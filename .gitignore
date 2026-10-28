@@ -1,0 +1,15 @@
+.DS_Store
+Thumbs.db
+*.log
+node_modules/
+.vscode/
+.idea/
+*.swp
+__pycache__/
+*.pyc
+
+# ── 不上传：构建/对齐脚本 ──
+*.py
+
+# ── 不上传：内部方法论文档 ──
+/SKILL.md
