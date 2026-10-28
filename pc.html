@@ -6851,6 +6851,36 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
     </template>
   </el-dialog>
 
+  <!-- 实验室巡检 · 作业执行 / 作业详情 -->
+  <el-dialog v-model="labInspExecVisible" class="demo-dialog--biz" :title="(labInspExecReadonly ? '作业详情 — ' : '作业执行 — ') + (labInspExecRow['计划单号']||'')" width="820px" align-center destroy-on-close append-to-body>
+    <el-descriptions :column="3" border size="small" style="margin-bottom:16px">
+      <el-descriptions-item v-for="k in labInspExecHead" :key="k" :label="k">
+        <span v-if="['计划状态','逾期状态','检查结果'].includes(k) && labInspExecRow[k] && labInspExecRow[k]!=='/'" class="tag" :class="tagClass(labInspExecRow[k])">{{ labInspExecRow[k] }}</span>
+        <span v-else>{{ labInspExecRow[k] || '—' }}</span>
+      </el-descriptions-item>
+    </el-descriptions>
+    <div style="font-size:15px;font-weight:600;text-align:center;margin-bottom:14px">{{ labInspExecFormName }}</div>
+    <el-form label-width="150px" :disabled="labInspExecReadonly">
+      <el-form-item v-for="f in labInspExecFields" :key="f.label" :label="f.label" :required="!!f.required && !labInspExecReadonly">
+        <el-radio-group v-if="f.type==='judge'" v-model="labInspExecData[f.label]">
+          <el-radio value="合格">合格</el-radio>
+          <el-radio value="不合格">不合格</el-radio>
+        </el-radio-group>
+        <el-input v-else-if="f.type==='number'" v-model="labInspExecData[f.label]" placeholder="请输入数值" style="width:240px"></el-input>
+        <el-input v-else-if="f.type==='textarea'" v-model="labInspExecData[f.label]" type="textarea" :rows="2" placeholder="请输入"></el-input>
+        <el-input v-else-if="f.type==='sign'" :model-value="labInspExecData[f.label]" readonly placeholder="点击签字" style="width:240px;cursor:pointer" @click="labInspSign(f)"></el-input>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <el-button v-if="labInspExecReadonly" type="primary" @click="labInspExecVisible=false">关闭</el-button>
+      <template v-else>
+        <el-button @click="labInspExecVisible=false">取消</el-button>
+        <el-button @click="saveLabInspExec(false)">保存</el-button>
+        <el-button type="primary" @click="saveLabInspExec(true)">提交</el-button>
+      </template>
+    </template>
+  </el-dialog>
+
   <!-- 仪器外校：执行 -->
   <el-dialog v-model="wjExecVisible" class="demo-dialog--biz" title="执行" fullscreen destroy-on-close append-to-body>
     <div style="font-weight:600;margin-bottom:12px">单据信息</div>
@@ -9665,13 +9695,13 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
 <script src="https://cdn.jsdelivr.net/npm/vxe-table@4/lib/index.umd.min.js"></script>
 <script src="./js/demo-announcements.js?v=1.4.14"></script>
 <script src="./js/page-configs.js?v=1.4.445"></script>
-<script src="./js/mock-rows.js?v=1.4.274"></script>
+<script src="./js/mock-rows.js?v=1.4.275"></script>
 <script src="./js/dict-catalog.js?v=1.1.14"></script>
 <script src="./js/page-prd-notes.js?v=2.4.430"></script>
 <script src="./js/remarks-markdown.js?v=1.1.0"></script>
 <script type="module" src="./js/remarks-mermaid-init.js"></script>
 <script src="./js/remarks-mermaid.js"></script>
-<script src="./js/demo-store.js?v=1.0.115"></script>
+<script src="./js/demo-store.js?v=1.0.116"></script>
 <script>
 const { createApp, ref, computed, reactive, watch, onMounted, onBeforeUnmount, nextTick } = Vue;
 const { ElMessage } = ElementPlus;
@@ -18700,34 +18730,117 @@ const app = createApp({
         ElMessage.success('已删除 '+ids.size+' 条巡检计划');
       }).catch(()=>{});
     }
-    function execLabInspPlan(row){
-      if(!row || !['待执行','执行中'].includes(row['计划状态'])){
-        ElMessage.warning('仅待执行或执行中的计划可作业执行'); return;
+    function labInspFormFields(name){
+      const map = {
+        '每日巡检': [
+          { label:'通道畅通', type:'judge', required:true },
+          { label:'灭火器完好', type:'judge', required:true },
+          { label:'紧急冲淋可用', type:'judge', required:true },
+          { label:'地面整洁', type:'judge', required:true },
+          { label:'异常描述', type:'textarea' },
+          { label:'巡检人签字', type:'sign', required:true }
+        ],
+        '仪器状态巡检': [
+          { label:'仪器运行状态', type:'judge', required:true },
+          { label:'报警指示', type:'judge', required:true },
+          { label:'排风开启', type:'judge', required:true },
+          { label:'台面清洁', type:'judge', required:true },
+          { label:'废液液位目视', type:'judge', required:true },
+          { label:'异常描述', type:'textarea' },
+          { label:'巡检人签字', type:'sign', required:true }
+        ],
+        '洁净区巡检': [
+          { label:'更衣规范', type:'judge', required:true },
+          { label:'压差正常', type:'judge', required:true },
+          { label:'温湿度目视', type:'judge', required:true },
+          { label:'洁净服穿戴', type:'judge', required:true },
+          { label:'异常描述', type:'textarea' },
+          { label:'巡检人签字', type:'sign', required:true }
+        ],
+        '试剂柜巡检': [
+          { label:'柜锁完好', type:'judge', required:true },
+          { label:'试剂标识', type:'judge', required:true },
+          { label:'危化品台账', type:'judge', required:true },
+          { label:'柜内整洁', type:'judge', required:true },
+          { label:'异常描述', type:'textarea' },
+          { label:'巡检人签字', type:'sign', required:true }
+        ],
+        '安全巡检': [
+          { label:'通道畅通', type:'judge', required:true },
+          { label:'灭火器完好', type:'judge', required:true },
+          { label:'紧急冲淋可用', type:'judge', required:true },
+          { label:'地面整洁', type:'judge', required:true },
+          { label:'异常描述', type:'textarea' },
+          { label:'巡检人签字', type:'sign', required:true }
+        ]
+      };
+      return map[name] || map['安全巡检'];
+    }
+    const labInspExecVisible = ref(false);
+    const labInspExecReadonly = ref(false);
+    const labInspExecRow = ref({});
+    const labInspExecData = reactive({});
+    const labInspExecFields = computed(()=> labInspFormFields(labInspExecRow.value['表单名称']));
+    const labInspExecFormName = computed(()=> labInspExecRow.value['表单名称'] || '安全巡检');
+    const labInspExecHead = computed(()=> ['计划单号','计划状态','巡检方案名称','内容描述','表单名称','计划开始时间','计划结束时间','逾期状态']
+      .concat(labInspExecReadonly.value ? ['检查结果','操作人','操作时间'] : []));
+    function openLabInspExec(row, readonly){
+      if(!row) return;
+      const srcTab = (labInspPlanBag('tab-1').some(r=> r.id===row.id) || ['待执行','执行中'].includes(row['计划状态'])) ? 'tab-1' : 'tab-2';
+      const p = labInspPlanBag(srcTab).find(r=> r.id===row.id)
+        || labInspPlanBag('tab-1').find(r=> r.id===row.id)
+        || labInspPlanBag('tab-2').find(r=> r.id===row.id)
+        || row;
+      if(!readonly && !['待执行','执行中'].includes(p['计划状态'])){
+        ElMessage.warning('仅待执行、执行中的计划可作业执行'); return;
       }
-      ElementPlus.ElMessageBox.confirm('确认完成作业执行？完成后计划状态变为已完成，并写入巡检记录。','作业执行',{
-        confirmButtonText:'确定', cancelButtonText:'取消', type:'info'
-      }).then(()=>{
-        row['计划状态'] = '已完成';
-        const stamp = nowStamp();
-        const rec = {
-          ...row,
-          id: 'labr-' + Date.now(),
-          计划状态: '已完成',
-          检查结果: '正常',
-          操作时间: stamp,
-          操作人: '张三'
-        };
-        labInspPlanBag('tab-2').unshift(rec);
+      Object.keys(labInspExecData).forEach(k=> delete labInspExecData[k]);
+      Object.assign(labInspExecData, p._formData || {});
+      const view = labInspEnrichPlanRows([p])[0] || p;
+      labInspExecRow.value = view;
+      labInspExecReadonly.value = !!readonly;
+      labInspExecVisible.value = true;
+    }
+    function labInspSign(f){ if(!labInspExecReadonly.value) labInspExecData[f.label] = CI_OPERATOR; }
+    function saveLabInspExec(submit){
+      const list = labInspPlanBag('tab-1');
+      const p = list.find(r=> r.id===labInspExecRow.value.id);
+      if(!p || !['待执行','执行中'].includes(p['计划状态'])){
+        ElMessage.warning('仅待执行、执行中的计划可作业执行'); return;
+      }
+      const data = { ...labInspExecData };
+      if(submit){
+        const miss = labInspExecFields.value.find(f=> f.required && !String(data[f.label]||'').trim());
+        if(miss){ ElMessage.warning('请填写「'+miss.label+'」'); return; }
+      }
+      p._formData = data;
+      if(!submit){
+        p['计划状态'] = '执行中';
+        labInspExecVisible.value = false;
         bumpStore();
-        if(String(row[LAB_INSP_AFFECT]||'').includes('循环')){
-          const sch = labInspSchemeRows().find(r=> r['巡检方案名称']===row['巡检方案名称']);
-          if(sch){ sch['最新一次计划完成时间'] = stamp; sch['最新计划完成时间'] = stamp; }
-        }
-        const tip = String(row[LAB_INSP_AFFECT]||'').includes('循环')
-          ? '作业已完成，已写入巡检记录；已按循环计划更新方案最新计划完成时间'
-          : '作业已完成，已写入巡检记录';
-        ElMessage.success(tip);
-      }).catch(()=>{});
+        ElMessage.success('已保存，计划状态为执行中');
+        return;
+      }
+      const stamp = nowStamp();
+      const result = labInspExecFields.value.some(f=> f.type==='judge' && data[f.label]==='不合格') ? '异常' : '正常';
+      Object.assign(p, { 计划状态:'已完成', 操作时间: stamp, 操作人: CI_OPERATOR, 检查结果: result });
+      const rec = Object.assign({}, p, {
+        id: 'labr-' + Date.now(),
+        计划状态: '已完成',
+        检查结果: result,
+        操作时间: stamp,
+        操作人: CI_OPERATOR,
+        _formData: data
+      });
+      labInspPlanBag('tab-2').unshift(rec);
+      const cycle = p['创建方式']==='自动' || String(p[LAB_INSP_AFFECT]||'').includes('循环');
+      if(cycle){
+        const sch = labInspSchemeRows().find(r=> r['巡检方案名称']===p['巡检方案名称']);
+        if(sch){ sch['最新一次计划完成时间'] = stamp; sch['最新计划完成时间'] = stamp; }
+      }
+      labInspExecVisible.value = false;
+      bumpStore();
+      ElMessage.success('提交成功，已生成巡检记录' + (cycle ? '；已更新方案最新一次计划完成时间' : ''));
     }
     function linkLabInspQuery(){
       const rows = tableData.value.filter(r=> selectedIds.value.includes(r.id));
@@ -34672,8 +34785,8 @@ const app = createApp({
       if(pageId.value===YL_PAGE && op.name==='查看详情'){ openYlSource(row); return; }
       if(pageId.value===WJ_ORDER && op.name==='编辑' && !DJ_OPEN.includes(row['单据状态'])){ ElMessage.warning('仅待执行、执行中的外校单可编辑'); return; }
       if(isDjPlanPage() && op.name==='编辑' && !DJ_OPEN.includes(row['计划状态'])){ ElMessage.warning('仅待执行、执行中的'+djKind().w+'计划可编辑'); return; }
-      if((op.name==='详情' && pageId.value!=='insp-scheme' && pageId.value!=='insp-method') || op.name==='变更详情' || op.name==='盘点详情' || (op.name==='作业详情' && (pageId.value==='wh-insp-plan' || pageId.value===LAB_INSP_PLAN))){ openDetail(row); return; }
-      if(op.name==='作业执行' && pageId.value===LAB_INSP_PLAN){ execLabInspPlan(row); return; }
+      if(pageId.value===LAB_INSP_PLAN && (op.name==='作业执行' || op.name==='作业详情')){ openLabInspExec(row, op.name==='作业详情'); return; }
+      if((op.name==='详情' && pageId.value!=='insp-scheme' && pageId.value!=='insp-method') || op.name==='变更详情' || op.name==='盘点详情' || (op.name==='作业详情' && pageId.value==='wh-insp-plan')){ openDetail(row); return; }
       if(pageId.value===LAB_PREP && (op.name==='执行' || op.name==='配制详情')){ openLabPrepExec(row, op.name==='配制详情'); return; }
       if(pageId.value===LAB_PREP && op.name==='编辑' && row['单据状态']!=='待执行'){ ElMessage.warning('仅待执行状态的配液单可编辑'); return; }
       if(pageId.value===LAB_CALIB && (op.name==='执行' || op.name==='标定详情')){ openLabCalibExec(row, op.name==='标定详情'); return; }
@@ -44408,7 +44521,7 @@ const app = createApp({
       batchVisible, batchTitle, batchForm, batchLines, batchSelected, batchFieldSource, batchCtx, isBatchFieldLocked, batchLockedDisplay, batchSelectOptions, resetBatchCtx, onDetailLineRowAction,
       craftVisible, craftProcVisible, craftProcForm, craftTitle, craftKw, craftZoom, craftLocked, craftNodes, filteredCraftProcs, craftEdgeLines,
       openCraftProc, onCraftProcOk,
-      MSA_TIPS, MSA_STD_KEYS, msaFormVisible, msaFormMode, msaTab, msaForm, msaInsts, msaInstSel, msaStds, msaStdSel, msaItems, msaItemSel, msaSpecOf, onMsaAction, msaRemoveItems, msaItemHead, saveMsaForm, msaDtVisible, msaDtKeys, msaDtPlan, msaDtGroups, msaEntryDisabled, onMsaEntryOp, msaEn, msaEnStd, msaEnItems, msaEnRows, msaEnCalc, msaImport, saveMsaEntry, msaPrec, msaFmt, msaPv, stbFormVisible, stbFormMode, stbTab, stbForm, stbInsts, stbInstSel, stbStds, stbStdSel, stbItems, stbItemSel, onStbAction, stbRemoveItems, saveStbForm, stbDtVisible, stbDtPlan, stbMeasures, stbMeasureSel, stbDtStd, stbFinishTip, stbAddMeasure, stbDelMeasures, stbFinish, stbEntryDisabled, onStbEntryOp, stbEn, stbEnStd, stbEnItems, stbImport, saveStbEntry, stbPv, biasFormVisible, biasFormMode, biasForm, biasInstOptions, biasPeople, biasTypes, onBiasInst, refreshBiasNo, saveBiasForm, biasDtVisible, biasDt, biasDtKeys, biasAn, biasAnStats, biasCell, biasFmtNum, saveBiasEntry, biasDownloadTpl, biasImport, biasFilesVisible, biasFileNo, openBiasFiles, openBiasPreview, biasPv, qcDownload, ElMessage, tagClass, srShare, saveSrShare, copySrShare, srFill, submitSrFill, srReview, openSrReview, submitSrReview, srExt, srExtLogin, srExtKeys, srExtVal, openSrFill, refreshHmExpire, hmHist, openHmHistDetail, hmCmp, hmArchLineTab, hmArchPlant, hmArchCust, hmArchLaw, hmArchPlantSel, hmArchCustSel, hmArchLawSel, hmArchAddLine, hmArchDelLines, hmCmpPassCount, hmCmpFailCount, hmCmpSkipCount, hmCmpRowClass, hmCmpValStyle, confirmHmCompare, hmFilePick, hmVoidPickRows, hmFilePickRows, confirmHmFilePick, refreshHmChgExpire, designVisible, designTitle, designBasic, designAdvanced, designCanvas, designFormName, designFormTitle, designActive, designActiveField, designDragType, formPreviewVisible, djExecVisible, djExecReadonly, djExecRow, djExecData, djExecFields, djExecHead, djExecFormName, djSign, saveDjExec, tyK, instDictOpts, tyDetailVisible, tyDetail, tyDetailKeys, tyDetailLines, TY_NOTICE_KEYS, TY_NOTICE_REQ, AP_TYPES, AP_LEADERS, AP_WAYS, AP_REMIND, AP_UNITS, tyTypes, tyFormVisible, tyFormMode, tyFormLines, tyFormSel, tyForm, onTyLineAction, saveTyForm, tyApVisible, tyApBatch, tyApRows, tyApSel, tyAp, tyApFlows, tyApLocked, tyApUsers, loadTyFlow, addTyNode, copyTyNode, removeTyNodes, onTyApType, onTyApField, submitTyAp, tyAuditVisible, tyAuditForm, tyAuditNode, submitTyAudit, sgVisible, sgMode, sgTab, sgForm, sgTitle, sgSchemeText, SG_ZERO, SG_ROUND, SG_TAKE, sgLineSel, openSgPick, removeSgSchemes, saveSg, sgPickVisible, sgPickCode, sgPickName, sgPickQuery, sgPickRows, sgPickSel, confirmSgPick, srVisible, srMode, srForm, srTitle, srPartyLabel, srMonthOpts, SR_DIMS, SR_WEEK, srSchemeOpts, srItemOpts, srFillItems, openSrPick, srOnDim, srOnTarget, saveSr, deleteSr, srSpcVisible, srSpcMenu, srSpcKey, srSpc, srRuleNames, srToggleAll, srToggleOne, srRestore, saveSrSpc, SR_FILTER_ROWS, SR_ZERO, SR_ROUND, SR_TAKE, SR_GROUP_SECS, SR_CHART_TYPES, SR_TIP_FIELDS, SR_DASH, srClearFilter, srRestoreGroup, srRestoreLimit, srRestoreView, srOnTake, srEnsureTips, srToggleLimit, srToggleTipAll, srToggleTipOne, acVisible, acMode, acForm, acTitle, acPartyLabel, AC_METRICS, acSchemeOpts, openAcPick, acOnTarget, saveAc, deleteAc, MY_WX_PAGE, WO_LINK_PAGES, YS_SECS, woFixTab, woParts, woPartSel, removeWoParts, roundWoPart, ysDlgVisible, ysDlgBatch, ysDlgRows, ysForm, saveYsDlg, WO_PAGE, CL_REPAIR, WO_FIX_SECS, bxFormKind, bxFaultLocked, saveWoForm, bxExpTip, woFixVisible, woFixRow, woFix, openWoExp, saveWoFix, CL_WAYS, clDlgVisible, clDlgBatch, clDlgRows, clForm, clNeedRepair, clFaultTypes, saveClDraft, submitClDlg, maintTeamNames, bxDetailSecs, BX_INST_KEYS, BX_DETAIL, BX_FILE_KEYS, BX_TAG_KEYS, bxFormVisible, bxFormMode, bxFormTitle, bxFormLines, bxFormSel, bxForm, bxLineTypes, bxFaultTypes, onBxLineAction, saveBxForm, bxExpVisible, bxExpPick, bxExpRows, openBxExp, confirmBxExp, bxLinkVisible, bxLinkNos, bxLinkRows, goBxLink, bxDetailVisible, bxDetailRow, bxDetailTab, bxFlowNodes, openBxFlowNo, wjExecVisible, wjExecRow, wjExecLines, wjExecSel, onWjLineAction, onWjLineChange, openWjLineSupplier, saveWjExec, INST_PAGE, INST_BASE_FIELDS, INST_BASE_REQ, INST_CYCLE_UNITS, INST_DEPT_TREE, INST_DICTS, instTypeId, instTypeKw, instTypeList, instAllTypes, instCfgFieldList, onInstTypeQuery, selectInstType, onInstTypeOp, instTypeVisible, instTypeTitle, instTypeForm, openInstType, saveInstType, instCfgVisible, instCfgRows, instCfgSel, openInstCfg, addInstCfgRow, onInstCfgAttr, delInstCfgRows, saveInstCfg, instImageUrl, previewInstImage, instFormVisible, instFormMode, instFormTitle, instFormBase, instFormCfg, instFormOther, instUsers, onInstCodeInput, calcInstNext, onInstCycleInput, pickInstSupplier, saveInstForm, instLinkVisible, instLinkNos, instLinkRows, goInstLink, instIoTip, djMyUser, djMyUsers, isDjMyPage, isDjPlanPage,
+      MSA_TIPS, MSA_STD_KEYS, msaFormVisible, msaFormMode, msaTab, msaForm, msaInsts, msaInstSel, msaStds, msaStdSel, msaItems, msaItemSel, msaSpecOf, onMsaAction, msaRemoveItems, msaItemHead, saveMsaForm, msaDtVisible, msaDtKeys, msaDtPlan, msaDtGroups, msaEntryDisabled, onMsaEntryOp, msaEn, msaEnStd, msaEnItems, msaEnRows, msaEnCalc, msaImport, saveMsaEntry, msaPrec, msaFmt, msaPv, stbFormVisible, stbFormMode, stbTab, stbForm, stbInsts, stbInstSel, stbStds, stbStdSel, stbItems, stbItemSel, onStbAction, stbRemoveItems, saveStbForm, stbDtVisible, stbDtPlan, stbMeasures, stbMeasureSel, stbDtStd, stbFinishTip, stbAddMeasure, stbDelMeasures, stbFinish, stbEntryDisabled, onStbEntryOp, stbEn, stbEnStd, stbEnItems, stbImport, saveStbEntry, stbPv, biasFormVisible, biasFormMode, biasForm, biasInstOptions, biasPeople, biasTypes, onBiasInst, refreshBiasNo, saveBiasForm, biasDtVisible, biasDt, biasDtKeys, biasAn, biasAnStats, biasCell, biasFmtNum, saveBiasEntry, biasDownloadTpl, biasImport, biasFilesVisible, biasFileNo, openBiasFiles, openBiasPreview, biasPv, qcDownload, ElMessage, tagClass, srShare, saveSrShare, copySrShare, srFill, submitSrFill, srReview, openSrReview, submitSrReview, srExt, srExtLogin, srExtKeys, srExtVal, openSrFill, refreshHmExpire, hmHist, openHmHistDetail, hmCmp, hmArchLineTab, hmArchPlant, hmArchCust, hmArchLaw, hmArchPlantSel, hmArchCustSel, hmArchLawSel, hmArchAddLine, hmArchDelLines, hmCmpPassCount, hmCmpFailCount, hmCmpSkipCount, hmCmpRowClass, hmCmpValStyle, confirmHmCompare, hmFilePick, hmVoidPickRows, hmFilePickRows, confirmHmFilePick, refreshHmChgExpire, designVisible, designTitle, designBasic, designAdvanced, designCanvas, designFormName, designFormTitle, designActive, designActiveField, designDragType, formPreviewVisible, djExecVisible, djExecReadonly, djExecRow, djExecData, djExecFields, djExecHead, djExecFormName, djSign, saveDjExec, labInspExecVisible, labInspExecReadonly, labInspExecRow, labInspExecData, labInspExecFields, labInspExecFormName, labInspExecHead, openLabInspExec, labInspSign, saveLabInspExec, tyK, instDictOpts, tyDetailVisible, tyDetail, tyDetailKeys, tyDetailLines, TY_NOTICE_KEYS, TY_NOTICE_REQ, AP_TYPES, AP_LEADERS, AP_WAYS, AP_REMIND, AP_UNITS, tyTypes, tyFormVisible, tyFormMode, tyFormLines, tyFormSel, tyForm, onTyLineAction, saveTyForm, tyApVisible, tyApBatch, tyApRows, tyApSel, tyAp, tyApFlows, tyApLocked, tyApUsers, loadTyFlow, addTyNode, copyTyNode, removeTyNodes, onTyApType, onTyApField, submitTyAp, tyAuditVisible, tyAuditForm, tyAuditNode, submitTyAudit, sgVisible, sgMode, sgTab, sgForm, sgTitle, sgSchemeText, SG_ZERO, SG_ROUND, SG_TAKE, sgLineSel, openSgPick, removeSgSchemes, saveSg, sgPickVisible, sgPickCode, sgPickName, sgPickQuery, sgPickRows, sgPickSel, confirmSgPick, srVisible, srMode, srForm, srTitle, srPartyLabel, srMonthOpts, SR_DIMS, SR_WEEK, srSchemeOpts, srItemOpts, srFillItems, openSrPick, srOnDim, srOnTarget, saveSr, deleteSr, srSpcVisible, srSpcMenu, srSpcKey, srSpc, srRuleNames, srToggleAll, srToggleOne, srRestore, saveSrSpc, SR_FILTER_ROWS, SR_ZERO, SR_ROUND, SR_TAKE, SR_GROUP_SECS, SR_CHART_TYPES, SR_TIP_FIELDS, SR_DASH, srClearFilter, srRestoreGroup, srRestoreLimit, srRestoreView, srOnTake, srEnsureTips, srToggleLimit, srToggleTipAll, srToggleTipOne, acVisible, acMode, acForm, acTitle, acPartyLabel, AC_METRICS, acSchemeOpts, openAcPick, acOnTarget, saveAc, deleteAc, MY_WX_PAGE, WO_LINK_PAGES, YS_SECS, woFixTab, woParts, woPartSel, removeWoParts, roundWoPart, ysDlgVisible, ysDlgBatch, ysDlgRows, ysForm, saveYsDlg, WO_PAGE, CL_REPAIR, WO_FIX_SECS, bxFormKind, bxFaultLocked, saveWoForm, bxExpTip, woFixVisible, woFixRow, woFix, openWoExp, saveWoFix, CL_WAYS, clDlgVisible, clDlgBatch, clDlgRows, clForm, clNeedRepair, clFaultTypes, saveClDraft, submitClDlg, maintTeamNames, bxDetailSecs, BX_INST_KEYS, BX_DETAIL, BX_FILE_KEYS, BX_TAG_KEYS, bxFormVisible, bxFormMode, bxFormTitle, bxFormLines, bxFormSel, bxForm, bxLineTypes, bxFaultTypes, onBxLineAction, saveBxForm, bxExpVisible, bxExpPick, bxExpRows, openBxExp, confirmBxExp, bxLinkVisible, bxLinkNos, bxLinkRows, goBxLink, bxDetailVisible, bxDetailRow, bxDetailTab, bxFlowNodes, openBxFlowNo, wjExecVisible, wjExecRow, wjExecLines, wjExecSel, onWjLineAction, onWjLineChange, openWjLineSupplier, saveWjExec, INST_PAGE, INST_BASE_FIELDS, INST_BASE_REQ, INST_CYCLE_UNITS, INST_DEPT_TREE, INST_DICTS, instTypeId, instTypeKw, instTypeList, instAllTypes, instCfgFieldList, onInstTypeQuery, selectInstType, onInstTypeOp, instTypeVisible, instTypeTitle, instTypeForm, openInstType, saveInstType, instCfgVisible, instCfgRows, instCfgSel, openInstCfg, addInstCfgRow, onInstCfgAttr, delInstCfgRows, saveInstCfg, instImageUrl, previewInstImage, instFormVisible, instFormMode, instFormTitle, instFormBase, instFormCfg, instFormOther, instUsers, onInstCodeInput, calcInstNext, onInstCycleInput, pickInstSupplier, saveInstForm, instLinkVisible, instLinkNos, instLinkRows, goInstLink, instIoTip, djMyUser, djMyUsers, isDjMyPage, isDjPlanPage,
       importVisible, exportVisible, opcRel, printVisible, printCodes, printTpl, printPrinter, openPrintLabel, qcView, clDevVisible, clDevForm, clDevOpts, clDevRule, confirmClDev, clSampleVisible, clSampleQuery, clSampleRows, clSampleCols, clSampleExpanded, consignPrintVisible, consignPrint,
       pickerVisible, pickerTitle, pickerDialogTitle, pickerKw, pickerPrepQ, pickerPrepFilterTick, pickerPrepSelQty, pickerPrepNeedQty, resetPickerPrepQ, pickerRows, pickerColumns, pickerDialogWidth, pickerMultiSelect, pickerCurrent, pickerSelected, pickerMode,
       mergeVisible, mergeForm, onMergeShipOk, onFormSelectChange, onFormTextInput,
