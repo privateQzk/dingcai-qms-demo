@@ -2347,7 +2347,7 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
 
   <!-- 新增/编辑 字典项 -->
   <el-dialog v-model="formVisible" class="demo-dialog--biz" :class="{ 'demo-dialog--insp-method': isWideBizForm, 'demo-dialog--fullscreen': isFullscreenBizForm }" :title="formDialogTitle" :width="isFullscreenBizForm ? '100%' : (isWideBizForm ? 'min(1100px, 96vw)' : formDialogWidth)" :fullscreen="isFullscreenBizForm" :top="isFullscreenBizForm ? '0' : '4vh'" :align-center="!isFullscreenBizForm" destroy-on-close append-to-body :close-on-click-modal="false">
-    <el-form :label-width="isWideBizForm || isQmsFlowForm ? '150px' : (page.formLabelWidth || '128px')" v-if="page">
+    <el-form :label-width="isWideBizForm || isQmsFlowForm ? '150px' : (page.formLabelWidth || '128px')" v-if="page" :class="{ 'scheme-readonly': pageId==='np-0215-05' && formMode==='detail' }" :inert="pageId==='np-0215-05' && formMode==='detail' ? true : undefined">
       <!-- 检验方法 · 专用布局（对齐源系统：头信息 + 公用参数 + 样本参数） -->
       <template v-if="isInspMethodForm">
         <div :class="{ 'scheme-readonly': formMode==='detail' }">
@@ -3033,53 +3033,76 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
         <section class="demo-form-section">
           <div class="demo-form-grid demo-form-grid--cols-2 drift-rule-form-grid">
             <el-form-item label="规则编码" required>
-              <el-input v-model="formModel['规则编码']" placeholder="输入，唯一" clearable></el-input>
+              <el-input v-model="formModel['规则编码']" placeholder="输入，唯一" clearable :disabled="formMode==='detail'"></el-input>
             </el-form-item>
             <el-form-item label="规则名称" required>
-              <el-input v-model="formModel['规则名称']" placeholder="输入，唯一" clearable></el-input>
+              <el-input v-model="formModel['规则名称']" placeholder="输入，唯一" clearable :disabled="formMode==='detail'"></el-input>
             </el-form-item>
             <el-form-item label="典型保留时间规则" required>
-              <el-select v-model="formModel['典型保留时间规则']" placeholder="请选择" style="width:100%">
+              <el-select v-model="formModel['典型保留时间规则']" placeholder="请选择" style="width:100%" :disabled="formMode==='detail'">
                 <el-option v-for="o in DRIFT_TR_OPTS" :key="o" :label="o" :value="o"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="适用检验类型" required>
-              <el-select v-model="formModel['适用检验类型']" placeholder="请选择" filterable style="width:100%">
+              <el-select v-model="formModel['适用检验类型']" placeholder="请选择" filterable style="width:100%" :disabled="formMode==='detail'">
                 <el-option v-for="o in DRIFT_INSP_OPTS" :key="o" :label="o" :value="o"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item required class="span-2 drift-diff-item">
-              <template #label>
-                <span class="drift-diff-label">相对保留时间与典型保留时间差值范围</span>
-              </template>
-              <div class="drift-diff-range" v-if="formModel._diff">
-                <el-select v-model="formModel._diff.ls" class="drift-sign-select" teleported placeholder="-">
-                  <el-option label="-" value="-"></el-option>
-                  <el-option label="+" value="+"></el-option>
-                </el-select>
-                <el-input v-model="formModel._diff.lv" class="drift-diff-num" placeholder="数值" clearable></el-input>
-                <span class="drift-diff-sep">~</span>
-                <el-select v-model="formModel._diff.rs" class="drift-sign-select" teleported placeholder="+">
-                  <el-option label="-" value="-"></el-option>
-                  <el-option label="+" value="+"></el-option>
-                </el-select>
-                <el-input v-model="formModel._diff.rv" class="drift-diff-num" placeholder="数值" clearable></el-input>
-              </div>
-            </el-form-item>
             <el-form-item label="备注" class="drift-remark-item">
-              <el-input v-model="formModel['备注']" type="textarea" :rows="2" placeholder="请输入"></el-input>
+              <el-input v-model="formModel['备注']" type="textarea" :rows="2" placeholder="请输入" :disabled="formMode==='detail'"></el-input>
             </el-form-item>
             <el-form-item label="启用状态" required>
-              <el-switch class="demo-enable-switch" v-model="formSwitch['启用状态']" inline-prompt active-text="启用" inactive-text="禁用"></el-switch>
+              <el-switch class="demo-enable-switch" v-model="formSwitch['启用状态']" inline-prompt active-text="启用" inactive-text="禁用" :disabled="formMode==='detail'"></el-switch>
             </el-form-item>
           </div>
         </section>
         <el-tabs v-model="driftInnerTab" class="insp-scheme-tabs">
+          <el-tab-pane label="RRT&TR偏差规则" name="RRT&TR偏差规则">
+            <div class="insp-method-param-block" :inert="formMode==='detail'">
+              <div class="insp-method-param-block__hd">
+                <span class="insp-method-param-block__title">RRT&TR偏差规则</span>
+                <div class="insp-method-param-block__tools" v-if="formMode!=='detail'">
+                  <el-button type="primary" size="small" @click="addDriftRrtRow">添加一行</el-button>
+                  <el-button type="danger" size="small" :disabled="!driftRrtSelected.length" @click="removeDriftRows('rrt')">批量删除</el-button>
+                </div>
+              </div>
+              <el-table class="demo-data-table demo-data-table--striped" :data="driftRrtRows" border stripe max-height="420" empty-text="暂无数据" @selection-change="rows=>driftRrtSelected=rows" style="width:100%">
+                <el-table-column v-if="formMode!=='detail'" type="selection" width="48"></el-table-column>
+                <el-table-column type="index" label="序号" width="64"></el-table-column>
+                <el-table-column label="时间范围" min-width="240">
+                  <template #default="{ row }">
+                    <div class="drift-diff-range">
+                      <el-input v-model="row['起']" size="small" placeholder="起" style="width:100px" :disabled="formMode==='detail'"></el-input>
+                      <span class="drift-diff-sep">～</span>
+                      <el-input v-model="row['止']" size="small" placeholder="止" style="width:100px" :disabled="formMode==='detail'"></el-input>
+                    </div>
+                  </template>
+                </el-table-column>
+                <el-table-column label="RRT&TR差值范围" min-width="340">
+                  <template #default="{ row }">
+                    <div class="drift-diff-range">
+                      <el-select v-model="row.ls" class="drift-sign-select" size="small" teleported placeholder="-" :disabled="formMode==='detail'">
+                        <el-option label="-" value="-"></el-option>
+                        <el-option label="+" value="+"></el-option>
+                      </el-select>
+                      <el-input v-model="row.lv" class="drift-diff-num" size="small" placeholder="数值" clearable :disabled="formMode==='detail'"></el-input>
+                      <span class="drift-diff-sep">~</span>
+                      <el-select v-model="row.rs" class="drift-sign-select" size="small" teleported placeholder="+" :disabled="formMode==='detail'">
+                        <el-option label="-" value="-"></el-option>
+                        <el-option label="+" value="+"></el-option>
+                      </el-select>
+                      <el-input v-model="row.rv" class="drift-diff-num" size="small" placeholder="数值" clearable :disabled="formMode==='detail'"></el-input>
+                    </div>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+          </el-tab-pane>
           <el-tab-pane label="杂质指标" name="杂质指标">
-            <div class="insp-method-param-block">
+            <div class="insp-method-param-block" :inert="formMode==='detail'">
               <div class="insp-method-param-block__hd">
                 <span class="insp-method-param-block__title">过滤固定杂质范围</span>
-                <div class="insp-method-param-block__tools">
+                <div class="insp-method-param-block__tools" v-if="formMode!=='detail'">
                   <el-button type="primary" size="small" @click="addDriftRangeRow">添加一行</el-button>
                   <el-button size="small" @click="importVisible=true">导入数据</el-button>
                   <el-button type="danger" size="small" :disabled="!driftRangeSelected.length" @click="removeDriftRows('range')">批量删除</el-button>
@@ -3120,10 +3143,10 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
                 </el-form-item>
               </div>
             </div>
-            <div class="insp-method-param-block" style="margin-top:16px">
+            <div class="insp-method-param-block" style="margin-top:16px" :inert="formMode==='detail'">
               <div class="insp-method-param-block__hd">
                 <span class="insp-method-param-block__title">已知杂质项目及指标</span>
-                <div class="insp-method-param-block__tools">
+                <div class="insp-method-param-block__tools" v-if="formMode!=='detail'">
                   <el-button type="primary" size="small" @click="addDriftKnownRow">添加一行</el-button>
                   <el-button size="small" @click="importVisible=true">导入数据</el-button>
                   <el-button type="danger" size="small" :disabled="!driftKnownSelected.length" @click="removeDriftRows('known')">批量删除</el-button>
@@ -3170,16 +3193,16 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
             </div>
           </el-tab-pane>
           <el-tab-pane label="物料" name="物料">
-            <div class="insp-method-param-block">
+            <div class="insp-method-param-block" :inert="formMode==='detail'">
               <div class="insp-method-param-block__hd">
                 <span class="insp-method-param-block__title">物料<span class="scheme-sel-meta">已选: {{ driftMatSelected.length }}</span></span>
-                <div class="insp-method-param-block__tools">
+                <div class="insp-method-param-block__tools" v-if="formMode!=='detail'">
                   <el-button type="primary" size="small" @click="openSchemeRelDrawer('drift-mat')">添加物料</el-button>
                   <el-button type="danger" size="small" :disabled="!driftMatSelected.length" @click="removeDriftRows('mat')">批量删除</el-button>
                 </div>
               </div>
               <el-table class="demo-data-table demo-data-table--striped" :data="driftMatRows" border stripe max-height="420" empty-text="暂无数据" @selection-change="rows=>driftMatSelected=rows" style="width:100%">
-                <el-table-column type="selection" width="48"></el-table-column>
+                <el-table-column v-if="formMode!=='detail'" type="selection" width="48"></el-table-column>
                 <el-table-column type="index" label="序号" width="64"></el-table-column>
                 <el-table-column prop="物料编码" label="物料编码" min-width="130"></el-table-column>
                 <el-table-column prop="物料名称" label="物料名称" min-width="150"></el-table-column>
@@ -3191,16 +3214,16 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
             </div>
           </el-tab-pane>
           <el-tab-pane label="采样点" name="采样点">
-            <div class="insp-method-param-block">
+            <div class="insp-method-param-block" :inert="formMode==='detail'">
               <div class="insp-method-param-block__hd">
                 <span class="insp-method-param-block__title">采样点<span class="scheme-sel-meta">已选: {{ driftPointSelected.length }}</span></span>
-                <div class="insp-method-param-block__tools">
+                <div class="insp-method-param-block__tools" v-if="formMode!=='detail'">
                   <el-button type="primary" size="small" @click="openSchemeRelDrawer('drift-point')">添加采样点</el-button>
                   <el-button type="danger" size="small" :disabled="!driftPointSelected.length" @click="removeDriftRows('point')">批量删除</el-button>
                 </div>
               </div>
               <el-table class="demo-data-table demo-data-table--striped" :data="driftPointRows" border stripe max-height="420" empty-text="暂无数据" @selection-change="rows=>driftPointSelected=rows" style="width:100%">
-                <el-table-column type="selection" width="48"></el-table-column>
+                <el-table-column v-if="formMode!=='detail'" type="selection" width="48"></el-table-column>
                 <el-table-column type="index" label="序号" width="64"></el-table-column>
                 <el-table-column prop="采样点编码" label="采样点编码" min-width="130"></el-table-column>
                 <el-table-column prop="采样点名称" label="采样点名称" min-width="150"></el-table-column>
@@ -3212,16 +3235,16 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
             </div>
           </el-tab-pane>
           <el-tab-pane label="色谱柱" name="色谱柱">
-            <div class="insp-method-param-block">
+            <div class="insp-method-param-block" :inert="formMode==='detail'">
               <div class="insp-method-param-block__hd">
                 <span class="insp-method-param-block__title">色谱柱<span class="scheme-sel-meta">已选: {{ driftColSelected.length }}</span></span>
-                <div class="insp-method-param-block__tools">
+                <div class="insp-method-param-block__tools" v-if="formMode!=='detail'">
                   <el-button type="primary" size="small" @click="openSchemeRelDrawer('drift-col')">添加色谱柱</el-button>
                   <el-button type="danger" size="small" :disabled="!driftColSelected.length" @click="removeDriftRows('col')">批量删除</el-button>
                 </div>
               </div>
               <el-table class="demo-data-table" :data="driftColRows" border stripe max-height="420" empty-text="暂无数据" @selection-change="rows=>driftColSelected=rows" style="width:100%">
-                <el-table-column type="selection" width="48"></el-table-column>
+                <el-table-column v-if="formMode!=='detail'" type="selection" width="48"></el-table-column>
                 <el-table-column type="index" label="序号" width="64"></el-table-column>
                 <el-table-column prop="色谱柱型号" label="色谱柱型号" min-width="220"></el-table-column>
               </el-table>
@@ -3382,6 +3405,24 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
             </el-form-item>
             <el-form-item label="备注">
               <el-input v-model="formModel['备注']" type="textarea" :rows="1" placeholder="输入" clearable></el-input>
+            </el-form-item>
+            <el-form-item label="作业说明" style="grid-column:1/-1">
+              <el-input v-model="formModel['作业说明']" type="textarea" :rows="3" placeholder="输入长文本" clearable :disabled="formMode==='detail'"></el-input>
+            </el-form-item>
+            <el-form-item label="作业附件">
+              <div v-if="formMode==='detail'">
+                <el-button v-if="formModel['作业附件']" link type="primary" @click="onFilePreview(formModel['作业附件'])">{{ formModel['作业附件'] }}</el-button>
+                <span v-else>—</span>
+              </div>
+              <div v-else style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                <el-upload action="#" :auto-upload="false" :show-file-list="false" :on-change="onInspMethodFile">
+                  <el-button type="primary" link>+点击上传</el-button>
+                </el-upload>
+                <template v-if="formModel['作业附件']">
+                  <el-button link type="primary" @click="onFilePreview(formModel['作业附件'])">{{ formModel['作业附件'] }}</el-button>
+                  <el-button link type="danger" @click="formModel['作业附件']=''">删除</el-button>
+                </template>
+              </div>
             </el-form-item>
             <el-form-item label="启用状态" required>
               <el-switch class="demo-enable-switch" v-model="formSwitch['启用状态']" inline-prompt active-text="启用" inactive-text="禁用"></el-switch>
@@ -3822,6 +3863,13 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
             <el-form-item v-if="pageId==='wait-samp' && activeTab==='tab-rd'" label="预计完成时间">
               <el-date-picker v-model="formModel['预计完成时间']" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" placeholder="选择日期时间" style="width:100%"></el-date-picker>
             </el-form-item>
+            <el-form-item label="作业说明" style="grid-column:1/-1">
+              <el-input :model-value="formModel['作业说明']||''" type="textarea" :rows="3" readonly placeholder="按抽样方案自动带入"></el-input>
+            </el-form-item>
+            <el-form-item label="作业附件">
+              <el-button v-if="formModel['作业附件']" link type="primary" @click="onFilePreview(formModel['作业附件'])">{{ formModel['作业附件'] }}</el-button>
+              <span v-else class="demo-readonly">—</span>
+            </el-form-item>
             <el-form-item label="取样备注" style="grid-column:1/-1">
               <el-input v-model="formModel['取样备注']" type="textarea" :rows="3" placeholder="输入"></el-input>
             </el-form-item>
@@ -4181,8 +4229,8 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
                 </span>
               </template>
               <div v-if="f.type==='readonly' || isFormFieldLocked(f)" style="display:flex;align-items:center;gap:4px;width:100%">
-                <el-input :model-value="formModel[f.name] || ((f.ctrl||'').includes('系统') ? (f.placeholder||'系统自动计算') : ((f.ctrl||'').includes('自动')||(f.ctrl||'').includes('回填')?(f.placeholder||'自动带入'):''))" disabled :placeholder="f.placeholder||(((f.ctrl||'').includes('回填')||(f.ctrl||'').includes('自动'))?'自动带入':'')" style="flex:1" :class="{ 'demo-refresh-input': f.refreshable && formMode!=='edit' }">
-                  <template #append v-if="f.refreshable && formMode!=='edit'">
+                <el-input :model-value="formModel[f.name] || ((f.ctrl||'').includes('系统') ? (f.placeholder||'系统自动计算') : ((f.ctrl||'').includes('自动')||(f.ctrl||'').includes('回填')?(f.placeholder||'自动带入'):''))" disabled :placeholder="f.placeholder||(((f.ctrl||'').includes('回填')||(f.ctrl||'').includes('自动'))?'自动带入':'')" style="flex:1" :class="{ 'demo-refresh-input': f.refreshable && formMode==='add' }">
+                  <template #append v-if="f.refreshable && formMode==='add'">
                     <el-tooltip content="刷新单号"><el-button class="demo-refresh-btn" @click="onFormFieldRefresh(f)"><svg viewBox="0 0 1024 1024" width="14" height="14" fill="currentColor"><path d="M771.8 252.2A360 360 0 0 0 152 512h72a288 288 0 0 1 497-198.4L616 416h264V152l-108.2 100.2zM800 512a288 288 0 0 1-497 198.4L408 608H144v264l108.2-100.2A360 360 0 0 0 872 512h-72z"/></svg></el-button></el-tooltip>
                   </template>
                 </el-input>
@@ -4322,8 +4370,8 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
             <div class="demo-form-field-row">
               <div class="demo-form-field-row__main" :class="{ 'demo-form-field-row__main--fit': f.type==='radio' && f.tip && !f.tipMark }">
             <div v-if="f.type==='readonly' || isFormFieldLocked(f)" style="display:flex;align-items:center;gap:4px;width:100%">
-              <el-input :model-value="formModel[f.name] || ((f.ctrl||'').includes('系统') ? (f.placeholder||'系统自动计算') : ((f.ctrl||'').includes('自动')||(f.ctrl||'').includes('回填')?(f.placeholder||'自动带入'):''))" disabled :placeholder="f.placeholder||(((f.ctrl||'').includes('回填')||(f.ctrl||'').includes('自动'))?'自动带入':'')" style="flex:1" :class="{ 'demo-refresh-input': f.refreshable && formMode!=='edit' }">
-                <template #append v-if="f.refreshable && formMode!=='edit'">
+              <el-input :model-value="formModel[f.name] || ((f.ctrl||'').includes('系统') ? (f.placeholder||'系统自动计算') : ((f.ctrl||'').includes('自动')||(f.ctrl||'').includes('回填')?(f.placeholder||'自动带入'):''))" disabled :placeholder="f.placeholder||(((f.ctrl||'').includes('回填')||(f.ctrl||'').includes('自动'))?'自动带入':'')" style="flex:1" :class="{ 'demo-refresh-input': f.refreshable && formMode==='add' }">
+                <template #append v-if="f.refreshable && formMode==='add'">
                   <el-tooltip content="刷新单号"><el-button class="demo-refresh-btn" @click="onFormFieldRefresh(f)"><svg viewBox="0 0 1024 1024" width="14" height="14" fill="currentColor"><path d="M771.8 252.2A360 360 0 0 0 152 512h72a288 288 0 0 1 497-198.4L616 416h264V152l-108.2 100.2zM800 512a288 288 0 0 1-497 198.4L408 608H144v264l108.2-100.2A360 360 0 0 0 872 512h-72z"/></svg></el-button></el-tooltip>
                 </template>
               </el-input>
@@ -4444,6 +4492,43 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
           </el-table>
         </div>
       </section>
+      <section class="demo-form-section" v-if="pageId==='np-0215-05' && !isTreeTypeForm">
+        <el-tabs v-model="hmImpEntryTab">
+          <el-tab-pane label="数据录入" name="entry">
+            <div class="insp-method-param-block__hd" style="margin-bottom:10px" v-if="formMode!=='detail'">
+              <div class="insp-method-param-block__tools" style="margin-right:auto">
+                <el-button size="small" type="primary" @click="hmImpCompareEntry">数据比对</el-button>
+              </div>
+              <div class="insp-method-param-block__tools">
+                <el-button size="small" type="primary" @click="hmImpAddEntryRows">添加一行</el-button>
+                <el-button size="small" type="danger" :disabled="!(hmImpEntrySel&&hmImpEntrySel.length)" @click="hmImpDelEntryRows">批量删除</el-button>
+              </div>
+            </div>
+            <el-table class="demo-data-table demo-data-table--striped" :data="hmImpEntryRows" border stripe max-height="420" empty-text="暂无数据" @selection-change="rows => hmImpEntrySel = rows" style="width:100%">
+              <el-table-column v-if="formMode!=='detail'" type="selection" width="48"></el-table-column>
+              <el-table-column type="index" label="序号" width="64"></el-table-column>
+              <el-table-column label="标准编号" min-width="160">
+                <template #default="{ row }">
+                  <el-input :model-value="row['标准编号']||''" readonly class="demo-picker-input" :placeholder="formMode==='detail' ? '' : '点击选择'" :disabled="formMode==='detail'" @click="formMode!=='detail' && openHmImpStdPick(row)"></el-input>
+                </template>
+              </el-table-column>
+              <el-table-column prop="标准名称" label="标准名称" min-width="180" show-overflow-tooltip>
+                <template #default="{ row }"><span class="demo-readonly">{{ row['标准名称'] || '—' }}</span></template>
+              </el-table-column>
+              <el-table-column label="测试值" min-width="140">
+                <template #default="{ row }"><el-input v-model="row['测试值']" placeholder="数值或 ND" clearable :disabled="formMode==='detail'" @input="row['比对结果']=''"></el-input></template>
+              </el-table-column>
+              <el-table-column label="比对结果" min-width="240" show-overflow-tooltip>
+                <template #default="{ row }">
+                  <span v-if="row['比对结果']==='合格'" style="color:#389E0D;font-weight:600">合格</span>
+                  <span v-else-if="row['比对结果']" style="color:#CF1322;font-weight:500">{{ row['比对结果'] }}</span>
+                  <span v-else class="demo-readonly">—</span>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-tab-pane>
+        </el-tabs>
+      </section>
       <section class="demo-form-section" v-if="pageId==='np-0215-01' && !isTreeTypeForm">
         <el-tabs v-model="hmArchLineTab">
           <el-tab-pane label="厂内标准" name="plant">
@@ -4499,7 +4584,7 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
                 @click="onFormLineAction((a && a.name)||a)">{{ (a && a.name)||a }}</el-button>
         </div>
             <div class="demo-table-scroll">
-            <el-table class="demo-data-table demo-data-table--striped" :class="{ 'batch-rel-lines': pageId==='np-0601-01' }" :data="formLineRows" border stripe style="width:100%" :max-height="pageId==='np-0215-01' || pageId==='np-0103-12' || pageId==='np-0201-11' ? 480 : 280" :empty-text="formLineEmptyText" @selection-change="rows => formLineSelected = rows">
+            <el-table class="demo-data-table demo-data-table--striped" :class="{ 'batch-rel-lines': pageId==='np-0601-01' }" :data="formLineRows" border stripe style="width:100%" :max-height="pageId==='np-0215-01' || pageId==='np-0103-12' || pageId==='np-0103-14' || pageId==='np-0201-17' || pageId==='np-0201-11' ? 480 : 280" :empty-text="formLineEmptyText" @selection-change="rows => formLineSelected = rows">
               <el-table-column v-if="!isBcSerialPage() && pageId!=='np-0502-01' && pageId!=='np-0601-01'" type="selection" width="48"></el-table-column>
               <el-table-column v-if="pageId==='gather-scheme'" width="42" label="">
                 <template #default="{ $index }">
@@ -4574,19 +4659,20 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
         </el-table>
             </div>
           </el-tab-pane>
-          <el-tab-pane v-if="pageId==='np-0103-12'">
-            <template #label><span class="line-col-req">*</span>适用检验类</template>
+          <el-tab-pane v-if="pageId==='np-0103-12' || pageId==='np-0103-14'">
+            <template #label><span class="line-col-req">*</span>{{ pageId==='np-0103-14' ? '检验类' : '适用检验类' }}</template>
             <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;justify-content:flex-end">
               <el-button size="small" type="primary" @click="onDispatchCatAction('添加')">添加</el-button>
               <el-button size="small" type="danger" :disabled="!(formCatSelected&&formCatSelected.length)" @click="onDispatchCatAction('批量删除')">批量删除</el-button>
             </div>
             <div class="demo-table-scroll">
-              <el-table class="demo-data-table demo-data-table--striped" :data="formCatRows" border stripe style="width:100%" max-height="480" empty-text="请添加适用检验类" @selection-change="rows => formCatSelected = rows">
+              <el-table class="demo-data-table demo-data-table--striped" :data="formCatRows" border stripe style="width:100%" max-height="480" :empty-text="pageId==='np-0103-14' ? '请添加检验类' : '请添加适用检验类'" @selection-change="rows => formCatSelected = rows">
                 <el-table-column type="selection" width="48"></el-table-column>
                 <el-table-column type="index" label="序号" width="72"></el-table-column>
                 <el-table-column prop="检验类编码" label="检验类编码" min-width="140" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="检验类名称" label="检验类名称" min-width="140" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="适用仪器类型" label="适用仪器类型" min-width="140" show-overflow-tooltip></el-table-column>
+                <el-table-column v-if="pageId==='np-0103-14'" prop="检验类属性" label="检验类属性" min-width="120" show-overflow-tooltip></el-table-column>
+                <el-table-column v-else prop="适用仪器类型" label="适用仪器类型" min-width="140" show-overflow-tooltip></el-table-column>
               </el-table>
             </div>
           </el-tab-pane>
@@ -4634,6 +4720,12 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
         <el-button type="primary" @click="formVisible=false">关闭</el-button>
       </template>
       <template v-else-if="isInspMethodForm && formMode==='detail'">
+        <el-button type="primary" @click="formVisible=false">关闭</el-button>
+      </template>
+      <template v-else-if="isDriftRuleForm && formMode==='detail'">
+        <el-button type="primary" @click="formVisible=false">关闭</el-button>
+      </template>
+      <template v-else-if="pageId==='np-0215-05' && formMode==='detail'">
         <el-button type="primary" @click="formVisible=false">关闭</el-button>
       </template>
       <template v-else-if="page && (page.formFooterActions||[]).length">
@@ -5574,10 +5666,11 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
           <el-input :model-value="devReqForm.样品编号" readonly clearable class="demo-picker-input" placeholder="请点击选择" @click="openDevPick" @clear="clearDevSamples"></el-input>
         </el-form-item>
         <el-form-item label="报检单号"><el-input :model-value="devReqForm.报检单号" disabled placeholder="自动带入"></el-input></el-form-item>
-        <el-form-item label="物料编码"><el-input :model-value="devReqForm.物料编码" disabled placeholder="自动带入"></el-input></el-form-item>
+        <el-form-item label="报检类型"><el-input :model-value="devReqForm.报检类型" disabled placeholder="自动带入"></el-input></el-form-item>
         <el-form-item label="物料名称"><el-input :model-value="devReqForm.物料名称" disabled placeholder="自动带入"></el-input></el-form-item>
-        <el-form-item label="物料规格"><el-input :model-value="devReqForm.物料规格" disabled placeholder="自动带入"></el-input></el-form-item>
+        <el-form-item label="物料编码"><el-input :model-value="devReqForm.物料编码" disabled placeholder="自动带入"></el-input></el-form-item>
         <el-form-item label="报检批号"><el-input :model-value="devReqForm.报检批号" disabled placeholder="自动带入"></el-input></el-form-item>
+        <el-form-item label="物料规格"><el-input :model-value="devReqForm.物料规格" disabled placeholder="自动带入"></el-input></el-form-item>
         <el-form-item label="需求完成时间">
           <el-date-picker v-model="devReqForm.需求完成时间" type="date" value-format="YYYY-MM-DD" placeholder="请选择" style="width:100%"></el-date-picker>
         </el-form-item>
@@ -5627,6 +5720,20 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
     </template>
   </el-dialog>
 
+  <el-dialog v-model="devLaunchVisible" class="demo-dialog--biz" title="发起需求" width="min(520px, 96vw)" align-center destroy-on-close append-to-body :close-on-click-modal="false">
+    <el-form label-width="90px" class="demo-form">
+      <el-form-item label="测试要求">
+        <el-input v-model="devLaunchNeed" type="textarea" :rows="3" placeholder="如器件结构、测试条件、测试项"></el-input>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <div style="display:flex;justify-content:flex-end;gap:8px">
+        <el-button @click="devLaunchVisible=false">取消</el-button>
+        <el-button type="primary" @click="confirmLaunchDevReqs">确定</el-button>
+      </div>
+    </template>
+  </el-dialog>
+
   <el-drawer v-model="devLogVisible" :title="'流水记录 · ' + devLogNo" size="70%" append-to-body destroy-on-close>
     <el-table class="demo-data-table demo-data-table--striped" :data="devLogRows" border stripe style="width:100%" empty-text="暂无流水">
       <el-table-column type="index" label="序号" width="60"></el-table-column>
@@ -5646,10 +5753,11 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
           <el-input :model-value="plateReqForm.样品编号" readonly clearable class="demo-picker-input" placeholder="请点击选择" @click="openPlatePick" @clear="clearPlateSamples"></el-input>
         </el-form-item>
         <el-form-item label="报检单号"><el-input :model-value="plateReqForm.报检单号" disabled placeholder="自动带入"></el-input></el-form-item>
-        <el-form-item label="物料编码"><el-input :model-value="plateReqForm.物料编码" disabled placeholder="自动带入"></el-input></el-form-item>
+        <el-form-item label="报检类型"><el-input :model-value="plateReqForm.报检类型" disabled placeholder="自动带入"></el-input></el-form-item>
         <el-form-item label="物料名称"><el-input :model-value="plateReqForm.物料名称" disabled placeholder="自动带入"></el-input></el-form-item>
-        <el-form-item label="物料规格"><el-input :model-value="plateReqForm.物料规格" disabled placeholder="自动带入"></el-input></el-form-item>
+        <el-form-item label="物料编码"><el-input :model-value="plateReqForm.物料编码" disabled placeholder="自动带入"></el-input></el-form-item>
         <el-form-item label="报检批号"><el-input :model-value="plateReqForm.报检批号" disabled placeholder="自动带入"></el-input></el-form-item>
+        <el-form-item label="物料规格"><el-input :model-value="plateReqForm.物料规格" disabled placeholder="自动带入"></el-input></el-form-item>
         <el-form-item label="制板类型"><el-input model-value="光刻" disabled></el-input></el-form-item>
         <el-form-item label="需求完成时间">
           <el-date-picker v-model="plateReqForm.需求完成时间" type="date" value-format="YYYY-MM-DD" placeholder="请选择" style="width:100%"></el-date-picker>
@@ -5695,6 +5803,20 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
       <div style="display:flex;justify-content:flex-end;gap:8px">
         <el-button @click="plateCancelVisible=false">取消</el-button>
         <el-button type="primary" @click="confirmPlateCancel">确定</el-button>
+      </div>
+    </template>
+  </el-dialog>
+
+  <el-dialog v-model="plateLaunchVisible" class="demo-dialog--biz" title="发起需求" width="min(520px, 96vw)" align-center destroy-on-close append-to-body :close-on-click-modal="false">
+    <el-form label-width="90px" class="demo-form">
+      <el-form-item label="制板要求">
+        <el-input v-model="plateLaunchNeed" type="textarea" :rows="3" placeholder="如光刻层、版图、线下送样说明"></el-input>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <div style="display:flex;justify-content:flex-end;gap:8px">
+        <el-button @click="plateLaunchVisible=false">取消</el-button>
+        <el-button type="primary" @click="confirmLaunchPlateReqs">确定</el-button>
       </div>
     </template>
   </el-dialog>
@@ -9697,7 +9819,7 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
 <script src="./js/page-configs.js?v=1.4.445"></script>
 <script src="./js/mock-rows.js?v=1.4.275"></script>
 <script src="./js/dict-catalog.js?v=1.1.14"></script>
-<script src="./js/page-prd-notes.js?v=2.4.430"></script>
+<script src="./js/page-prd-notes.js?v=2.4.432"></script>
 <script src="./js/remarks-markdown.js?v=1.1.0"></script>
 <script type="module" src="./js/remarks-mermaid-init.js"></script>
 <script src="./js/remarks-mermaid.js"></script>
@@ -11491,9 +11613,11 @@ const app = createApp({
       oeItem: { title:'选择检验项目', src:'insp-project', tab:'tab-item', codeField:'检验项编码', nameField:'检验项名称',
         cols:[['检验项编码',140],['检验项名称',180],['检验项类型',100],['所属检验类',140],['检验项单位',100]] },
       oeSample: { title:'选择样品', codeField:'样品编号', nameField:'物料名称',
-        cols:[['样品编号',140],['样品状态',90],['报检单号',150],['物料编码',140],['物料名称',180],['物料规格',120],['报检批号',130]] },
+        cols:[['样品编号',140],['样品状态',90],['报检类型',120],['报检单号',150],['物料编码',140],['物料名称',180],['物料规格',120],['报检批号',130]] },
       hmStd: { title:'选择厂内标准', src:'np-0215-01', tab:'tab-1', codeField:'标准编号', nameField:'标准名称',
         cols:[['标准编号',140],['标准名称',220],['版本',80],['物质项数',100],['启用状态',90]] },
+      hmArchStd: { title:'选择标准', src:'np-0215-01', tab:'main', codeField:'标准编号', nameField:'标准名称',
+        cols:[['标准编号',110],['标准名称',200],['英文名称',160],['CAS No',120],['单位',80],['物料类',120]] },
       gatherItem: { title:'选择采集项目', src:'gather-item', codeField:'采集项编码', nameField:'采集项名称',
         cols:[['采集项编码',130],['采集项名称',140],['采集项单位',100],['采集方式',90],['采集频率',100],['点位名称',160],['采集平台',140],['备注',120],['启用状态',90],['创建人',90],['创建时间',160]] },
       gatherScheme: { title:'选择采集方案', src:'gather-scheme', codeField:'采集方案编码', nameField:'采集方案名称', byName:true,
@@ -11517,7 +11641,7 @@ const app = createApp({
           cols:[['报检单号',170],['单据状态',90],['优先级',80],[smp?'样品编号':'物料编码',140],[nameField,180],[smp?'样品规格':'物料规格',120],['报检批号',130],['应取样件数',100],['已取样件数',100]] };
       }
       if(ioPickKind.value==='oeSample'){
-        return { ...IO_PICK_META.oeSample, title:'选择样品 · ' + (formModel['报检单类型']||'') };
+        return { ...IO_PICK_META.oeSample, title:'选择样品' };
       }
       if(ioPickKind.value==='splitSample'){
         return { title:'选择样品 · ' + (formModel['报检类型']||''), codeField:'样品编号', nameField:'物料名称',
@@ -11636,6 +11760,10 @@ const app = createApp({
         list = list.filter(r=> names.has(String(r['检验项名称']||'').trim()) && !used.has(String(r['检验项名称']||'').trim()));
       }
       if(ioPickKind.value==='hmStd') list = list.filter(r=> r['启用状态']==='启用' && (r._lines||[]).length);
+      if(ioPickKind.value==='hmArchStd'){
+        const cat = String(formModel['物料类']||'').trim();
+        list = list.filter(r=> !cat || String(r['物料类']||'')===cat);
+      }
       if(ioPickKind.value==='gatherItem'){
         const taken = new Set((formLineRows.value||[]).map(r=> r['采集项编码']));
         list = list.filter(r=> !taken.has(r['采集项编码']));
@@ -11707,6 +11835,15 @@ const app = createApp({
         nextTick(()=> setTimeout(()=>{
           const t = ioPickTableRef.value;
           if(t) ioPickRows.value.forEach(r=> { if(picked.has(r[keyField])) t.toggleRowSelection(r, true); });
+        }, 0));
+        return;
+      }
+      if(bind==='hmImpEntry'){
+        const picked = new Set((hmImpEntryRows.value||[]).map(r=> String(r['标准编号']||'').trim()).filter(Boolean));
+        if(!picked.size) return;
+        nextTick(()=> setTimeout(()=>{
+          const t = ioPickTableRef.value;
+          if(t) ioPickRows.value.forEach(r=> { if(picked.has(String(r['标准编号']||''))) t.toggleRowSelection(r, true); });
         }, 0));
         return;
       }
@@ -11800,7 +11937,7 @@ const app = createApp({
             const code = String(r['物料编码']||'').trim();
             if(!code || exist.has(code)) return;
             exist.add(code);
-            formLineRows.value = formLineRows.value.concat([{ 物料编码: code, 物料名称: r['物料名称']||'', 物料规格: r['物料规格']||'' }]);
+            formLineRows.value = formLineRows.value.concat([{ 物料编码: code, 物料名称: r['物料名称']||'', 物料规格: r['物料规格']||'', 物料种类: r['物料种类']||'' }]);
             added++;
           });
           ioPickVisible.value = false;
@@ -11851,6 +11988,27 @@ const app = createApp({
           formLineRows.value = (formLineRows.value||[]).concat(add.map(x=> hmArchLineFromItem(x)));
           ioPickVisible.value = false;
           ElMessage.success('已添加 ' + add.length + ' 项');
+          return;
+        }
+        if(ioPickBind.value==='hmImpEntry'){
+          const used = new Set((hmImpEntryRows.value||[]).map(r=> String(r['标准编号']||'').trim()).filter(Boolean));
+          const add = rows.filter(r=> r['标准编号'] && !used.has(String(r['标准编号']).trim()));
+          if(!add.length){ ElMessage.warning('所选标准已在列表中'); return; }
+          const target = hmImpEntryTarget.value;
+          let filled = 0;
+          add.forEach((r, i)=>{
+            const line = { id:'hmie-'+Date.now().toString(36)+i, 标准编号: r['标准编号']||'', 标准名称: r['标准名称']||'', 测试值:'', 比对结果:'', _archId: r.id };
+            if(i===0 && target && !String(target['标准编号']||'').trim()){
+              Object.assign(target, line, { id: target.id || line.id });
+              filled++;
+            } else {
+              hmImpEntryRows.value.push(line);
+              filled++;
+            }
+          });
+          hmImpEntryTarget.value = null;
+          ioPickVisible.value = false;
+          ElMessage.success('已添加 '+filled+' 项');
           return;
         }
         if(ioPickBind.value==='oeItems'){
@@ -11944,11 +12102,14 @@ const app = createApp({
       if(ioPickBind.value==='splitSample'){ applySplitSamplePick([r]); return; }
       if(ioPickBind.value==='oeSample'){
         const prev = formModel['样品编号'];
+        const sampleType = String(r['报检类型']||r['报检单类型']||'').trim();
         formModel['样品编号'] = r['样品编号'] || '';
         formModel['报检单号'] = r['报检单号'] || '';
+        formModel['报检单类型'] = sampleType;
         ['物料编码','物料名称','物料规格','报检批号'].forEach(k=>{ formModel[k] = r[k] && r[k]!=='—' ? r[k] : ''; });
         formModel['研发项目号'] = oeRdOf(r['报检单号']) || (r['研发项目号'] && r['研发项目号']!=='—' ? r['研发项目号'] : '');
         formModel._schemeName = r['检验方案'] && r['检验方案']!=='—' ? r['检验方案'] : '';
+        if(!formModel['报检类型']) formModel['报检类型'] = '异地委托';
         if(prev && prev!==formModel['样品编号']) formLineRows.value = [];
         ioPickVisible.value = false;
         return;
@@ -14284,7 +14445,7 @@ const app = createApp({
       const open = devOpenReq(s['样品编号']);
       return Object.assign({}, s, { _items: items, _open: open ? open['需求单号'] : '' });
     }
-    const DEV_HEAD_KEYS = ['样品编号','报检单号','物料编码','物料名称','物料规格','报检批号'];
+    const DEV_HEAD_KEYS = ['样品编号','报检单号','报检类型','物料编码','物料名称','物料规格','报检批号'];
     function joinReqHead(rows){
       const join = key=> rows.map(p=>{
         const v = p[key];
@@ -14296,9 +14457,10 @@ const app = createApp({
     }
     const devReqVisible = ref(false);
     const devReqRows = ref([]);
-    const devReqForm = reactive({ 样品编号:'', 报检单号:'', 物料编码:'', 物料名称:'', 物料规格:'', 报检批号:'', 需求完成时间:'', 测试要求:'' });
+    const DEV_HEAD_BLANK = { 样品编号:'', 报检单号:'', 报检类型:'', 物料编码:'', 物料名称:'', 物料规格:'', 报检批号:'' };
+    const devReqForm = reactive({ ...DEV_HEAD_BLANK, 需求完成时间:'', 测试要求:'' });
     function syncDevHead(){
-      const head = devReqRows.value.length ? joinReqHead(devReqRows.value) : { 样品编号:'', 报检单号:'', 物料编码:'', 物料名称:'', 物料规格:'', 报检批号:'' };
+      const head = devReqRows.value.length ? joinReqHead(devReqRows.value) : { ...DEV_HEAD_BLANK };
       Object.assign(devReqForm, head);
     }
     const devReqTitle = computed(()=> ({ edit:'编辑', copy:'复制' }[devReqMode.value] || '新增'));
@@ -14326,7 +14488,7 @@ const app = createApp({
       devReqEditId.value = devReqMode.value==='edit' && row ? row.id : '';
       if(devReqMode.value==='add' || !row){
         devReqRows.value = [];
-        Object.assign(devReqForm, { 样品编号:'', 报检单号:'', 物料编码:'', 物料名称:'', 物料规格:'', 报检批号:'', 需求完成时间:'', 测试要求:'' });
+        Object.assign(devReqForm, { ...DEV_HEAD_BLANK, 需求完成时间:'', 测试要求:'' });
       } else {
         const src = devSrcRow(row);
         devReqRows.value = [devSampleView(reqSampleBase(src))];
@@ -14426,13 +14588,26 @@ const app = createApp({
       ElementPlus.ElMessageBox.confirm(parts.join(''), '二次确认', { type:'warning', dangerouslyUseHTMLString: true, confirmButtonText:'继续'+ask, cancelButtonText:'返回修改' })
         .then(()=> createDevReqs(rows)).catch(()=>{});
     }
+    const devLaunchVisible = ref(false);
+    const devLaunchNeed = ref('');
+    const devLaunchRows = ref([]);
     function launchDevReqs(){
       devSettleTabs();
       const rows = devTab('tab-1').filter(r=> selectedIds.value.includes(r.id));
       if(!rows.length){ ElMessage.warning('请先勾选待发起的需求'); return; }
       if(rows.some(r=> r['需求状态']!=='待发起')){ ElMessage.warning('仅待发起的需求可发起'); return; }
-      rows.forEach(r=>{ r['需求状态'] = '已发起'; });
+      const raw = String((rows[0]||{})['测试要求']||'').trim();
+      devLaunchNeed.value = (!raw || raw==='—') ? '' : raw;
+      devLaunchRows.value = rows;
+      devLaunchVisible.value = true;
+    }
+    function confirmLaunchDevReqs(){
+      const rows = devLaunchRows.value || [];
+      if(!rows.length){ devLaunchVisible.value = false; return; }
+      const need = String(devLaunchNeed.value||'').trim() || '—';
+      rows.forEach(r=>{ r['测试要求'] = need; r['需求状态'] = '已发起'; });
       selectedIds.value = [];
+      devLaunchVisible.value = false;
       bumpStore();
       ElMessage.success('已发起 '+rows.length+' 条器件测试需求，已推送 DDB');
     }
@@ -14514,9 +14689,10 @@ const app = createApp({
     }
     const plateReqVisible = ref(false);
     const plateReqRows = ref([]);
-    const plateReqForm = reactive({ 样品编号:'', 报检单号:'', 物料编码:'', 物料名称:'', 物料规格:'', 报检批号:'', 需求完成时间:'', 制板要求:'' });
+    const PLATE_HEAD_BLANK = { 样品编号:'', 报检单号:'', 报检类型:'', 物料编码:'', 物料名称:'', 物料规格:'', 报检批号:'' };
+    const plateReqForm = reactive({ ...PLATE_HEAD_BLANK, 需求完成时间:'', 制板要求:'' });
     function syncPlateHead(){
-      const head = plateReqRows.value.length ? joinReqHead(plateReqRows.value) : { 样品编号:'', 报检单号:'', 物料编码:'', 物料名称:'', 物料规格:'', 报检批号:'' };
+      const head = plateReqRows.value.length ? joinReqHead(plateReqRows.value) : { ...PLATE_HEAD_BLANK };
       Object.assign(plateReqForm, head);
     }
     const plateReqTitle = computed(()=> ({ edit:'编辑', copy:'复制' }[plateReqMode.value] || '新增'));
@@ -14525,7 +14701,7 @@ const app = createApp({
       plateReqEditId.value = plateReqMode.value==='edit' && row ? row.id : '';
       if(plateReqMode.value==='add' || !row){
         plateReqRows.value = [];
-        Object.assign(plateReqForm, { 样品编号:'', 报检单号:'', 物料编码:'', 物料名称:'', 物料规格:'', 报检批号:'', 需求完成时间:'', 制板要求:'' });
+        Object.assign(plateReqForm, { ...PLATE_HEAD_BLANK, 需求完成时间:'', 制板要求:'' });
       } else {
         const src = plateSrcRow(row);
         plateReqRows.value = [plateSampleView(reqSampleBase(src))];
@@ -14602,17 +14778,31 @@ const app = createApp({
       ElementPlus.ElMessageBox.confirm(html, '二次确认', { type:'warning', dangerouslyUseHTMLString: true, confirmButtonText:'继续'+ask, cancelButtonText:'返回修改' })
         .then(()=> createPlateReqs(rows)).catch(()=>{});
     }
+    const plateLaunchVisible = ref(false);
+    const plateLaunchNeed = ref('');
+    const plateLaunchRows = ref([]);
     function launchPlateReqs(){
       plateSettleTabs();
       const rows = plateTab('tab-1').filter(r=> selectedIds.value.includes(r.id));
       if(!rows.length){ ElMessage.warning('请先勾选待发起的需求'); return; }
       if(rows.some(r=> r['需求状态']!=='待发起')){ ElMessage.warning('仅待发起的需求可发起'); return; }
+      const raw = String((rows[0]||{})['制板要求']||'').trim();
+      plateLaunchNeed.value = (!raw || raw==='—') ? '' : raw;
+      plateLaunchRows.value = rows;
+      plateLaunchVisible.value = true;
+    }
+    function confirmLaunchPlateReqs(){
+      const rows = plateLaunchRows.value || [];
+      if(!rows.length){ plateLaunchVisible.value = false; return; }
+      const need = String(plateLaunchNeed.value||'').trim() || '—';
       const stamp = nowStamp();
       rows.forEach(r=>{
+        r['制板要求'] = need;
         r['需求状态'] = '已发起';
         if(!r['FES需求单号'] || r['FES需求单号']==='—') r['FES需求单号'] = plateNextNo('FES', stamp, 5);
       });
       selectedIds.value = [];
+      plateLaunchVisible.value = false;
       bumpStore();
       ElMessage.success('已发起 '+rows.length+' 条制板任务需求，已推送 FES，请线下送样');
     }
@@ -14668,6 +14858,76 @@ const app = createApp({
       return plateTab('tab-2').filter(r=> r['需求单号']===plateLogNo.value).slice().sort((a, b)=> String(b['操作时间']).localeCompare(String(a['操作时间'])));
     });
     function openPlateLog(row){ plateLogNo.value = row['需求单号']; plateLogVisible.value = true; }
+    const CASS_PAGE = 'np-0201-17';
+    function cassList(){ const bag = (MOCK[CASS_PAGE] = MOCK[CASS_PAGE] || {}); return (bag.main = bag.main || []); }
+    function cassNextNo(){
+      const d = new Date();
+      const prefix = 'KSXX' + String(d.getFullYear()).slice(2) + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0');
+      let max = 0;
+      cassList().forEach(r=>{
+        const s = String(r['信息流水号']||'');
+        if(!s.startsWith(prefix)) return;
+        const n = parseInt(s.slice(prefix.length), 10);
+        if(n > max) max = n;
+      });
+      return prefix + String(max + 1).padStart(3, '0');
+    }
+    function cassEmptyLine(){
+      return { 玻璃板序号:'', 批次号:'', 样品编号:'', 物料编码:'', 物料名称:'' };
+    }
+    function renumberCassLines(){
+      (formLineRows.value||[]).forEach((r, i)=>{ r['玻璃板序号'] = String(i + 1); });
+    }
+    function openCassForm(){
+      openForm('add');
+      formModel['信息流水号'] = cassNextNo();
+      formModel['卡塞编号'] = '';
+      formModel['卡塞类型'] = '';
+      formLineRows.value = [];
+      formLineSelected.value = [];
+    }
+    function saveCassForm(){
+      const no = String(formModel['信息流水号']||'').trim() || cassNextNo();
+      const code = String(formModel['卡塞编号']||'').trim();
+      const typ = String(formModel['卡塞类型']||'').trim();
+      if(!code){ ElMessage.warning('请输入卡塞编号'); return; }
+      if(!typ){ ElMessage.warning('请选择卡塞类型'); return; }
+      const list = cassList();
+      if(list.some(r=> r['信息流水号']===no)){ ElMessage.warning('信息流水号「'+no+'」已存在'); return; }
+      renumberCassLines();
+      const lines = (formLineRows.value||[]).map(r=>({
+        玻璃板序号: String(r['玻璃板序号']||'').trim(),
+        批次号: String(r['批次号']||'').trim() || '—',
+        样品编号: String(r['样品编号']||'').trim() || '—',
+        物料编码: String(r['物料编码']||'').trim() || '—',
+        物料名称: String(r['物料名称']||'').trim() || '—'
+      })).filter(r=> r['批次号']!=='—' || r['样品编号']!=='—' || r['物料编码']!=='—' || r['物料名称']!=='—');
+      lines.forEach((r, i)=>{ r['玻璃板序号'] = String(i + 1); });
+      list.unshift({
+        id: 'ks-'+Date.now().toString(36),
+        信息流水号: no,
+        卡塞编号: code,
+        卡塞类型: typ,
+        关联玻璃板数: String(lines.length),
+        创建人: '管理员',
+        创建时间: nowStamp(),
+        _lines: lines
+      });
+      formVisible.value = false;
+      bumpStore();
+      ElMessage.success('已新增卡塞 '+no);
+    }
+    function deleteCassRows(){
+      const ids = new Set(selectedIds.value);
+      if(!ids.size){ ElMessage.warning('请先勾选要删除的卡塞信息'); return; }
+      ElementPlus.ElMessageBox.confirm('确认删除所选的 '+ids.size+' 条卡塞信息？删除后不可恢复。', '批量删除', { type:'warning' }).then(()=>{
+        const list = cassList();
+        for(let i = list.length - 1; i >= 0; i--){ if(ids.has(list[i].id)) list.splice(i, 1); }
+        selectedIds.value = [];
+        bumpStore();
+        ElMessage.success('已删除 '+ids.size+' 条卡塞信息');
+      }).catch(()=>{});
+    }
     const OQC_PAGE = 'np-0201-15';
     function oqcTab(name){ const bag = (MOCK[OQC_PAGE] = MOCK[OQC_PAGE] || {}); return (bag[name] = bag[name] || []); }
     const oqcUploadVisible = ref(false);
@@ -14764,26 +15024,29 @@ const app = createApp({
       return {
         检验类编码: (r && r['检验类编码']) || '',
         检验类名称: (r && r['检验类名称']) || '',
+        检验类属性: (r && r['检验类属性']) || '',
         适用仪器类型: (r && r['适用仪器类型']) || ''
       };
     }
-    function dispatchCatsFromRow(row){
+    function dispatchCatsFromRow(row, nameKey){
       if(Array.isArray(row && row._cats) && row._cats.length) return row._cats.map(dispatchCatLine);
-      const names = splitDun(row && row['适用检验类']);
+      const names = splitDun(row && (row[nameKey] || row['适用检验类'] || row['检验类']));
       const all = ((MOCK['insp-project']||{})['tab-category']||[]);
       return names.map(name=>{
         const hit = all.find(r=> r['检验类名称']===name);
-        return hit ? dispatchCatLine(hit) : { 检验类编码:'', 检验类名称:name, 适用仪器类型:'' };
+        return hit ? dispatchCatLine(hit) : { 检验类编码:'', 检验类名称:name, 检验类属性:'', 适用仪器类型:'' };
       });
     }
     function dispatchLinesFromRow(row){
-      if(Array.isArray(row && row._mats) && row._mats.length) return row._mats.map(r=> ({ 物料编码: r['物料编码']||'', 物料名称: r['物料名称']||'', 物料规格: r['物料规格']||'' }));
+      if(Array.isArray(row && row._mats) && row._mats.length) return row._mats.map(r=> ({ 物料编码: r['物料编码']||'', 物料名称: r['物料名称']||'', 物料规格: r['物料规格']||'', 物料种类: r['物料种类']||'' }));
       const codes = splitDun(row && row['物料编码']).filter(x=> x && x!=='—');
       const names = splitDun(row && row['物料名称']);
-      const texts = String((row && row['适用物料'])||'').split('、');
+      const texts = String((row && (row['适用物料'] || row['物料信息']))||'').split('、');
+      const all = ((MOCK['mat-list']||{}).main)||[];
       return codes.map((code, i)=>{
         const parts = String(texts[i]||'').split(' / ').map(s=> s.trim());
-        return { 物料编码: code, 物料名称: names[i] || parts[1] || '', 物料规格: parts[2] || '' };
+        const hit = all.find(r=> r['物料编码']===code);
+        return { 物料编码: code, 物料名称: names[i] || parts[1] || (hit&&hit['物料名称']) || '', 物料规格: parts[2] || (hit&&hit['物料规格']) || '', 物料种类: (hit&&hit['物料种类']) || '' };
       });
     }
     function dispatchInstLine(r){
@@ -20263,13 +20526,21 @@ const app = createApp({
     function openCostForm(){
       openForm('add');
       formModel['标准工时单位'] = '时';
+      formLineRows.value = [];
+      formLineSelected.value = [];
+      formCatRows.value = [];
+      formCatSelected.value = [];
     }
     function saveCostForm(){
       const txt = k=> String(formModel[k]==null ? '' : formModel[k]).trim();
       const isAdd = formMode.value==='add' || formMode.value==='copy';
-      const cats = splitDun(Array.isArray(formModel['检验类']) ? formModel['检验类'].join('、') : txt('检验类'));
-      const mats = splitDun(txt('物料信息')).map(s=> { const p = s.split(' / ').map(x=> x.trim()); return { text: s, code: p[0], name: p[1] || '' }; })
-        .filter((m, i, a)=> m.code && a.findIndex(x=> x.code===m.code)===i);
+      const cats = (formCatRows.value||[]).map(r=> String(r['检验类名称']||'').trim()).filter((n,i,a)=> n && a.indexOf(n)===i);
+      const mats = (formLineRows.value||[]).map(r=> ({
+        code: String(r['物料编码']||'').trim(),
+        name: String(r['物料名称']||'').trim(),
+        spec: String(r['物料规格']||'').trim(),
+        kind: String(r['物料种类']||'').trim()
+      })).filter((m, i, a)=> m.code && a.findIndex(x=> x.code===m.code)===i);
       const codes = mats.map(m=> m.code);
       if(!cats.length){ ElMessage.warning('请选择检验类'); return; }
       if(!txt('标准工时')){ ElMessage.warning('请输入标准工时'); return; }
@@ -20284,8 +20555,13 @@ const app = createApp({
         if(mat){ ElMessage.warning('检验类「'+cat+'」+ 物料「'+mat+'」已在方案 '+x['方案编码']+' 中配置，请修改后再保存'); return; }
       }
       const payload = {
-        检验类: cats.join('、'), 匹配范围: codes.length ? '指定物料' : '全部物料',
-        物料信息: mats.map(m=> m.text).join('、'), 物料编码: codes.join('、') || '—', 物料名称: mats.map(m=> m.name).join('、') || '全部物料'
+        检验类: cats.join('、'),
+        _cats: (formCatRows.value||[]).map(dispatchCatLine),
+        匹配范围: codes.length ? '指定物料' : '全部物料',
+        物料信息: mats.map(m=> [m.code, m.name, m.spec].filter(Boolean).join(' / ')).join('、'),
+        物料编码: codes.join('、') || '—',
+        物料名称: mats.map(m=> m.name).join('、') || '全部物料',
+        _mats: mats.map(m=> ({ 物料编码: m.code, 物料名称: m.name, 物料规格: m.spec, 物料种类: m.kind }))
       };
       Object.assign(payload, {
         '标准工时': costNum(formModel['标准工时']).toFixed(2) + ' ' + (txt('标准工时单位') || '时'),
@@ -20631,18 +20907,13 @@ const app = createApp({
       formModel['现应取样件数'] = String(base + (add > 0 ? add : 0));
     }
     watch(()=> formModel['报检单类型'], (nv, ov)=>{
-      const oeTab = pageId.value==='insp-order' && activeTab.value==='tab-oe';
-      if((!['add-sample','np-0201-01','np-0201-02'].includes(pageId.value) && !oeTab) || nv===ov || !ov) return;
+      // 异地委托：报检单类型由样品带入，不再因切换类型清空样品
+      if(!['add-sample','np-0201-01'].includes(pageId.value) || nv===ov || !ov) return;
       formModel['报检单号'] = '';
       ADD_SAMPLE_CARRY.forEach(key=>{ formModel[key] = ''; });
       if(pageId.value==='add-sample'){
         formModel['原应取样件数'] = '';
         formModel['现应取样件数'] = '';
-      } else if(pageId.value==='np-0201-02' || oeTab){
-        formModel['样品编号'] = '';
-        formModel['研发项目号'] = '';
-        formModel._schemeName = '';
-        formLineRows.value = [];
       } else {
         formModel['基本单位'] = '';
         formModel['物料信息'] = '';
@@ -21804,6 +22075,8 @@ const app = createApp({
       if(pageId.value==='np-0201-11') return '设置拆分份数后点「拆分」生成子样品';
       const id = pageId.value;
       if(id===DISPATCH_PAGE) return '请添加适用物料';
+      if(id===COST_PAGE) return '不选则适用全部物料，点击添加指定物料';
+      if(id===CASS_PAGE) return '点击添加关联玻璃板，可不填';
       if(id==='pkg-craft') return '请点击新增选择适用物料（非必填）';
       if(isBcLineFormPage()) return '请点击新增行添加流水明细';
       if(id==='lg-dispatch') return '选择订单或前置关联单据后自动带入物料，或点击新增挑选物料';
@@ -21847,9 +22120,14 @@ const app = createApp({
       if(pageId.value===COST_PAGE && ['add','edit','copy'].includes(formMode.value)){
         return (formMode.value==='edit' ? '编辑' : '新增') + '成本方案';
       }
+      if(pageId.value===CASS_PAGE && ['add','edit','copy'].includes(formMode.value)){
+        return '新增卡塞';
+      }
       if(formMode.value==='add') return '新增';
       if(formMode.value==='copy') return '复制';
       if(formMode.value==='detail' && pageId.value==='insp-scheme') return '详情';
+      if(formMode.value==='detail' && pageId.value===DRIFT_PAGE) return '详情';
+      if(formMode.value==='detail' && pageId.value===HM_IMP_PAGE) return '详情';
       if(formMode.value==='detail' && pageId.value==='insp-method'){
         if(formModel._fromVersionTree){
           const ver = String(formModel['版本号']||'').trim();
@@ -27807,7 +28085,7 @@ const app = createApp({
 
     /** 漂移规则设置 */
     const DRIFT_TR_OPTS = ['按固定值不叠加','按批次新建流动叠加','首批次新建流动叠加，其余批次不叠加'];
-    const DRIFT_INSP_OPTS = ['原材料','生产过程','生产产品'];
+    const DRIFT_INSP_OPTS = ['采购来料检','生产过程检','生产物料检','研发检'];
     const DRIFT_UCL_OPS = ['≤','<'];
     const DRIFT_LCL_OPS = ['≥','>'];
     function emptyDriftLimit(upper){ return { op: upper?'≤':'≥', val:'' }; }
@@ -27820,11 +28098,31 @@ const app = createApp({
       }
       return { op: def, val: String(v==null?'':v).trim() };
     }
-    const driftInnerTab = ref('杂质指标');
+    function emptyDriftRrtRow(){ return { id:'rrt-'+Date.now()+'-'+Math.random().toString(36).slice(2,6), 起:'', 止:'', ls:'-', lv:'', rs:'+', rv:'' }; }
+    function normalizeDriftRrtRow(r){
+      const d = r||{};
+      return {
+        id: d.id || ('rrt-'+Math.random().toString(36).slice(2,8)),
+        起: d['起']==null?'':String(d['起']),
+        止: d['止']==null?'':String(d['止']),
+        ls: d.ls==='+' ? '+' : '-',
+        lv: d.lv==null?'':String(d.lv),
+        rs: d.rs==='-' ? '-' : '+',
+        rv: d.rv==null?'':String(d.rv)
+      };
+    }
+    function driftRrtRowsOf(row){
+      if(Array.isArray(row && row._rrtRules) && row._rrtRules.length) return row._rrtRules.map(normalizeDriftRrtRow);
+      if(row && row._diff) return [normalizeDriftRrtRow(Object.assign({ 起:'1', 止:'30' }, row._diff))];
+      return [];
+    }
+    const driftInnerTab = ref('RRT&TR偏差规则');
     const driftRangeRows = ref([]);
     const driftRangeSelected = ref([]);
     const driftKnownRows = ref([]);
     const driftKnownSelected = ref([]);
+    const driftRrtRows = ref([]);
+    const driftRrtSelected = ref([]);
     const driftMatRows = ref([]);
     const driftMatSelected = ref([]);
     const driftPointRows = ref([]);
@@ -27834,13 +28132,13 @@ const app = createApp({
     function driftBag(){ if(!MOCK[DRIFT_PAGE]) MOCK[DRIFT_PAGE]={}; return MOCK[DRIFT_PAGE]; }
     function driftRowsOf(tab){ const b=driftBag(), k=tab||activeTab.value; if(!Array.isArray(b[k])) b[k]=[]; return b[k]; }
     function resetDriftForm(){
-      driftInnerTab.value='杂质指标';
+      driftInnerTab.value='RRT&TR偏差规则';
       driftRangeRows.value=[]; driftRangeSelected.value=[];
       driftKnownRows.value=[]; driftKnownSelected.value=[];
+      driftRrtRows.value=[]; driftRrtSelected.value=[];
       driftMatRows.value=[]; driftMatSelected.value=[];
       driftPointRows.value=[]; driftPointSelected.value=[];
       driftColRows.value=[]; driftColSelected.value=[];
-      formModel._diff = { ls:'-', lv:'', rs:'+', rv:'' };
       formModel._ucl = emptyDriftLimit(true); formModel._lcl = emptyDriftLimit(false);
       formModel['典型保留时间规则'] = '按固定值不叠加';
       formSwitch['启用状态'] = true;
@@ -27853,8 +28151,6 @@ const app = createApp({
       formModel['适用检验类型'] = row['适用检验类型']||'';
       formModel['备注'] = row['备注']==='—' ? '' : (row['备注']||'');
       formSwitch['启用状态'] = row['启用状态']!=='禁用';
-      const d = row._diff || {};
-      formModel._diff = { ls:d.ls||'-', lv:d.lv||'', rs:d.rs||'+', rv:d.rv||'' };
       formModel._ucl = normalizeDriftLimit(row._ucl, true); formModel._lcl = normalizeDriftLimit(row._lcl, false);
       driftRangeRows.value = (row._range||[]).map(r=>({...r, id:r.id||('rng-'+Math.random())}));
       driftKnownRows.value = (row._known||[]).map(r=>{
@@ -27862,17 +28158,19 @@ const app = createApp({
         n.UCL = normalizeDriftLimit(r.UCL, true); n.LCL = normalizeDriftLimit(r.LCL, false);
         return n;
       });
+      driftRrtRows.value = driftRrtRowsOf(row);
       driftMatRows.value = (row._mats||[]).map(r=>({...r}));
       driftPointRows.value = (row._points||[]).map(r=>({...r}));
       driftColRows.value = (row._cols||[]).map(r=>({...r}));
       if(!isCopy) formModel._editId = row.id;
     }
     function openDriftForm(mode, row){
-      openForm(mode==='edit'?'edit':(mode==='copy'?'copy':'add'));
+      openForm(mode==='detail'?'detail':(mode==='edit'?'edit':(mode==='copy'?'copy':'add')));
       if(mode==='add') resetDriftForm();
       else fillDriftForm(row, mode==='copy');
     }
     function addDriftRangeRow(){ driftRangeRows.value.push({ id:'rng-'+Date.now(), 起:'', 止:'' }); }
+    function addDriftRrtRow(){ driftRrtRows.value.push(emptyDriftRrtRow()); }
     function addDriftKnownRow(){
       driftKnownRows.value.push({ id:'ki-'+Date.now(), 是否主峰:'否', 典型保留时间:'', 定性结构:'', UCL:emptyDriftLimit(true), LCL:emptyDriftLimit(false), 创建方式:'手动', 创建时间: nowStamp() });
     }
@@ -27881,15 +28179,41 @@ const app = createApp({
       driftKnownRows.value.forEach(r=>{ if(r!==row) r['是否主峰']='否'; });
     }
     function removeDriftRows(kind){
-      const map={ range:[driftRangeRows,driftRangeSelected], known:[driftKnownRows,driftKnownSelected], mat:[driftMatRows,driftMatSelected], point:[driftPointRows,driftPointSelected], col:[driftColRows,driftColSelected] };
+      const map={ range:[driftRangeRows,driftRangeSelected], known:[driftKnownRows,driftKnownSelected], rrt:[driftRrtRows,driftRrtSelected], mat:[driftMatRows,driftMatSelected], point:[driftPointRows,driftPointSelected], col:[driftColRows,driftColSelected] };
       const [rows,sel]=map[kind]; const set=new Set(sel.value); rows.value=rows.value.filter(r=>!set.has(r)); sel.value=[];
     }
     function driftDiffText(diff){
       const d=diff||{};
       const lv=String(d.lv||'0').trim()||'0'; const rv=String(d.rv||'0').trim()||'0';
       const l=((d.ls||'-')==='+'?'+':'-')+lv;
-      const r=((d.rs||'+')==='-'?'-':'')+rv;
+      const r=((d.rs||'+')==='-'?'-':'+')+rv;
       return l+'~'+r;
+    }
+    function driftRrtSummary(rows){
+      const list=(rows||[]).map(r=>{
+        const t=[String(r['起']||'').trim(), String(r['止']||'').trim()].filter(Boolean).join('～');
+        const d=driftDiffText(r);
+        return t ? (d+'；'+t) : d;
+      }).filter(Boolean);
+      return list.join('；') || '—';
+    }
+    function driftDiffBounds(diff){
+      const d=diff||{};
+      const lo=(d.ls==='+'?1:-1)*Number(d.lv||0);
+      const hi=(d.rs==='-'?-1:1)*Number(d.rv||0);
+      return { lo, hi };
+    }
+    function driftPickRrtRule(rule, timeVal){
+      const rows=driftRrtRowsOf(rule);
+      if(!rows.length) return null;
+      const t=Number(timeVal);
+      if(!Number.isFinite(t)) return rows[0];
+      const hit=rows.find(r=>{
+        const a=String(r['起']||'').trim(), b=String(r['止']||'').trim();
+        const lo=a===''?-Infinity:Number(a), hi=b===''?Infinity:Number(b);
+        return t>=lo-1e-9 && t<=hi+1e-9;
+      });
+      return hit||rows[0];
     }
     function saveDriftForm(){
       const txt=k=> String(formModel[k]==null?'':formModel[k]).trim();
@@ -27897,9 +28221,14 @@ const app = createApp({
       if(!code){ ElMessage.warning('请填写规则编码'); return; }
       if(!name){ ElMessage.warning('请填写规则名称'); return; }
       if(!tr){ ElMessage.warning('请选择典型保留时间规则'); return; }
-      const d=formModel._diff||{};
-      if(!String(d.lv||'').trim() || !String(d.rv||'').trim()){ ElMessage.warning('请填写相对保留时间与典型保留时间差值范围'); return; }
       if(!insp){ ElMessage.warning('请选择适用检验类型'); return; }
+      if(!driftRrtRows.value.length){ ElMessage.warning('请在「RRT&TR偏差规则」中至少添加一行'); return; }
+      for(const r of driftRrtRows.value){
+        const a=String(r['起']||'').trim(), b=String(r['止']||'').trim();
+        if(!a || !b){ ElMessage.warning('请完整填写时间范围'); return; }
+        if(Number(b)<=Number(a)){ ElMessage.warning('时间范围：右边值须大于左边值'); return; }
+        if(!String(r.lv||'').trim() || !String(r.rv||'').trim()){ ElMessage.warning('请完整填写 RRT&TR 差值范围'); return; }
+      }
       if(!driftMatRows.value.length){ ElMessage.warning('请添加适用物料'); return; }
       if(!driftPointRows.value.length){ ElMessage.warning('请添加适用采样点'); return; }
       for(const r of driftRangeRows.value){
@@ -27932,14 +28261,17 @@ const app = createApp({
       const points=driftPointRows.value.map(r=>({...r}));
       const cols=driftColRows.value.map(r=>({...r}));
       const known=driftKnownRows.value.map(r=>({...r}));
+      const rrtRules=driftRrtRows.value.map(normalizeDriftRrtRow);
+      const first=rrtRules[0]||{};
       const payload={
-        规则编码:code, 规则名称:name, TR规则:tr, 'RRT&TR的偏差范围':driftDiffText(d),
+        规则编码:code, 规则名称:name, TR规则:tr, 'RRT&TR的偏差范围':driftRrtSummary(rrtRules),
         适用检验类型:insp, 杂质个数:known.length,
         适用物料: mats.map(m=> (m['物料编码']||'')+'/'+(m['物料名称']||'')).join(',') || '—',
         适用采样点: points.map(m=> m['采样点名称']||m['采样点编码']).filter(Boolean).join(',') || '—',
         适用色谱柱: cols.map(m=> m['色谱柱型号']).filter(Boolean).join(',') || '—',
         备注: txt('备注')||'—', 启用状态: formSwitch['启用状态']===false?'禁用':'启用',
-        _diff:{ ls:d.ls||'-', lv:String(d.lv||'').trim(), rs:d.rs||'+', rv:String(d.rv||'').trim() },
+        _rrtRules: rrtRules,
+        _diff:{ ls:first.ls||'-', lv:String(first.lv||'').trim(), rs:first.rs||'+', rv:String(first.rv||'').trim() },
         _ucl:normalizeDriftLimit(formModel._ucl, true), _lcl:normalizeDriftLimit(formModel._lcl, false),
         _range: driftRangeRows.value.map(r=>({...r})), _known:known.map(r=> Object.assign({}, r, { UCL:normalizeDriftLimit(r.UCL,true), LCL:normalizeDriftLimit(r.LCL,false) })), _mats:mats, _points:points, _cols:cols
       };
@@ -28065,8 +28397,6 @@ const app = createApp({
         const rt = Number(p['谱图保留时间']);
         p['相对保留时间'] = (mrt && mtyp!=null ? rt*mtyp/mrt : rt).toFixed(3);
       });
-      const d = rule._diff||{};
-      const lo = (d.ls==='+'?1:-1)*Number(d.lv||0), hi = (d.rs==='-'?-1:1)*Number(d.rv||0);
       rows.forEach(p=>{
         p._autoLock = false;
         if(p['是否主峰']==='是'){ p['对应典型保留时间'] = mk ? mk['典型保留时间'] : ''; p['是否锁定']='是'; p._autoLock=true; return; }
@@ -28075,6 +28405,8 @@ const app = createApp({
         if(fresh) p['是否锁定'] = '否';
         else if(p['是否锁定']==='是') return;
         const rrt = Number(p['相对保留时间']);
+        const picked = driftPickRrtRule(rule, p['谱图保留时间']);
+        const { lo, hi } = driftDiffBounds(picked||rule._diff||{});
         let best = null, bd = Infinity;
         known.forEach(k=>{
           if(k['是否主峰']==='是') return;
@@ -28260,7 +28592,7 @@ const app = createApp({
 
     /** 数据台账：左侧 类型 → 物料+采样点 台账，右侧按漂移规则典型保留时间透视谱图识别数据 */
     const LEDGER_PAGE = 'np-0208-04';
-    const LEDGER_TYPES = ['原材料','生产过程','生产产品'];
+    const LEDGER_TYPES = ['采购来料检','生产过程检','生产物料检','研发检'];
     const LEDGER_DIMS = ['峰面积','保留时间','峰面积&保留时间'];
     const LEDGER_LS = 'dingcai-drift-ledger-v1';
     function ledgerCache(){ try{ return JSON.parse(localStorage.getItem(LEDGER_LS)||'{}') || {}; }catch(e){ return {}; } }
@@ -29685,6 +30017,101 @@ const app = createApp({
     const hmArchPlantSel = ref([]);
     const hmArchCustSel = ref([]);
     const hmArchLawSel = ref([]);
+    const hmImpEntryTab = ref('entry');
+    const hmImpEntryRows = ref([]);
+    const hmImpEntrySel = ref([]);
+    const hmImpEntryTarget = ref(null);
+    function hmImpResetEntry(){
+      hmImpEntryRows.value = [];
+      hmImpEntrySel.value = [];
+      hmImpEntryTarget.value = null;
+      hmImpEntryTab.value = 'entry';
+    }
+    function hmImpLoadEntry(row){
+      hmImpEntryRows.value = (Array.isArray(row && row._entryLines) ? row._entryLines : []).map((r,i)=> Object.assign({
+        id: r.id || ('hmie-'+i), 标准编号:'', 标准名称:'', 测试值:'', 比对结果:''
+      }, r));
+      hmImpEntrySel.value = [];
+      hmImpEntryTarget.value = null;
+      hmImpEntryTab.value = 'entry';
+    }
+    function hmImpAddEntryRows(){
+      const cat = String(formModel['物料类']||'').trim();
+      if(!cat){ ElMessage.warning('请先选择物料类'); return; }
+      hmImpEntryTarget.value = null;
+      openIoPick('hmArchStd', 'hmImpEntry', '标准编号', true);
+    }
+    function openHmImpStdPick(row){
+      if(formMode.value==='detail') return;
+      const cat = String(formModel['物料类']||'').trim();
+      if(!cat){ ElMessage.warning('请先选择物料类'); return; }
+      hmImpEntryTarget.value = row || null;
+      openIoPick('hmArchStd', 'hmImpEntry', '标准编号', true);
+    }
+    function hmImpDelEntryRows(){
+      if(!(hmImpEntrySel.value||[]).length){ ElMessage.warning('请先勾选要删除的行'); return; }
+      const ids = new Set(hmImpEntrySel.value.map(r=> r.id));
+      hmImpEntryRows.value = hmImpEntryRows.value.filter(r=> !ids.has(r.id));
+      hmImpEntrySel.value = [];
+    }
+    function hmImpArchByCode(code){
+      const c = String(code||'').trim();
+      if(!c) return null;
+      return hmArchRows().find(r=> String(r['标准编号']||'')===c) || null;
+    }
+    function hmImpLimitNum(raw){
+      const s = String(raw==null?'':raw).trim();
+      if(!s) return null;
+      if(/^nd$/i.test(s)) return 0;
+      if(/^\d+(\.\d+)?$/.test(s)) return parseFloat(s);
+      return NaN;
+    }
+    function hmImpCompareOne(row){
+      const arch = hmImpArchByCode(row['标准编号']) || (row._archId ? hmArchRows().find(r=> r.id===row._archId) : null);
+      if(!arch) return '未找到标准档案';
+      const test = hmImpLimitNum(row['测试值']);
+      if(test==null) return '请填写测试值';
+      if(Number.isNaN(test)) return '测试值仅支持数值或 ND';
+      const fails = [];
+      (arch._plant||[]).forEach(p=>{
+        const lim = hmImpLimitNum(p['限制值']);
+        if(lim==null || Number.isNaN(lim)) return;
+        if(test > lim) fails.push('不符合厂内标准');
+      });
+      (arch._cust||[]).forEach(p=>{
+        const lim = hmImpLimitNum(p['限制值']);
+        if(lim==null || Number.isNaN(lim)) return;
+        if(test > lim){
+          const name = String(p['客户名称']||p['客户信息']||'客户').trim() || '客户';
+          fails.push('不符合'+name+'标准');
+        }
+      });
+      (arch._law||[]).forEach(p=>{
+        const lim = hmImpLimitNum(p['限制值']);
+        if(lim==null || Number.isNaN(lim)) return;
+        if(test > lim){
+          const name = String(p['法规名称']||'法规').trim() || '法规';
+          fails.push('不符合'+name+'标准');
+        }
+      });
+      const uniq = [...new Set(fails)];
+      return uniq.length ? uniq.join('、') : '合格';
+    }
+    function hmImpCompareEntry(){
+      if(!(hmImpEntryRows.value||[]).length){ ElMessage.warning('请先添加数据录入行'); return; }
+      let ok = 0, bad = 0;
+      hmImpEntryRows.value.forEach(r=>{
+        r['比对结果'] = hmImpCompareOne(r);
+        if(r['比对结果']==='合格') ok++; else bad++;
+      });
+      ElMessage.success('比对完成：合格 '+ok+'，不符合 '+bad);
+    }
+    function onHmImpMatCatChange(){
+      if(!(hmImpEntryRows.value||[]).length) return;
+      hmImpEntryRows.value = [];
+      hmImpEntrySel.value = [];
+      ElMessage.info('已切换物料类，数据录入行已清空');
+    }
     function hmArchAddLine(kind){
       const id = 'hml-'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
       if(kind==='cust') hmArchCust.value.push({ id, 客户信息:'', 客户编码:'', 客户名称:'', 限制值:'' });
@@ -30584,6 +31011,14 @@ const app = createApp({
       if(list.some(r=> r!==cur && r['申请单号']===applyNo)){ ElMessage.warning('申请单号已存在，请刷新后重试'); return; }
       if(list.some(r=> r!==cur && r['文件编号']===fileNo)){ ElMessage.warning('文件编号已存在，请刷新后重试'); return; }
       const stamp = nowStamp();
+      const entryLines = (hmImpEntryRows.value||[]).map(r=> ({
+        id: r.id,
+        标准编号: r['标准编号']||'',
+        标准名称: r['标准名称']||'',
+        测试值: r['测试值']||'',
+        比对结果: r['比对结果']||'',
+        _archId: r._archId || ''
+      }));
       if(isAdd){
         list.unshift(Object.assign({
           id: 'hmimp-'+Date.now().toString(36),
@@ -30592,9 +31027,9 @@ const app = createApp({
           审核单号: '—',
           创建人: CI_OPERATOR,
           创建时间: stamp,
-        }, vals, { 申请单号: applyNo, 文件编号: fileNo, 导入状态: '未导入' }));
+        }, vals, { 申请单号: applyNo, 文件编号: fileNo, 导入状态: '未导入', _entryLines: entryLines }));
       } else {
-        Object.assign(cur, vals, { 申请单号: applyNo, 文件编号: fileNo });
+        Object.assign(cur, vals, { 申请单号: applyNo, 文件编号: fileNo, _entryLines: entryLines });
       }
       formVisible.value = false;
       bumpStore();
@@ -31410,6 +31845,10 @@ const app = createApp({
         const keyOf = r => done ? (r['单据状态']==='已关闭' ? (r['关闭时间']||r['创建时间']) : (r['完成时间']||r['创建时间'])) : r['创建时间'];
         list = list.slice().sort((a, b)=> String(keyOf(b)||'').localeCompare(String(keyOf(a)||'')));
       }
+      if(pageId.value===CASS_PAGE){
+        list = applyContainsExactQuery(list, query, ['信息流水号','卡塞编号'], ['卡塞类型']);
+        list = list.slice().sort((a, b)=> String(b['创建时间']||'').localeCompare(String(a['创建时间']||'')));
+      }
       if(pageId.value===COST_PAGE){
         list = applyContainsExactQuery(list, query, ['方案编码'], ['匹配范围','启用状态']);
         if(query['检验类']) list = list.filter(r=> splitDun(r['检验类']).includes(query['检验类']));
@@ -31945,6 +32384,7 @@ const app = createApp({
           使用周期单位: '天',
           提前预警单位: '天',
         });
+        hmImpResetEntry();
       }
       else if(pageId.value===HM_VOID_PAGE && (mode||'add')==='add'){
         Object.assign(formModel, { 申请单号: hmNextVoidNo(), 文件编号:'', 文件名称:'', 文件类型:'', 客户名称:'', 法规名称:'', 文件:'', 作废原因:'' });
@@ -32257,9 +32697,11 @@ const app = createApp({
       }
       else if(pageId.value==='np-0502-01') formLineRows.value = [];
       else if(pageId.value==='np-0601-01') formLineRows.value = [batchRelEmptyLine()];
-      else if(pageId.value==='np-0201-02' || pageId.value===DISPATCH_PAGE || pageId.value===SPLIT_PAGE){
+      else if(pageId.value==='np-0201-02' || pageId.value===DISPATCH_PAGE || pageId.value===COST_PAGE || pageId.value===CASS_PAGE || pageId.value===SPLIT_PAGE){
         formLineRows.value = [];
         if(pageId.value===DISPATCH_PAGE){ formCatRows.value = []; formCatSelected.value = []; formInstRows.value = []; formInstSelected.value = []; formModel['使用仪器'] = ''; }
+        if(pageId.value===COST_PAGE){ formCatRows.value = []; formCatSelected.value = []; formLineSelected.value = []; }
+        if(pageId.value===CASS_PAGE) formLineSelected.value = [];
       }
       else formLineRows.value = lines ? [{_i:1},{_i:2}] : [];
       if(pageId.value!=='wh-stocktake') formBarcodeRows.value = [];
@@ -32488,6 +32930,7 @@ const app = createApp({
         if(f && formMode.value==='add' && f.default!=null && f.default!=='' && (formModel[f.name]==null || formModel[f.name]==='')) formModel[f.name] = f.default;
       });
       if(formMode.value==='add' && pageId.value===OQC_PAGE) formModel['单据号'] = oqcNextNo();
+      if(formMode.value==='add' && pageId.value===CASS_PAGE) formModel['信息流水号'] = cassNextNo();
       formVisible.value=true;
       applyGatherFormDefaults();
     }
@@ -32778,6 +33221,8 @@ const app = createApp({
       } else if(pageId.value==='np-0201-02'){
         const lines = (Array.isArray(row && row._lines) && row._lines.length) ? row._lines : oeLinesFromText((row && row['委托项目']) || '');
         detailLineRows.value = lines.map(r=>({ ...r }));
+      } else if(pageId.value===CASS_PAGE){
+        detailLineRows.value = (Array.isArray(row && row._lines) ? row._lines : []).map(r=>({ ...r }));
       } else if(mockLines && mockLines.length){
         detailLineRows.value = mockLines.map(r=>({...r}));
       } else if((page.value?.detailLineFields||[]).length){
@@ -32815,6 +33260,7 @@ const app = createApp({
     function deleteConfirmTip(btn){
       const b = btn || {};
       if(pageId.value==='wwpo') return '确认删除所选委外加工订单？仅「待执行」状态且未生成下游委外发料/收料单据的订单可删除。删除后不可恢复。';
+      if(pageId.value===CASS_PAGE) return `确认删除所选的 ${selectedIds.value.length} 条卡塞信息？删除后不可恢复。`;
       if(pageId.value==='mat-medium') return `确认删除所选的 ${selectedIds.value.length} 条物料介质对照记录？删除后不可恢复。`;
       if(pageId.value==='serial-arch') return `确认删除所选的 ${selectedIds.value.length} 条流水码档案？仅库存状态为「初始化」的记录可删，删除后不可恢复。`;
       if(pageId.value==='tank-arch') return `确认删除所选的 ${selectedIds.value.length} 条储罐档案？仅空罐（无物料明细）可删；被业务引用的数据不可删除。`;
@@ -33555,6 +34001,8 @@ const app = createApp({
       if(pageId.value===PLATE_PAGE && btn.name==='发起需求'){ launchPlateReqs(); return; }
       if(pageId.value===PLATE_PAGE && btn.name==='批量删除'){ deletePlateReqs(); return; }
       if(pageId.value===PLATE_PAGE && btn.name==='批量关闭'){ closePlateReqs(); return; }
+      if(pageId.value===CASS_PAGE && btn.name==='新增'){ openCassForm(); return; }
+      if(pageId.value===CASS_PAGE && btn.name==='批量删除'){ deleteCassRows(); return; }
       if(pageId.value===MATRIX_PAGE && btn.name==='单项累计权重设置'){ openMatrixWeight(); return; }
       if(pageId.value===OQC_PAGE && btn.name==='上传附件'){ openOqcUpload((tableData.value||[]).filter(r=> selectedIds.value.includes(r.id))); return; }
       if(pageId.value===OQC_PAGE && (btn.name==='删除' || btn.name==='关闭')){ oqcRemove(btn.name==='关闭'); return; }
@@ -34786,7 +35234,7 @@ const app = createApp({
       if(pageId.value===WJ_ORDER && op.name==='编辑' && !DJ_OPEN.includes(row['单据状态'])){ ElMessage.warning('仅待执行、执行中的外校单可编辑'); return; }
       if(isDjPlanPage() && op.name==='编辑' && !DJ_OPEN.includes(row['计划状态'])){ ElMessage.warning('仅待执行、执行中的'+djKind().w+'计划可编辑'); return; }
       if(pageId.value===LAB_INSP_PLAN && (op.name==='作业执行' || op.name==='作业详情')){ openLabInspExec(row, op.name==='作业详情'); return; }
-      if((op.name==='详情' && pageId.value!=='insp-scheme' && pageId.value!=='insp-method') || op.name==='变更详情' || op.name==='盘点详情' || (op.name==='作业详情' && pageId.value==='wh-insp-plan')){ openDetail(row); return; }
+      if((op.name==='详情' && pageId.value!=='insp-scheme' && pageId.value!=='insp-method' && pageId.value!==DRIFT_PAGE && pageId.value!==HM_IMP_PAGE) || op.name==='变更详情' || op.name==='盘点详情' || (op.name==='作业详情' && pageId.value==='wh-insp-plan')){ openDetail(row); return; }
       if(pageId.value===LAB_PREP && (op.name==='执行' || op.name==='配制详情')){ openLabPrepExec(row, op.name==='配制详情'); return; }
       if(pageId.value===LAB_PREP && op.name==='编辑' && row['单据状态']!=='待执行'){ ElMessage.warning('仅待执行状态的配液单可编辑'); return; }
       if(pageId.value===LAB_CALIB && (op.name==='执行' || op.name==='标定详情')){ openLabCalibExec(row, op.name==='标定详情'); return; }
@@ -34867,12 +35315,12 @@ const app = createApp({
           ElMessage.warning('仅待执行状态的单据可编辑'); return;
         }
       }
-      if(pageId.value===DRIFT_PAGE && (op.name==='编辑' || op.name==='复制')){
-        openDriftForm(op.name==='复制'?'copy':'edit', row); return;
+      if(pageId.value===DRIFT_PAGE && (op.name==='详情' || op.name==='编辑' || op.name==='复制')){
+        openDriftForm(op.name==='详情'?'detail':(op.name==='复制'?'copy':'edit'), row); return;
       }
       if(pageId.value===SPI_PAGE && op.name==='编辑'){ openSpiForm('edit', row); return; }
       if(pageId.value===COST_FLOW && op.name==='编辑'){ openCostFlowEdit(row); return; }
-      if(op.name==='编辑' || op.name==='复制' || op.name==='版本查看' || (op.name==='详情' && (pageId.value==='insp-scheme' || pageId.value==='insp-method'))){
+      if(op.name==='编辑' || op.name==='复制' || op.name==='版本查看' || (op.name==='详情' && (pageId.value==='insp-scheme' || pageId.value==='insp-method' || pageId.value===HM_IMP_PAGE))){
         if(pageId.value==='np-0501-01' && op.name==='编辑' && (row||{})['采集状态']==='开启'){
           ElMessage.warning('开启状态不可编辑'); return;
         }
@@ -34971,6 +35419,9 @@ const app = createApp({
         if(pageId.value===HM_ARCH_PAGE){
           hmArchLoadLines(row);
         }
+        if(pageId.value===HM_IMP_PAGE){
+          hmImpLoadEntry(row);
+        }
         if(pageId.value===HM_LIB_PAGE){
           const code = row['客户编码'] && row['客户编码']!=='—' ? row['客户编码'] : '';
           const name = row['客户名称'] && row['客户名称']!=='—' ? row['客户名称'] : '';
@@ -35035,10 +35486,13 @@ const app = createApp({
           delete formModel._editId;
         }
         if(pageId.value===COST_PAGE){
-          ['检验类','物料信息'].forEach(k=> { formModel[k] = row[k] || ''; });
           const hour = costHourParts(row);
           formModel['标准工时'] = hour.n;
           formModel['标准工时单位'] = hour.u;
+          formLineRows.value = dispatchLinesFromRow(row);
+          formLineSelected.value = [];
+          formCatRows.value = dispatchCatsFromRow(row, '检验类');
+          formCatSelected.value = [];
           if(op.name==='复制'){ formModel['方案编码'] = ''; delete formModel._editId; }
         }
         if(pageId.value===COST_FLOW){
@@ -35105,6 +35559,8 @@ const app = createApp({
           formModel['抽样方案名称'] = row['抽样方案名称']||'';
           formModel['抽样类型'] = row['抽样类型']||'抽检';
           formModel['备注'] = row['备注']==='—'?'':(row['备注']||'');
+          formModel['作业说明'] = row['作业说明']==='—'?'':(row['作业说明']||'');
+          formModel['作业附件'] = row['作业附件']==='—'?'':(row['作业附件']||'');
           sampInspectTypes.value = Array.isArray(row._inspectTypes)
             ? row._inspectTypes.slice()
             : String(row['适用报检单']||'').split(/[、,，]/).map(s=>s.trim()).filter(Boolean);
@@ -35888,6 +36344,19 @@ const app = createApp({
           formModel['检验方案'] = row['检验方案'] || '';
           formModel['取样备注'] = row['报检备注'] || '';
           formModel._sampOrderNo = row['报检单号'] || '';
+          {
+            const schemeName = String(row['抽样方案名称']||'').trim();
+            const schemeCode = String(row['抽样方案编码']||'').trim();
+            const schemes = (((window.WMS_MOCK_ROWS || MOCK)['samp-scheme']||{}).main||[]);
+            const scheme = schemes.find(s=>
+              (schemeName && (s['抽样方案名称']||'')===schemeName) ||
+              (schemeCode && (s['抽样方案编码']||'')===schemeCode)
+            );
+            const desc = scheme ? (scheme['作业说明']||'') : '';
+            const file = scheme ? (scheme['作业附件']||'') : '';
+            formModel['作业说明'] = (desc && desc!=='—') ? desc : '';
+            formModel['作业附件'] = (file && file!=='—') ? file : '';
+          }
           if(pageId.value==='wait-samp' && activeTab.value==='tab-rd'){
             const src = (((MOCK['insp-order']||{})['tab-rd'])||[]).find(r=> r['报检单号']===row['报检单号']);
             const v = (src && src['预计完成时间']) || row['预计完成时间'] || '';
@@ -36403,12 +36872,7 @@ const app = createApp({
       return out;
     }
     function oeSampleRows(){
-      const type = String(formModel['报检单类型']||'').trim();
-      return oeAllSamples().filter(r=>{
-        if(String(r['样品状态']||'')==='已完成') return false;
-        const rt = String(r['报检类型']||r['报检单类型']||'').trim();
-        return !type || rt===type;
-      });
+      return oeAllSamples().filter(r=> String(r['样品状态']||'')!=='已完成');
     }
     function oeSchemeItemNames(){
       const sample = oeAllSamples().find(r=> r['样品编号']===formModel['样品编号']);
@@ -36564,7 +37028,7 @@ const app = createApp({
     function onDispatchCatAction(name){
       if(name==='添加'){ openIoPick('inspCat', 'dispatchCats', '检验类名称', true); return; }
       const set = new Set(formCatSelected.value||[]);
-      if(!set.size){ ElMessage.warning('请先勾选适用检验类'); return; }
+      if(!set.size){ ElMessage.warning(pageId.value===COST_PAGE ? '请先勾选检验类' : '请先勾选适用检验类'); return; }
       formCatRows.value = formCatRows.value.filter(r=> !set.has(r));
       formCatSelected.value = [];
     }
@@ -36588,13 +37052,28 @@ const app = createApp({
           return;
         }
       }
-      if(pageId.value===DISPATCH_PAGE){
+      if(pageId.value===DISPATCH_PAGE || pageId.value===COST_PAGE){
         if(name==='添加'){ openIoPick('mat', 'dispatchMats', '物料名称', true); return; }
         if(String(name).includes('删除')){
           const set = new Set(formLineSelected.value||[]);
-          if(!set.size){ ElMessage.warning('请先勾选适用物料'); return; }
+          if(!set.size){ ElMessage.warning(pageId.value===COST_PAGE ? '请先勾选物料' : '请先勾选适用物料'); return; }
           formLineRows.value = formLineRows.value.filter(r=> !set.has(r));
           formLineSelected.value = [];
+          return;
+        }
+      }
+      if(pageId.value===CASS_PAGE){
+        if(name==='添加'){
+          formLineRows.value = (formLineRows.value||[]).concat([cassEmptyLine()]);
+          renumberCassLines();
+          return;
+        }
+        if(String(name).includes('删除')){
+          const set = new Set(formLineSelected.value||[]);
+          if(!set.size){ ElMessage.warning('请先勾选关联玻璃板'); return; }
+          formLineRows.value = formLineRows.value.filter(r=> !set.has(r));
+          formLineSelected.value = [];
+          renumberCassLines();
           return;
         }
       }
@@ -38464,6 +38943,7 @@ const app = createApp({
       if(qcFormOk()) return;
       if(pageId.value===SPLIT_PAGE && formMode.value==='add'){ confirmSampleSplit(); return; }
       if(pageId.value===OQC_PAGE && ['add','edit'].includes(formMode.value)){ saveOqcForm(); return; }
+      if(pageId.value===CASS_PAGE && ['add','edit','copy'].includes(formMode.value)){ saveCassForm(); return; }
       if(formMode.value==='samp' && pageId.value===FLOW_WAIT){
         const rid = formModel._editId;
         flowTakeSample();
@@ -38714,6 +39194,8 @@ const app = createApp({
           适用报检单: (sampInspectTypes.value||[]).join('、'),
           取样方法: formModel['取样方法'] || '按批次抽样',
           备注: formModel['备注']||'',
+          作业说明: formModel['作业说明']||'',
+          作业附件: formModel['作业附件']||'',
           启用状态: formSwitch['启用状态']===false ? '禁用' : '启用',
           规则条件数: String((sampRuleRows.value||[]).length),
           适用物料: (sampMatRows.value||[]).map(r=>r.物料名称||r.物料编码).filter(Boolean).join('、') || '—',
@@ -42068,6 +42550,10 @@ const app = createApp({
       if(pageId.value===CI_PAGE && f && f.name==='提案人'){ onCiProposerChange(); return; }
       if(pageId.value===CHG_PAGE && f && f.name==='申请人'){ onChgApplicantChange(); return; }
       if(pageId.value===SE_PAGE && f && f.name==='事件类型'){ formModel['来源单号'] = ''; return; }
+      if(pageId.value===HM_IMP_PAGE && f && f.name==='物料类'){
+        onHmImpMatCatChange();
+        return;
+      }
       if(pageId.value===HM_IMP_PAGE && f && f.name==='文件类型'){
         if(formModel['文件类型']!=='客户文件'){ formModel['客户信息']=''; formModel['客户名称']=''; formModel['客户编码']=''; }
         if(formModel['文件类型']!=='法规文件') formModel['法规名称']='';
@@ -42356,10 +42842,6 @@ const app = createApp({
         openIoPick(title==='适用检验类' ? 'inspCat' : title==='使用仪器' ? 'inst' : 'inspTeam', 'form', title, true);
         return;
       }
-      if(pageId.value===COST_PAGE && !lineRow && (bind||'form')==='form' && (title==='检验类' || title==='派单班组')){
-        openIoPick(title==='检验类' ? 'inspCat' : 'inspTeam', 'form', title, true);
-        return;
-      }
       if(IO_PICK_FIELD[title] && !lineRow && pageId.value!=='mat-medium' && (bind==='query' || ((bind||'form')==='form' && formVisible.value))){
         const fields = bind==='query' ? ((tabView.value||{}).queryFields||[]) : (activeFormFields.value||[]);
         const fc = fields.find(x=> x && x.name===title);
@@ -42382,7 +42864,6 @@ const app = createApp({
         return;
       }
       if(pageId.value==='np-0201-02' && title==='样品编号' && !lineRow && (bind||'form')==='form' || (pageId.value==='insp-order' && activeTab.value==='tab-oe' && title==='样品编号' && !lineRow && (bind||'form')==='form')){
-        if(!formModel['报检单类型']){ ElMessage.warning('请先选择报检单类型'); return; }
         openIoPick('oeSample', 'oeSample', '样品编号');
         return;
       }
@@ -44237,6 +44718,10 @@ const app = createApp({
         const m = { '待发起':'tag-o','已发起':'tag-b','已关闭':'tag-gr','已完成':'tag-g' };
         if(m[v]) return m[v];
       }
+      if(pageId.value===CASS_PAGE){
+        const m = { '光刻胶生产':'tag-b','光刻胶研发':'tag-p' };
+        if(m[v]) return m[v];
+      }
       if(pageId.value===SPI_PAGE || pageId.value===LEDGER_PAGE){
         const m = { 正常:'tag-g', 异常:'tag-r', 启用:'tag-g', 禁用:'tag-gr' };
         if(m[v]) return m[v];
@@ -44502,9 +44987,9 @@ const app = createApp({
       costFlowBatch, openCostFlowEdit, openCostFlowBatch, applyCostFlowBatchFill, confirmCostFlowBatch,
       taskLogVisible, taskLogNo, taskDetailRows,
       devReqVisible, devReqTitle, devReqRows, devReqForm, removeDevReqRow, confirmDevReq, openDevPick, clearDevSamples,
-      devCancelVisible, devCancelRow, devCancelReason, confirmDevCancel, devLogVisible, devLogNo, devLogRows,
+      devCancelVisible, devCancelRow, devCancelReason, confirmDevCancel, devLaunchVisible, devLaunchNeed, confirmLaunchDevReqs, devLogVisible, devLogNo, devLogRows,
       plateReqVisible, plateReqTitle, plateReqRows, plateReqForm, removePlateReqRow, confirmPlateReq, openPlatePick, clearPlateSamples,
-      plateCancelVisible, plateCancelRow, plateCancelReason, confirmPlateCancel, plateLogVisible, plateLogNo, plateLogRows,
+      plateCancelVisible, plateCancelRow, plateCancelReason, confirmPlateCancel, plateLaunchVisible, plateLaunchNeed, confirmLaunchPlateReqs, plateLogVisible, plateLogNo, plateLogRows,
       oqcUploadVisible, oqcUploadRows, oqcUploadFiles, oqcUploadRemark, confirmOqcUpload,
       matrixWeightVisible, matrixWeightForm, saveMatrixWeight, qualityLevelText, qualityIconStyle,
       ioPickVisible, ioPickMeta, ioPickQ, ioPickTick, ioPickRows, ioPickCurrent, ioPickMulti, ioPickSelected, ioPickTableRef, ioPickRowKey, onIoPickSelection, resetIoPickQ, confirmIoPick, SPLIT_TEAMS, sampSplitVisible, sampSplitForm, sampSplitRows, sampSplitSelected, sampSplitParents, canDeleteSampSplit, canDeleteEnvMon, FLOW_TABS, sampSplitPickVisible, sampSplitPickTableRef, sampSplitPickTab, sampSplitPickShowTabs, sampSplitPickQ, sampSplitPickSelected, sampSplitPickRows, sampSplitPickCols, openSampSplitLedgerPick, confirmSampSplitLedgerPick, SLOC_DESTS, openIoPick, confirmPrintLabel, saveSlposForm, slocDispVisible, slocDispMode, slocDispTitle, slocDispRows, slocDispSelected, slocDispCols, slocDispForm, onSlocDispSelect, slocLocOpts, confirmSlocLoc, SLOC_SCRAP_REASONS, onSlocDispWay, onSlocDispLoc, openSlocDispSupplier, confirmSlocDisp, slocLogVisible, slocLogNo, slocLogRows, genSampSplitRows, removeSampSplitRow, confirmSampleSplit, sampSplitRecordVisible, sampSplitRecordParent, sampSplitRecordRows,
@@ -44512,7 +44997,7 @@ const app = createApp({
       calibEntryVisible, calibEntryReadonly, calibEntryIdx, calibEntryTest, openCalibEntry, submitCalibEntry,
       labPrepExecVisible, labPrepExecReadonly, labPrepExecRow, labPrepExec, labPrepLineSel, labPrepReagentPick, labPrepEnvFields, labPrepDevFields, labPrepMethod, labPrepHeadCols, labPrepReagentOptions, labPrepEnumOpts, addLabPrepLine, removeLabPrepLines, saveLabPrepExec, submitLabPrepExec, downloadLabPrepPdf,
       tplTabs, tplCalc, tplRefParamOptions, onTplPubTimesChange, tplKind, isTplForm, tplFormTab, tplRows, tplSel, onTplFlagChange, addTplRow, removeTplRows, onTplAttrChange,
-      formVisible, formMode, formDialogTitle, formDialogWidth, formSwitch, formModel, formFieldTipOpen, setFormFieldTip, toggleFormFieldTip, isInspMethodForm, isInspSchemeForm, isDriftRuleForm, isInspProjectCategoryForm, isSampSchemeForm, isFullscreenBizForm, isFullscreenDetail, detailHeaderTableFields, detailHeaderTableRows, isAutoSampForm, isSpcSchemeForm, isWideBizForm, isTreeTypeForm, isSchemeCylinder, sigmaConfigModel, onSigmaConfigConfirm, activeFormSections, isQmsFlowForm, entryCat, entryCats, entryCatRows, entryMethods, entryPickCat, entryStamp, entryResultText, entryFocusItem, entryCatSubmitted, entryMethodTab, entryDescOpen, entryMethodDetail, entryMethodVerOptions, entryOnVersion, entryMats, entryMatSelected, removeEntryMats, entryExtraFiles, onEntryExtraFile, removeEntryExtraFile, entryInstruments, entryInstrumentOptions, entrySpectra, removeEntrySpectrum, openEntrySpecPick, entrySpecVisible, entrySpecQuery, entrySpecFiles, entrySpecChecked, entrySpecBatches, entrySpecCols, entrySpecDraft, entrySpecFillCol, entrySpecFillAll, entrySpecAutoFill, confirmEntrySpecPick, entryPubParams, entryPubCols, entryPubCell, entrySetPubCell, entrySampParams, entrySampCols, entryCell, entrySetCell, entryLimitText, entryQuickExpandAll, entryQuickFilledCount, entryCategoryId, entryCategoryKw, filteredEntryCategories, spcProcessId, spcProcessKw, filteredSpcProcesses, activeChartTab, spcChartCards, envStat, costPivot, costFlowDlg, COST_DIMS, COST_MEASURES, COST_PRESETS, costFlowOpts, costDragStart, costDragOver, costDragDrop, costDragEnd, costRemoveDim, costMarkCustom, costAddDim, costApplyPreset, costPivotReset, costPivotQuery, costPivotRowClass, costOpenFlow, costPivotExport, batchTrace, batchRelAddLine, batchRelCopyLine, batchRelDelLine, envStatNames, envStatItemOptions, envStatOnName, envStatQuery, envStatReset, envStatOpenSet, envStatSaveSet, envStatOpenSamples, envStatExport, treeListId, treeListKw, filteredTreeListNodes, onTreeListOp, waitSampInnerTab, waitSampSampleRows, waitSampSampleSelected, waitSampItemRows, waitSampItemSelected, waitSampSchemeItemCount, waitSampTempItemCount, waitSampItemSourceLabel, addWaitSampSample, refreshWaitSampCodes, removeWaitSampSamples, addWaitSampItem, removeWaitSampItems, recheckSampleRows, disposeDetailRows, disposeDetailSelected, initDisposeDetailRows, batchDisposeReceive, mrbWritebackVisible, saveMrbWriteback, mrbWriteback, disposeDetailVisible, disposeDetailViewRows, DRIFT_PAGE, DRIFT_TR_OPTS, DRIFT_INSP_OPTS, DRIFT_UCL_OPS, DRIFT_LCL_OPS, driftInnerTab, driftRangeRows, driftRangeSelected, driftKnownRows, driftKnownSelected, driftMatRows, driftMatSelected, driftPointRows, driftPointSelected, driftColRows, driftColSelected, addDriftRangeRow, addDriftKnownRow, onDriftMainPeak, removeDriftRows, schemeInnerTab, schemeQualRows, schemeQuantRows, schemeQualSelected, schemeQuantSelected, schemePointRows, schemeMatRows, schemeCustRows, schemeSuppRows, schemeMediaRows, schemeItemDrawerVisible, schemeItemDrawerKind, schemeItemDrawerQ, schemeItemDrawerTick, schemeItemDrawerRows, schemeItemDrawerSelected, openSchemeItemDrawer, confirmSchemeItemDrawer, removeSchemeRows, schemeRelDrawerVisible, schemeRelDrawerKind, schemeRelDrawerTitle, schemeRelDrawerRows, schemeRelDrawerColumns, schemeRelDrawerSelected, schemeRelDrawerTableRef, schemeRelDrawerRowKey, onSchemeRelDrawerSelect, clearSchemeRelDrawerSelect, openSchemeRelDrawer, confirmSchemeRelDrawer, resetSchemeRelDrawerQ, schemeRelDrawerQ, schemeRelDrawerTick, addSchemeMedium, schemeLimitOps, openSchemeUnitDrawer, openItemUomUnitDrawer, onSchemeFnChange, schemePointSelected, schemeMatSelected, schemeCustSelected, schemeSuppSelected, removeSchemeRelRows, schemeQualEnumDrawerVisible, schemeQualEnumDraft, schemeQualEnumSelected, schemeQualEnumEnableOther, openSchemeQualEnumDrawer, addSchemeQualEnumItem, removeSchemeQualEnumItems, confirmSchemeQualEnumDrawer, renumberSchemeQualEnum, sampInnerTab, sampInspectTypes, sampRuleRows, sampRuleSelected, sampMatRows, sampMatSelected, sampFormulaVisible, sampFormulaValue, onSampTypeChange, isSampRuleFirst, isSampRuleLast, normalizeSampRuleFixed, removeSampRuleRow, removeSampMatRows, openSampFormula, insertSampFormulaFn, confirmSampFormula, validateSampRules, addSampRuleRow, removeSampRuleRows, autoSampDetailRows, autoSampDetailSelected, autoSampPickVisible, autoSampPickKind, autoSampPickTitle, autoSampPickQ, autoSampPickTick, autoSampPickRows, autoSampPickColumns, autoSampPickMulti, autoSampPickCurrent, autoSampPickSelected, openAutoSampPick, resetAutoSampPickQ, confirmAutoSampPick, copyAutoSampDetail, validateAutoSampDetails, addAutoSampDetail, removeAutoSampDetails, inspMethodPublicParams, inspMethodSampleParams, inspMethodPublicSelected, inspMethodSampleSelected, inspMethodInnerTab, inspMethodMatRows, inspMethodMatSelected, inspMethodMatCatRows, inspMethodMatCatSelected, METHOD_MAT_SRCS, methodMatSrc, onMethodMatSrcTab, openMethodMatSupp, openMethodMatUnit, removeInspMethodMats, addInspMethodMatCat, copyInspMethodMatCat, removeInspMethodMatCats, openMethodMatCatMat, clearMethodMatCatMat, openMethodMatCatCat, clearMethodMatCatCat, methodVerVisible, methodVerTitle, methodVerRows, methodVerCount, openMethodVerDetail, onInspMethodFile, inspParamDrawerVisible, inspParamDrawerQ, inspParamDrawerTick, inspParamDrawerRows, inspParamDrawerSelected, openInspParamDrawer, resetInspParamDrawerQ, confirmInspParamDrawer, removeInspMethodParams, onInspMethodPublicToggle, onInspMethodPublicTimesChange, inspCatInstrumentTypeOptions, INSP_CAT_ATTRS, inspItemUnitDrawerVisible, inspItemUnitDrawerTitle, inspItemUnitDrawerQ, inspItemUnitDrawerTick, inspItemUnitDrawerRows, inspItemUnitDrawerCurrent, inspItemUnitDrawerSelectedKey, inspItemUnitTableRef, inspItemUnitRowKey, selectInspItemUnitRow, onInspItemUnitRowClick, onInspItemUnitCurrentChange, clearInspItemUnitDrawer, openInspItemUnitDrawer, confirmInspItemUnitDrawer, poMatPool, formLineSelected, dispatchAuditVisible, dispatchAuditRow, dispatchAuditForm, splitVisible, splitRow, splitForm, splitLines, splitLineSelected, splitNeedsOrder, splitShowPreDoc, splitShowSoShipPreDocs, splitShowSoPreoutPrepDoc, splitPreDocRequired, splitShowPo, onSplitOrderTypeChange, openSplitPicker, settleVisible, settleRows, settleForm, totalSettleQty, totalSettleFee, openSettleModal, onSettleOk, secondaryAssignVisible, secondaryAssignRow, secondaryAssignForm, resetSecondaryAssignForm, onSecondaryAssignOk, assignVisible, assignRow, assignForm, assignCarriers, assignVehicles, assignTrailers, activeFormFields, activeFormLineFields, formLineEmptyText, formLineRows, formCatRows, formCatSelected, onDispatchCatAction, formInstRows, formInstSelected, onDispatchInstAction, onGsDragStart, onGsDrop, onFormLineSelectChange,
+      formVisible, formMode, formDialogTitle, formDialogWidth, formSwitch, formModel, formFieldTipOpen, setFormFieldTip, toggleFormFieldTip, isInspMethodForm, isInspSchemeForm, isDriftRuleForm, isInspProjectCategoryForm, isSampSchemeForm, isFullscreenBizForm, isFullscreenDetail, detailHeaderTableFields, detailHeaderTableRows, isAutoSampForm, isSpcSchemeForm, isWideBizForm, isTreeTypeForm, isSchemeCylinder, sigmaConfigModel, onSigmaConfigConfirm, activeFormSections, isQmsFlowForm, entryCat, entryCats, entryCatRows, entryMethods, entryPickCat, entryStamp, entryResultText, entryFocusItem, entryCatSubmitted, entryMethodTab, entryDescOpen, entryMethodDetail, entryMethodVerOptions, entryOnVersion, entryMats, entryMatSelected, removeEntryMats, entryExtraFiles, onEntryExtraFile, removeEntryExtraFile, entryInstruments, entryInstrumentOptions, entrySpectra, removeEntrySpectrum, openEntrySpecPick, entrySpecVisible, entrySpecQuery, entrySpecFiles, entrySpecChecked, entrySpecBatches, entrySpecCols, entrySpecDraft, entrySpecFillCol, entrySpecFillAll, entrySpecAutoFill, confirmEntrySpecPick, entryPubParams, entryPubCols, entryPubCell, entrySetPubCell, entrySampParams, entrySampCols, entryCell, entrySetCell, entryLimitText, entryQuickExpandAll, entryQuickFilledCount, entryCategoryId, entryCategoryKw, filteredEntryCategories, spcProcessId, spcProcessKw, filteredSpcProcesses, activeChartTab, spcChartCards, envStat, costPivot, costFlowDlg, COST_DIMS, COST_MEASURES, COST_PRESETS, costFlowOpts, costDragStart, costDragOver, costDragDrop, costDragEnd, costRemoveDim, costMarkCustom, costAddDim, costApplyPreset, costPivotReset, costPivotQuery, costPivotRowClass, costOpenFlow, costPivotExport, batchTrace, batchRelAddLine, batchRelCopyLine, batchRelDelLine, envStatNames, envStatItemOptions, envStatOnName, envStatQuery, envStatReset, envStatOpenSet, envStatSaveSet, envStatOpenSamples, envStatExport, treeListId, treeListKw, filteredTreeListNodes, onTreeListOp, waitSampInnerTab, waitSampSampleRows, waitSampSampleSelected, waitSampItemRows, waitSampItemSelected, waitSampSchemeItemCount, waitSampTempItemCount, waitSampItemSourceLabel, addWaitSampSample, refreshWaitSampCodes, removeWaitSampSamples, addWaitSampItem, removeWaitSampItems, recheckSampleRows, disposeDetailRows, disposeDetailSelected, initDisposeDetailRows, batchDisposeReceive, mrbWritebackVisible, saveMrbWriteback, mrbWriteback, disposeDetailVisible, disposeDetailViewRows, DRIFT_PAGE, DRIFT_TR_OPTS, DRIFT_INSP_OPTS, DRIFT_UCL_OPS, DRIFT_LCL_OPS, driftInnerTab, driftRangeRows, driftRangeSelected, driftKnownRows, driftKnownSelected, driftRrtRows, driftRrtSelected, driftMatRows, driftMatSelected, driftPointRows, driftPointSelected, driftColRows, driftColSelected, addDriftRangeRow, addDriftRrtRow, addDriftKnownRow, onDriftMainPeak, removeDriftRows, schemeInnerTab, schemeQualRows, schemeQuantRows, schemeQualSelected, schemeQuantSelected, schemePointRows, schemeMatRows, schemeCustRows, schemeSuppRows, schemeMediaRows, schemeItemDrawerVisible, schemeItemDrawerKind, schemeItemDrawerQ, schemeItemDrawerTick, schemeItemDrawerRows, schemeItemDrawerSelected, openSchemeItemDrawer, confirmSchemeItemDrawer, removeSchemeRows, schemeRelDrawerVisible, schemeRelDrawerKind, schemeRelDrawerTitle, schemeRelDrawerRows, schemeRelDrawerColumns, schemeRelDrawerSelected, schemeRelDrawerTableRef, schemeRelDrawerRowKey, onSchemeRelDrawerSelect, clearSchemeRelDrawerSelect, openSchemeRelDrawer, confirmSchemeRelDrawer, resetSchemeRelDrawerQ, schemeRelDrawerQ, schemeRelDrawerTick, addSchemeMedium, schemeLimitOps, openSchemeUnitDrawer, openItemUomUnitDrawer, onSchemeFnChange, schemePointSelected, schemeMatSelected, schemeCustSelected, schemeSuppSelected, removeSchemeRelRows, schemeQualEnumDrawerVisible, schemeQualEnumDraft, schemeQualEnumSelected, schemeQualEnumEnableOther, openSchemeQualEnumDrawer, addSchemeQualEnumItem, removeSchemeQualEnumItems, confirmSchemeQualEnumDrawer, renumberSchemeQualEnum, sampInnerTab, sampInspectTypes, sampRuleRows, sampRuleSelected, sampMatRows, sampMatSelected, sampFormulaVisible, sampFormulaValue, onSampTypeChange, isSampRuleFirst, isSampRuleLast, normalizeSampRuleFixed, removeSampRuleRow, removeSampMatRows, openSampFormula, insertSampFormulaFn, confirmSampFormula, validateSampRules, addSampRuleRow, removeSampRuleRows, autoSampDetailRows, autoSampDetailSelected, autoSampPickVisible, autoSampPickKind, autoSampPickTitle, autoSampPickQ, autoSampPickTick, autoSampPickRows, autoSampPickColumns, autoSampPickMulti, autoSampPickCurrent, autoSampPickSelected, openAutoSampPick, resetAutoSampPickQ, confirmAutoSampPick, copyAutoSampDetail, validateAutoSampDetails, addAutoSampDetail, removeAutoSampDetails, inspMethodPublicParams, inspMethodSampleParams, inspMethodPublicSelected, inspMethodSampleSelected, inspMethodInnerTab, inspMethodMatRows, inspMethodMatSelected, inspMethodMatCatRows, inspMethodMatCatSelected, METHOD_MAT_SRCS, methodMatSrc, onMethodMatSrcTab, openMethodMatSupp, openMethodMatUnit, removeInspMethodMats, addInspMethodMatCat, copyInspMethodMatCat, removeInspMethodMatCats, openMethodMatCatMat, clearMethodMatCatMat, openMethodMatCatCat, clearMethodMatCatCat, methodVerVisible, methodVerTitle, methodVerRows, methodVerCount, openMethodVerDetail, onInspMethodFile, inspParamDrawerVisible, inspParamDrawerQ, inspParamDrawerTick, inspParamDrawerRows, inspParamDrawerSelected, openInspParamDrawer, resetInspParamDrawerQ, confirmInspParamDrawer, removeInspMethodParams, onInspMethodPublicToggle, onInspMethodPublicTimesChange, inspCatInstrumentTypeOptions, INSP_CAT_ATTRS, inspItemUnitDrawerVisible, inspItemUnitDrawerTitle, inspItemUnitDrawerQ, inspItemUnitDrawerTick, inspItemUnitDrawerRows, inspItemUnitDrawerCurrent, inspItemUnitDrawerSelectedKey, inspItemUnitTableRef, inspItemUnitRowKey, selectInspItemUnitRow, onInspItemUnitRowClick, onInspItemUnitCurrentChange, clearInspItemUnitDrawer, openInspItemUnitDrawer, confirmInspItemUnitDrawer, poMatPool, formLineSelected, dispatchAuditVisible, dispatchAuditRow, dispatchAuditForm, splitVisible, splitRow, splitForm, splitLines, splitLineSelected, splitNeedsOrder, splitShowPreDoc, splitShowSoShipPreDocs, splitShowSoPreoutPrepDoc, splitPreDocRequired, splitShowPo, onSplitOrderTypeChange, openSplitPicker, settleVisible, settleRows, settleForm, totalSettleQty, totalSettleFee, openSettleModal, onSettleOk, secondaryAssignVisible, secondaryAssignRow, secondaryAssignForm, resetSecondaryAssignForm, onSecondaryAssignOk, assignVisible, assignRow, assignForm, assignCarriers, assignVehicles, assignTrailers, activeFormFields, activeFormLineFields, formLineEmptyText, formLineRows, formCatRows, formCatSelected, onDispatchCatAction, formInstRows, formInstSelected, onDispatchInstAction, onGsDragStart, onGsDrop, onFormLineSelectChange,
       kpiCfgVisible, kpiGrades, kpiGradeSel, kpiProjects, kpiProjSel, kpiScoreVisible, kpiScoreReadonly, kpiScoreVendor, kpiScoreProjects, kpiScoreExplain, kpiScoreRemark, kpiScoreTotal, kpiScoreGrade, kpiVendorRows, kpiVendorCols, kpiVendorSel,
       kpiFlowVisible, kpiFlowRow, kpiFlowNodes, kpiFlowStamp, kpiFlowStampClass,
       qcInspectVisible, qcInspectRow, qcInspectForm,
@@ -44521,7 +45006,7 @@ const app = createApp({
       batchVisible, batchTitle, batchForm, batchLines, batchSelected, batchFieldSource, batchCtx, isBatchFieldLocked, batchLockedDisplay, batchSelectOptions, resetBatchCtx, onDetailLineRowAction,
       craftVisible, craftProcVisible, craftProcForm, craftTitle, craftKw, craftZoom, craftLocked, craftNodes, filteredCraftProcs, craftEdgeLines,
       openCraftProc, onCraftProcOk,
-      MSA_TIPS, MSA_STD_KEYS, msaFormVisible, msaFormMode, msaTab, msaForm, msaInsts, msaInstSel, msaStds, msaStdSel, msaItems, msaItemSel, msaSpecOf, onMsaAction, msaRemoveItems, msaItemHead, saveMsaForm, msaDtVisible, msaDtKeys, msaDtPlan, msaDtGroups, msaEntryDisabled, onMsaEntryOp, msaEn, msaEnStd, msaEnItems, msaEnRows, msaEnCalc, msaImport, saveMsaEntry, msaPrec, msaFmt, msaPv, stbFormVisible, stbFormMode, stbTab, stbForm, stbInsts, stbInstSel, stbStds, stbStdSel, stbItems, stbItemSel, onStbAction, stbRemoveItems, saveStbForm, stbDtVisible, stbDtPlan, stbMeasures, stbMeasureSel, stbDtStd, stbFinishTip, stbAddMeasure, stbDelMeasures, stbFinish, stbEntryDisabled, onStbEntryOp, stbEn, stbEnStd, stbEnItems, stbImport, saveStbEntry, stbPv, biasFormVisible, biasFormMode, biasForm, biasInstOptions, biasPeople, biasTypes, onBiasInst, refreshBiasNo, saveBiasForm, biasDtVisible, biasDt, biasDtKeys, biasAn, biasAnStats, biasCell, biasFmtNum, saveBiasEntry, biasDownloadTpl, biasImport, biasFilesVisible, biasFileNo, openBiasFiles, openBiasPreview, biasPv, qcDownload, ElMessage, tagClass, srShare, saveSrShare, copySrShare, srFill, submitSrFill, srReview, openSrReview, submitSrReview, srExt, srExtLogin, srExtKeys, srExtVal, openSrFill, refreshHmExpire, hmHist, openHmHistDetail, hmCmp, hmArchLineTab, hmArchPlant, hmArchCust, hmArchLaw, hmArchPlantSel, hmArchCustSel, hmArchLawSel, hmArchAddLine, hmArchDelLines, hmCmpPassCount, hmCmpFailCount, hmCmpSkipCount, hmCmpRowClass, hmCmpValStyle, confirmHmCompare, hmFilePick, hmVoidPickRows, hmFilePickRows, confirmHmFilePick, refreshHmChgExpire, designVisible, designTitle, designBasic, designAdvanced, designCanvas, designFormName, designFormTitle, designActive, designActiveField, designDragType, formPreviewVisible, djExecVisible, djExecReadonly, djExecRow, djExecData, djExecFields, djExecHead, djExecFormName, djSign, saveDjExec, labInspExecVisible, labInspExecReadonly, labInspExecRow, labInspExecData, labInspExecFields, labInspExecFormName, labInspExecHead, openLabInspExec, labInspSign, saveLabInspExec, tyK, instDictOpts, tyDetailVisible, tyDetail, tyDetailKeys, tyDetailLines, TY_NOTICE_KEYS, TY_NOTICE_REQ, AP_TYPES, AP_LEADERS, AP_WAYS, AP_REMIND, AP_UNITS, tyTypes, tyFormVisible, tyFormMode, tyFormLines, tyFormSel, tyForm, onTyLineAction, saveTyForm, tyApVisible, tyApBatch, tyApRows, tyApSel, tyAp, tyApFlows, tyApLocked, tyApUsers, loadTyFlow, addTyNode, copyTyNode, removeTyNodes, onTyApType, onTyApField, submitTyAp, tyAuditVisible, tyAuditForm, tyAuditNode, submitTyAudit, sgVisible, sgMode, sgTab, sgForm, sgTitle, sgSchemeText, SG_ZERO, SG_ROUND, SG_TAKE, sgLineSel, openSgPick, removeSgSchemes, saveSg, sgPickVisible, sgPickCode, sgPickName, sgPickQuery, sgPickRows, sgPickSel, confirmSgPick, srVisible, srMode, srForm, srTitle, srPartyLabel, srMonthOpts, SR_DIMS, SR_WEEK, srSchemeOpts, srItemOpts, srFillItems, openSrPick, srOnDim, srOnTarget, saveSr, deleteSr, srSpcVisible, srSpcMenu, srSpcKey, srSpc, srRuleNames, srToggleAll, srToggleOne, srRestore, saveSrSpc, SR_FILTER_ROWS, SR_ZERO, SR_ROUND, SR_TAKE, SR_GROUP_SECS, SR_CHART_TYPES, SR_TIP_FIELDS, SR_DASH, srClearFilter, srRestoreGroup, srRestoreLimit, srRestoreView, srOnTake, srEnsureTips, srToggleLimit, srToggleTipAll, srToggleTipOne, acVisible, acMode, acForm, acTitle, acPartyLabel, AC_METRICS, acSchemeOpts, openAcPick, acOnTarget, saveAc, deleteAc, MY_WX_PAGE, WO_LINK_PAGES, YS_SECS, woFixTab, woParts, woPartSel, removeWoParts, roundWoPart, ysDlgVisible, ysDlgBatch, ysDlgRows, ysForm, saveYsDlg, WO_PAGE, CL_REPAIR, WO_FIX_SECS, bxFormKind, bxFaultLocked, saveWoForm, bxExpTip, woFixVisible, woFixRow, woFix, openWoExp, saveWoFix, CL_WAYS, clDlgVisible, clDlgBatch, clDlgRows, clForm, clNeedRepair, clFaultTypes, saveClDraft, submitClDlg, maintTeamNames, bxDetailSecs, BX_INST_KEYS, BX_DETAIL, BX_FILE_KEYS, BX_TAG_KEYS, bxFormVisible, bxFormMode, bxFormTitle, bxFormLines, bxFormSel, bxForm, bxLineTypes, bxFaultTypes, onBxLineAction, saveBxForm, bxExpVisible, bxExpPick, bxExpRows, openBxExp, confirmBxExp, bxLinkVisible, bxLinkNos, bxLinkRows, goBxLink, bxDetailVisible, bxDetailRow, bxDetailTab, bxFlowNodes, openBxFlowNo, wjExecVisible, wjExecRow, wjExecLines, wjExecSel, onWjLineAction, onWjLineChange, openWjLineSupplier, saveWjExec, INST_PAGE, INST_BASE_FIELDS, INST_BASE_REQ, INST_CYCLE_UNITS, INST_DEPT_TREE, INST_DICTS, instTypeId, instTypeKw, instTypeList, instAllTypes, instCfgFieldList, onInstTypeQuery, selectInstType, onInstTypeOp, instTypeVisible, instTypeTitle, instTypeForm, openInstType, saveInstType, instCfgVisible, instCfgRows, instCfgSel, openInstCfg, addInstCfgRow, onInstCfgAttr, delInstCfgRows, saveInstCfg, instImageUrl, previewInstImage, instFormVisible, instFormMode, instFormTitle, instFormBase, instFormCfg, instFormOther, instUsers, onInstCodeInput, calcInstNext, onInstCycleInput, pickInstSupplier, saveInstForm, instLinkVisible, instLinkNos, instLinkRows, goInstLink, instIoTip, djMyUser, djMyUsers, isDjMyPage, isDjPlanPage,
+      MSA_TIPS, MSA_STD_KEYS, msaFormVisible, msaFormMode, msaTab, msaForm, msaInsts, msaInstSel, msaStds, msaStdSel, msaItems, msaItemSel, msaSpecOf, onMsaAction, msaRemoveItems, msaItemHead, saveMsaForm, msaDtVisible, msaDtKeys, msaDtPlan, msaDtGroups, msaEntryDisabled, onMsaEntryOp, msaEn, msaEnStd, msaEnItems, msaEnRows, msaEnCalc, msaImport, saveMsaEntry, msaPrec, msaFmt, msaPv, stbFormVisible, stbFormMode, stbTab, stbForm, stbInsts, stbInstSel, stbStds, stbStdSel, stbItems, stbItemSel, onStbAction, stbRemoveItems, saveStbForm, stbDtVisible, stbDtPlan, stbMeasures, stbMeasureSel, stbDtStd, stbFinishTip, stbAddMeasure, stbDelMeasures, stbFinish, stbEntryDisabled, onStbEntryOp, stbEn, stbEnStd, stbEnItems, stbImport, saveStbEntry, stbPv, biasFormVisible, biasFormMode, biasForm, biasInstOptions, biasPeople, biasTypes, onBiasInst, refreshBiasNo, saveBiasForm, biasDtVisible, biasDt, biasDtKeys, biasAn, biasAnStats, biasCell, biasFmtNum, saveBiasEntry, biasDownloadTpl, biasImport, biasFilesVisible, biasFileNo, openBiasFiles, openBiasPreview, biasPv, qcDownload, ElMessage, tagClass, srShare, saveSrShare, copySrShare, srFill, submitSrFill, srReview, openSrReview, submitSrReview, srExt, srExtLogin, srExtKeys, srExtVal, openSrFill, refreshHmExpire, hmHist, openHmHistDetail, hmCmp, hmArchLineTab, hmArchPlant, hmArchCust, hmArchLaw, hmArchPlantSel, hmArchCustSel, hmArchLawSel, hmImpEntryTab, hmImpEntryRows, hmImpEntrySel, hmImpAddEntryRows, openHmImpStdPick, hmImpDelEntryRows, hmImpCompareEntry, hmArchAddLine, hmArchDelLines, hmCmpPassCount, hmCmpFailCount, hmCmpSkipCount, hmCmpRowClass, hmCmpValStyle, confirmHmCompare, hmFilePick, hmVoidPickRows, hmFilePickRows, confirmHmFilePick, refreshHmChgExpire, designVisible, designTitle, designBasic, designAdvanced, designCanvas, designFormName, designFormTitle, designActive, designActiveField, designDragType, formPreviewVisible, djExecVisible, djExecReadonly, djExecRow, djExecData, djExecFields, djExecHead, djExecFormName, djSign, saveDjExec, labInspExecVisible, labInspExecReadonly, labInspExecRow, labInspExecData, labInspExecFields, labInspExecFormName, labInspExecHead, openLabInspExec, labInspSign, saveLabInspExec, tyK, instDictOpts, tyDetailVisible, tyDetail, tyDetailKeys, tyDetailLines, TY_NOTICE_KEYS, TY_NOTICE_REQ, AP_TYPES, AP_LEADERS, AP_WAYS, AP_REMIND, AP_UNITS, tyTypes, tyFormVisible, tyFormMode, tyFormLines, tyFormSel, tyForm, onTyLineAction, saveTyForm, tyApVisible, tyApBatch, tyApRows, tyApSel, tyAp, tyApFlows, tyApLocked, tyApUsers, loadTyFlow, addTyNode, copyTyNode, removeTyNodes, onTyApType, onTyApField, submitTyAp, tyAuditVisible, tyAuditForm, tyAuditNode, submitTyAudit, sgVisible, sgMode, sgTab, sgForm, sgTitle, sgSchemeText, SG_ZERO, SG_ROUND, SG_TAKE, sgLineSel, openSgPick, removeSgSchemes, saveSg, sgPickVisible, sgPickCode, sgPickName, sgPickQuery, sgPickRows, sgPickSel, confirmSgPick, srVisible, srMode, srForm, srTitle, srPartyLabel, srMonthOpts, SR_DIMS, SR_WEEK, srSchemeOpts, srItemOpts, srFillItems, openSrPick, srOnDim, srOnTarget, saveSr, deleteSr, srSpcVisible, srSpcMenu, srSpcKey, srSpc, srRuleNames, srToggleAll, srToggleOne, srRestore, saveSrSpc, SR_FILTER_ROWS, SR_ZERO, SR_ROUND, SR_TAKE, SR_GROUP_SECS, SR_CHART_TYPES, SR_TIP_FIELDS, SR_DASH, srClearFilter, srRestoreGroup, srRestoreLimit, srRestoreView, srOnTake, srEnsureTips, srToggleLimit, srToggleTipAll, srToggleTipOne, acVisible, acMode, acForm, acTitle, acPartyLabel, AC_METRICS, acSchemeOpts, openAcPick, acOnTarget, saveAc, deleteAc, MY_WX_PAGE, WO_LINK_PAGES, YS_SECS, woFixTab, woParts, woPartSel, removeWoParts, roundWoPart, ysDlgVisible, ysDlgBatch, ysDlgRows, ysForm, saveYsDlg, WO_PAGE, CL_REPAIR, WO_FIX_SECS, bxFormKind, bxFaultLocked, saveWoForm, bxExpTip, woFixVisible, woFixRow, woFix, openWoExp, saveWoFix, CL_WAYS, clDlgVisible, clDlgBatch, clDlgRows, clForm, clNeedRepair, clFaultTypes, saveClDraft, submitClDlg, maintTeamNames, bxDetailSecs, BX_INST_KEYS, BX_DETAIL, BX_FILE_KEYS, BX_TAG_KEYS, bxFormVisible, bxFormMode, bxFormTitle, bxFormLines, bxFormSel, bxForm, bxLineTypes, bxFaultTypes, onBxLineAction, saveBxForm, bxExpVisible, bxExpPick, bxExpRows, openBxExp, confirmBxExp, bxLinkVisible, bxLinkNos, bxLinkRows, goBxLink, bxDetailVisible, bxDetailRow, bxDetailTab, bxFlowNodes, openBxFlowNo, wjExecVisible, wjExecRow, wjExecLines, wjExecSel, onWjLineAction, onWjLineChange, openWjLineSupplier, saveWjExec, INST_PAGE, INST_BASE_FIELDS, INST_BASE_REQ, INST_CYCLE_UNITS, INST_DEPT_TREE, INST_DICTS, instTypeId, instTypeKw, instTypeList, instAllTypes, instCfgFieldList, onInstTypeQuery, selectInstType, onInstTypeOp, instTypeVisible, instTypeTitle, instTypeForm, openInstType, saveInstType, instCfgVisible, instCfgRows, instCfgSel, openInstCfg, addInstCfgRow, onInstCfgAttr, delInstCfgRows, saveInstCfg, instImageUrl, previewInstImage, instFormVisible, instFormMode, instFormTitle, instFormBase, instFormCfg, instFormOther, instUsers, onInstCodeInput, calcInstNext, onInstCycleInput, pickInstSupplier, saveInstForm, instLinkVisible, instLinkNos, instLinkRows, goInstLink, instIoTip, djMyUser, djMyUsers, isDjMyPage, isDjPlanPage,
       importVisible, exportVisible, opcRel, printVisible, printCodes, printTpl, printPrinter, openPrintLabel, qcView, clDevVisible, clDevForm, clDevOpts, clDevRule, confirmClDev, clSampleVisible, clSampleQuery, clSampleRows, clSampleCols, clSampleExpanded, consignPrintVisible, consignPrint,
       pickerVisible, pickerTitle, pickerDialogTitle, pickerKw, pickerPrepQ, pickerPrepFilterTick, pickerPrepSelQty, pickerPrepNeedQty, resetPickerPrepQ, pickerRows, pickerColumns, pickerDialogWidth, pickerMultiSelect, pickerCurrent, pickerSelected, pickerMode,
       mergeVisible, mergeForm, onMergeShipOk, onFormSelectChange, onFormTextInput,

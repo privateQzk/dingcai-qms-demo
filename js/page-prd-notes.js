@@ -395,10 +395,6 @@ window.WMS_PAGE_PRD_NOTES = {
     "title": "供应商整改 · 页面说明",
     "markdown": ""
   },
-  "np-0214-01": {
-    "title": "SIP文件管理 · 页面说明",
-    "markdown": ""
-  },
   "np-0215-01": {
     "title": "有害物质档案库 · 页面说明",
     "markdown": ""
@@ -761,6 +757,10 @@ window.WMS_PAGE_PRD_NOTES = {
   },
   "np-0215-07": {
     "title": "文件作废 · 页面说明",
+    "markdown": ""
+  },
+  "np-0201-17": {
+    "title": "卡塞信息表 · 页面说明",
     "markdown": ""
   }
 };

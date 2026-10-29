@@ -419,6 +419,11 @@ window.WMS_PAGE_CONFIGS = {
               "pageId": "np-0201-16"
             },
             {
+              "title": "卡塞信息表",
+              "index": "np-0201-17",
+              "pageId": "np-0201-17"
+            },
+            {
               "title": "发货OQC台账",
               "index": "np-0201-15",
               "pageId": "np-0201-15"
@@ -613,7 +618,8 @@ window.WMS_PAGE_CONFIGS = {
             {
               "title": "数据比对",
               "index": "np-0208-05",
-              "pageId": "np-0208-05"
+              "pageId": "np-0208-05",
+              "hidden": true
             }
           ]
         },
@@ -679,11 +685,6 @@ window.WMS_PAGE_CONFIGS = {
               "pageId": "np-0213-02"
             }
           ]
-        },
-        {
-          "title": "SIP文件管理",
-          "index": "np-0214-01",
-          "pageId": "np-0214-01"
         },
         {
           "title": "有害物质管理",
@@ -1192,6 +1193,7 @@ window.WMS_PAGE_CONFIGS = {
     {
       "title": "批次追溯",
       "index": "g-批次追溯",
+      "hidden": true,
       "children": [
         {
           "title": "批次关系事件表",
@@ -4333,6 +4335,17 @@ window.WMS_PAGE_CONFIGS = {
               "width": 160
             },
             {
+              "field": "作业说明",
+              "title": "作业说明",
+              "width": 160
+            },
+            {
+              "field": "作业附件",
+              "title": "作业附件",
+              "width": 180,
+              "slot": "files"
+            },
+            {
               "field": "备注",
               "title": "备注",
               "width": 120
@@ -4418,6 +4431,18 @@ window.WMS_PAGE_CONFIGS = {
               "type": "textarea",
               "required": false,
               "ctrl": "输入"
+            },
+            {
+              "name": "作业说明",
+              "type": "textarea",
+              "required": false,
+              "ctrl": "输入长文本"
+            },
+            {
+              "name": "作业附件",
+              "type": "upload",
+              "required": false,
+              "ctrl": "上传一个文件，列表展示文件名"
             },
             {
               "name": "启用状态",
@@ -13801,6 +13826,18 @@ window.WMS_PAGE_CONFIGS = {
           "ctrl": "仅研发检显示；日期时间选择；提交取样后反写报检单（研发检）的预计完成时间"
         },
         {
+          "name": "作业说明",
+          "type": "textarea",
+          "required": false,
+          "ctrl": "按报检单关联的抽样方案自动带入；只读"
+        },
+        {
+          "name": "作业附件",
+          "type": "upload",
+          "required": false,
+          "ctrl": "按报检单关联的抽样方案自动带入；可预览"
+        },
+        {
           "name": "取样备注",
           "type": "textarea",
           "required": false,
@@ -13843,6 +13880,20 @@ window.WMS_PAGE_CONFIGS = {
             "required": false,
             "placeholder": "选择日期时间",
             "tip": "仅研发检显示；日期时间选择；提交取样后反写报检单（研发检）的预计完成时间"
+          },
+          {
+            "name": "作业说明",
+            "type": "textarea",
+            "required": false,
+            "placeholder": "按抽样方案自动带入",
+            "readonly": true
+          },
+          {
+            "name": "作业附件",
+            "type": "upload",
+            "required": false,
+            "placeholder": "按抽样方案自动带入，可预览",
+            "preview": true
           },
           {
             "name": "取样备注",
@@ -44252,25 +44303,6 @@ window.WMS_PAGE_CONFIGS = {
           "placeholder": "保存后自动生成"
         },
         {
-          "name": "检验类",
-          "type": "picker",
-          "required": true,
-          "multiple": true,
-          "placeholder": "请点击选择，多选",
-          "ctrl": "点击右侧抽屉弹出检验类列表，多选；可按检验类编码/名称查询；回填检验类名称"
-        },
-        {
-          "name": "物料信息",
-          "type": "picker",
-          "required": false,
-          "multiple": true,
-          "placeholder": "不选则适用全部物料",
-          "ctrl": "点击右侧抽屉弹出物料列表，多选；可按物料编码/名称查询；回填「物料编码 / 物料名称 / 物料规格」",
-          "tipMark": "!",
-          "tipTitle": "说明：",
-          "tip": "1、点击右侧抽屉弹出「物料列表」的启用物料，多选；\n2、不选则适用全部物料，作为该检验类的兜底方案，也适用研发检、外来小样检等无物料编码的样品"
-        },
-        {
           "name": "标准工时",
           "type": "number-unit",
           "required": true,
@@ -44300,9 +44332,39 @@ window.WMS_PAGE_CONFIGS = {
       "hasDetail": false,
       "stub": false,
       "formFlat": true,
-      "formLineFields": [],
-      "formLineActions": [],
-      "formDialogWidth": "760px",
+      "formLineTabLabel": "物料信息",
+      "formLineTitle": "物料信息",
+      "formLineTip": "不选则适用全部物料（兜底方案）",
+      "formLineTextOnly": true,
+      "formLineFields": [
+        {
+          "name": "物料编码",
+          "type": "readonly"
+        },
+        {
+          "name": "物料名称",
+          "type": "readonly"
+        },
+        {
+          "name": "物料规格",
+          "type": "readonly"
+        },
+        {
+          "name": "物料种类",
+          "type": "readonly"
+        }
+      ],
+      "formLineActions": [
+        {
+          "name": "添加",
+          "type": "primary"
+        },
+        {
+          "name": "批量删除",
+          "type": "danger"
+        }
+      ],
+      "formDialogWidth": "960px",
       "formLabelWidth": "150px"
     },
     "np-0104-07": {
@@ -49847,7 +49909,7 @@ window.WMS_PAGE_CONFIGS = {
             {
               "name": "发起需求",
               "type": "default",
-              "desc": "勾选待发起的需求，状态改为已发起并推送"
+              "desc": "勾选后弹窗编辑测试要求（自动带入主列表），确定后回写并推送"
             },
             {
               "name": "批量删除",
@@ -51095,9 +51157,10 @@ window.WMS_PAGE_CONFIGS = {
               "name": "适用检验类型",
               "type": "select",
               "options": [
-                "原材料",
-                "生产过程",
-                "生产产品"
+                "采购来料检",
+                "生产过程检",
+                "生产物料检",
+                "研发检"
               ]
             },
             {
@@ -51262,9 +51325,10 @@ window.WMS_PAGE_CONFIGS = {
               "name": "适用检验类型",
               "type": "select",
               "options": [
-                "原材料",
-                "生产过程",
-                "生产产品"
+                "采购来料检",
+                "生产过程检",
+                "生产物料检",
+                "研发检"
               ]
             },
             {
@@ -51432,9 +51496,10 @@ window.WMS_PAGE_CONFIGS = {
           "type": "select",
           "required": true,
           "options": [
-            "原材料",
-            "生产过程",
-            "生产产品"
+            "采购来料检",
+            "生产过程检",
+            "生产物料检",
+            "研发检"
           ]
         },
         {
@@ -51518,9 +51583,10 @@ window.WMS_PAGE_CONFIGS = {
               "name": "检验类型",
               "type": "select",
               "options": [
-                "原材料",
-                "生产过程",
-                "生产产品"
+                "采购来料检",
+                "生产过程检",
+                "生产物料检",
+                "研发检"
               ]
             },
             {
@@ -51781,9 +51847,10 @@ window.WMS_PAGE_CONFIGS = {
               "name": "检验类型",
               "type": "select",
               "options": [
-                "原材料",
-                "生产过程",
-                "生产产品"
+                "采购来料检",
+                "生产过程检",
+                "生产物料检",
+                "研发检"
               ]
             },
             {
@@ -56858,36 +56925,6 @@ window.WMS_PAGE_CONFIGS = {
       "formLineFields": [],
       "formLineActions": []
     },
-    "np-0214-01": {
-      "id": "np-0214-01",
-      "title": "SIP文件管理",
-      "groups": [
-        "质量管理"
-      ],
-      "breadcrumb": [
-        "质量管理",
-        "SIP文件管理"
-      ],
-      "tabs": [],
-      "tabViews": [
-        {
-          "queryFields": [],
-          "toolbar": [],
-          "columns": [],
-          "rowOps": [],
-          "name": "main",
-          "label": ""
-        }
-      ],
-      "formFields": [],
-      "detailFields": [],
-      "hasEdit": false,
-      "hasDetail": false,
-      "stub": true,
-      "formFlat": true,
-      "formLineFields": [],
-      "formLineActions": []
-    },
     "np-0215-01": {
       "id": "np-0215-01",
       "title": "有害物质档案库",
@@ -58806,17 +58843,20 @@ window.WMS_PAGE_CONFIGS = {
                                                                                   "title": "操作",
                                                                                   "field": "_actions",
                                                                                   "name": "_actions",
-                                                                                  "width": 160,
+                                                                                  "width": 220,
                                                                                   "fixed": "right",
                                                                                   "slot": "row_actions"
                                                                                 }
                                                                               ],
                                                                               "rowOps": [
                                                                                 {
+                                                                                  "name": "确认导入"
+                                                                                },
+                                                                                {
                                                                                   "name": "编辑"
                                                                                 },
                                                                                 {
-                                                                                  "name": "确认导入"
+                                                                                  "name": "详情"
                                                                                 }
                                                                               ]
                                                                             }
@@ -58973,11 +59013,12 @@ window.WMS_PAGE_CONFIGS = {
                                                                           ],
                                                                           "detailFields": [],
                                                                           "hasEdit": true,
-                                                                          "hasDetail": false,
+                                                                          "hasDetail": true,
                                                                           "stub": false,
                                                                           "formFlat": true,
                                                                           "formLineFields": [],
-                                                                          "formLineActions": []
+                                                                          "formLineActions": [],
+                                                                          "formFullscreen": true
                                                                         },
     "np-0215-04": {
   "id": "np-0215-04",
@@ -81340,31 +81381,22 @@ window.WMS_PAGE_CONFIGS = {
       ],
       "formFields": [
         {
-          "name": "报检单类型",
-          "type": "select",
-          "required": true,
-          "ctrl": "必填；切换时清空已选样品编号、报检单号及带出字段",
-          "options": [
-            "采购来料检",
-            "生产过程检",
-            "生产物料检",
-            "生产SST检",
-            "研发检",
-            "外来小样检",
-            "库内复检"
-          ]
-        },
-        {
           "name": "样品编号",
           "type": "picker",
           "required": true,
-          "ctrl": "必填；需先选择报检单类型；点击右侧抽屉弹出样品列表，单选；按报检单类型过滤，不展示已完成状态样品；选择后自动带入报检单号"
+          "ctrl": "必填；点击右侧抽屉弹出「选择样品」列表，单选；不展示已完成状态样品；可按样品编号、物料名称查询；选择后自动带入报检单号、报检单类型及物料信息"
         },
         {
           "name": "报检单号",
           "type": "readonly",
           "required": false,
-          "ctrl": "选择样品编号后自动代入"
+          "ctrl": "根据样品自动带入"
+        },
+        {
+          "name": "报检单类型",
+          "type": "readonly",
+          "required": true,
+          "ctrl": "根据样品自动带入"
         },
         {
           "name": "物料编码",
@@ -81880,7 +81912,7 @@ window.WMS_PAGE_CONFIGS = {
             {
               "name": "发起需求",
               "type": "default",
-              "desc": "勾选待发起的需求，状态改为已发起并推送"
+              "desc": "勾选后弹窗编辑制板要求（自动带入主列表），确定后回写并推送"
             },
             {
               "name": "批量删除",
@@ -82181,6 +82213,205 @@ window.WMS_PAGE_CONFIGS = {
       "formFlat": true,
       "formLineFields": [],
       "formLineActions": []
+    },
+    "np-0201-17": {
+      "id": "np-0201-17",
+      "title": "卡塞信息表",
+      "groups": [
+        "质量管理",
+        "检验管理"
+      ],
+      "breadcrumb": [
+        "质量管理",
+        "检验管理",
+        "卡塞信息表"
+      ],
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [
+            {
+              "name": "信息流水号",
+              "type": "input"
+            },
+            {
+              "name": "卡塞编号",
+              "type": "input"
+            },
+            {
+              "name": "卡塞类型",
+              "type": "select",
+              "options": [
+                "光刻胶生产",
+                "光刻胶研发"
+              ]
+            }
+          ],
+          "toolbar": [
+            {
+              "name": "新增",
+              "type": "primary",
+              "desc": "打开「新增卡塞」弹窗"
+            },
+            {
+              "name": "批量删除",
+              "type": "danger",
+              "desc": "删除勾选的卡塞信息"
+            }
+          ],
+          "columns": [
+            {
+              "field": "信息流水号",
+              "title": "信息流水号",
+              "width": 160,
+              "fixed": "left"
+            },
+            {
+              "field": "卡塞编号",
+              "title": "卡塞编号",
+              "width": 140
+            },
+            {
+              "field": "卡塞类型",
+              "title": "卡塞类型",
+              "width": 120,
+              "slot": "tag"
+            },
+            {
+              "field": "关联玻璃板数",
+              "title": "关联玻璃板数",
+              "width": 120
+            },
+            {
+              "field": "创建人",
+              "title": "创建人",
+              "width": 100
+            },
+            {
+              "field": "创建时间",
+              "title": "创建时间",
+              "width": 160
+            },
+            {
+              "field": "_actions",
+              "title": "操作",
+              "width": 90,
+              "fixed": "right",
+              "slot": "row_actions"
+            }
+          ],
+          "rowOps": [
+            {
+              "name": "详情"
+            }
+          ]
+        }
+      ],
+      "formFields": [
+        {
+          "name": "信息流水号",
+          "type": "readonly",
+          "required": false,
+          "placeholder": "系统自动生成"
+        },
+        {
+          "name": "卡塞编号",
+          "type": "input",
+          "required": true,
+          "placeholder": "请输入"
+        },
+        {
+          "name": "卡塞类型",
+          "type": "select",
+          "required": true,
+          "options": [
+            "光刻胶生产",
+            "光刻胶研发"
+          ]
+        }
+      ],
+      "detailFields": [
+        {
+          "name": "信息流水号"
+        },
+        {
+          "name": "卡塞编号"
+        },
+        {
+          "name": "卡塞类型"
+        },
+        {
+          "name": "创建人"
+        },
+        {
+          "name": "创建时间"
+        }
+      ],
+      "detailLineTitle": "关联玻璃板",
+      "detailLineFields": [
+        {
+          "name": "玻璃板序号"
+        },
+        {
+          "name": "批次号"
+        },
+        {
+          "name": "样品编号"
+        },
+        {
+          "name": "物料编码"
+        },
+        {
+          "name": "物料名称"
+        }
+      ],
+      "hasEdit": false,
+      "hasDetail": true,
+      "stub": false,
+      "formFlat": true,
+      "formLineTabLabel": "关联玻璃板",
+      "formLineTitle": "关联玻璃板",
+      "formLineTip": "记录卡塞内各批次玻璃板；可不填",
+      "formLineFields": [
+        {
+          "name": "玻璃板序号",
+          "type": "readonly"
+        },
+        {
+          "name": "批次号",
+          "type": "input",
+          "placeholder": "请输入"
+        },
+        {
+          "name": "样品编号",
+          "type": "input",
+          "placeholder": "请输入"
+        },
+        {
+          "name": "物料编码",
+          "type": "input",
+          "placeholder": "请输入"
+        },
+        {
+          "name": "物料名称",
+          "type": "input",
+          "placeholder": "请输入"
+        }
+      ],
+      "formLineActions": [
+        {
+          "name": "添加",
+          "type": "primary"
+        },
+        {
+          "name": "批量删除",
+          "type": "danger"
+        }
+      ],
+      "formDialogWidth": "960px",
+      "formLabelWidth": "120px"
     },
     "np-0201-05": {
       "id": "np-0201-05",
@@ -85680,6 +85911,17 @@ window.WMS_PAGE_CONFIGS = {
               "width": 160
             },
             {
+              "field": "作业说明",
+              "title": "作业说明",
+              "width": 160
+            },
+            {
+              "field": "作业附件",
+              "title": "作业附件",
+              "width": 180,
+              "slot": "files"
+            },
+            {
               "field": "备注",
               "title": "备注",
               "width": 120
@@ -85765,6 +86007,18 @@ window.WMS_PAGE_CONFIGS = {
               "type": "textarea",
               "required": false,
               "ctrl": "输入"
+            },
+            {
+              "name": "作业说明",
+              "type": "textarea",
+              "required": false,
+              "ctrl": "输入长文本"
+            },
+            {
+              "name": "作业附件",
+              "type": "upload",
+              "required": false,
+              "ctrl": "上传一个文件，列表展示文件名"
             },
             {
               "name": "启用状态",
@@ -95147,6 +95401,18 @@ window.WMS_PAGE_CONFIGS = {
           "ctrl": "仅研发检显示；日期时间选择；提交取样后反写报检单（研发检）的预计完成时间"
         },
         {
+          "name": "作业说明",
+          "type": "textarea",
+          "required": false,
+          "ctrl": "按报检单关联的抽样方案自动带入；只读"
+        },
+        {
+          "name": "作业附件",
+          "type": "upload",
+          "required": false,
+          "ctrl": "按报检单关联的抽样方案自动带入；可预览"
+        },
+        {
           "name": "取样备注",
           "type": "textarea",
           "required": false,
@@ -95189,6 +95455,20 @@ window.WMS_PAGE_CONFIGS = {
             "required": false,
             "placeholder": "选择日期时间",
             "tip": "仅研发检显示；日期时间选择；提交取样后反写报检单（研发检）的预计完成时间"
+          },
+          {
+            "name": "作业说明",
+            "type": "textarea",
+            "required": false,
+            "placeholder": "按抽样方案自动带入",
+            "readonly": true
+          },
+          {
+            "name": "作业附件",
+            "type": "upload",
+            "required": false,
+            "placeholder": "按抽样方案自动带入，可预览",
+            "preview": true
           },
           {
             "name": "取样备注",
@@ -129429,25 +129709,6 @@ window.WMS_PAGE_CONFIGS = {
           "placeholder": "保存后自动生成"
         },
         {
-          "name": "检验类",
-          "type": "picker",
-          "required": true,
-          "multiple": true,
-          "placeholder": "请点击选择，多选",
-          "ctrl": "点击右侧抽屉弹出检验类列表，多选；可按检验类编码/名称查询；回填检验类名称"
-        },
-        {
-          "name": "物料信息",
-          "type": "picker",
-          "required": false,
-          "multiple": true,
-          "placeholder": "不选则适用全部物料",
-          "ctrl": "点击右侧抽屉弹出物料列表，多选；可按物料编码/名称查询；回填「物料编码 / 物料名称 / 物料规格」",
-          "tipMark": "!",
-          "tipTitle": "说明：",
-          "tip": "1、点击右侧抽屉弹出「物料列表」的启用物料，多选；\n2、不选则适用全部物料，作为该检验类的兜底方案，也适用研发检、外来小样检等无物料编码的样品"
-        },
-        {
           "name": "标准工时",
           "type": "number-unit",
           "required": true,
@@ -129477,9 +129738,39 @@ window.WMS_PAGE_CONFIGS = {
       "hasDetail": false,
       "stub": false,
       "formFlat": true,
-      "formLineFields": [],
-      "formLineActions": [],
-      "formDialogWidth": "760px",
+      "formLineTabLabel": "物料信息",
+      "formLineTitle": "物料信息",
+      "formLineTip": "不选则适用全部物料（兜底方案）",
+      "formLineTextOnly": true,
+      "formLineFields": [
+        {
+          "name": "物料编码",
+          "type": "readonly"
+        },
+        {
+          "name": "物料名称",
+          "type": "readonly"
+        },
+        {
+          "name": "物料规格",
+          "type": "readonly"
+        },
+        {
+          "name": "物料种类",
+          "type": "readonly"
+        }
+      ],
+      "formLineActions": [
+        {
+          "name": "添加",
+          "type": "primary"
+        },
+        {
+          "name": "批量删除",
+          "type": "danger"
+        }
+      ],
+      "formDialogWidth": "960px",
       "formLabelWidth": "150px"
     },
     {
@@ -131416,7 +131707,7 @@ window.WMS_PAGE_CONFIGS = {
             {
               "name": "发起需求",
               "type": "default",
-              "desc": "勾选待发起的需求，状态改为已发起并推送"
+              "desc": "勾选后弹窗编辑测试要求（自动带入主列表），确定后回写并推送"
             },
             {
               "name": "批量删除",
@@ -131825,7 +132116,7 @@ window.WMS_PAGE_CONFIGS = {
             {
               "name": "发起需求",
               "type": "default",
-              "desc": "勾选待发起的需求，状态改为已发起并推送"
+              "desc": "勾选后弹窗编辑制板要求（自动带入主列表），确定后回写并推送"
             },
             {
               "name": "批量删除",
@@ -132126,6 +132417,205 @@ window.WMS_PAGE_CONFIGS = {
       "formFlat": true,
       "formLineFields": [],
       "formLineActions": []
+    },
+    {
+      "id": "np-0201-17",
+      "title": "卡塞信息表",
+      "groups": [
+        "质量管理",
+        "检验管理"
+      ],
+      "breadcrumb": [
+        "质量管理",
+        "检验管理",
+        "卡塞信息表"
+      ],
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [
+            {
+              "name": "信息流水号",
+              "type": "input"
+            },
+            {
+              "name": "卡塞编号",
+              "type": "input"
+            },
+            {
+              "name": "卡塞类型",
+              "type": "select",
+              "options": [
+                "光刻胶生产",
+                "光刻胶研发"
+              ]
+            }
+          ],
+          "toolbar": [
+            {
+              "name": "新增",
+              "type": "primary",
+              "desc": "打开「新增卡塞」弹窗"
+            },
+            {
+              "name": "批量删除",
+              "type": "danger",
+              "desc": "删除勾选的卡塞信息"
+            }
+          ],
+          "columns": [
+            {
+              "field": "信息流水号",
+              "title": "信息流水号",
+              "width": 160,
+              "fixed": "left"
+            },
+            {
+              "field": "卡塞编号",
+              "title": "卡塞编号",
+              "width": 140
+            },
+            {
+              "field": "卡塞类型",
+              "title": "卡塞类型",
+              "width": 120,
+              "slot": "tag"
+            },
+            {
+              "field": "关联玻璃板数",
+              "title": "关联玻璃板数",
+              "width": 120
+            },
+            {
+              "field": "创建人",
+              "title": "创建人",
+              "width": 100
+            },
+            {
+              "field": "创建时间",
+              "title": "创建时间",
+              "width": 160
+            },
+            {
+              "field": "_actions",
+              "title": "操作",
+              "width": 90,
+              "fixed": "right",
+              "slot": "row_actions"
+            }
+          ],
+          "rowOps": [
+            {
+              "name": "详情"
+            }
+          ]
+        }
+      ],
+      "formFields": [
+        {
+          "name": "信息流水号",
+          "type": "readonly",
+          "required": false,
+          "placeholder": "系统自动生成"
+        },
+        {
+          "name": "卡塞编号",
+          "type": "input",
+          "required": true,
+          "placeholder": "请输入"
+        },
+        {
+          "name": "卡塞类型",
+          "type": "select",
+          "required": true,
+          "options": [
+            "光刻胶生产",
+            "光刻胶研发"
+          ]
+        }
+      ],
+      "detailFields": [
+        {
+          "name": "信息流水号"
+        },
+        {
+          "name": "卡塞编号"
+        },
+        {
+          "name": "卡塞类型"
+        },
+        {
+          "name": "创建人"
+        },
+        {
+          "name": "创建时间"
+        }
+      ],
+      "detailLineTitle": "关联玻璃板",
+      "detailLineFields": [
+        {
+          "name": "玻璃板序号"
+        },
+        {
+          "name": "批次号"
+        },
+        {
+          "name": "样品编号"
+        },
+        {
+          "name": "物料编码"
+        },
+        {
+          "name": "物料名称"
+        }
+      ],
+      "hasEdit": false,
+      "hasDetail": true,
+      "stub": false,
+      "formFlat": true,
+      "formLineTabLabel": "关联玻璃板",
+      "formLineTitle": "关联玻璃板",
+      "formLineTip": "记录卡塞内各批次玻璃板；可不填",
+      "formLineFields": [
+        {
+          "name": "玻璃板序号",
+          "type": "readonly"
+        },
+        {
+          "name": "批次号",
+          "type": "input",
+          "placeholder": "请输入"
+        },
+        {
+          "name": "样品编号",
+          "type": "input",
+          "placeholder": "请输入"
+        },
+        {
+          "name": "物料编码",
+          "type": "input",
+          "placeholder": "请输入"
+        },
+        {
+          "name": "物料名称",
+          "type": "input",
+          "placeholder": "请输入"
+        }
+      ],
+      "formLineActions": [
+        {
+          "name": "添加",
+          "type": "primary"
+        },
+        {
+          "name": "批量删除",
+          "type": "danger"
+        }
+      ],
+      "formDialogWidth": "960px",
+      "formLabelWidth": "120px"
     },
     {
       "id": "np-0201-15",
@@ -133057,9 +133547,10 @@ window.WMS_PAGE_CONFIGS = {
               "name": "适用检验类型",
               "type": "select",
               "options": [
-                "原材料",
-                "生产过程",
-                "生产产品"
+                "采购来料检",
+                "生产过程检",
+                "生产物料检",
+                "研发检"
               ]
             },
             {
@@ -133224,9 +133715,10 @@ window.WMS_PAGE_CONFIGS = {
               "name": "适用检验类型",
               "type": "select",
               "options": [
-                "原材料",
-                "生产过程",
-                "生产产品"
+                "采购来料检",
+                "生产过程检",
+                "生产物料检",
+                "研发检"
               ]
             },
             {
@@ -133394,9 +133886,10 @@ window.WMS_PAGE_CONFIGS = {
           "type": "select",
           "required": true,
           "options": [
-            "原材料",
-            "生产过程",
-            "生产产品"
+            "采购来料检",
+            "生产过程检",
+            "生产物料检",
+            "研发检"
           ]
         },
         {
@@ -133480,9 +133973,10 @@ window.WMS_PAGE_CONFIGS = {
               "name": "检验类型",
               "type": "select",
               "options": [
-                "原材料",
-                "生产过程",
-                "生产产品"
+                "采购来料检",
+                "生产过程检",
+                "生产物料检",
+                "研发检"
               ]
             },
             {
@@ -133743,9 +134237,10 @@ window.WMS_PAGE_CONFIGS = {
               "name": "检验类型",
               "type": "select",
               "options": [
-                "原材料",
-                "生产过程",
-                "生产产品"
+                "采购来料检",
+                "生产过程检",
+                "生产物料检",
+                "研发检"
               ]
             },
             {
@@ -138821,36 +139316,6 @@ window.WMS_PAGE_CONFIGS = {
       "formLineActions": []
     },
     {
-      "id": "np-0214-01",
-      "title": "SIP文件管理",
-      "groups": [
-        "质量管理"
-      ],
-      "breadcrumb": [
-        "质量管理",
-        "SIP文件管理"
-      ],
-      "tabs": [],
-      "tabViews": [
-        {
-          "queryFields": [],
-          "toolbar": [],
-          "columns": [],
-          "rowOps": [],
-          "name": "main",
-          "label": ""
-        }
-      ],
-      "formFields": [],
-      "detailFields": [],
-      "hasEdit": false,
-      "hasDetail": false,
-      "stub": true,
-      "formFlat": true,
-      "formLineFields": [],
-      "formLineActions": []
-    },
-    {
       "id": "np-0215-01",
       "title": "有害物质档案库",
       "groups": [
@@ -140768,17 +141233,20 @@ window.WMS_PAGE_CONFIGS = {
                           "title": "操作",
                           "field": "_actions",
                           "name": "_actions",
-                          "width": 160,
+                          "width": 220,
                           "fixed": "right",
                           "slot": "row_actions"
                         }
                       ],
                       "rowOps": [
                         {
+                          "name": "确认导入"
+                        },
+                        {
                           "name": "编辑"
                         },
                         {
-                          "name": "确认导入"
+                          "name": "详情"
                         }
                       ]
                     }
@@ -140935,11 +141403,12 @@ window.WMS_PAGE_CONFIGS = {
                   ],
                   "detailFields": [],
                   "hasEdit": true,
-                  "hasDetail": false,
+                  "hasDetail": true,
                   "stub": false,
                   "formFlat": true,
                   "formLineFields": [],
-                  "formLineActions": []
+                  "formLineActions": [],
+                                                                          "formFullscreen": true
                 },
     {
   "id": "np-0215-04",
@@ -163301,31 +163770,22 @@ window.WMS_PAGE_CONFIGS = {
       ],
       "formFields": [
         {
-          "name": "报检单类型",
-          "type": "select",
-          "required": true,
-          "ctrl": "必填；切换时清空已选样品编号、报检单号及带出字段",
-          "options": [
-            "采购来料检",
-            "生产过程检",
-            "生产物料检",
-            "生产SST检",
-            "研发检",
-            "外来小样检",
-            "库内复检"
-          ]
-        },
-        {
           "name": "样品编号",
           "type": "picker",
           "required": true,
-          "ctrl": "必填；需先选择报检单类型；点击右侧抽屉弹出样品列表，单选；按报检单类型过滤，不展示已完成状态样品；选择后自动带入报检单号"
+          "ctrl": "必填；点击右侧抽屉弹出「选择样品」列表，单选；不展示已完成状态样品；可按样品编号、物料名称查询；选择后自动带入报检单号、报检单类型及物料信息"
         },
         {
           "name": "报检单号",
           "type": "readonly",
           "required": false,
-          "ctrl": "选择样品编号后自动代入"
+          "ctrl": "根据样品自动带入"
+        },
+        {
+          "name": "报检单类型",
+          "type": "readonly",
+          "required": true,
+          "ctrl": "根据样品自动带入"
         },
         {
           "name": "物料编码",
