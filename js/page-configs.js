@@ -344,7 +344,7 @@ window.WMS_PAGE_CONFIGS = {
               "pageId": "wait-samp"
             },
             {
-              "title": "任务分配",
+              "title": "任务分派",
               "index": "np-0201-13",
               "pageId": "np-0201-13"
             },
@@ -9586,18 +9586,6 @@ window.WMS_PAGE_CONFIGS = {
               "width": 130
             },
             {
-              "title": "稳定性方案",
-              "field": "稳定性方案",
-              "name": "稳定性方案",
-              "width": 110
-            },
-            {
-              "title": "计划检验日期",
-              "field": "计划检验日期",
-              "name": "计划检验日期",
-              "width": 120
-            },
-            {
               "title": "预计送样时间",
               "field": "预计送样时间",
               "name": "预计送样时间",
@@ -9903,18 +9891,6 @@ window.WMS_PAGE_CONFIGS = {
                   "required": false,
                   "ctrl": "输入",
                   "labelRed": true
-                },
-                {
-                  "name": "稳定性方案",
-                  "type": "input",
-                  "required": false,
-                  "ctrl": "输入"
-                },
-                {
-                  "name": "计划检验日期",
-                  "type": "date",
-                  "required": true,
-                  "ctrl": "选择日期"
                 }
               ]
             },
@@ -10051,18 +10027,6 @@ window.WMS_PAGE_CONFIGS = {
               "required": false,
               "ctrl": "输入",
               "labelRed": true
-            },
-            {
-              "name": "稳定性方案",
-              "type": "input",
-              "required": false,
-              "ctrl": "输入"
-            },
-            {
-              "name": "计划检验日期",
-              "type": "date",
-              "required": true,
-              "ctrl": "选择日期"
             },
             {
               "name": "应取样件数",
@@ -13050,12 +13014,6 @@ window.WMS_PAGE_CONFIGS = {
               "width": 110
             },
             {
-              "title": "计划检验日期",
-              "field": "计划检验日期",
-              "name": "计划检验日期",
-              "width": 120
-            },
-            {
               "title": "应取样件数",
               "field": "应取样件数",
               "name": "应取样件数",
@@ -14845,18 +14803,6 @@ window.WMS_PAGE_CONFIGS = {
               "field": "报检批号",
               "name": "报检批号",
               "width": 110
-            },
-            {
-              "title": "稳定性方案",
-              "field": "稳定性方案",
-              "name": "稳定性方案",
-              "width": 110
-            },
-            {
-              "title": "计划检验日期",
-              "field": "计划检验日期",
-              "name": "计划检验日期",
-              "width": 120
             },
             {
               "title": "检验班组",
@@ -16663,18 +16609,6 @@ window.WMS_PAGE_CONFIGS = {
               "width": 110
             },
             {
-              "title": "稳定性方案",
-              "field": "稳定性方案",
-              "name": "稳定性方案",
-              "width": 110
-            },
-            {
-              "title": "计划检验日期",
-              "field": "计划检验日期",
-              "name": "计划检验日期",
-              "width": 120
-            },
-            {
               "title": "研发项目号",
               "field": "研发项目号",
               "name": "研发项目号",
@@ -17490,7 +17424,7 @@ window.WMS_PAGE_CONFIGS = {
     },
     "np-0201-13": {
       "id": "np-0201-13",
-      "title": "任务分配",
+      "title": "任务分派",
       "groups": [
         "质量管理",
         "检验管理"
@@ -17498,12 +17432,12 @@ window.WMS_PAGE_CONFIGS = {
       "breadcrumb": [
         "质量管理",
         "检验管理",
-        "任务分配"
+        "任务分派"
       ],
       "tabs": [
         {
           "name": "tab-1",
-          "label": "任务分配"
+          "label": "任务分派"
         },
         {
           "name": "tab-2",
@@ -17513,7 +17447,7 @@ window.WMS_PAGE_CONFIGS = {
       "tabViews": [
         {
           "name": "tab-1",
-          "label": "任务分配",
+          "label": "任务分派",
           "queryFields": [
             {
               "name": "样品编号",
@@ -20234,18 +20168,6 @@ window.WMS_PAGE_CONFIGS = {
               "width": 110
             },
             {
-              "title": "稳定性方案",
-              "field": "稳定性方案",
-              "name": "稳定性方案",
-              "width": 110
-            },
-            {
-              "title": "计划检验日期",
-              "field": "计划检验日期",
-              "name": "计划检验日期",
-              "width": 120
-            },
-            {
               "title": "检验班组",
               "field": "检验班组",
               "name": "检验班组",
@@ -21512,18 +21434,6 @@ window.WMS_PAGE_CONFIGS = {
               "field": "SAP生产订单号",
               "name": "SAP生产订单号",
               "width": 160
-            },
-            {
-              "title": "稳定性方案",
-              "field": "稳定性方案",
-              "name": "稳定性方案",
-              "width": 110
-            },
-            {
-              "title": "计划检验日期",
-              "field": "计划检验日期",
-              "name": "计划检验日期",
-              "width": 120
             },
             {
               "title": "需求完成时间",
@@ -43657,7 +43567,7 @@ window.WMS_PAGE_CONFIGS = {
           "placeholder": "请点击选择，多选",
           "tipMark": "!",
           "tipTitle": "说明：",
-          "tip": "1、点击右侧抽屉弹出「检验班组」的启用班组，多选；\n2、选 1 个班组=自动分配，报检单进入任务分配后直接分给该班组；\n3、选多个班组=手动分配，这些班组作为候选，由班长手动指定"
+          "tip": "1、点击右侧抽屉弹出「检验班组」的启用班组，多选；\n2、选 1 个班组=自动分配，报检单进入任务分派后直接分给该班组；\n3、选多个班组=手动分配，这些班组作为候选，由班长手动指定"
         },
         {
           "name": "分配方式",
@@ -48186,18 +48096,6 @@ window.WMS_PAGE_CONFIGS = {
               "field": "报检批号",
               "name": "报检批号",
               "width": 110
-            },
-            {
-              "title": "稳定性方案",
-              "field": "稳定性方案",
-              "name": "稳定性方案",
-              "width": 110
-            },
-            {
-              "title": "计划检验日期",
-              "field": "计划检验日期",
-              "name": "计划检验日期",
-              "width": 120
             },
             {
               "title": "检验班组",
@@ -91091,18 +90989,6 @@ window.WMS_PAGE_CONFIGS = {
               "width": 130
             },
             {
-              "title": "稳定性方案",
-              "field": "稳定性方案",
-              "name": "稳定性方案",
-              "width": 110
-            },
-            {
-              "title": "计划检验日期",
-              "field": "计划检验日期",
-              "name": "计划检验日期",
-              "width": 120
-            },
-            {
               "title": "预计送样时间",
               "field": "预计送样时间",
               "name": "预计送样时间",
@@ -91408,18 +91294,6 @@ window.WMS_PAGE_CONFIGS = {
                   "required": false,
                   "ctrl": "输入",
                   "labelRed": true
-                },
-                {
-                  "name": "稳定性方案",
-                  "type": "input",
-                  "required": false,
-                  "ctrl": "输入"
-                },
-                {
-                  "name": "计划检验日期",
-                  "type": "date",
-                  "required": true,
-                  "ctrl": "选择日期"
                 }
               ]
             },
@@ -91556,18 +91430,6 @@ window.WMS_PAGE_CONFIGS = {
               "required": false,
               "ctrl": "输入",
               "labelRed": true
-            },
-            {
-              "name": "稳定性方案",
-              "type": "input",
-              "required": false,
-              "ctrl": "输入"
-            },
-            {
-              "name": "计划检验日期",
-              "type": "date",
-              "required": true,
-              "ctrl": "选择日期"
             },
             {
               "name": "应取样件数",
@@ -94555,12 +94417,6 @@ window.WMS_PAGE_CONFIGS = {
               "width": 110
             },
             {
-              "title": "计划检验日期",
-              "field": "计划检验日期",
-              "name": "计划检验日期",
-              "width": 120
-            },
-            {
               "title": "应取样件数",
               "field": "应取样件数",
               "name": "应取样件数",
@@ -97514,18 +97370,6 @@ window.WMS_PAGE_CONFIGS = {
               "width": 110
             },
             {
-              "title": "稳定性方案",
-              "field": "稳定性方案",
-              "name": "稳定性方案",
-              "width": 110
-            },
-            {
-              "title": "计划检验日期",
-              "field": "计划检验日期",
-              "name": "计划检验日期",
-              "width": 120
-            },
-            {
               "title": "检验班组",
               "field": "检验班组",
               "name": "检验班组",
@@ -99960,18 +99804,6 @@ window.WMS_PAGE_CONFIGS = {
               "width": 110
             },
             {
-              "title": "稳定性方案",
-              "field": "稳定性方案",
-              "name": "稳定性方案",
-              "width": 110
-            },
-            {
-              "title": "计划检验日期",
-              "field": "计划检验日期",
-              "name": "计划检验日期",
-              "width": 120
-            },
-            {
               "title": "检验班组",
               "field": "检验班组",
               "name": "检验班组",
@@ -101776,18 +101608,6 @@ window.WMS_PAGE_CONFIGS = {
               "width": 110
             },
             {
-              "title": "稳定性方案",
-              "field": "稳定性方案",
-              "name": "稳定性方案",
-              "width": 110
-            },
-            {
-              "title": "计划检验日期",
-              "field": "计划检验日期",
-              "name": "计划检验日期",
-              "width": 120
-            },
-            {
               "title": "研发项目号",
               "field": "研发项目号",
               "name": "研发项目号",
@@ -102603,7 +102423,7 @@ window.WMS_PAGE_CONFIGS = {
     },
     {
       "id": "np-0201-13",
-      "title": "任务分配",
+      "title": "任务分派",
       "groups": [
         "质量管理",
         "检验管理"
@@ -102611,12 +102431,12 @@ window.WMS_PAGE_CONFIGS = {
       "breadcrumb": [
         "质量管理",
         "检验管理",
-        "任务分配"
+        "任务分派"
       ],
       "tabs": [
         {
           "name": "tab-1",
-          "label": "任务分配"
+          "label": "任务分派"
         },
         {
           "name": "tab-2",
@@ -102626,7 +102446,7 @@ window.WMS_PAGE_CONFIGS = {
       "tabViews": [
         {
           "name": "tab-1",
-          "label": "任务分配",
+          "label": "任务分派",
           "queryFields": [
             {
               "name": "样品编号",
@@ -107018,18 +106838,6 @@ window.WMS_PAGE_CONFIGS = {
               "width": 110
             },
             {
-              "title": "稳定性方案",
-              "field": "稳定性方案",
-              "name": "稳定性方案",
-              "width": 110
-            },
-            {
-              "title": "计划检验日期",
-              "field": "计划检验日期",
-              "name": "计划检验日期",
-              "width": 120
-            },
-            {
               "title": "检验班组",
               "field": "检验班组",
               "name": "检验班组",
@@ -108296,18 +108104,6 @@ window.WMS_PAGE_CONFIGS = {
               "field": "SAP生产订单号",
               "name": "SAP生产订单号",
               "width": 160
-            },
-            {
-              "title": "稳定性方案",
-              "field": "稳定性方案",
-              "name": "稳定性方案",
-              "width": 110
-            },
-            {
-              "title": "计划检验日期",
-              "field": "计划检验日期",
-              "name": "计划检验日期",
-              "width": 120
             },
             {
               "title": "需求完成时间",
@@ -128993,7 +128789,7 @@ window.WMS_PAGE_CONFIGS = {
           "placeholder": "请点击选择，多选",
           "tipMark": "!",
           "tipTitle": "说明：",
-          "tip": "1、点击右侧抽屉弹出「检验班组」的启用班组，多选；\n2、选 1 个班组=自动分配，报检单进入任务分配后直接分给该班组；\n3、选多个班组=手动分配，这些班组作为候选，由班长手动指定"
+          "tip": "1、点击右侧抽屉弹出「检验班组」的启用班组，多选；\n2、选 1 个班组=自动分配，报检单进入任务分派后直接分给该班组；\n3、选多个班组=手动分配，这些班组作为候选，由班长手动指定"
         },
         {
           "name": "分配方式",

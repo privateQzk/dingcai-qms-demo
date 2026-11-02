@@ -9832,10 +9832,10 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
 <script src="https://cdn.jsdelivr.net/npm/vxe-pc-ui@4/lib/index.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vxe-table@4/lib/index.umd.min.js"></script>
 <script src="./js/demo-announcements.js?v=1.4.14"></script>
-<script src="./js/page-configs.js?v=1.4.457"></script>
+<script src="./js/page-configs.js?v=1.4.459"></script>
 <script src="./js/mock-rows.js?v=1.4.279"></script>
 <script src="./js/dict-catalog.js?v=1.1.14"></script>
-<script src="./js/page-prd-notes.js?v=2.4.451"></script>
+<script src="./js/page-prd-notes.js?v=2.4.455"></script>
 <script src="./js/remarks-markdown.js?v=1.1.0"></script>
 <script type="module" src="./js/remarks-mermaid-init.js"></script>
 <script src="./js/remarks-mermaid.js"></script>
@@ -13085,7 +13085,7 @@ const app = createApp({
       const task = taskTab('tab-1').find(o=> o['样品编号']===sampleNo);
       if(task) task['预计完成时间'] = etaVal;
     }
-    /** 新进入任务分配的样品先按派单方案自动分配一次 */
+    /** 新进入任务分派的样品先按派单方案自动分配一次 */
     function taskAutoNew(o){
       const stamp = nowStamp();
       let n = 0;
@@ -13209,7 +13209,7 @@ const app = createApp({
         操作时间: e.stamp || nowStamp()
       });
     }
-    /* ===== 检验流程数据流转：报检单 → 待取样任务 → 取样生成样品（样品拆分 / 样品检验台账）→ 任务分配 → 数据录入 ===== */
+    /* ===== 检验流程数据流转：报检单 → 待取样任务 → 取样生成样品（样品拆分 / 样品检验台账）→ 任务分派 → 数据录入 ===== */
     const FLOW_ORDER = 'insp-order', FLOW_WAIT = 'wait-samp', FLOW_LEDGER = 'ledger';
     const FLOW_ENTRY = 'entry-sample', FLOW_ENTRY_CAT = 'entry-category', FLOW_MY_TASK = 'my-task';
     const FLOW_PAGES = [FLOW_ORDER, FLOW_WAIT, SPLIT_PAGE, FLOW_LEDGER, TASK_PAGE, TIME_FB_PAGE, FLOW_ENTRY, FLOW_ENTRY_CAT, FLOW_MY_TASK, SLOC_PAGE];
@@ -13299,7 +13299,7 @@ const app = createApp({
         bag.splice(0, bag.length, ...list);
       });
     }
-    /** 样品的分配结果：母样取任务分配，子样沿用母样 */
+    /** 样品的分配结果：母样取任务分派，子样沿用母样 */
     function flowAsgOf(s){
       const m = taskIsKid(s) ? flowSplitRow(s['母样编号']) : s;
       return (m && m._asg) || null;
@@ -13527,7 +13527,7 @@ const app = createApp({
       flowSyncEntry();
       formVisible.value = false;
       bumpStore();
-      ElMessage.success('取样完成，已生成 '+cnt+' 个样品（'+created.map(s=> s['样品编号']).join('、')+'），已进入样品拆分和任务分配');
+      ElMessage.success('取样完成，已生成 '+cnt+' 个样品（'+created.map(s=> s['样品编号']).join('、')+'），已进入样品拆分和任务分派');
     }
     /** 待取样任务 · 结束取样：待取样件数清零，报检单移出待取样任务 */
     function flowEndSampling(rows){
@@ -14097,7 +14097,7 @@ const app = createApp({
       const list = rows.map(r=> flowSplitRow(r['样品编号'])).filter(Boolean);
       const empty = list.filter(s=> !flowHasData(s, flowSampleItems(s)));
       if(empty.length){ ElMessage.warning('样品 '+empty.map(s=> s['样品编号']).join('、')+' 未录入检验数据，不能结束录入'); return; }
-      ElementPlus.ElMessageBox.confirm('确认结束录入所选 '+list.length+' 个样品？结束后样品（含子样）检验完成，不再出现在任务分配和数据录入中。', '结束录入', { type: 'warning' }).then(()=>{
+      ElementPlus.ElMessageBox.confirm('确认结束录入所选 '+list.length+' 个样品？结束后样品（含子样）检验完成，不再出现在任务分派和数据录入中。', '结束录入', { type: 'warning' }).then(()=>{
         const stamp = nowStamp();
         list.forEach(s=> flowFinishSample(s, stamp));
         flowSyncAll();
