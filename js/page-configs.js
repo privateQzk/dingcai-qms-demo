@@ -728,6 +728,27 @@ window.WMS_PAGE_CONFIGS = {
           ]
         },
         {
+          "title": "测量系统分析",
+          "index": "g-质量管理/测量系统分析",
+          "children": [
+            {
+              "title": "重复性与再现性",
+              "index": "np-0313-01",
+              "pageId": "np-0313-01"
+            },
+            {
+              "title": "稳定性",
+              "index": "np-0313-02",
+              "pageId": "np-0313-02"
+            },
+            {
+              "title": "偏倚",
+              "index": "np-0313-03",
+              "pageId": "np-0313-03"
+            }
+          ]
+        },
+        {
           "title": "检验成本统计",
           "index": "g-质量管理/检验成本统计",
           "children": [
@@ -930,27 +951,6 @@ window.WMS_PAGE_CONFIGS = {
           "title": "仪器调拨",
           "index": "np-0312-01",
           "pageId": "np-0312-01"
-        },
-        {
-          "title": "MSA",
-          "index": "g-仪器管理/MSA",
-          "children": [
-            {
-              "title": "重复性与再现性",
-              "index": "np-0313-01",
-              "pageId": "np-0313-01"
-            },
-            {
-              "title": "稳定性",
-              "index": "np-0313-02",
-              "pageId": "np-0313-02"
-            },
-            {
-              "title": "偏倚",
-              "index": "np-0313-03",
-              "pageId": "np-0313-03"
-            }
-          ]
         }
       ]
     },
@@ -1053,7 +1053,8 @@ window.WMS_PAGE_CONFIGS = {
             {
               "title": "留样销毁",
               "index": "np-0404-03",
-              "pageId": "np-0404-03"
+              "pageId": "np-0404-03",
+              "hidden": true
             },
             {
               "title": "临期提醒",
@@ -27027,10 +27028,6 @@ window.WMS_PAGE_CONFIGS = {
               "type": "default"
             },
             {
-              "name": "批量发起审核",
-              "type": "primary"
-            },
-            {
               "name": "导出",
               "type": "default"
             }
@@ -27676,10 +27673,6 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
-              "name": "设置",
-              "type": "default"
-            },
-            {
               "name": "I图样本数据",
               "type": "default"
             },
@@ -28276,10 +28269,6 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "toolbar": [
-            {
-              "name": "设置",
-              "type": "default"
-            },
             {
               "name": "I图样本数据",
               "type": "default"
@@ -28882,10 +28871,6 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
-              "name": "设置",
-              "type": "default"
-            },
-            {
               "name": "I图样本数据",
               "type": "default"
             },
@@ -29281,7 +29266,7 @@ window.WMS_PAGE_CONFIGS = {
       "hasDetail": true,
       "stub": false,
       "formFlat": true,
-      "spcTips": "查询后展示控制图与下方分析表；完整判异/过滤规则见「设置」。"
+      "spcTips": "查询后展示控制图与下方分析表；完整判异 / 过滤 / 样本组 / 管控限 / 控制图样式见「设置」。"
     },
     "spc-single": {
       "id": "spc-single",
@@ -29533,10 +29518,6 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
-              "name": "设置",
-              "type": "default"
-            },
-            {
               "name": "I图样本数据",
               "type": "default"
             },
@@ -30133,10 +30114,6 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "toolbar": [
-            {
-              "name": "设置",
-              "type": "default"
-            },
             {
               "name": "I图样本数据",
               "type": "default"
@@ -30739,10 +30716,6 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
-              "name": "设置",
-              "type": "default"
-            },
-            {
               "name": "I图样本数据",
               "type": "default"
             },
@@ -31138,7 +31111,7 @@ window.WMS_PAGE_CONFIGS = {
       "hasDetail": true,
       "stub": false,
       "formFlat": true,
-      "spcTips": "查询后展示控制图与下方分析表；完整判异/过滤规则见「设置」。"
+      "spcTips": "查询后展示控制图与下方分析表；完整判异 / 过滤 / 样本组 / 管控限 / 控制图样式见「设置」。"
     },
     "spc-compare": {
       "id": "spc-compare",
@@ -43597,12 +43570,6 @@ window.WMS_PAGE_CONFIGS = {
               "width": 180
             },
             {
-              "field": "匹配范围",
-              "title": "匹配范围",
-              "width": 100,
-              "slot": "tag"
-            },
-            {
               "field": "物料编码",
               "title": "物料编码",
               "width": 240
@@ -43917,16 +43884,15 @@ window.WMS_PAGE_CONFIGS = {
           "formFields": [
             {
               "name": "库位编码",
-              "type": "readonly",
-              "required": false,
-              "ctrl": "系统自动生成",
-              "placeholder": "保存后系统自动生成"
+              "type": "input",
+              "required": true,
+              "placeholder": "手动输入，唯一"
             },
             {
               "name": "库位名称",
               "type": "input",
               "required": true,
-              "placeholder": "同一库位类型下不可重复"
+              "placeholder": "手动输入，唯一"
             },
             {
               "name": "库位类型",
@@ -43968,15 +43934,6 @@ window.WMS_PAGE_CONFIGS = {
               "type": "input"
             },
             {
-              "name": "去向类型",
-              "type": "select",
-              "options": [
-                "仪器分析",
-                "理化检测",
-                "外送检测"
-              ]
-            },
-            {
               "name": "启用状态",
               "type": "select",
               "options": [
@@ -43987,8 +43944,7 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "queryDefault": [
             "去向编码",
-            "去向名称",
-            "去向类型"
+            "去向名称"
           ],
           "queryMore": [
             "启用状态"
@@ -44028,25 +43984,6 @@ window.WMS_PAGE_CONFIGS = {
               "field": "去向名称",
               "name": "去向名称",
               "width": 140
-            },
-            {
-              "title": "去向类型",
-              "field": "去向类型",
-              "name": "去向类型",
-              "width": 100,
-              "slot": "tag"
-            },
-            {
-              "title": "所属检验班组",
-              "field": "所属检验班组",
-              "name": "所属检验班组",
-              "width": 120
-            },
-            {
-              "title": "领用中样品数",
-              "field": "领用中样品数",
-              "name": "领用中样品数",
-              "width": 110
             },
             {
               "title": "备注",
@@ -44096,29 +44033,13 @@ window.WMS_PAGE_CONFIGS = {
               "name": "去向编码",
               "type": "input",
               "required": true,
-              "placeholder": "如 LC、MS、GC；大写字母、数字和-"
+              "placeholder": "手动输入，唯一；如 LC、MS、GC"
             },
             {
               "name": "去向名称",
               "type": "input",
               "required": true,
-              "placeholder": "如：液相色谱室"
-            },
-            {
-              "name": "去向类型",
-              "type": "select",
-              "required": true,
-              "options": [
-                "仪器分析",
-                "理化检测",
-                "外送检测"
-              ]
-            },
-            {
-              "name": "所属检验班组",
-              "type": "select",
-              "required": false,
-              "filterable": true
+              "placeholder": "手动输入，唯一"
             },
             {
               "name": "备注",
@@ -44250,8 +44171,8 @@ window.WMS_PAGE_CONFIGS = {
               "width": 260
             },
             {
-              "field": "标准工时",
-              "title": "标准工时",
+              "field": "标准系数",
+              "title": "标准系数",
               "width": 120
             },
             {
@@ -44303,7 +44224,7 @@ window.WMS_PAGE_CONFIGS = {
           "placeholder": "保存后自动生成"
         },
         {
-          "name": "标准工时",
+          "name": "标准系数",
           "type": "number-unit",
           "required": true,
           "placeholder": "输入数字",
@@ -44334,7 +44255,7 @@ window.WMS_PAGE_CONFIGS = {
       "formFlat": true,
       "formLineTabLabel": "物料信息",
       "formLineTitle": "物料信息",
-      "formLineTip": "不选则适用全部物料（兜底方案）",
+      "formLineTip": "必填，至少添加一条物料",
       "formLineTextOnly": true,
       "formLineFields": [
         {
@@ -54082,7 +54003,7 @@ window.WMS_PAGE_CONFIGS = {
           "label": "待处理",
           "queryFields": [
             {
-              "name": "外审单号",
+              "name": "审核单号",
               "type": "input"
             },
             {
@@ -54130,7 +54051,7 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "queryDefault": [
-            "外审单号",
+            "审核单号",
             "审核方式",
             "审核类型",
             "客户名称"
@@ -54165,9 +54086,9 @@ window.WMS_PAGE_CONFIGS = {
               "slot": "tag"
             },
             {
-              "title": "外审单号",
-              "field": "外审单号",
-              "name": "外审单号",
+              "title": "审核单号",
+              "field": "审核单号",
+              "name": "审核单号",
               "width": 100
             },
             {
@@ -54263,7 +54184,7 @@ window.WMS_PAGE_CONFIGS = {
           "label": "已完成",
           "queryFields": [
             {
-              "name": "外审单号",
+              "name": "审核单号",
               "type": "input"
             },
             {
@@ -54319,7 +54240,7 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "queryDefault": [
-            "外审单号",
+            "审核单号",
             "审核方式",
             "审核类型",
             "客户名称"
@@ -54341,9 +54262,9 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "columns": [
             {
-              "title": "外审单号",
-              "field": "外审单号",
-              "name": "外审单号",
+              "title": "审核单号",
+              "field": "审核单号",
+              "name": "审核单号",
               "width": 100
             },
             {
@@ -54444,7 +54365,7 @@ window.WMS_PAGE_CONFIGS = {
       ],
       "formFields": [
         {
-          "name": "外审单号",
+          "name": "审核单号",
           "type": "readonly",
           "required": true,
           "refreshable": true,
@@ -65001,6 +64922,11 @@ window.WMS_PAGE_CONFIGS = {
               "slot": "tag"
             },
             {
+              "field": "校验费用",
+              "title": "校验费用",
+              "width": 110
+            },
+            {
               "field": "外校报告",
               "title": "外校报告",
               "minWidth": 170
@@ -68516,12 +68442,12 @@ window.WMS_PAGE_CONFIGS = {
       "id": "np-0313-01",
       "title": "重复性与再现性",
       "groups": [
-        "仪器管理",
-        "MSA"
+        "质量管理",
+        "测量系统分析"
       ],
       "breadcrumb": [
-        "仪器管理",
-        "MSA",
+        "质量管理",
+        "测量系统分析",
         "重复性与再现性"
       ],
       "tabs": [],
@@ -68741,12 +68667,12 @@ window.WMS_PAGE_CONFIGS = {
       "id": "np-0313-02",
       "title": "稳定性",
       "groups": [
-        "仪器管理",
-        "MSA"
+        "质量管理",
+        "测量系统分析"
       ],
       "breadcrumb": [
-        "仪器管理",
-        "MSA",
+        "质量管理",
+        "测量系统分析",
         "稳定性"
       ],
       "tabs": [],
@@ -68963,12 +68889,12 @@ window.WMS_PAGE_CONFIGS = {
       "id": "np-0313-03",
       "title": "偏倚",
       "groups": [
-        "仪器管理",
-        "MSA"
+        "质量管理",
+        "测量系统分析"
       ],
       "breadcrumb": [
-        "仪器管理",
-        "MSA",
+        "质量管理",
+        "测量系统分析",
         "偏倚"
       ],
       "tabs": [],
@@ -80009,10 +79935,10 @@ window.WMS_PAGE_CONFIGS = {
           "width": 80
         },
         {
-          "field": "工时",
-          "title": "工时",
+          "field": "标准系数",
+          "title": "标准系数",
           "width": 100,
-          "name": "工时"
+          "name": "标准系数"
         },
         {
           "field": "取样时间",
@@ -82190,6 +82116,11 @@ window.WMS_PAGE_CONFIGS = {
               "field": "卡塞二维码号",
               "title": "卡塞二维码号",
               "width": 140
+            },
+            {
+              "field": "制板数据",
+              "title": "制板数据",
+              "minWidth": 160
             },
             {
               "field": "完成时间",
@@ -113881,10 +113812,6 @@ window.WMS_PAGE_CONFIGS = {
               "type": "default"
             },
             {
-              "name": "批量发起审核",
-              "type": "primary"
-            },
-            {
               "name": "导出",
               "type": "default"
             }
@@ -114530,10 +114457,6 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
-              "name": "设置",
-              "type": "default"
-            },
-            {
               "name": "I图样本数据",
               "type": "default"
             },
@@ -115130,10 +115053,6 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "toolbar": [
-            {
-              "name": "设置",
-              "type": "default"
-            },
             {
               "name": "I图样本数据",
               "type": "default"
@@ -115736,10 +115655,6 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
-              "name": "设置",
-              "type": "default"
-            },
-            {
               "name": "I图样本数据",
               "type": "default"
             },
@@ -116135,7 +116050,7 @@ window.WMS_PAGE_CONFIGS = {
       "hasDetail": true,
       "stub": false,
       "formFlat": true,
-      "spcTips": "查询后展示控制图与下方分析表；完整判异/过滤规则见「设置」。"
+      "spcTips": "查询后展示控制图与下方分析表；完整判异 / 过滤 / 样本组 / 管控限 / 控制图样式见「设置」。"
     },
     {
       "id": "spc-single",
@@ -116387,10 +116302,6 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
-              "name": "设置",
-              "type": "default"
-            },
-            {
               "name": "I图样本数据",
               "type": "default"
             },
@@ -116987,10 +116898,6 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "toolbar": [
-            {
-              "name": "设置",
-              "type": "default"
-            },
             {
               "name": "I图样本数据",
               "type": "default"
@@ -117593,10 +117500,6 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
-              "name": "设置",
-              "type": "default"
-            },
-            {
               "name": "I图样本数据",
               "type": "default"
             },
@@ -117992,7 +117895,7 @@ window.WMS_PAGE_CONFIGS = {
       "hasDetail": true,
       "stub": false,
       "formFlat": true,
-      "spcTips": "查询后展示控制图与下方分析表；完整判异/过滤规则见「设置」。"
+      "spcTips": "查询后展示控制图与下方分析表；完整判异 / 过滤 / 样本组 / 管控限 / 控制图样式见「设置」。"
     },
     {
       "id": "spc-compare",
@@ -129003,12 +128906,6 @@ window.WMS_PAGE_CONFIGS = {
               "width": 180
             },
             {
-              "field": "匹配范围",
-              "title": "匹配范围",
-              "width": 100,
-              "slot": "tag"
-            },
-            {
               "field": "物料编码",
               "title": "物料编码",
               "width": 240
@@ -129323,16 +129220,15 @@ window.WMS_PAGE_CONFIGS = {
           "formFields": [
             {
               "name": "库位编码",
-              "type": "readonly",
-              "required": false,
-              "ctrl": "系统自动生成",
-              "placeholder": "保存后系统自动生成"
+              "type": "input",
+              "required": true,
+              "placeholder": "手动输入，唯一"
             },
             {
               "name": "库位名称",
               "type": "input",
               "required": true,
-              "placeholder": "同一库位类型下不可重复"
+              "placeholder": "手动输入，唯一"
             },
             {
               "name": "库位类型",
@@ -129374,15 +129270,6 @@ window.WMS_PAGE_CONFIGS = {
               "type": "input"
             },
             {
-              "name": "去向类型",
-              "type": "select",
-              "options": [
-                "仪器分析",
-                "理化检测",
-                "外送检测"
-              ]
-            },
-            {
               "name": "启用状态",
               "type": "select",
               "options": [
@@ -129393,8 +129280,7 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "queryDefault": [
             "去向编码",
-            "去向名称",
-            "去向类型"
+            "去向名称"
           ],
           "queryMore": [
             "启用状态"
@@ -129434,25 +129320,6 @@ window.WMS_PAGE_CONFIGS = {
               "field": "去向名称",
               "name": "去向名称",
               "width": 140
-            },
-            {
-              "title": "去向类型",
-              "field": "去向类型",
-              "name": "去向类型",
-              "width": 100,
-              "slot": "tag"
-            },
-            {
-              "title": "所属检验班组",
-              "field": "所属检验班组",
-              "name": "所属检验班组",
-              "width": 120
-            },
-            {
-              "title": "领用中样品数",
-              "field": "领用中样品数",
-              "name": "领用中样品数",
-              "width": 110
             },
             {
               "title": "备注",
@@ -129502,29 +129369,13 @@ window.WMS_PAGE_CONFIGS = {
               "name": "去向编码",
               "type": "input",
               "required": true,
-              "placeholder": "如 LC、MS、GC；大写字母、数字和-"
+              "placeholder": "手动输入，唯一；如 LC、MS、GC"
             },
             {
               "name": "去向名称",
               "type": "input",
               "required": true,
-              "placeholder": "如：液相色谱室"
-            },
-            {
-              "name": "去向类型",
-              "type": "select",
-              "required": true,
-              "options": [
-                "仪器分析",
-                "理化检测",
-                "外送检测"
-              ]
-            },
-            {
-              "name": "所属检验班组",
-              "type": "select",
-              "required": false,
-              "filterable": true
+              "placeholder": "手动输入，唯一"
             },
             {
               "name": "备注",
@@ -129656,8 +129507,8 @@ window.WMS_PAGE_CONFIGS = {
               "width": 260
             },
             {
-              "field": "标准工时",
-              "title": "标准工时",
+              "field": "标准系数",
+              "title": "标准系数",
               "width": 120
             },
             {
@@ -129709,7 +129560,7 @@ window.WMS_PAGE_CONFIGS = {
           "placeholder": "保存后自动生成"
         },
         {
-          "name": "标准工时",
+          "name": "标准系数",
           "type": "number-unit",
           "required": true,
           "placeholder": "输入数字",
@@ -129740,7 +129591,7 @@ window.WMS_PAGE_CONFIGS = {
       "formFlat": true,
       "formLineTabLabel": "物料信息",
       "formLineTitle": "物料信息",
-      "formLineTip": "不选则适用全部物料（兜底方案）",
+      "formLineTip": "必填，至少添加一条物料",
       "formLineTextOnly": true,
       "formLineFields": [
         {
@@ -132394,6 +132245,11 @@ window.WMS_PAGE_CONFIGS = {
               "field": "卡塞二维码号",
               "title": "卡塞二维码号",
               "width": 140
+            },
+            {
+              "field": "制板数据",
+              "title": "制板数据",
+              "minWidth": 160
             },
             {
               "field": "完成时间",
@@ -136472,7 +136328,7 @@ window.WMS_PAGE_CONFIGS = {
           "label": "待处理",
           "queryFields": [
             {
-              "name": "外审单号",
+              "name": "审核单号",
               "type": "input"
             },
             {
@@ -136520,7 +136376,7 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "queryDefault": [
-            "外审单号",
+            "审核单号",
             "审核方式",
             "审核类型",
             "客户名称"
@@ -136555,9 +136411,9 @@ window.WMS_PAGE_CONFIGS = {
               "slot": "tag"
             },
             {
-              "title": "外审单号",
-              "field": "外审单号",
-              "name": "外审单号",
+              "title": "审核单号",
+              "field": "审核单号",
+              "name": "审核单号",
               "width": 100
             },
             {
@@ -136653,7 +136509,7 @@ window.WMS_PAGE_CONFIGS = {
           "label": "已完成",
           "queryFields": [
             {
-              "name": "外审单号",
+              "name": "审核单号",
               "type": "input"
             },
             {
@@ -136709,7 +136565,7 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "queryDefault": [
-            "外审单号",
+            "审核单号",
             "审核方式",
             "审核类型",
             "客户名称"
@@ -136731,9 +136587,9 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "columns": [
             {
-              "title": "外审单号",
-              "field": "外审单号",
-              "name": "外审单号",
+              "title": "审核单号",
+              "field": "审核单号",
+              "name": "审核单号",
               "width": 100
             },
             {
@@ -136834,7 +136690,7 @@ window.WMS_PAGE_CONFIGS = {
       ],
       "formFields": [
         {
-          "name": "外审单号",
+          "name": "审核单号",
           "type": "readonly",
           "required": true,
           "refreshable": true,
@@ -147391,6 +147247,11 @@ window.WMS_PAGE_CONFIGS = {
               "slot": "tag"
             },
             {
+              "field": "校验费用",
+              "title": "校验费用",
+              "width": 110
+            },
+            {
               "field": "外校报告",
               "title": "外校报告",
               "minWidth": 170
@@ -150906,12 +150767,12 @@ window.WMS_PAGE_CONFIGS = {
       "id": "np-0313-01",
       "title": "重复性与再现性",
       "groups": [
-        "仪器管理",
-        "MSA"
+        "质量管理",
+        "测量系统分析"
       ],
       "breadcrumb": [
-        "仪器管理",
-        "MSA",
+        "质量管理",
+        "测量系统分析",
         "重复性与再现性"
       ],
       "tabs": [],
@@ -151131,12 +150992,12 @@ window.WMS_PAGE_CONFIGS = {
       "id": "np-0313-02",
       "title": "稳定性",
       "groups": [
-        "仪器管理",
-        "MSA"
+        "质量管理",
+        "测量系统分析"
       ],
       "breadcrumb": [
-        "仪器管理",
-        "MSA",
+        "质量管理",
+        "测量系统分析",
         "稳定性"
       ],
       "tabs": [],
@@ -151353,12 +151214,12 @@ window.WMS_PAGE_CONFIGS = {
       "id": "np-0313-03",
       "title": "偏倚",
       "groups": [
-        "仪器管理",
-        "MSA"
+        "质量管理",
+        "测量系统分析"
       ],
       "breadcrumb": [
-        "仪器管理",
-        "MSA",
+        "质量管理",
+        "测量系统分析",
         "偏倚"
       ],
       "tabs": [],
@@ -162399,8 +162260,8 @@ window.WMS_PAGE_CONFIGS = {
           "width": 80
         },
         {
-          "field": "工时",
-          "title": "工时",
+          "field": "标准系数",
+          "title": "标准系数",
           "width": 100
         },
         {

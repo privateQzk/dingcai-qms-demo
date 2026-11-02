@@ -559,7 +559,8 @@ window.QMS_APP_MODULES = [
     "homeGroup": "实验室管理 · 留样管理",
     "pageId": "np-0404-03",
     "tab": "tab-1",
-    "kind": "list"
+    "kind": "list",
+    "hidden": true
   },
   {
     "id": "app-labxj",
@@ -5221,8 +5222,6 @@ window.QMS_APP_MODULES = [
         .map(r => ({
           code: r['去向编码'],
           name: r['去向名称'],
-          type: r['去向类型'] || '',
-          team: r['所属检验班组'] || '',
           label: (r['去向名称'] || '') + '（' + (r['去向编码'] || '') + '）'
         }));
     }
@@ -5231,7 +5230,7 @@ window.QMS_APP_MODULES = [
       if (!code) { qms.soutDest = null; return; }
       const hit = soutDestOpts().find(d => d.code === code) || null;
       if (!hit) { toast('请选择领用去向'); qms.soutDest = null; qms.soutDestCode = ''; return; }
-      qms.soutDest = { code: hit.code, name: hit.name, type: hit.type, team: hit.team };
+      qms.soutDest = { code: hit.code, name: hit.name };
     }
     function confirmSout() {
       if (!qms.soutSample) { toast('请先扫描样品条码'); return; }
