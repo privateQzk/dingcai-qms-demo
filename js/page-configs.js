@@ -359,7 +359,7 @@ window.WMS_PAGE_CONFIGS = {
               "pageId": "np-0201-01"
             },
             {
-              "title": "异地委托",
+              "title": "内部委托",
               "index": "np-0201-02",
               "pageId": "np-0201-02"
             },
@@ -6168,7 +6168,7 @@ window.WMS_PAGE_CONFIGS = {
         },
         {
           "name": "tab-oe",
-          "label": "异地委托"
+          "label": "内部委托"
         }
       ],
       "tabViews": [
@@ -7420,7 +7420,7 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "name": "tab-oe",
-          "label": "异地委托",
+          "label": "内部委托",
           "formLayout": "insp-scheme",
           "formFields": [
             {
@@ -7568,7 +7568,7 @@ window.WMS_PAGE_CONFIGS = {
         },
         {
           "name": "tab-oe",
-          "label": "异地委托"
+          "label": "内部委托"
         }
       ],
       "tabViews": [
@@ -11494,7 +11494,7 @@ window.WMS_PAGE_CONFIGS = {
         },
         {
           "name": "tab-oe",
-          "label": "异地委托",
+          "label": "内部委托",
           "queryFields": [
             {
               "name": "单据状态",
@@ -12296,7 +12296,7 @@ window.WMS_PAGE_CONFIGS = {
         },
         {
           "name": "tab-oe",
-          "label": "异地委托"
+          "label": "内部委托"
         }
       ],
       "tabViews": [
@@ -13572,7 +13572,7 @@ window.WMS_PAGE_CONFIGS = {
         },
         {
           "name": "tab-oe",
-          "label": "异地委托",
+          "label": "内部委托",
           "columns": [
             {
               "title": "报检单号",
@@ -13949,7 +13949,7 @@ window.WMS_PAGE_CONFIGS = {
         },
         {
           "name": "tab-oe",
-          "label": "异地委托"
+          "label": "内部委托"
         }
       ],
       "tabViews": [
@@ -15509,7 +15509,7 @@ window.WMS_PAGE_CONFIGS = {
         },
         {
           "name": "tab-oe",
-          "label": "异地委托",
+          "label": "内部委托",
           "columns": [
             {
               "title": "样品编号",
@@ -15910,7 +15910,7 @@ window.WMS_PAGE_CONFIGS = {
         },
         {
           "name": "tab-oe",
-          "label": "异地委托"
+          "label": "内部委托"
         }
       ],
       "tabViews": [
@@ -17166,7 +17166,7 @@ window.WMS_PAGE_CONFIGS = {
         },
         {
           "name": "tab-oe",
-          "label": "异地委托",
+          "label": "内部委托",
           "columns": [
             {
               "title": "报检单号",
@@ -17485,7 +17485,7 @@ window.WMS_PAGE_CONFIGS = {
                 "研发检",
                 "外来小样检",
                 "库内复检",
-                "异地委托"
+                "内部委托"
               ]
             },
             {
@@ -19001,7 +19001,7 @@ window.WMS_PAGE_CONFIGS = {
                 "研发检",
                 "外来小样检",
                 "库内复检",
-                "异地委托"
+                "内部委托"
               ]
             },
             {
@@ -19050,7 +19050,7 @@ window.WMS_PAGE_CONFIGS = {
                     "研发检",
                     "外来小样检",
                     "库内复检",
-                    "异地委托"
+                    "内部委托"
                   ]
                 },
                 {
@@ -19105,7 +19105,7 @@ window.WMS_PAGE_CONFIGS = {
                 "研发检",
                 "外来小样检",
                 "库内复检",
-                "异地委托"
+                "内部委托"
               ]
             },
             {
@@ -19155,7 +19155,7 @@ window.WMS_PAGE_CONFIGS = {
             "研发检",
             "外来小样检",
             "库内复检",
-            "异地委托"
+            "内部委托"
           ]
         },
         {
@@ -19206,7 +19206,7 @@ window.WMS_PAGE_CONFIGS = {
                 "研发检",
                 "外来小样检",
                 "库内复检",
-                "异地委托"
+                "内部委托"
               ]
             },
             {
@@ -19299,7 +19299,7 @@ window.WMS_PAGE_CONFIGS = {
         },
         {
           "name": "tab-oe",
-          "label": "异地委托"
+          "label": "内部委托"
         }
       ],
       "tabViews": [
@@ -20845,7 +20845,7 @@ window.WMS_PAGE_CONFIGS = {
         },
         {
           "name": "tab-oe",
-          "label": "异地委托",
+          "label": "内部委托",
           "columns": [
             {
               "title": "样品编号",
@@ -21503,7 +21503,7 @@ window.WMS_PAGE_CONFIGS = {
                 "研发检",
                 "外来小样检",
                 "库内复检",
-                "异地委托"
+                "内部委托"
               ]
             },
             {
@@ -46072,7 +46072,7 @@ window.WMS_PAGE_CONFIGS = {
                 "研发检",
                 "外来小样检",
                 "库内复检",
-                "异地委托"
+                "内部委托"
               ]
             },
             {
@@ -46425,7 +46425,7 @@ window.WMS_PAGE_CONFIGS = {
                 "研发检",
                 "外来小样检",
                 "库内复检",
-                "异地委托"
+                "内部委托"
               ]
             },
             {
@@ -46979,7 +46979,7 @@ window.WMS_PAGE_CONFIGS = {
         },
         {
           "name": "tab-oe",
-          "label": "异地委托"
+          "label": "内部委托"
         }
       ],
       "tabViews": [
@@ -49235,7 +49235,7 @@ window.WMS_PAGE_CONFIGS = {
         },
         {
           "name": "tab-oe",
-          "label": "异地委托",
+          "label": "内部委托",
           "columns": [
             {
               "title": "样品状态",
@@ -80805,7 +80805,7 @@ window.WMS_PAGE_CONFIGS = {
                 "研发检",
                 "外来小样检",
                 "库内复检",
-                "异地委托"
+                "内部委托"
               ]
             },
             {
@@ -81025,7 +81025,7 @@ window.WMS_PAGE_CONFIGS = {
     },
     "np-0201-02": {
       "id": "np-0201-02",
-      "title": "异地委托",
+      "title": "内部委托",
       "groups": [
         "质量管理",
         "检验管理"
@@ -81033,7 +81033,7 @@ window.WMS_PAGE_CONFIGS = {
       "breadcrumb": [
         "质量管理",
         "检验管理",
-        "异地委托"
+        "内部委托"
       ],
       "tabs": [],
       "tabViews": [
@@ -81284,10 +81284,10 @@ window.WMS_PAGE_CONFIGS = {
           "name": "报检类型",
           "type": "select",
           "required": false,
-          "default": "异地委托",
-          "ctrl": "枚举「异地委托」，新增默认选中",
+          "default": "内部委托",
+          "ctrl": "枚举「内部委托」，新增默认选中",
           "options": [
-            "异地委托"
+            "内部委托"
           ]
         },
         {
@@ -82313,7 +82313,7 @@ window.WMS_PAGE_CONFIGS = {
                 "研发检",
                 "外来小样检",
                 "库内复检",
-                "异地委托"
+                "内部委托"
               ]
             },
             {
@@ -87571,7 +87571,7 @@ window.WMS_PAGE_CONFIGS = {
         },
         {
           "name": "tab-oe",
-          "label": "异地委托"
+          "label": "内部委托"
         }
       ],
       "tabViews": [
@@ -88823,7 +88823,7 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "name": "tab-oe",
-          "label": "异地委托",
+          "label": "内部委托",
           "formLayout": "insp-scheme",
           "formFields": [
             {
@@ -88971,7 +88971,7 @@ window.WMS_PAGE_CONFIGS = {
         },
         {
           "name": "tab-oe",
-          "label": "异地委托"
+          "label": "内部委托"
         }
       ],
       "tabViews": [
@@ -92897,7 +92897,7 @@ window.WMS_PAGE_CONFIGS = {
         },
         {
           "name": "tab-oe",
-          "label": "异地委托",
+          "label": "内部委托",
           "queryFields": [
             {
               "name": "单据状态",
@@ -93699,7 +93699,7 @@ window.WMS_PAGE_CONFIGS = {
         },
         {
           "name": "tab-oe",
-          "label": "异地委托"
+          "label": "内部委托"
         }
       ],
       "tabViews": [
@@ -94975,7 +94975,7 @@ window.WMS_PAGE_CONFIGS = {
         },
         {
           "name": "tab-oe",
-          "label": "异地委托",
+          "label": "内部委托",
           "columns": [
             {
               "title": "报检单号",
@@ -95344,7 +95344,7 @@ window.WMS_PAGE_CONFIGS = {
                 "研发检",
                 "外来小样检",
                 "库内复检",
-                "异地委托"
+                "内部委托"
               ]
             },
             {
@@ -95697,7 +95697,7 @@ window.WMS_PAGE_CONFIGS = {
                 "研发检",
                 "外来小样检",
                 "库内复检",
-                "异地委托"
+                "内部委托"
               ]
             },
             {
@@ -96251,7 +96251,7 @@ window.WMS_PAGE_CONFIGS = {
         },
         {
           "name": "tab-oe",
-          "label": "异地委托"
+          "label": "内部委托"
         }
       ],
       "tabViews": [
@@ -98507,7 +98507,7 @@ window.WMS_PAGE_CONFIGS = {
         },
         {
           "name": "tab-oe",
-          "label": "异地委托",
+          "label": "内部委托",
           "columns": [
             {
               "title": "样品状态",
@@ -98948,7 +98948,7 @@ window.WMS_PAGE_CONFIGS = {
         },
         {
           "name": "tab-oe",
-          "label": "异地委托"
+          "label": "内部委托"
         }
       ],
       "tabViews": [
@@ -100508,7 +100508,7 @@ window.WMS_PAGE_CONFIGS = {
         },
         {
           "name": "tab-oe",
-          "label": "异地委托",
+          "label": "内部委托",
           "columns": [
             {
               "title": "样品编号",
@@ -100909,7 +100909,7 @@ window.WMS_PAGE_CONFIGS = {
         },
         {
           "name": "tab-oe",
-          "label": "异地委托"
+          "label": "内部委托"
         }
       ],
       "tabViews": [
@@ -102165,7 +102165,7 @@ window.WMS_PAGE_CONFIGS = {
         },
         {
           "name": "tab-oe",
-          "label": "异地委托",
+          "label": "内部委托",
           "columns": [
             {
               "title": "报检单号",
@@ -102484,7 +102484,7 @@ window.WMS_PAGE_CONFIGS = {
                 "研发检",
                 "外来小样检",
                 "库内复检",
-                "异地委托"
+                "内部委托"
               ]
             },
             {
@@ -105671,7 +105671,7 @@ window.WMS_PAGE_CONFIGS = {
                 "研发检",
                 "外来小样检",
                 "库内复检",
-                "异地委托"
+                "内部委托"
               ]
             },
             {
@@ -105720,7 +105720,7 @@ window.WMS_PAGE_CONFIGS = {
                     "研发检",
                     "外来小样检",
                     "库内复检",
-                    "异地委托"
+                    "内部委托"
                   ]
                 },
                 {
@@ -105775,7 +105775,7 @@ window.WMS_PAGE_CONFIGS = {
                 "研发检",
                 "外来小样检",
                 "库内复检",
-                "异地委托"
+                "内部委托"
               ]
             },
             {
@@ -105825,7 +105825,7 @@ window.WMS_PAGE_CONFIGS = {
             "研发检",
             "外来小样检",
             "库内复检",
-            "异地委托"
+            "内部委托"
           ]
         },
         {
@@ -105876,7 +105876,7 @@ window.WMS_PAGE_CONFIGS = {
                 "研发检",
                 "外来小样检",
                 "库内复检",
-                "异地委托"
+                "内部委托"
               ]
             },
             {
@@ -105969,7 +105969,7 @@ window.WMS_PAGE_CONFIGS = {
         },
         {
           "name": "tab-oe",
-          "label": "异地委托"
+          "label": "内部委托"
         }
       ],
       "tabViews": [
@@ -107515,7 +107515,7 @@ window.WMS_PAGE_CONFIGS = {
         },
         {
           "name": "tab-oe",
-          "label": "异地委托",
+          "label": "内部委托",
           "columns": [
             {
               "title": "样品编号",
@@ -108173,7 +108173,7 @@ window.WMS_PAGE_CONFIGS = {
                 "研发检",
                 "外来小样检",
                 "库内复检",
-                "异地委托"
+                "内部委托"
               ]
             },
             {
@@ -163027,7 +163027,7 @@ window.WMS_PAGE_CONFIGS = {
                 "研发检",
                 "外来小样检",
                 "库内复检",
-                "异地委托"
+                "内部委托"
               ]
             },
             {
@@ -163247,7 +163247,7 @@ window.WMS_PAGE_CONFIGS = {
     },
     {
       "id": "np-0201-02",
-      "title": "异地委托",
+      "title": "内部委托",
       "groups": [
         "质量管理",
         "检验管理"
@@ -163255,7 +163255,7 @@ window.WMS_PAGE_CONFIGS = {
       "breadcrumb": [
         "质量管理",
         "检验管理",
-        "异地委托"
+        "内部委托"
       ],
       "tabs": [],
       "tabViews": [
@@ -163506,10 +163506,10 @@ window.WMS_PAGE_CONFIGS = {
           "name": "报检类型",
           "type": "select",
           "required": false,
-          "default": "异地委托",
-          "ctrl": "枚举「异地委托」，新增默认选中",
+          "default": "内部委托",
+          "ctrl": "枚举「内部委托」，新增默认选中",
           "options": [
-            "异地委托"
+            "内部委托"
           ]
         },
         {
@@ -163705,7 +163705,7 @@ window.WMS_PAGE_CONFIGS = {
                 "研发检",
                 "外来小样检",
                 "库内复检",
-                "异地委托"
+                "内部委托"
               ]
             },
             {

@@ -635,6 +635,24 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
 .entry-chip{background:#f5f5f5;border-radius:4px;padding:4px 8px;font-size:12px;color:#595959}
 .entry-chip b{color:#262626;font-weight:500}
 .entry-tools{display:flex;gap:8px;flex:none}
+.entry-inherit__steps{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:13px;color:#8c8c8c}
+.entry-inherit__steps .is-on{color:#1677ff;font-weight:600}
+.entry-inherit__steps .is-done{color:#52c41a}
+.entry-inherit__arrow{color:#bfbfbf;font-style:normal}
+.entry-inherit__curr,.entry-inherit__src{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;padding:10px 12px;background:#f5f7fa;border-radius:6px}
+.entry-inherit__src{font-size:13px;color:#595959;gap:16px}
+.entry-inherit__src b{color:#262626;margin-left:4px}
+.entry-inherit__toolbar{display:flex;gap:8px;margin-bottom:12px}
+.entry-inherit__query{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;align-items:center}
+.entry-inherit__tip{margin-top:8px;font-size:12px;color:#8c8c8c}
+.entry-inherit__body{display:grid;grid-template-columns:320px 1fr;gap:12px;min-height:400px}
+.entry-inherit__cats,.entry-inherit__preview{border:1px solid #e5e6eb;border-radius:6px;overflow:hidden;background:#fff}
+.entry-inherit__hd{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;border-bottom:1px solid #f0f0f0;font-weight:600;font-size:13px}
+.entry-inherit__cat{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid #f5f5f5}
+.entry-inherit__cat.is-off{opacity:.55;background:#fafafa}
+.entry-inherit__cat.is-on{background:#f0f7ff}
+.entry-inherit__cnt{margin-left:auto;font-size:12px;color:#8c8c8c}
+@media (max-width:900px){.entry-inherit__body{grid-template-columns:1fr}}
 .entry-filters{display:flex;flex-wrap:wrap;gap:16px;align-items:center;padding:12px 16px}
 .entry-filters--tab{padding:8px 0 4px}
 .entry-method-meta{display:flex;flex-wrap:wrap;gap:8px 28px;padding:0 16px 8px;color:#595959;line-height:22px}
@@ -3947,6 +3965,7 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
                 <span class="entry-chip">取样日期 <b>{{ formModel['取样时间'] || '—' }}</b></span>
               </div>
               <div class="entry-tools">
+                <el-button type="primary" plain @click="openEntryInherit">数据继承</el-button>
                 <el-button @click="ElMessage.info('Demo：已记录异常数据上报')">异常数据上报</el-button>
                 <el-button @click="ElMessage.info('当前为全屏录入')">全屏</el-button>
               </div>
@@ -4756,6 +4775,134 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
       <el-button @click="formVisible=false">取消</el-button>
       <el-button type="primary" @click="onFormOk">{{ (page && page.formOkText) || '确定' }}</el-button>
       </template>
+    </template>
+  </el-dialog>
+
+  <!-- 数据录入 · 数据继承 -->
+  <el-dialog v-model="entryInheritVisible" class="demo-dialog--biz" title="数据继承" width="min(1080px, 96vw)" top="4vh" append-to-body destroy-on-close :close-on-click-modal="false">
+    <div class="entry-inherit">
+      <div class="entry-inherit__steps">
+        <span :class="{ 'is-on': entryInheritStep===1, 'is-done': entryInheritStep>1 }">1 选择来源样品</span>
+        <i class="entry-inherit__arrow">→</i>
+        <span :class="{ 'is-on': entryInheritStep===2 }">2 选择检验类并预览</span>
+      </div>
+      <div class="entry-inherit__curr">
+        <span class="entry-chip">当前样品 <b>{{ formModel['样品编号'] || '—' }}</b></span>
+        <span class="entry-chip">物料名称 <b>{{ formModel['物料名称'] || '—' }}</b></span>
+        <span class="entry-chip">检验方案 <b>{{ formModel['检验方案'] || '—' }}</b></span>
+        <span class="entry-chip">报检单号 <b>{{ formModel['报检单号'] || '—' }}</b></span>
+      </div>
+      <template v-if="entryInheritStep===1">
+        <div class="entry-inherit__toolbar">
+          <el-button type="primary" @click="openEntryInheritPick">添加样品</el-button>
+          <el-button :disabled="!entryInheritSelected.length" @click="removeEntryInheritAdded">批量删除</el-button>
+        </div>
+        <el-table class="demo-data-table demo-data-table--striped" :data="entryInheritAdded" border stripe height="420"
+          @selection-change="rows=> entryInheritSelected=rows"
+          :row-class-name="({row})=> row['样品编号']===entryInheritSampleNo ? 'is-current' : ''"
+          @row-click="r=> entryInheritSampleNo=r['样品编号']" empty-text="请先点击「添加样品」，从台账选择已完成样品">
+          <el-table-column type="selection" width="48"></el-table-column>
+          <el-table-column width="52" align="center" label="选用">
+            <template #default="{ row }">
+              <el-radio v-model="entryInheritSampleNo" :value="row['样品编号']" @click.stop>&nbsp;</el-radio>
+            </template>
+          </el-table-column>
+          <el-table-column prop="样品编号" label="样品编号" min-width="140"></el-table-column>
+          <el-table-column prop="物料编码" label="物料编码" width="130"></el-table-column>
+          <el-table-column prop="物料名称" label="物料名称" min-width="150" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="报检单号" label="报检单号" min-width="140"></el-table-column>
+          <el-table-column prop="报检批号" label="报检批号" width="120"></el-table-column>
+          <el-table-column prop="检验方案" label="检验方案" min-width="140" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="检验完成时间" label="检验完成时间" width="160"></el-table-column>
+          <el-table-column prop="检验结论" label="检验结论" width="90"></el-table-column>
+          <el-table-column label="操作" width="80" fixed="right">
+            <template #default="{ row }">
+              <el-button link type="danger" @click.stop="removeEntryInheritOne(row)">移除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div class="entry-inherit__tip">默认不加载全部样品。通过「添加样品」弹窗从台账挑选「已完成」母样加入列表，勾选「选用」后点下一步。</div>
+      </template>
+      <template v-else>
+        <div class="entry-inherit__src">
+          <span>来源样品 <b>{{ entryInheritSampleNo || '—' }}</b></span>
+          <span v-if="entryInheritSrcRow">物料 <b>{{ entryInheritSrcRow['物料名称'] || '—' }}</b></span>
+          <span v-if="entryInheritSrcRow">完成时间 <b>{{ entryInheritSrcRow['检验完成时间'] || '—' }}</b></span>
+          <span v-if="entryInheritSrcRow">结论 <b>{{ entryInheritSrcRow['检验结论'] || '—' }}</b></span>
+        </div>
+        <div class="entry-inherit__body">
+          <aside class="entry-inherit__cats">
+            <div class="entry-inherit__hd">
+              <span>可继承检验类</span>
+              <el-checkbox :model-value="entryInheritAllChecked" :indeterminate="entryInheritSomeChecked" @change="entryInheritToggleAll">全选可匹配</el-checkbox>
+            </div>
+            <div v-for="c in entryInheritCatOpts" :key="c.name" class="entry-inherit__cat" :class="{ 'is-off': !c.matchable, 'is-on': entryInheritCats.includes(c.name) }">
+              <el-checkbox :model-value="entryInheritCats.includes(c.name)" :disabled="!c.matchable" @change="v=> entryInheritToggleCat(c.name, v)">
+                <span>{{ c.name }}</span>
+              </el-checkbox>
+              <el-tag v-if="!c.matchable" size="small" type="info">当前样品无此检验类</el-tag>
+              <el-tag v-else-if="c.hasData" size="small" type="warning">将覆盖已有</el-tag>
+              <el-tag v-else size="small" type="success">可匹配</el-tag>
+              <span class="entry-inherit__cnt">{{ c.itemCount }} 项</span>
+            </div>
+            <div v-if="!entryInheritCatOpts.length" style="padding:16px;color:#8c8c8c">来源样品暂无检验类数据</div>
+          </aside>
+          <section class="entry-inherit__preview">
+            <div class="entry-inherit__hd">
+              <span>回填预览</span>
+              <el-radio-group v-model="entryInheritMode" size="small">
+                <el-radio-button value="empty">仅回填空项</el-radio-button>
+                <el-radio-button value="overwrite">覆盖已有数据</el-radio-button>
+              </el-radio-group>
+            </div>
+            <el-table :data="entryInheritPreviewRows" border stripe height="360" empty-text="请勾选可匹配的检验类">
+              <el-table-column prop="检验类" label="检验类" width="110"></el-table-column>
+              <el-table-column prop="检验项" label="检验项" min-width="140"></el-table-column>
+              <el-table-column prop="实测值" label="实测值" width="110"></el-table-column>
+              <el-table-column prop="结论" label="结论" width="90"></el-table-column>
+              <el-table-column prop="匹配" label="匹配结果" width="110">
+                <template #default="{ row }">
+                  <el-tag size="small" :type="row.匹配==='将回填' ? 'success' : (row.匹配==='跳过(已有)' ? 'info' : 'warning')">{{ row.匹配 }}</el-tag>
+                </template>
+              </el-table-column>
+            </el-table>
+          </section>
+        </div>
+      </template>
+    </div>
+    <template #footer>
+      <el-button v-if="entryInheritStep===2" @click="entryInheritStep=1">上一步</el-button>
+      <el-button @click="entryInheritVisible=false">取消</el-button>
+      <el-button v-if="entryInheritStep===1" type="primary" @click="entryInheritNext">下一步</el-button>
+      <el-button v-else type="primary" @click="confirmEntryInherit">确定继承</el-button>
+    </template>
+  </el-dialog>
+
+  <!-- 数据继承 · 添加样品弹窗 -->
+  <el-dialog v-model="entryInheritPickVisible" class="demo-dialog--biz" title="选择已完成样品" width="min(960px, 94vw)" top="6vh" append-to-body destroy-on-close :close-on-click-modal="false">
+    <div class="entry-inherit__query">
+      <el-input v-model="entryInheritQ.样品编号" placeholder="样品编号" clearable style="width:160px"></el-input>
+      <el-input v-model="entryInheritQ.报检单号" placeholder="报检单号" clearable style="width:160px"></el-input>
+      <el-input v-model="entryInheritQ.物料名称" placeholder="物料名称" clearable style="width:180px"></el-input>
+      <el-button type="primary" @click="entryInheritQueryTick++">查询</el-button>
+      <el-button @click="Object.assign(entryInheritQ,{样品编号:'',报检单号:'',物料名称:''}); entryInheritQueryTick++">重置</el-button>
+    </div>
+    <el-table class="demo-data-table demo-data-table--striped" :data="entryInheritPickRows" border stripe height="420"
+      @selection-change="rows=> entryInheritPickSel=rows" empty-text="暂无已完成样品">
+      <el-table-column type="selection" width="48" :selectable="r=> !entryInheritAddedNos.has(r['样品编号'])"></el-table-column>
+      <el-table-column prop="样品编号" label="样品编号" min-width="140"></el-table-column>
+      <el-table-column prop="物料编码" label="物料编码" width="120"></el-table-column>
+      <el-table-column prop="物料名称" label="物料名称" min-width="140" show-overflow-tooltip></el-table-column>
+      <el-table-column prop="报检单号" label="报检单号" min-width="130"></el-table-column>
+      <el-table-column prop="报检批号" label="报检批号" width="110"></el-table-column>
+      <el-table-column prop="检验方案" label="检验方案" min-width="130" show-overflow-tooltip></el-table-column>
+      <el-table-column prop="检验完成时间" label="检验完成时间" width="160"></el-table-column>
+      <el-table-column prop="检验结论" label="检验结论" width="90"></el-table-column>
+    </el-table>
+    <div class="entry-inherit__tip">数据来源：样品检验台账 · 已完成母样（已加入列表的不可再选）；优先同物料、同报检类型。</div>
+    <template #footer>
+      <el-button @click="entryInheritPickVisible=false">取消</el-button>
+      <el-button type="primary" @click="confirmEntryInheritPick">确定</el-button>
     </template>
   </el-dialog>
 
@@ -9832,10 +9979,10 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
 <script src="https://cdn.jsdelivr.net/npm/vxe-pc-ui@4/lib/index.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vxe-table@4/lib/index.umd.min.js"></script>
 <script src="./js/demo-announcements.js?v=1.4.14"></script>
-<script src="./js/page-configs.js?v=1.4.459"></script>
-<script src="./js/mock-rows.js?v=1.4.279"></script>
+<script src="./js/page-configs.js?v=1.4.460"></script>
+<script src="./js/mock-rows.js?v=1.4.280"></script>
 <script src="./js/dict-catalog.js?v=1.1.14"></script>
-<script src="./js/page-prd-notes.js?v=2.4.455"></script>
+<script src="./js/page-prd-notes.js?v=2.4.459"></script>
 <script src="./js/remarks-markdown.js?v=1.1.0"></script>
 <script type="module" src="./js/remarks-mermaid-init.js"></script>
 <script src="./js/remarks-mermaid.js"></script>
@@ -11697,7 +11844,7 @@ const app = createApp({
         : (((mock[meta.src]||{})[meta.tab||'main'])||[]).filter(r=> (r['启用状态']||'启用')==='启用');
       if(ioPickKind.value==='inspScheme'){
         const bag = mock['insp-scheme'] || {};
-        const labels = { 'tab-pi':'采购来料检', 'tab-pp':'生产过程检', 'tab-pm':'生产物料检', 'tab-sst':'生产SST检', 'tab-rd':'研发检', 'tab-ext':'外来小样检', 'tab-wr':'库内复检', 'tab-oe':'异地委托' };
+        const labels = { 'tab-pi':'采购来料检', 'tab-pp':'生产过程检', 'tab-pm':'生产物料检', 'tab-sst':'生产SST检', 'tab-rd':'研发检', 'tab-ext':'外来小样检', 'tab-wr':'库内复检', 'tab-oe':'内部委托' };
         list = [];
         Object.keys(bag).forEach(tab=>{
           if(!Array.isArray(bag[tab])) return;
@@ -12125,7 +12272,7 @@ const app = createApp({
         ['物料编码','物料名称','物料规格','报检批号'].forEach(k=>{ formModel[k] = r[k] && r[k]!=='—' ? r[k] : ''; });
         formModel['研发项目号'] = oeRdOf(r['报检单号']) || (r['研发项目号'] && r['研发项目号']!=='—' ? r['研发项目号'] : '');
         formModel._schemeName = r['检验方案'] && r['检验方案']!=='—' ? r['检验方案'] : '';
-        if(!formModel['报检类型']) formModel['报检类型'] = '异地委托';
+        if(!formModel['报检类型']) formModel['报检类型'] = '内部委托';
         if(prev && prev!==formModel['样品编号']) formLineRows.value = [];
         ioPickVisible.value = false;
         return;
@@ -13797,6 +13944,194 @@ const app = createApp({
         for(let i=0;i<n;i++) draft[p.代号].push(row ? entryCell(row, p.代号, i) : '');
       });
       return draft;
+    }
+    const entryInheritVisible = ref(false);
+    const entryInheritPickVisible = ref(false);
+    const entryInheritStep = ref(1);
+    const entryInheritSampleNo = ref('');
+    const entryInheritCats = ref([]);
+    const entryInheritMode = ref('empty');
+    const entryInheritQueryTick = ref(0);
+    const entryInheritQ = reactive({ 样品编号:'', 报检单号:'', 物料名称:'' });
+    const entryInheritAdded = ref([]);
+    const entryInheritSelected = ref([]);
+    const entryInheritPickSel = ref([]);
+    function entryInheritLedgerAll(){
+      const out = [];
+      FLOW_TABS.forEach(t=>{
+        flowBag(FLOW_LEDGER, t.name).forEach(r=>{
+          if(r && r['样品编号']) out.push(Object.assign({ _ledgerTab: t.name, 报检类型: r['报检类型'] || t.label }, r));
+        });
+      });
+      return out;
+    }
+    const entryInheritAddedNos = computed(()=> new Set((entryInheritAdded.value||[]).map(r=> r['样品编号'])));
+    const entryInheritPickRows = computed(()=>{
+      void entryInheritQueryTick.value;
+      void storeTick.value;
+      const cur = formModel['样品编号'];
+      const q = entryInheritQ;
+      return entryInheritLedgerAll().filter(r=>{
+        if(r['样品状态']!=='已完成') return false;
+        if(taskIsKid(r)) return false;
+        if(cur && r['样品编号']===cur) return false;
+        if(q.样品编号 && !String(r['样品编号']||'').includes(q.样品编号.trim())) return false;
+        if(q.报检单号 && !String(r['报检单号']||'').includes(q.报检单号.trim())) return false;
+        if(q.物料名称 && !String(r['物料名称']||'').includes(q.物料名称.trim())) return false;
+        return true;
+      }).sort((a,b)=>{
+        const mat = formModel['物料编码'];
+        const tabLab = formModel['报检类型'] || flowLabelOf(activeTab.value) || '';
+        const score = (r)=> (mat && r['物料编码']===mat ? 2 : 0) + (tabLab && r['报检类型']===tabLab ? 1 : 0);
+        return score(b) - score(a) || String(b['检验完成时间']||'').localeCompare(String(a['检验完成时间']||''));
+      });
+    });
+    const entryInheritSrcRow = computed(()=> (entryInheritAdded.value||[]).find(r=> r['样品编号']===entryInheritSampleNo.value) || entryInheritLedgerAll().find(r=> r['样品编号']===entryInheritSampleNo.value) || null);
+    function entryInheritSrcItems(row){
+      const s = row || entryInheritSrcRow.value;
+      if(!s) return [];
+      const e = s._entry || {};
+      const items = e.items || {};
+      const names = [];
+      String((s['方案项目']||'')+';'+(s['临时项目']||'')).split(/[;；]/).map(x=> x.trim()).filter(x=> x && x!=='—').forEach(n=>{ if(!names.includes(n)) names.push(n); });
+      Object.keys(items).forEach(n=>{ if(!names.includes(n)) names.push(n); });
+      const catMap = new Map((((MOCK['insp-project']||{})['tab-item'])||[]).filter(i=> i['启用状态']!=='禁用').map(i=> [i['检验项名称'], i['所属检验类']]));
+      return names.map((n, i)=>{
+        const it = items[n] || {};
+        let val = it.实测值 || it.检验结果 || '';
+        let concl = it.结论 || it.检验结论 || '';
+        // Demo：已完成样品若无缓存明细，按项生成可预览的示意值
+        if(!val && !Object.keys(items).length){
+          val = String((90 + (i % 9) + (i * 0.13)).toFixed(2));
+          concl = '合格';
+        }
+        return {
+          检验项: n,
+          检验类: catMap.get(n) || '未分类',
+          实测值: val || '—',
+          结论: concl || '—'
+        };
+      });
+    }
+    const entryInheritCatOpts = computed(()=>{
+      const curCats = new Set(entryCats.value || []);
+      const curFilled = new Set();
+      (formLineRows.value||[]).forEach(r=>{
+        if(String(r['实测值']||'').trim() || (r['结论'] && r['结论']!=='—')) curFilled.add(r['所属检验类']||'未分类');
+      });
+      const groups = new Map();
+      entryInheritSrcItems().forEach(it=>{
+        const g = groups.get(it.检验类) || { name: it.检验类, itemCount: 0, matchable: curCats.has(it.检验类), hasData: curFilled.has(it.检验类) };
+        g.itemCount++;
+        groups.set(it.检验类, g);
+      });
+      return [...groups.values()];
+    });
+    const entryInheritPreviewRows = computed(()=>{
+      const picked = new Set(entryInheritCats.value || []);
+      const curByName = new Map((formLineRows.value||[]).map(r=> [r['检验项'], r]));
+      return entryInheritSrcItems().filter(it=> picked.has(it.检验类)).map(it=>{
+        const cur = curByName.get(it.检验项);
+        let match = '无对应项';
+        if(cur){
+          const has = String(cur['实测值']||'').trim() || (cur['结论'] && cur['结论']!=='—');
+          if(entryInheritMode.value==='overwrite') match = '将回填';
+          else match = has ? '跳过(已有)' : '将回填';
+        }
+        return Object.assign({}, it, { 匹配: match });
+      });
+    });
+    const entryInheritAllChecked = computed(()=>{
+      const ok = entryInheritCatOpts.value.filter(c=> c.matchable);
+      return ok.length > 0 && ok.every(c=> entryInheritCats.value.includes(c.name));
+    });
+    const entryInheritSomeChecked = computed(()=>{
+      const ok = entryInheritCatOpts.value.filter(c=> c.matchable);
+      const n = ok.filter(c=> entryInheritCats.value.includes(c.name)).length;
+      return n > 0 && n < ok.length;
+    });
+    function entryInheritToggleCat(name, on){
+      const set = new Set(entryInheritCats.value);
+      if(on) set.add(name); else set.delete(name);
+      entryInheritCats.value = [...set];
+    }
+    function entryInheritToggleAll(on){
+      entryInheritCats.value = on ? entryInheritCatOpts.value.filter(c=> c.matchable).map(c=> c.name) : [];
+    }
+    function openEntryInherit(){
+      if(!(formMode.value==='entry' || formMode.value==='quick-entry')) return;
+      entryInheritStep.value = 1;
+      entryInheritSampleNo.value = '';
+      entryInheritCats.value = [];
+      entryInheritMode.value = 'empty';
+      entryInheritAdded.value = [];
+      entryInheritSelected.value = [];
+      entryInheritPickSel.value = [];
+      Object.assign(entryInheritQ, { 样品编号:'', 报检单号:'', 物料名称:'' });
+      entryInheritQueryTick.value++;
+      entryInheritPickVisible.value = false;
+      entryInheritVisible.value = true;
+    }
+    function openEntryInheritPick(){
+      Object.assign(entryInheritQ, { 样品编号:'', 报检单号:'', 物料名称:'' });
+      entryInheritQueryTick.value++;
+      entryInheritPickSel.value = [];
+      entryInheritPickVisible.value = true;
+    }
+    function confirmEntryInheritPick(){
+      const rows = entryInheritPickSel.value || [];
+      if(!rows.length){ ElMessage.warning('请勾选要添加的样品'); return; }
+      const exist = entryInheritAddedNos.value;
+      const add = rows.filter(r=> !exist.has(r['样品编号']));
+      if(!add.length){ ElMessage.warning('所选样品已在列表中'); return; }
+      entryInheritAdded.value = entryInheritAdded.value.concat(add.map(r=> Object.assign({}, r)));
+      if(!entryInheritSampleNo.value && entryInheritAdded.value.length){
+        entryInheritSampleNo.value = entryInheritAdded.value[0]['样品编号'];
+      }
+      entryInheritPickVisible.value = false;
+      ElMessage.success('已添加 '+add.length+' 个样品');
+    }
+    function removeEntryInheritOne(row){
+      const no = row && row['样品编号'];
+      entryInheritAdded.value = entryInheritAdded.value.filter(r=> r['样品编号']!==no);
+      entryInheritSelected.value = entryInheritSelected.value.filter(r=> r['样品编号']!==no);
+      if(entryInheritSampleNo.value===no){
+        entryInheritSampleNo.value = (entryInheritAdded.value[0] && entryInheritAdded.value[0]['样品编号']) || '';
+      }
+    }
+    function removeEntryInheritAdded(){
+      const drop = new Set((entryInheritSelected.value||[]).map(r=> r['样品编号']));
+      if(!drop.size){ ElMessage.warning('请先勾选要删除的样品'); return; }
+      entryInheritAdded.value = entryInheritAdded.value.filter(r=> !drop.has(r['样品编号']));
+      entryInheritSelected.value = [];
+      if(drop.has(entryInheritSampleNo.value)){
+        entryInheritSampleNo.value = (entryInheritAdded.value[0] && entryInheritAdded.value[0]['样品编号']) || '';
+      }
+    }
+    function entryInheritNext(){
+      if(!(entryInheritAdded.value||[]).length){ ElMessage.warning('请先添加来源样品'); return; }
+      if(!entryInheritSampleNo.value){ ElMessage.warning('请选用一个来源样品'); return; }
+      if(!(entryInheritAdded.value||[]).some(r=> r['样品编号']===entryInheritSampleNo.value)){
+        ElMessage.warning('请选用列表中的来源样品'); return;
+      }
+      entryInheritCats.value = entryInheritCatOpts.value.filter(c=> c.matchable).map(c=> c.name);
+      entryInheritStep.value = 2;
+    }
+    function confirmEntryInherit(){
+      const rows = entryInheritPreviewRows.value.filter(r=> r.匹配==='将回填');
+      if(!entryInheritCats.value.length){ ElMessage.warning('请勾选要继承的检验类'); return; }
+      if(!rows.length){ ElMessage.warning(entryInheritMode.value==='empty' ? '所选检验类无可回填的空项' : '没有可回填的检验项'); return; }
+      const byName = new Map((formLineRows.value||[]).map(r=> [r['检验项'], r]));
+      let n = 0;
+      rows.forEach(src=>{
+        const cur = byName.get(src.检验项);
+        if(!cur) return;
+        if(src.实测值 && src.实测值!=='—') cur['实测值'] = src.实测值;
+        if(src.结论 && src.结论!=='—'){ cur['结论'] = src.结论; cur['检验结论'] = src.结论; }
+        n++;
+      });
+      entryInheritVisible.value = false;
+      ElMessage.success('已继承 '+n+' 个检验项数据到当前样品');
     }
     function openEntrySpecPick(){
       entrySpecQuery.date = '当天';
@@ -20977,7 +21312,7 @@ const app = createApp({
       formModel['现应取样件数'] = String(base + (add > 0 ? add : 0));
     }
     watch(()=> formModel['报检单类型'], (nv, ov)=>{
-      // 异地委托：报检单类型由样品带入，不再因切换类型清空样品
+      // 内部委托：报检单类型由样品带入，不再因切换类型清空样品
       if(!['add-sample','np-0201-01'].includes(pageId.value) || nv===ov || !ov) return;
       formModel['报检单号'] = '';
       ADD_SAMPLE_CARRY.forEach(key=>{ formModel[key] = ''; });
@@ -24472,8 +24807,8 @@ const app = createApp({
       }
       if((pageId.value===WO_PAGE || pageId.value===MY_WX_PAGE) && ['维修','编辑'].includes(op.name) && !WO_OPEN.includes((row||{})['单据状态'])) return '仅待维修、维修中、退修的维修单可'+op.name;
       if(pageId.value==='np-0501-01' && op.name==='编辑' && (row||{})['采集状态']==='开启') return '开启状态不可编辑';
-      if(pageId.value==='np-0201-02' && op.name==='编辑' && (row||{})['单据状态']!=='未完成') return '仅未完成的异地委托单可编辑';
-      if(pageId.value==='insp-order' && activeTab.value==='tab-oe' && op.name==='编辑' && (row||{})['单据状态']!=='待执行') return '仅待执行的异地委托报检单可编辑';
+      if(pageId.value==='np-0201-02' && op.name==='编辑' && (row||{})['单据状态']!=='未完成') return '仅未完成的内部委托单可编辑';
+      if(pageId.value==='insp-order' && activeTab.value==='tab-oe' && op.name==='编辑' && (row||{})['单据状态']!=='待执行') return '仅待执行的内部委托报检单可编辑';
       if((pageId.value==='np-0405-01' || pageId.value==='np-0405-02') && op.name==='执行' && !['待执行','执行中'].includes((row||{})['单据状态'])) return '仅待执行、执行中的单据可执行';
       return '';
     }
@@ -33363,7 +33698,7 @@ const app = createApp({
     ];
     const SG_ROUND = ['报出值', '实测值'];
     const SG_TAKE = ['所有值', '同批次最差值', '同批次最优值', '同批次平均值', '同批次首样', '同批次尾样'];
-    const SG_TYPE = { 'tab-pi': '采购来料', 'tab-pp': '生产过程', 'tab-pm': '生产物料', 'tab-sst': '生产SST', 'tab-rd': '研发', 'tab-ext': '外来小样', 'tab-wr': '库内复检', 'tab-oe': '异地委托' };
+    const SG_TYPE = { 'tab-pi': '采购来料', 'tab-pp': '生产过程', 'tab-pm': '生产物料', 'tab-sst': '生产SST', 'tab-rd': '研发', 'tab-ext': '外来小样', 'tab-wr': '库内复检', 'tab-oe': '内部委托' };
     const sgVisible = ref(false);
     const sgMode = ref('add');
     const sgTab = ref('rule');
@@ -34500,7 +34835,7 @@ const app = createApp({
         if(!selectedIds.value.length){ ElMessage.warning('请先勾选数据'); return; }
         const rows = tableData.value.filter(r=> selectedIds.value.includes(r.id));
         if(rows.some(r=> r['单据状态']!=='未完成')){
-          ElMessage.warning('仅未完成的异地委托单可关闭'); return;
+          ElMessage.warning('仅未完成的内部委托单可关闭'); return;
         }
       }
       if(pageId.value==='insp-order' && activeTab.value==='tab-oe' && (btn.name==='关闭' || btn.name.includes('删除'))){
@@ -34510,13 +34845,13 @@ const app = createApp({
           ElMessage.warning('仅待执行、执行中的报检单可关闭'); return;
         }
         if(btn.name.includes('删除') && rows.some(r=> r['单据状态']!=='待执行')){
-          ElMessage.warning('仅待执行的异地委托报检单可删除'); return;
+          ElMessage.warning('仅待执行的内部委托报检单可删除'); return;
         }
       }
       if(pageId.value==='np-0201-02' && (btn.name.includes('删除') || btn.name==='删除勾选')){
         const rows = tableData.value.filter(r=> selectedIds.value.includes(r.id));
         if(rows.some(r=> r['单据状态']!=='未完成')){
-          ElMessage.warning('仅未完成的异地委托单可删除'); return;
+          ElMessage.warning('仅未完成的内部委托单可删除'); return;
         }
       }
       if(pageId.value==='cl-record' && btn.name==='批量删除'){ clRecordBatchDelete(); return; }
@@ -35393,10 +35728,10 @@ const app = createApp({
         if(row['单据状态']!=='待执行'){ ElMessage.warning('仅待执行状态的'+labRgIoDir()+'单可编辑'); return; }
       }
       if(op.name==='编辑' && pageId.value==='np-0201-02'){
-        if(row['单据状态']!=='未完成'){ ElMessage.warning('仅未完成的异地委托单可编辑'); return; }
+        if(row['单据状态']!=='未完成'){ ElMessage.warning('仅未完成的内部委托单可编辑'); return; }
       }
       if(op.name==='编辑' && pageId.value==='insp-order' && activeTab.value==='tab-oe'){
-        if(row['单据状态']!=='待执行'){ ElMessage.warning('仅待执行的异地委托报检单可编辑'); return; }
+        if(row['单据状态']!=='待执行'){ ElMessage.warning('仅待执行的内部委托报检单可编辑'); return; }
       }
       if(op.name==='编辑' && (pageId.value==='bc-scrap-proc' || pageId.value==='bc-freeze' || pageId.value==='bc-unfreeze')){
         if(row['单据状态']!=='待执行'){
@@ -37029,7 +37364,7 @@ const app = createApp({
         优先级: e['优先级'] || '—',
         研发项目号: oeRdOf(sourceNo) || (e['研发项目号'] && e['研发项目号']!=='—' ? e['研发项目号'] : '—'),
         报检备注: (e['备注'] && e['备注']!=='—') ? e['备注'] : (e['报检备注'] || '—'),
-        报检类型: '异地委托',
+        报检类型: '内部委托',
         报检人: e['申请人'] || e['报检人'] || '管理员',
         报检时间: e['申请时间'] || e['报检时间'] || nowStamp(),
         报检部门: '—',
@@ -37071,7 +37406,7 @@ const app = createApp({
       const orders = oeOrderList();
       const cur = isAdd ? null : orders.find(r=> r.id===formModel._editId);
       if(!isAdd && !cur){ ElMessage.warning('未找到待编辑报检单'); return; }
-      if(!isAdd && cur['单据状态']!=='待执行'){ ElMessage.warning('仅待执行的异地委托报检单可编辑'); return; }
+      if(!isAdd && cur['单据状态']!=='待执行'){ ElMessage.warning('仅待执行的内部委托报检单可编辑'); return; }
       const entrusts = oeEntrustList();
       let entrust = cur ? entrusts.find(r=> r['委托单号']===cur['委托单号']) : null;
       const stamp = nowStamp();
@@ -37092,7 +37427,7 @@ const app = createApp({
         需求完成时间: formModel['需求完成时间'] || '—',
         预计送样时间: formModel['预计送样时间'] || '—',
         优先级: formModel['优先级'] || '—',
-        报检类型: formModel['报检类型'] || '异地委托',
+        报检类型: formModel['报检类型'] || '内部委托',
         备注: formModel['备注'] || '—',
         研发项目号: formModel['研发项目号'] || '—',
         检验方案: formModel._schemeName || entrust['检验方案'] || '—',
@@ -45078,7 +45413,7 @@ const app = createApp({
       calibEntryVisible, calibEntryReadonly, calibEntryIdx, calibEntryTest, openCalibEntry, submitCalibEntry,
       labPrepExecVisible, labPrepExecReadonly, labPrepExecRow, labPrepExec, labPrepLineSel, labPrepReagentPick, labPrepEnvFields, labPrepDevFields, labPrepMethod, labPrepHeadCols, labPrepReagentOptions, labPrepEnumOpts, addLabPrepLine, removeLabPrepLines, saveLabPrepExec, submitLabPrepExec, downloadLabPrepPdf,
       tplTabs, tplCalc, tplRefParamOptions, onTplPubTimesChange, tplKind, isTplForm, tplFormTab, tplRows, tplSel, onTplFlagChange, addTplRow, removeTplRows, onTplAttrChange,
-      formVisible, formMode, formDialogTitle, formDialogWidth, formSwitch, formModel, formFieldTipOpen, setFormFieldTip, toggleFormFieldTip, isInspMethodForm, isInspSchemeForm, isDriftRuleForm, isInspProjectCategoryForm, isSampSchemeForm, isFullscreenBizForm, isFullscreenDetail, detailHeaderTableFields, detailHeaderTableRows, isAutoSampForm, isSpcSchemeForm, isWideBizForm, isTreeTypeForm, isSchemeCylinder, sigmaConfigModel, onSigmaConfigConfirm, activeFormSections, isQmsFlowForm, entryCat, entryCats, entryCatRows, entryMethods, entryPickCat, entryStamp, entryResultText, entryFocusItem, entryCatSubmitted, entryMethodTab, entryDescOpen, entryMethodDetail, entryMethodVerOptions, entryOnVersion, entryMats, entryMatSelected, entryMatScan, entryMatScanRef, onEntryMatScan, removeEntryMats, entryExtraFiles, onEntryExtraFile, removeEntryExtraFile, entryInstruments, entryInstrumentOptions, entrySpectra, removeEntrySpectrum, openEntrySpecPick, entrySpecVisible, entrySpecQuery, entrySpecFiles, entrySpecChecked, entrySpecBatches, entrySpecCols, entrySpecDraft, entrySpecFillCol, entrySpecFillAll, entrySpecAutoFill, confirmEntrySpecPick, entryPubParams, entryPubCols, entryPubCell, entrySetPubCell, entrySampParams, entrySampCols, entryCell, entrySetCell, entryLimitText, entryQuickExpandAll, entryQuickFilledCount, entryCategoryId, entryCategoryKw, filteredEntryCategories, spcProcessId, spcProcessKw, filteredSpcProcesses, activeChartTab, spcChartCards, envStat, costPivot, costFlowDlg, COST_DIMS, COST_MEASURES, COST_PRESETS, costFlowOpts, costDragStart, costDragOver, costDragDrop, costDragEnd, costRemoveDim, costMarkCustom, costAddDim, costApplyPreset, costPivotReset, costPivotQuery, costPivotRowClass, costOpenFlow, costPivotExport, batchTrace, batchRelAddLine, batchRelCopyLine, batchRelDelLine, envStatNames, envStatItemOptions, envStatOnName, envStatQuery, envStatReset, envStatOpenSet, envStatSaveSet, envStatOpenSamples, envStatExport, treeListId, treeListKw, filteredTreeListNodes, onTreeListOp, waitSampInnerTab, waitSampSampleRows, waitSampSampleSelected, waitSampItemRows, waitSampItemSelected, waitSampSchemeItemCount, waitSampTempItemCount, waitSampItemSourceLabel, addWaitSampSample, refreshWaitSampCodes, removeWaitSampSamples, addWaitSampItem, removeWaitSampItems, recheckSampleRows, disposeDetailRows, disposeDetailSelected, initDisposeDetailRows, batchDisposeReceive, mrbWritebackVisible, saveMrbWriteback, mrbWriteback, disposeDetailVisible, disposeDetailViewRows, DRIFT_PAGE, DRIFT_TR_OPTS, DRIFT_INSP_OPTS, DRIFT_UCL_OPS, DRIFT_LCL_OPS, driftInnerTab, driftRangeRows, driftRangeSelected, driftKnownRows, driftKnownSelected, driftRrtRows, driftRrtSelected, driftMatRows, driftMatSelected, driftPointRows, driftPointSelected, driftColRows, driftColSelected, addDriftRangeRow, addDriftRrtRow, addDriftKnownRow, onDriftMainPeak, removeDriftRows, schemeInnerTab, schemeQualRows, schemeQuantRows, schemeQualSelected, schemeQuantSelected, schemePointRows, schemeMatRows, schemeCustRows, schemeSuppRows, schemeMediaRows, schemeItemDrawerVisible, schemeItemDrawerKind, schemeItemDrawerQ, schemeItemDrawerTick, schemeItemDrawerRows, schemeItemDrawerSelected, openSchemeItemDrawer, confirmSchemeItemDrawer, removeSchemeRows, schemeRelDrawerVisible, schemeRelDrawerKind, schemeRelDrawerTitle, schemeRelDrawerRows, schemeRelDrawerColumns, schemeRelDrawerSelected, schemeRelDrawerTableRef, schemeRelDrawerRowKey, onSchemeRelDrawerSelect, clearSchemeRelDrawerSelect, openSchemeRelDrawer, confirmSchemeRelDrawer, resetSchemeRelDrawerQ, schemeRelDrawerQ, schemeRelDrawerTick, addSchemeMedium, schemeLimitOps, openSchemeUnitDrawer, openItemUomUnitDrawer, onSchemeFnChange, schemePointSelected, schemeMatSelected, schemeCustSelected, schemeSuppSelected, removeSchemeRelRows, schemeQualEnumDrawerVisible, schemeQualEnumDraft, schemeQualEnumSelected, schemeQualEnumEnableOther, openSchemeQualEnumDrawer, addSchemeQualEnumItem, removeSchemeQualEnumItems, confirmSchemeQualEnumDrawer, renumberSchemeQualEnum, sampInnerTab, sampInspectTypes, sampRuleRows, sampRuleSelected, sampMatRows, sampMatSelected, sampFormulaVisible, sampFormulaValue, onSampTypeChange, isSampRuleFirst, isSampRuleLast, normalizeSampRuleFixed, removeSampRuleRow, removeSampMatRows, openSampFormula, insertSampFormulaFn, confirmSampFormula, validateSampRules, addSampRuleRow, removeSampRuleRows, autoSampDetailRows, autoSampDetailSelected, autoSampPickVisible, autoSampPickKind, autoSampPickTitle, autoSampPickQ, autoSampPickTick, autoSampPickRows, autoSampPickColumns, autoSampPickMulti, autoSampPickCurrent, autoSampPickSelected, openAutoSampPick, resetAutoSampPickQ, confirmAutoSampPick, copyAutoSampDetail, validateAutoSampDetails, addAutoSampDetail, removeAutoSampDetails, inspMethodPublicParams, inspMethodSampleParams, inspMethodPublicSelected, inspMethodSampleSelected, inspMethodInnerTab, inspMethodMatRows, inspMethodMatSelected, inspMethodMatCatRows, inspMethodMatCatSelected, METHOD_MAT_SRCS, methodMatSrc, onMethodMatSrcTab, openMethodMatSupp, openMethodMatUnit, removeInspMethodMats, addInspMethodMatCat, copyInspMethodMatCat, removeInspMethodMatCats, openMethodMatCatMat, clearMethodMatCatMat, openMethodMatCatCat, clearMethodMatCatCat, methodVerVisible, methodVerTitle, methodVerRows, methodVerCount, openMethodVerDetail, onInspMethodFile, inspParamDrawerVisible, inspParamDrawerQ, inspParamDrawerTick, inspParamDrawerRows, inspParamDrawerSelected, openInspParamDrawer, resetInspParamDrawerQ, confirmInspParamDrawer, removeInspMethodParams, onInspMethodPublicToggle, onInspMethodPublicTimesChange, inspCatInstrumentTypeOptions, INSP_CAT_ATTRS, inspItemUnitDrawerVisible, inspItemUnitDrawerTitle, inspItemUnitDrawerQ, inspItemUnitDrawerTick, inspItemUnitDrawerRows, inspItemUnitDrawerCurrent, inspItemUnitDrawerSelectedKey, inspItemUnitTableRef, inspItemUnitRowKey, selectInspItemUnitRow, onInspItemUnitRowClick, onInspItemUnitCurrentChange, clearInspItemUnitDrawer, openInspItemUnitDrawer, confirmInspItemUnitDrawer, poMatPool, formLineSelected, dispatchAuditVisible, dispatchAuditRow, dispatchAuditForm, splitVisible, splitRow, splitForm, splitLines, splitLineSelected, splitNeedsOrder, splitShowPreDoc, splitShowSoShipPreDocs, splitShowSoPreoutPrepDoc, splitPreDocRequired, splitShowPo, onSplitOrderTypeChange, openSplitPicker, settleVisible, settleRows, settleForm, totalSettleQty, totalSettleFee, openSettleModal, onSettleOk, secondaryAssignVisible, secondaryAssignRow, secondaryAssignForm, resetSecondaryAssignForm, onSecondaryAssignOk, assignVisible, assignRow, assignForm, assignCarriers, assignVehicles, assignTrailers, activeFormFields, activeFormLineFields, formLineEmptyText, formLineRows, formCatRows, formCatSelected, onDispatchCatAction, formInstRows, formInstSelected, onDispatchInstAction, onGsDragStart, onGsDrop, onFormLineSelectChange,
+      formVisible, formMode, formDialogTitle, formDialogWidth, formSwitch, formModel, formFieldTipOpen, setFormFieldTip, toggleFormFieldTip, isInspMethodForm, isInspSchemeForm, isDriftRuleForm, isInspProjectCategoryForm, isSampSchemeForm, isFullscreenBizForm, isFullscreenDetail, detailHeaderTableFields, detailHeaderTableRows, isAutoSampForm, isSpcSchemeForm, isWideBizForm, isTreeTypeForm, isSchemeCylinder, sigmaConfigModel, onSigmaConfigConfirm, activeFormSections, isQmsFlowForm, entryCat, entryCats, entryCatRows, entryMethods, entryPickCat, entryStamp, entryResultText, entryFocusItem, entryCatSubmitted, entryMethodTab, entryDescOpen, entryMethodDetail, entryMethodVerOptions, entryOnVersion, entryMats, entryMatSelected, entryMatScan, entryMatScanRef, onEntryMatScan, removeEntryMats, entryExtraFiles, onEntryExtraFile, removeEntryExtraFile, entryInstruments, entryInstrumentOptions, entrySpectra, removeEntrySpectrum, openEntryInherit, entryInheritVisible, entryInheritPickVisible, entryInheritStep, entryInheritSampleNo, entryInheritCats, entryInheritMode, entryInheritQ, entryInheritQueryTick, entryInheritAdded, entryInheritSelected, entryInheritPickSel, entryInheritPickRows, entryInheritAddedNos, openEntryInheritPick, confirmEntryInheritPick, removeEntryInheritOne, removeEntryInheritAdded, entryInheritSrcRow, entryInheritCatOpts, entryInheritPreviewRows, entryInheritAllChecked, entryInheritSomeChecked, entryInheritToggleCat, entryInheritToggleAll, entryInheritNext, confirmEntryInherit, openEntrySpecPick, entrySpecVisible, entrySpecQuery, entrySpecFiles, entrySpecChecked, entrySpecBatches, entrySpecCols, entrySpecDraft, entrySpecFillCol, entrySpecFillAll, entrySpecAutoFill, confirmEntrySpecPick, entryPubParams, entryPubCols, entryPubCell, entrySetPubCell, entrySampParams, entrySampCols, entryCell, entrySetCell, entryLimitText, entryQuickExpandAll, entryQuickFilledCount, entryCategoryId, entryCategoryKw, filteredEntryCategories, spcProcessId, spcProcessKw, filteredSpcProcesses, activeChartTab, spcChartCards, envStat, costPivot, costFlowDlg, COST_DIMS, COST_MEASURES, COST_PRESETS, costFlowOpts, costDragStart, costDragOver, costDragDrop, costDragEnd, costRemoveDim, costMarkCustom, costAddDim, costApplyPreset, costPivotReset, costPivotQuery, costPivotRowClass, costOpenFlow, costPivotExport, batchTrace, batchRelAddLine, batchRelCopyLine, batchRelDelLine, envStatNames, envStatItemOptions, envStatOnName, envStatQuery, envStatReset, envStatOpenSet, envStatSaveSet, envStatOpenSamples, envStatExport, treeListId, treeListKw, filteredTreeListNodes, onTreeListOp, waitSampInnerTab, waitSampSampleRows, waitSampSampleSelected, waitSampItemRows, waitSampItemSelected, waitSampSchemeItemCount, waitSampTempItemCount, waitSampItemSourceLabel, addWaitSampSample, refreshWaitSampCodes, removeWaitSampSamples, addWaitSampItem, removeWaitSampItems, recheckSampleRows, disposeDetailRows, disposeDetailSelected, initDisposeDetailRows, batchDisposeReceive, mrbWritebackVisible, saveMrbWriteback, mrbWriteback, disposeDetailVisible, disposeDetailViewRows, DRIFT_PAGE, DRIFT_TR_OPTS, DRIFT_INSP_OPTS, DRIFT_UCL_OPS, DRIFT_LCL_OPS, driftInnerTab, driftRangeRows, driftRangeSelected, driftKnownRows, driftKnownSelected, driftRrtRows, driftRrtSelected, driftMatRows, driftMatSelected, driftPointRows, driftPointSelected, driftColRows, driftColSelected, addDriftRangeRow, addDriftRrtRow, addDriftKnownRow, onDriftMainPeak, removeDriftRows, schemeInnerTab, schemeQualRows, schemeQuantRows, schemeQualSelected, schemeQuantSelected, schemePointRows, schemeMatRows, schemeCustRows, schemeSuppRows, schemeMediaRows, schemeItemDrawerVisible, schemeItemDrawerKind, schemeItemDrawerQ, schemeItemDrawerTick, schemeItemDrawerRows, schemeItemDrawerSelected, openSchemeItemDrawer, confirmSchemeItemDrawer, removeSchemeRows, schemeRelDrawerVisible, schemeRelDrawerKind, schemeRelDrawerTitle, schemeRelDrawerRows, schemeRelDrawerColumns, schemeRelDrawerSelected, schemeRelDrawerTableRef, schemeRelDrawerRowKey, onSchemeRelDrawerSelect, clearSchemeRelDrawerSelect, openSchemeRelDrawer, confirmSchemeRelDrawer, resetSchemeRelDrawerQ, schemeRelDrawerQ, schemeRelDrawerTick, addSchemeMedium, schemeLimitOps, openSchemeUnitDrawer, openItemUomUnitDrawer, onSchemeFnChange, schemePointSelected, schemeMatSelected, schemeCustSelected, schemeSuppSelected, removeSchemeRelRows, schemeQualEnumDrawerVisible, schemeQualEnumDraft, schemeQualEnumSelected, schemeQualEnumEnableOther, openSchemeQualEnumDrawer, addSchemeQualEnumItem, removeSchemeQualEnumItems, confirmSchemeQualEnumDrawer, renumberSchemeQualEnum, sampInnerTab, sampInspectTypes, sampRuleRows, sampRuleSelected, sampMatRows, sampMatSelected, sampFormulaVisible, sampFormulaValue, onSampTypeChange, isSampRuleFirst, isSampRuleLast, normalizeSampRuleFixed, removeSampRuleRow, removeSampMatRows, openSampFormula, insertSampFormulaFn, confirmSampFormula, validateSampRules, addSampRuleRow, removeSampRuleRows, autoSampDetailRows, autoSampDetailSelected, autoSampPickVisible, autoSampPickKind, autoSampPickTitle, autoSampPickQ, autoSampPickTick, autoSampPickRows, autoSampPickColumns, autoSampPickMulti, autoSampPickCurrent, autoSampPickSelected, openAutoSampPick, resetAutoSampPickQ, confirmAutoSampPick, copyAutoSampDetail, validateAutoSampDetails, addAutoSampDetail, removeAutoSampDetails, inspMethodPublicParams, inspMethodSampleParams, inspMethodPublicSelected, inspMethodSampleSelected, inspMethodInnerTab, inspMethodMatRows, inspMethodMatSelected, inspMethodMatCatRows, inspMethodMatCatSelected, METHOD_MAT_SRCS, methodMatSrc, onMethodMatSrcTab, openMethodMatSupp, openMethodMatUnit, removeInspMethodMats, addInspMethodMatCat, copyInspMethodMatCat, removeInspMethodMatCats, openMethodMatCatMat, clearMethodMatCatMat, openMethodMatCatCat, clearMethodMatCatCat, methodVerVisible, methodVerTitle, methodVerRows, methodVerCount, openMethodVerDetail, onInspMethodFile, inspParamDrawerVisible, inspParamDrawerQ, inspParamDrawerTick, inspParamDrawerRows, inspParamDrawerSelected, openInspParamDrawer, resetInspParamDrawerQ, confirmInspParamDrawer, removeInspMethodParams, onInspMethodPublicToggle, onInspMethodPublicTimesChange, inspCatInstrumentTypeOptions, INSP_CAT_ATTRS, inspItemUnitDrawerVisible, inspItemUnitDrawerTitle, inspItemUnitDrawerQ, inspItemUnitDrawerTick, inspItemUnitDrawerRows, inspItemUnitDrawerCurrent, inspItemUnitDrawerSelectedKey, inspItemUnitTableRef, inspItemUnitRowKey, selectInspItemUnitRow, onInspItemUnitRowClick, onInspItemUnitCurrentChange, clearInspItemUnitDrawer, openInspItemUnitDrawer, confirmInspItemUnitDrawer, poMatPool, formLineSelected, dispatchAuditVisible, dispatchAuditRow, dispatchAuditForm, splitVisible, splitRow, splitForm, splitLines, splitLineSelected, splitNeedsOrder, splitShowPreDoc, splitShowSoShipPreDocs, splitShowSoPreoutPrepDoc, splitPreDocRequired, splitShowPo, onSplitOrderTypeChange, openSplitPicker, settleVisible, settleRows, settleForm, totalSettleQty, totalSettleFee, openSettleModal, onSettleOk, secondaryAssignVisible, secondaryAssignRow, secondaryAssignForm, resetSecondaryAssignForm, onSecondaryAssignOk, assignVisible, assignRow, assignForm, assignCarriers, assignVehicles, assignTrailers, activeFormFields, activeFormLineFields, formLineEmptyText, formLineRows, formCatRows, formCatSelected, onDispatchCatAction, formInstRows, formInstSelected, onDispatchInstAction, onGsDragStart, onGsDrop, onFormLineSelectChange,
       kpiCfgVisible, kpiGrades, kpiGradeSel, kpiProjects, kpiProjSel, kpiScoreVisible, kpiScoreReadonly, kpiScoreVendor, kpiScoreProjects, kpiScoreExplain, kpiScoreRemark, kpiScoreTotal, kpiScoreGrade, kpiVendorRows, kpiVendorCols, kpiVendorSel,
       kpiFlowVisible, kpiFlowRow, kpiFlowNodes, kpiFlowStamp, kpiFlowStampClass,
       qcInspectVisible, qcInspectRow, qcInspectForm,

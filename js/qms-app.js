@@ -85,7 +85,7 @@ window.QMS_APP_MODULES = [
   },
   {
     "id": "app-insp-tab-oe",
-    "name": "异地委托报检单",
+    "name": "内部委托报检单",
     "icon": "📋",
     "group": "质量管理",
     "section": "报检及取样",
@@ -93,7 +93,7 @@ window.QMS_APP_MODULES = [
     "pageId": "insp-order",
     "tab": "tab-oe",
     "kind": "insp",
-    "pcLabel": "异地委托"
+    "pcLabel": "内部委托"
   },
   {
     "id": "app-split",
@@ -225,7 +225,7 @@ window.QMS_APP_MODULES = [
   },
   {
     "id": "app-res-tab-oe",
-    "name": "异地委托报检单",
+    "name": "内部委托报检单",
     "icon": "🔎",
     "group": "质量管理",
     "section": "检验结果查询",
@@ -233,7 +233,7 @@ window.QMS_APP_MODULES = [
     "pageId": "insp-order",
     "tab": "tab-oe",
     "kind": "result",
-    "pcLabel": "异地委托"
+    "pcLabel": "内部委托"
   },
   {
     "id": "app-inst",
@@ -974,7 +974,7 @@ window.QMS_APP_MODULES = [
     const QM_TABS = [
       ['tab-pi', '采购来料检'], ['tab-pp', '生产过程检'], ['tab-pm', '生产物料检'],
       ['tab-sst', '生产SST检'], ['tab-rd', '研发检'], ['tab-ext', '外来小样检'], ['tab-wr', '库内复检'],
-      ['tab-oe', '异地委托']
+      ['tab-oe', '内部委托']
     ];
     function qmBlank(v) {
       const s = v == null ? '' : String(v).trim();
@@ -5632,7 +5632,7 @@ window.QMS_APP_MODULES = [
       const tabs = [
         ['tab-pi', '采购来料检'], ['tab-pp', '生产过程检'], ['tab-pm', '生产物料检'], ['tab-sst', '生产SST检'],
         ['tab-rd', '研发检'], ['tab-ext', '外来小样检'], ['tab-wr', '库内复检'],
-        ['tab-oe', '异地委托']
+        ['tab-oe', '内部委托']
       ];
       const out = [];
       const seen = new Set();
