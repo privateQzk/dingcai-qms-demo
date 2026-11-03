@@ -6822,14 +6822,6 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
             <el-option label="否" value="否"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="存储库位">
-          <el-select v-model="labArchForm['存储库位']" filterable clearable placeholder="请选择" style="width:100%" @change="onLabArchLocChange">
-            <el-option v-for="n in labArchLocOpts" :key="n" :label="n" :value="n"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="存储仓库">
-          <el-input :model-value="labArchForm['存储仓库']" disabled placeholder="自动带出"></el-input>
-        </el-form-item>
         <el-form-item label="备注">
           <el-input v-model="labArchForm['备注']" placeholder="手工填写"></el-input>
         </el-form-item>
@@ -9979,10 +9971,10 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
 <script src="https://cdn.jsdelivr.net/npm/vxe-pc-ui@4/lib/index.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vxe-table@4/lib/index.umd.min.js"></script>
 <script src="./js/demo-announcements.js?v=1.4.14"></script>
-<script src="./js/page-configs.js?v=1.4.460"></script>
+<script src="./js/page-configs.js?v=1.4.461"></script>
 <script src="./js/mock-rows.js?v=1.4.280"></script>
 <script src="./js/dict-catalog.js?v=1.1.14"></script>
-<script src="./js/page-prd-notes.js?v=2.4.459"></script>
+<script src="./js/page-prd-notes.js?v=2.4.461"></script>
 <script src="./js/remarks-markdown.js?v=1.1.0"></script>
 <script type="module" src="./js/remarks-mermaid-init.js"></script>
 <script src="./js/remarks-mermaid.js"></script>
@@ -22025,7 +22017,7 @@ const app = createApp({
       Object.keys(labArchForm).forEach(k=> delete labArchForm[k]);
       const k = labArchKind.value;
       const dateKey = labArchDateKey.value;
-      [k+'编码', k+'名称', k+'规格', k+'种类', '供应商名称', '计量单位', '建档数量', '批号', dateKey, '有效期', '失效日期', '存储库位', '存储仓库', '备注', '生成条码数']
+      [k+'编码', k+'名称', k+'规格', k+'种类', '供应商名称', '计量单位', '建档数量', '批号', dateKey, '有效期', '失效日期', '备注', '生成条码数']
         .forEach(n=> { labArchForm[n] = ''; });
       labArchForm['有效期单位'] = '月';
       if(k==='留样') labArchForm['是否玻璃片'] = '否';
@@ -22105,10 +22097,10 @@ const app = createApp({
           [dateKey]: labArchForm[dateKey] || '',
           '有效期': lifeN ? `${lifeN} ${lifeU}` : '', _lifeN: lifeN, _lifeU: lifeU,
           '失效日期': labAddLife(labArchForm[dateKey], lifeN, lifeU),
-          '存储库位': labArchForm['存储库位'] || '', '存储仓库': labArchForm['存储仓库'] || '',
+          '存储库位': '', '存储仓库': '',
           ...(k==='留样'
-            ? { '是否玻璃片': labArchForm['是否玻璃片'] || '否', '样品位置': retainLocText(labArchForm['存储仓库'], labArchForm['存储库位']) }
-            : { '库存位置': retainLocText(labArchForm['存储仓库'], labArchForm['存储库位']) }),
+            ? { '是否玻璃片': labArchForm['是否玻璃片'] || '否', '样品位置': '—' }
+            : { '库存位置': '—' }),
           '备注': labArchForm['备注'] || '', '条码来源': '建档'
         });
       }

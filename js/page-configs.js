@@ -41281,20 +41281,6 @@ window.WMS_PAGE_CONFIGS = {
           "ctrl": "自动计算：生产日期 + 有效期 - 1 天"
         },
         {
-          "name": "存储库位",
-          "type": "select",
-          "required": false,
-          "filterable": true,
-          "clearable": true,
-          "ctrl": "下拉单选启用库位"
-        },
-        {
-          "name": "存储仓库",
-          "type": "readonly",
-          "required": false,
-          "ctrl": "根据存储库位自动带出，只读"
-        },
-        {
           "name": "备注",
           "type": "input",
           "required": false,
@@ -41585,20 +41571,6 @@ window.WMS_PAGE_CONFIGS = {
           "type": "readonly",
           "required": false,
           "ctrl": "自动计算：生产日期 + 有效期 - 1 天"
-        },
-        {
-          "name": "存储库位",
-          "type": "select",
-          "required": false,
-          "filterable": true,
-          "clearable": true,
-          "ctrl": "下拉单选启用库位"
-        },
-        {
-          "name": "存储仓库",
-          "type": "readonly",
-          "required": false,
-          "ctrl": "根据存储库位自动带出，只读"
         },
         {
           "name": "备注",
@@ -41919,20 +41891,6 @@ window.WMS_PAGE_CONFIGS = {
           "label": "原失效日期"
         },
         {
-          "name": "存储库位",
-          "type": "select",
-          "required": false,
-          "filterable": true,
-          "clearable": true,
-          "ctrl": "下拉单选启用库位"
-        },
-        {
-          "name": "存储仓库",
-          "type": "readonly",
-          "required": false,
-          "ctrl": "根据存储库位自动带出，只读"
-        },
-        {
           "name": "备注",
           "type": "input",
           "required": false,
@@ -42245,24 +42203,10 @@ window.WMS_PAGE_CONFIGS = {
           "ctrl": "下拉单选，是 / 否；默认否"
         },
         {
-          "name": "存储库位",
-          "type": "select",
-          "required": false,
-          "filterable": true,
-          "clearable": true,
-          "ctrl": "下拉单选启用库位"
-        },
-        {
-          "name": "存储仓库",
-          "type": "readonly",
-          "required": false,
-          "ctrl": "根据存储库位自动带出，只读"
-        },
-        {
           "name": "样品位置",
           "type": "readonly",
           "required": false,
-          "ctrl": "自动写入，只读：存储仓库 / 存储库位"
+          "ctrl": "由入库单反写，建档时可为空"
         },
         {
           "name": "备注",
@@ -42555,20 +42499,6 @@ window.WMS_PAGE_CONFIGS = {
           "type": "readonly",
           "required": false,
           "ctrl": "自动计算：生产日期 + 有效期 - 1 天"
-        },
-        {
-          "name": "存储库位",
-          "type": "select",
-          "required": false,
-          "filterable": true,
-          "clearable": true,
-          "ctrl": "下拉单选启用库位"
-        },
-        {
-          "name": "存储仓库",
-          "type": "readonly",
-          "required": false,
-          "ctrl": "根据存储库位自动带出，只读"
         },
         {
           "name": "备注",
@@ -57108,452 +57038,452 @@ window.WMS_PAGE_CONFIGS = {
       },
       "formDialogWidth": "480px"
     },
-    "np-0215-02":                                                                                                                               {
-                                                                          "id": "np-0215-02",
-                                                                          "title": "有害物质文件库",
-                                                                          "groups": [
-                                                                            "质量管理",
-                                                                            "有害物质管理"
-                                                                          ],
-                                                                          "breadcrumb": [
-                                                                            "质量管理",
-                                                                            "有害物质管理",
-                                                                            "有害物质文件库"
-                                                                          ],
-                                                                          "tabs": [],
-                                                                          "tabViews": [
-                                                                            {
-                                                                              "name": "main",
-                                                                              "label": "有害物质文件库",
-                                                                              "queryFields": [
-                                                                                {
-                                                                                  "name": "文件编号",
-                                                                                  "type": "input"
-                                                                                },
-                                                                                {
-                                                                                  "name": "文件名称",
-                                                                                  "type": "input"
-                                                                                },
-                                                                                {
-                                                                                  "name": "文件类型",
-                                                                                  "type": "select",
-                                                                                  "options": [
-                                                                                    "厂内文件",
-                                                                                    "客户文件",
-                                                                                    "法规文件"
-                                                                                  ]
-                                                                                },
-                                                                                {
-                                                                                  "name": "使用状态",
-                                                                                  "type": "select",
-                                                                                  "options": [
-                                                                                    "正常",
-                                                                                    "临期",
-                                                                                    "过期"
-                                                                                  ]
-                                                                                },
-                                                                                {
-                                                                                  "name": "客户名称",
-                                                                                  "type": "input"
-                                                                                },
-                                                                                {
-                                                                                  "name": "法规名称",
-                                                                                  "type": "input"
-                                                                                },
-                                                                                {
-                                                                                  "name": "使用期限类型",
-                                                                                  "type": "select",
-                                                                                  "options": [
-                                                                                    "固定期限",
-                                                                                    "永久使用"
-                                                                                  ]
-                                                                                },
-                                                                                {
-                                                                                  "name": "失效日期",
-                                                                                  "type": "daterange"
-                                                                                },
-                                                                                {
-                                                                                  "name": "创建人",
-                                                                                  "type": "input"
-                                                                                },
-                                                                                {
-                                                                                  "name": "创建时间",
-                                                                                  "type": "daterange"
-                                                                                }
-                                                                              ],
-                                                                              "queryDefault": [
-                                                                                "文件编号",
-                                                                                "文件名称",
-                                                                                "文件类型",
-                                                                                "使用状态"
-                                                                              ],
-                                                                              "queryMore": [
-                                                                                "客户名称",
-                                                                                "法规名称",
-                                                                                "使用期限类型",
-                                                                                "失效日期",
-                                                                                "创建人",
-                                                                                "创建时间"
-                                                                              ],
-                                                                              "toolbar": [
-                                                                                {
-                                                                                  "name": "导出数据",
-                                                                                  "type": "default",
-                                                                                  "desc": "勾选数据后，导出所选；未勾选导出当前查询结果（限当前物料类）"
-                                                                                }
-                                                                              ],
-                                                                              "columns": [
-                                                                                {
-                                                                                  "title": "使用状态",
-                                                                                  "field": "使用状态",
-                                                                                  "name": "使用状态",
-                                                                                  "slot": "tag",
-                                                                                  "width": 90
-                                                                                },
-                                                                                {
-                                                                                  "title": "物料类",
-                                                                                  "field": "物料类",
-                                                                                  "name": "物料类",
-                                                                                  "width": 120
-                                                                                },
-                                                                                {
-                                                                                  "title": "文件编号",
-                                                                                  "field": "文件编号",
-                                                                                  "name": "文件编号",
-                                                                                  "width": 150
-                                                                                },
-                                                                                {
-                                                                                  "title": "文件名称",
-                                                                                  "field": "文件名称",
-                                                                                  "name": "文件名称",
-                                                                                  "minWidth": 180
-                                                                                },
-                                                                                {
-                                                                                  "title": "文件类型",
-                                                                                  "field": "文件类型",
-                                                                                  "name": "文件类型",
-                                                                                  "slot": "tag",
-                                                                                  "width": 100
-                                                                                },
-                                                                                {
-                                                                                  "title": "文件",
-                                                                                  "field": "文件",
-                                                                                  "name": "文件",
-                                                                                  "slot": "files",
-                                                                                  "width": 160
-                                                                                },
-                                                                                {
-                                                                                  "title": "内容描述",
-                                                                                  "field": "内容描述",
-                                                                                  "name": "内容描述",
-                                                                                  "minWidth": 180
-                                                                                },
-                                                                                {
-                                                                                  "title": "客户名称",
-                                                                                  "field": "客户名称",
-                                                                                  "name": "客户名称",
-                                                                                  "minWidth": 160
-                                                                                },
-                                                                                {
-                                                                                  "title": "法规名称",
-                                                                                  "field": "法规名称",
-                                                                                  "name": "法规名称",
-                                                                                  "minWidth": 140
-                                                                                },
-                                                                                {
-                                                                                  "title": "使用期限类型",
-                                                                                  "field": "使用期限类型",
-                                                                                  "name": "使用期限类型",
-                                                                                  "width": 110
-                                                                                },
-                                                                                {
-                                                                                  "title": "生效日期",
-                                                                                  "field": "生效日期",
-                                                                                  "name": "生效日期",
-                                                                                  "width": 110
-                                                                                },
-                                                                                {
-                                                                                  "title": "使用周期",
-                                                                                  "field": "使用周期",
-                                                                                  "name": "使用周期",
-                                                                                  "width": 100
-                                                                                },
-                                                                                {
-                                                                                  "title": "提前预警",
-                                                                                  "field": "提前预警",
-                                                                                  "name": "提前预警",
-                                                                                  "width": 100
-                                                                                },
-                                                                                {
-                                                                                  "title": "失效日期",
-                                                                                  "field": "失效日期",
-                                                                                  "name": "失效日期",
-                                                                                  "width": 110
-                                                                                },
-                                                                                {
-                                                                                  "title": "备注",
-                                                                                  "field": "备注",
-                                                                                  "name": "备注",
-                                                                                  "minWidth": 140
-                                                                                },
-                                                                                {
-                                                                                  "title": "创建人",
-                                                                                  "field": "创建人",
-                                                                                  "name": "创建人",
-                                                                                  "width": 90
-                                                                                },
-                                                                                {
-                                                                                  "title": "创建时间",
-                                                                                  "field": "创建时间",
-                                                                                  "name": "创建时间",
-                                                                                  "width": 170
-                                                                                },
-                                                                                {
-                                                                                  "title": "操作",
-                                                                                  "field": "_actions",
-                                                                                  "name": "操作",
-                                                                                  "width": 120,
-                                                                                  "fixed": "right",
-                                                                                  "slot": "row_actions"
-                                                                                }
-                                                                              ],
-                                                                              "rowOps": [
-                                                                                {
-                                                                                  "name": "历史树"
-                                                                                }
-                                                                              ]
-                                                                            }
-                                                                          ],
-                                                                          "formFields": [],
-                                                                          "detailFields": [],
-                                                                          "formSections": [
-                                                                            {
-                                                                              "title": "文件信息",
-                                                                              "fields": [
-                                                                                {
-                                                                                  "name": "文件编号",
-                                                                                  "type": "readonly",
-                                                                                  "required": true,
-                                                                                  "ctrl": "系统自动生成",
-                                                                                  "placeholder": "HM-FILE-000001"
-                                                                                },
-                                                                                {
-                                                                                  "name": "物料类",
-                                                                                  "type": "readonly",
-                                                                                  "required": true,
-                                                                                  "ctrl": "来自左侧选中物料类，不可改",
-                                                                                  "placeholder": "自动带入"
-                                                                                },
-                                                                                {
-                                                                                  "name": "文件名称",
-                                                                                  "type": "input",
-                                                                                  "required": true,
-                                                                                  "placeholder": "请输入"
-                                                                                },
-                                                                                {
-                                                                                  "name": "文件类型",
-                                                                                  "type": "select",
-                                                                                  "required": true,
-                                                                                  "placeholder": "请选择",
-                                                                                  "options": [
-                                                                                    "厂内文件",
-                                                                                    "客户文件",
-                                                                                    "法规文件"
-                                                                                  ]
-                                                                                },
-                                                                                {
-                                                                                  "name": "客户信息",
-                                                                                  "type": "picker",
-                                                                                  "required": true,
-                                                                                  "placeholder": "点击右侧抽屉选择客户",
-                                                                                  "showWhen": {
-                                                                                    "field": "文件类型",
-                                                                                    "eq": "客户文件"
-                                                                                  }
-                                                                                },
-                                                                                {
-                                                                                  "name": "法规名称",
-                                                                                  "type": "input",
-                                                                                  "required": true,
-                                                                                  "placeholder": "如 EU RoHS、IEC 62321",
-                                                                                  "showWhen": {
-                                                                                    "field": "文件类型",
-                                                                                    "eq": "法规文件"
-                                                                                  }
-                                                                                },
-                                                                                {
-                                                                                  "name": "文件",
-                                                                                  "type": "upload",
-                                                                                  "placeholder": "点击上传"
-                                                                                },
-                                                                                {
-                                                                                  "name": "内容描述",
-                                                                                  "type": "textarea",
-                                                                                  "placeholder": "请输入",
-                                                                                  "fullRow": true
-                                                                                },
-                                                                                {
-                                                                                  "name": "备注",
-                                                                                  "type": "input",
-                                                                                  "placeholder": "请输入"
-                                                                                }
-                                                                              ]
-                                                                            },
-                                                                            {
-                                                                              "title": "有效期",
-                                                                              "fields": [
-                                                                                {
-                                                                                  "name": "使用期限类型",
-                                                                                  "type": "select",
-                                                                                  "required": true,
-                                                                                  "placeholder": "请选择",
-                                                                                  "options": [
-                                                                                    "固定期限",
-                                                                                    "永久使用"
-                                                                                  ]
-                                                                                },
-                                                                                {
-                                                                                  "name": "生效日期",
-                                                                                  "type": "date",
-                                                                                  "required": true,
-                                                                                  "placeholder": "选择日期",
-                                                                                  "showWhen": {
-                                                                                    "field": "使用期限类型",
-                                                                                    "eq": "固定期限"
-                                                                                  }
-                                                                                },
-                                                                                {
-                                                                                  "name": "使用周期",
-                                                                                  "type": "number-unit",
-                                                                                  "required": true,
-                                                                                  "placeholder": "正整数",
-                                                                                  "options": [
-                                                                                    "天",
-                                                                                    "月",
-                                                                                    "年"
-                                                                                  ],
-                                                                                  "defaultUnit": "天",
-                                                                                  "showWhen": {
-                                                                                    "field": "使用期限类型",
-                                                                                    "eq": "固定期限"
-                                                                                  }
-                                                                                },
-                                                                                {
-                                                                                  "name": "提前预警",
-                                                                                  "type": "number-unit",
-                                                                                  "required": true,
-                                                                                  "placeholder": "正整数",
-                                                                                  "options": [
-                                                                                    "天",
-                                                                                    "月",
-                                                                                    "年"
-                                                                                  ],
-                                                                                  "defaultUnit": "天",
-                                                                                  "showWhen": {
-                                                                                    "field": "使用期限类型",
-                                                                                    "eq": "固定期限"
-                                                                                  }
-                                                                                },
-                                                                                {
-                                                                                  "name": "失效日期",
-                                                                                  "type": "readonly",
-                                                                                  "ctrl": "自动计算",
-                                                                                  "placeholder": "自动计算",
-                                                                                  "showWhen": {
-                                                                                    "field": "使用期限类型",
-                                                                                    "eq": "固定期限"
-                                                                                  }
-                                                                                }
-                                                                              ]
-                                                                            }
-                                                                          ],
-                                                                          "detailSections": [
-                                                                            {
-                                                                              "title": "文件信息",
-                                                                              "fields": [
-                                                                                {
-                                                                                  "name": "文件编号"
-                                                                                },
-                                                                                {
-                                                                                  "name": "文件名称"
-                                                                                },
-                                                                                {
-                                                                                  "name": "文件类型"
-                                                                                },
-                                                                                {
-                                                                                  "name": "客户名称"
-                                                                                },
-                                                                                {
-                                                                                  "name": "法规名称"
-                                                                                },
-                                                                                {
-                                                                                  "name": "文件"
-                                                                                },
-                                                                                {
-                                                                                  "name": "内容描述"
-                                                                                },
-                                                                                {
-                                                                                  "name": "备注"
-                                                                                }
-                                                                              ]
-                                                                            },
-                                                                            {
-                                                                              "title": "有效期",
-                                                                              "fields": [
-                                                                                {
-                                                                                  "name": "使用状态"
-                                                                                },
-                                                                                {
-                                                                                  "name": "使用期限类型"
-                                                                                },
-                                                                                {
-                                                                                  "name": "生效日期"
-                                                                                },
-                                                                                {
-                                                                                  "name": "使用周期"
-                                                                                },
-                                                                                {
-                                                                                  "name": "提前预警"
-                                                                                },
-                                                                                {
-                                                                                  "name": "失效日期"
-                                                                                },
-                                                                                {
-                                                                                  "name": "创建人"
-                                                                                },
-                                                                                {
-                                                                                  "name": "创建时间"
-                                                                                }
-                                                                              ]
-                                                                            }
-                                                                          ],
-                                                                          "hasEdit": false,
-                                                                          "hasDetail": false,
-                                                                          "stub": false,
-                                                                          "formFullscreen": true,
-                                                                          "detailFullscreen": true,
-                                                                          "formFlat": true,
-                                                                          "formGridCols": 3,
-                                                                          "formLineFields": [],
-                                                                          "formLineActions": [],
-                                                                          "layout": "tree-list",
-                                                                          "treeTitle": "物料类",
-                                                                          "treeField": "物料类",
-                                                                          "treeNodes": [
-                                                                            "光刻胶原料",
-                                                                            "OLED有机材料",
-                                                                            "包装辅材"
-                                                                          ],
-                                                                          "treeNodeDescs": {
-                                                                            "光刻胶原料": "光刻工艺相关原料的有害物质管控标准",
-                                                                            "OLED有机材料": "OLED 有机材料管控，限值通常更严",
-                                                                            "包装辅材": "包装及辅材类物料管控标准"
-                                                                          },
-                                                                          "treeToolbar": [],
-                                                                          "treeOps": [],
-                                                                          "treeReadonly": true,
-                                                                          "treeSourcePage": "np-0215-01"
-                                                                        },
+    "np-0215-02": {
+      "id": "np-0215-02",
+      "title": "有害物质文件库",
+      "groups": [
+        "质量管理",
+        "有害物质管理"
+      ],
+      "breadcrumb": [
+        "质量管理",
+        "有害物质管理",
+        "有害物质文件库"
+      ],
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "有害物质文件库",
+          "queryFields": [
+            {
+              "name": "文件编号",
+              "type": "input"
+            },
+            {
+              "name": "文件名称",
+              "type": "input"
+            },
+            {
+              "name": "文件类型",
+              "type": "select",
+              "options": [
+                "厂内文件",
+                "客户文件",
+                "法规文件"
+              ]
+            },
+            {
+              "name": "使用状态",
+              "type": "select",
+              "options": [
+                "正常",
+                "临期",
+                "过期"
+              ]
+            },
+            {
+              "name": "客户名称",
+              "type": "input"
+            },
+            {
+              "name": "法规名称",
+              "type": "input"
+            },
+            {
+              "name": "使用期限类型",
+              "type": "select",
+              "options": [
+                "固定期限",
+                "永久使用"
+              ]
+            },
+            {
+              "name": "失效日期",
+              "type": "daterange"
+            },
+            {
+              "name": "创建人",
+              "type": "input"
+            },
+            {
+              "name": "创建时间",
+              "type": "daterange"
+            }
+          ],
+          "queryDefault": [
+            "文件编号",
+            "文件名称",
+            "文件类型",
+            "使用状态"
+          ],
+          "queryMore": [
+            "客户名称",
+            "法规名称",
+            "使用期限类型",
+            "失效日期",
+            "创建人",
+            "创建时间"
+          ],
+          "toolbar": [
+            {
+              "name": "导出数据",
+              "type": "default",
+              "desc": "勾选数据后，导出所选；未勾选导出当前查询结果（限当前物料类）"
+            }
+          ],
+          "columns": [
+            {
+              "title": "使用状态",
+              "field": "使用状态",
+              "name": "使用状态",
+              "slot": "tag",
+              "width": 90
+            },
+            {
+              "title": "物料类",
+              "field": "物料类",
+              "name": "物料类",
+              "width": 120
+            },
+            {
+              "title": "文件编号",
+              "field": "文件编号",
+              "name": "文件编号",
+              "width": 150
+            },
+            {
+              "title": "文件名称",
+              "field": "文件名称",
+              "name": "文件名称",
+              "minWidth": 180
+            },
+            {
+              "title": "文件类型",
+              "field": "文件类型",
+              "name": "文件类型",
+              "slot": "tag",
+              "width": 100
+            },
+            {
+              "title": "文件",
+              "field": "文件",
+              "name": "文件",
+              "slot": "files",
+              "width": 160
+            },
+            {
+              "title": "内容描述",
+              "field": "内容描述",
+              "name": "内容描述",
+              "minWidth": 180
+            },
+            {
+              "title": "客户名称",
+              "field": "客户名称",
+              "name": "客户名称",
+              "minWidth": 160
+            },
+            {
+              "title": "法规名称",
+              "field": "法规名称",
+              "name": "法规名称",
+              "minWidth": 140
+            },
+            {
+              "title": "使用期限类型",
+              "field": "使用期限类型",
+              "name": "使用期限类型",
+              "width": 110
+            },
+            {
+              "title": "生效日期",
+              "field": "生效日期",
+              "name": "生效日期",
+              "width": 110
+            },
+            {
+              "title": "使用周期",
+              "field": "使用周期",
+              "name": "使用周期",
+              "width": 100
+            },
+            {
+              "title": "提前预警",
+              "field": "提前预警",
+              "name": "提前预警",
+              "width": 100
+            },
+            {
+              "title": "失效日期",
+              "field": "失效日期",
+              "name": "失效日期",
+              "width": 110
+            },
+            {
+              "title": "备注",
+              "field": "备注",
+              "name": "备注",
+              "minWidth": 140
+            },
+            {
+              "title": "创建人",
+              "field": "创建人",
+              "name": "创建人",
+              "width": 90
+            },
+            {
+              "title": "创建时间",
+              "field": "创建时间",
+              "name": "创建时间",
+              "width": 170
+            },
+            {
+              "title": "操作",
+              "field": "_actions",
+              "name": "操作",
+              "width": 120,
+              "fixed": "right",
+              "slot": "row_actions"
+            }
+          ],
+          "rowOps": [
+            {
+              "name": "历史树"
+            }
+          ]
+        }
+      ],
+      "formFields": [],
+      "detailFields": [],
+      "formSections": [
+        {
+          "title": "文件信息",
+          "fields": [
+            {
+              "name": "文件编号",
+              "type": "readonly",
+              "required": true,
+              "ctrl": "系统自动生成",
+              "placeholder": "HM-FILE-000001"
+            },
+            {
+              "name": "物料类",
+              "type": "readonly",
+              "required": true,
+              "ctrl": "来自左侧选中物料类，不可改",
+              "placeholder": "自动带入"
+            },
+            {
+              "name": "文件名称",
+              "type": "input",
+              "required": true,
+              "placeholder": "请输入"
+            },
+            {
+              "name": "文件类型",
+              "type": "select",
+              "required": true,
+              "placeholder": "请选择",
+              "options": [
+                "厂内文件",
+                "客户文件",
+                "法规文件"
+              ]
+            },
+            {
+              "name": "客户信息",
+              "type": "picker",
+              "required": true,
+              "placeholder": "点击右侧抽屉选择客户",
+              "showWhen": {
+                "field": "文件类型",
+                "eq": "客户文件"
+              }
+            },
+            {
+              "name": "法规名称",
+              "type": "input",
+              "required": true,
+              "placeholder": "如 EU RoHS、IEC 62321",
+              "showWhen": {
+                "field": "文件类型",
+                "eq": "法规文件"
+              }
+            },
+            {
+              "name": "文件",
+              "type": "upload",
+              "placeholder": "点击上传"
+            },
+            {
+              "name": "内容描述",
+              "type": "textarea",
+              "placeholder": "请输入",
+              "fullRow": true
+            },
+            {
+              "name": "备注",
+              "type": "input",
+              "placeholder": "请输入"
+            }
+          ]
+        },
+        {
+          "title": "有效期",
+          "fields": [
+            {
+              "name": "使用期限类型",
+              "type": "select",
+              "required": true,
+              "placeholder": "请选择",
+              "options": [
+                "固定期限",
+                "永久使用"
+              ]
+            },
+            {
+              "name": "生效日期",
+              "type": "date",
+              "required": true,
+              "placeholder": "选择日期",
+              "showWhen": {
+                "field": "使用期限类型",
+                "eq": "固定期限"
+              }
+            },
+            {
+              "name": "使用周期",
+              "type": "number-unit",
+              "required": true,
+              "placeholder": "正整数",
+              "options": [
+                "天",
+                "月",
+                "年"
+              ],
+              "defaultUnit": "天",
+              "showWhen": {
+                "field": "使用期限类型",
+                "eq": "固定期限"
+              }
+            },
+            {
+              "name": "提前预警",
+              "type": "number-unit",
+              "required": true,
+              "placeholder": "正整数",
+              "options": [
+                "天",
+                "月",
+                "年"
+              ],
+              "defaultUnit": "天",
+              "showWhen": {
+                "field": "使用期限类型",
+                "eq": "固定期限"
+              }
+            },
+            {
+              "name": "失效日期",
+              "type": "readonly",
+              "ctrl": "自动计算",
+              "placeholder": "自动计算",
+              "showWhen": {
+                "field": "使用期限类型",
+                "eq": "固定期限"
+              }
+            }
+          ]
+        }
+      ],
+      "detailSections": [
+        {
+          "title": "文件信息",
+          "fields": [
+            {
+              "name": "文件编号"
+            },
+            {
+              "name": "文件名称"
+            },
+            {
+              "name": "文件类型"
+            },
+            {
+              "name": "客户名称"
+            },
+            {
+              "name": "法规名称"
+            },
+            {
+              "name": "文件"
+            },
+            {
+              "name": "内容描述"
+            },
+            {
+              "name": "备注"
+            }
+          ]
+        },
+        {
+          "title": "有效期",
+          "fields": [
+            {
+              "name": "使用状态"
+            },
+            {
+              "name": "使用期限类型"
+            },
+            {
+              "name": "生效日期"
+            },
+            {
+              "name": "使用周期"
+            },
+            {
+              "name": "提前预警"
+            },
+            {
+              "name": "失效日期"
+            },
+            {
+              "name": "创建人"
+            },
+            {
+              "name": "创建时间"
+            }
+          ]
+        }
+      ],
+      "hasEdit": false,
+      "hasDetail": false,
+      "stub": false,
+      "formFullscreen": true,
+      "detailFullscreen": true,
+      "formFlat": true,
+      "formGridCols": 3,
+      "formLineFields": [],
+      "formLineActions": [],
+      "layout": "tree-list",
+      "treeTitle": "物料类",
+      "treeField": "物料类",
+      "treeNodes": [
+        "光刻胶原料",
+        "OLED有机材料",
+        "包装辅材"
+      ],
+      "treeNodeDescs": {
+        "光刻胶原料": "光刻工艺相关原料的有害物质管控标准",
+        "OLED有机材料": "OLED 有机材料管控，限值通常更严",
+        "包装辅材": "包装及辅材类物料管控标准"
+      },
+      "treeToolbar": [],
+      "treeOps": [],
+      "treeReadonly": true,
+      "treeSourcePage": "np-0215-01"
+    },
     "np-0215-03": {
       "id": "np-0215-03",
       "title": "临期文件",
@@ -57720,1296 +57650,1296 @@ window.WMS_PAGE_CONFIGS = {
       "formLineFields": [],
       "formLineActions": []
     },
-    "np-0215-07":                                                       {
-                                      "id": "np-0215-07",
-                                      "title": "文件作废",
-                                      "groups": [
-                                        "质量管理",
-                                        "有害物质管理"
-                                      ],
-                                      "breadcrumb": [
-                                        "质量管理",
-                                        "有害物质管理",
-                                        "文件作废"
-                                      ],
-                                      "tabs": [],
-                                      "tabViews": [
-                                        {
-                                          "name": "main",
-                                          "label": "",
-                                          "queryFields": [
-                                            {
-                                              "name": "申请单号",
-                                              "type": "input"
-                                            },
-                                            {
-                                              "name": "文件编号",
-                                              "type": "input"
-                                            },
-                                            {
-                                              "name": "文件名称",
-                                              "type": "input"
-                                            },
-                                            {
-                                              "name": "作废状态",
-                                              "type": "select",
-                                              "options": [
-                                                "未作废",
-                                                "已作废"
-                                              ]
-                                            },
-                                            {
-                                              "name": "文件类型",
-                                              "type": "select",
-                                              "options": [
-                                                "厂内文件",
-                                                "客户文件",
-                                                "法规文件"
-                                              ]
-                                            },
-                                            {
-                                              "name": "客户名称",
-                                              "type": "input"
-                                            },
-                                            {
-                                              "name": "法规名称",
-                                              "type": "input"
-                                            },
-                                            {
-                                              "name": "创建人",
-                                              "type": "input"
-                                            },
-                                            {
-                                              "name": "创建时间",
-                                              "type": "daterange"
-                                            }
-                                          ],
-                                          "queryDefault": [
-                                            "申请单号",
-                                            "文件编号",
-                                            "文件名称",
-                                            "作废状态"
-                                          ],
-                                          "queryMore": [
-                                            "文件类型",
-                                            "客户名称",
-                                            "法规名称",
-                                            "创建人",
-                                            "创建时间"
-                                          ],
-                                          "toolbar": [
-                                            {
-                                              "name": "新增",
-                                              "type": "primary"
-                                            },
-                                            {
-                                              "name": "导出数据",
-                                              "type": "default"
-                                            },
-                                            {
-                                              "name": "批量删除",
-                                              "type": "danger"
-                                            }
-                                          ],
-                                          "columns": [
-                                            {
-                                              "title": "作废状态",
-                                              "field": "作废状态",
-                                              "name": "作废状态",
-                                              "slot": "tag",
-                                              "width": 90
-                                            },
-                                            {
-                                              "title": "申请单号",
-                                              "field": "申请单号",
-                                              "name": "申请单号",
-                                              "width": 100
-                                            },
-                                            {
-                                              "title": "文件编号",
-                                              "field": "文件编号",
-                                              "name": "文件编号",
-                                              "width": 140
-                                            },
-                                            {
-                                              "title": "文件名称",
-                                              "field": "文件名称",
-                                              "name": "文件名称",
-                                              "width": 180
-                                            },
-                                            {
-                                              "title": "文件类型",
-                                              "field": "文件类型",
-                                              "name": "文件类型",
-                                              "width": 100,
-                                              "slot": "tag"
-                                            },
-                                            {
-                                              "title": "客户名称",
-                                              "field": "客户名称",
-                                              "name": "客户名称",
-                                              "width": 160
-                                            },
-                                            {
-                                              "title": "法规名称",
-                                              "field": "法规名称",
-                                              "name": "法规名称",
-                                              "width": 160
-                                            },
-                                            {
-                                              "title": "作废原因",
-                                              "field": "作废原因",
-                                              "name": "作废原因",
-                                              "width": 180
-                                            },
-                                            {
-                                              "title": "创建人",
-                                              "field": "创建人",
-                                              "name": "创建人",
-                                              "width": 90
-                                            },
-                                            {
-                                              "title": "创建时间",
-                                              "field": "创建时间",
-                                              "name": "创建时间",
-                                              "width": 160
-                                            },
-                                            {
-                                              "title": "操作",
-                                              "field": "_actions",
-                                              "name": "_actions",
-                                              "width": 160,
-                                              "fixed": "right",
-                                              "slot": "row_actions"
-                                            }
-                                          ],
-                                          "rowOps": [
-                                            {
-                                              "name": "编辑"
-                                            },
-                                            {
-                                              "name": "确认作废"
-                                            }
-                                          ]
-                                        }
-                                      ],
-                                      "formFields": [
-                                        {
-                                          "name": "申请单号",
-                                          "type": "readonly",
-                                          "required": true,
-                                          "refreshable": true,
-                                          "placeholder": "自动生成"
-                                        },
-                                        {
-                                          "name": "文件编号",
-                                          "type": "picker",
-                                          "required": true,
-                                          "placeholder": "点击选择资料库文件"
-                                        },
-                                        {
-                                          "name": "文件名称",
-                                          "type": "readonly",
-                                          "required": false
-                                        },
-                                        {
-                                          "name": "文件类型",
-                                          "type": "readonly",
-                                          "required": false
-                                        },
-                                        {
-                                          "name": "客户名称",
-                                          "type": "readonly",
-                                          "required": false
-                                        },
-                                        {
-                                          "name": "法规名称",
-                                          "type": "readonly",
-                                          "required": false
-                                        },
-                                        {
-                                          "name": "文件",
-                                          "type": "readonly",
-                                          "required": false
-                                        },
-                                        {
-                                          "name": "作废原因",
-                                          "type": "textarea",
-                                          "required": true,
-                                          "placeholder": "输入",
-                                          "fullRow": true
-                                        },
-                                        {
-                                          "name": "备注",
-                                          "type": "textarea",
-                                          "required": false,
-                                          "placeholder": "输入",
-                                          "fullRow": true
-                                        }
-                                      ],
-                                      "detailFields": [],
-                                      "hasEdit": true,
-                                      "hasDetail": false,
-                                      "stub": false,
-                                      "formFlat": true,
-                                      "formLineFields": [],
-                                      "formLineActions": []
-                                    },
-    "np-0215-06":                                                       {
-                                      "id": "np-0215-06",
-                                      "title": "文件变更",
-                                      "groups": [
-                                        "质量管理",
-                                        "有害物质管理"
-                                      ],
-                                      "breadcrumb": [
-                                        "质量管理",
-                                        "有害物质管理",
-                                        "文件变更"
-                                      ],
-                                      "tabs": [],
-                                      "tabViews": [
-                                        {
-                                          "name": "main",
-                                          "label": "",
-                                          "queryFields": [
-                                            {
-                                              "name": "申请单号",
-                                              "type": "input"
-                                            },
-                                            {
-                                              "name": "文件编号",
-                                              "type": "input"
-                                            },
-                                            {
-                                              "name": "文件名称",
-                                              "type": "input"
-                                            },
-                                            {
-                                              "name": "变更状态",
-                                              "type": "select",
-                                              "options": [
-                                                "未变更",
-                                                "已变更"
-                                              ]
-                                            },
-                                            {
-                                              "name": "变更类型",
-                                              "type": "select",
-                                              "options": [
-                                                "内容修订",
-                                                "客户信息变更",
-                                                "有效期调整",
-                                                "文件替换"
-                                              ]
-                                            },
-                                            {
-                                              "name": "客户名称",
-                                              "type": "input"
-                                            },
-                                            {
-                                              "name": "创建人",
-                                              "type": "input"
-                                            },
-                                            {
-                                              "name": "创建时间",
-                                              "type": "daterange"
-                                            }
-                                          ],
-                                          "queryDefault": [
-                                            "申请单号",
-                                            "文件编号",
-                                            "文件名称",
-                                            "变更状态"
-                                          ],
-                                          "queryMore": [
-                                            "变更类型",
-                                            "客户名称",
-                                            "创建人",
-                                            "创建时间"
-                                          ],
-                                          "toolbar": [
-                                            {
-                                              "name": "新增",
-                                              "type": "primary"
-                                            },
-                                            {
-                                              "name": "导出数据",
-                                              "type": "default"
-                                            },
-                                            {
-                                              "name": "批量删除",
-                                              "type": "danger"
-                                            }
-                                          ],
-                                          "columns": [
-                                            {
-                                              "title": "变更状态",
-                                              "field": "变更状态",
-                                              "name": "变更状态",
-                                              "slot": "tag",
-                                              "width": 90
-                                            },
-                                            {
-                                              "title": "申请单号",
-                                              "field": "申请单号",
-                                              "name": "申请单号",
-                                              "width": 100
-                                            },
-                                            {
-                                              "title": "文件编号",
-                                              "field": "文件编号",
-                                              "name": "文件编号",
-                                              "width": 140
-                                            },
-                                            {
-                                              "title": "文件类型",
-                                              "field": "文件类型",
-                                              "name": "文件类型",
-                                              "width": 100
-                                            },
-                                            {
-                                              "title": "变更类型",
-                                              "field": "变更类型",
-                                              "name": "变更类型",
-                                              "width": 120
-                                            },
-                                            {
-                                              "title": "变更前文件名称",
-                                              "field": "变更前文件名称",
-                                              "name": "变更前文件名称",
-                                              "width": 180
-                                            },
-                                            {
-                                              "title": "变更后文件名称",
-                                              "field": "变更后文件名称",
-                                              "name": "变更后文件名称",
-                                              "width": 180
-                                            },
-                                            {
-                                              "title": "变更前客户名称",
-                                              "field": "变更前客户名称",
-                                              "name": "变更前客户名称",
-                                              "width": 140
-                                            },
-                                            {
-                                              "title": "变更后客户名称",
-                                              "field": "变更后客户名称",
-                                              "name": "变更后客户名称",
-                                              "width": 140
-                                            },
-                                            {
-                                              "title": "变更前内容描述",
-                                              "field": "变更前内容描述",
-                                              "name": "变更前内容描述",
-                                              "width": 180
-                                            },
-                                            {
-                                              "title": "变更后内容描述",
-                                              "field": "变更后内容描述",
-                                              "name": "变更后内容描述",
-                                              "width": 180
-                                            },
-                                            {
-                                              "title": "变更前使用期限类型",
-                                              "field": "变更前使用期限类型",
-                                              "name": "变更前使用期限类型",
-                                              "width": 140
-                                            },
-                                            {
-                                              "title": "变更后使用期限类型",
-                                              "field": "变更后使用期限类型",
-                                              "name": "变更后使用期限类型",
-                                              "width": 140
-                                            },
-                                            {
-                                              "title": "变更前生效日期",
-                                              "field": "变更前生效日期",
-                                              "name": "变更前生效日期",
-                                              "width": 120
-                                            },
-                                            {
-                                              "title": "变更后生效日期",
-                                              "field": "变更后生效日期",
-                                              "name": "变更后生效日期",
-                                              "width": 120
-                                            },
-                                            {
-                                              "title": "变更前使用周期",
-                                              "field": "变更前使用周期",
-                                              "name": "变更前使用周期",
-                                              "width": 120
-                                            },
-                                            {
-                                              "title": "变更后使用周期",
-                                              "field": "变更后使用周期",
-                                              "name": "变更后使用周期",
-                                              "width": 120
-                                            },
-                                            {
-                                              "title": "创建人",
-                                              "field": "创建人",
-                                              "name": "创建人",
-                                              "width": 90
-                                            },
-                                            {
-                                              "title": "创建时间",
-                                              "field": "创建时间",
-                                              "name": "创建时间",
-                                              "width": 160
-                                            },
-                                            {
-                                              "title": "操作",
-                                              "field": "_actions",
-                                              "name": "_actions",
-                                              "width": 160,
-                                              "fixed": "right",
-                                              "slot": "row_actions"
-                                            }
-                                          ],
-                                          "rowOps": [
-                                            {
-                                              "name": "编辑"
-                                            },
-                                            {
-                                              "name": "确认变更"
-                                            }
-                                          ]
-                                        }
-                                      ],
-                                      "formFields": [],
-                                      "formSections": [
-                                        {
-                                          "title": "",
-                                          "fields": [
-                                            {
-                                              "name": "申请单号",
-                                              "type": "readonly",
-                                              "required": true,
-                                              "refreshable": true,
-                                              "placeholder": "自动生成"
-                                            },
-                                            {
-                                              "name": "原文件",
-                                              "type": "picker",
-                                              "required": true,
-                                              "placeholder": "点击选择，单选后回显文件编号/文件名称"
-                                            },
-                                            {
-                                              "name": "变更类型",
-                                              "type": "select",
-                                              "required": true,
-                                              "filterable": true,
-                                              "placeholder": "模糊下拉，字典表",
-                                              "options": [
-                                                "内容修订",
-                                                "客户信息变更",
-                                                "有效期调整",
-                                                "文件替换"
-                                              ]
-                                            },
-                                            {
-                                              "name": "文件类型",
-                                              "type": "readonly",
-                                              "required": false,
-                                              "placeholder": "选择原文件后带出"
-                                            },
-                                            {
-                                              "name": "变更内容说明",
-                                              "type": "textarea",
-                                              "required": false,
-                                              "placeholder": "输入",
-                                              "fullRow": true
-                                            }
-                                          ]
-                                        },
-                                        {
-                                          "title": "变更前信息",
-                                          "fields": [
-                                            {
-                                              "name": "变更前文件名称",
-                                              "type": "readonly",
-                                              "label": "文件名称",
-                                              "required": true,
-                                              "placeholder": "自动带入"
-                                            },
-                                            {
-                                              "name": "变更前客户名称",
-                                              "type": "readonly",
-                                              "label": "客户名称",
-                                              "required": false,
-                                              "placeholder": "自动带入"
-                                            },
-                                            {
-                                              "name": "变更前内容描述",
-                                              "type": "textarea",
-                                              "label": "内容描述",
-                                              "required": false,
-                                              "placeholder": "自动带入",
-                                              "fullRow": true,
-                                              "readonly": true
-                                            },
-                                            {
-                                              "name": "变更前文件",
-                                              "type": "readonly",
-                                              "label": "文件",
-                                              "required": true,
-                                              "placeholder": "点击预览",
-                                              "preview": true
-                                            },
-                                            {
-                                              "name": "变更前使用期限类型",
-                                              "type": "radio",
-                                              "label": "使用期限类型",
-                                              "required": true,
-                                              "options": [
-                                                "固定期限",
-                                                "永久使用"
-                                              ],
-                                              "halfRow": true,
-                                              "readonly": true
-                                            },
-                                            {
-                                              "name": "变更前生效日期",
-                                              "type": "readonly",
-                                              "label": "生效日期",
-                                              "required": false,
-                                              "placeholder": "自动带入",
-                                              "showWhen": {
-                                                "field": "变更前使用期限类型",
-                                                "eq": "固定期限"
-                                              }
-                                            },
-                                            {
-                                              "name": "变更前使用周期",
-                                              "type": "number-unit",
-                                              "label": "使用周期",
-                                              "required": false,
-                                              "placeholder": "自动带入",
-                                              "unitName": "变更前使用周期单位",
-                                              "defaultUnit": "天",
-                                              "options": [
-                                                "天",
-                                                "月",
-                                                "年"
-                                              ],
-                                              "showWhen": {
-                                                "field": "变更前使用期限类型",
-                                                "eq": "固定期限"
-                                              },
-                                              "readonly": true
-                                            },
-                                            {
-                                              "name": "变更前提前预警",
-                                              "type": "number-unit",
-                                              "label": "提前预警",
-                                              "required": false,
-                                              "placeholder": "自动带入",
-                                              "unitName": "变更前提前预警单位",
-                                              "defaultUnit": "天",
-                                              "options": [
-                                                "天",
-                                                "月",
-                                                "年"
-                                              ],
-                                              "showWhen": {
-                                                "field": "变更前使用期限类型",
-                                                "eq": "固定期限"
-                                              },
-                                              "readonly": true
-                                            },
-                                            {
-                                              "name": "变更前失效日期",
-                                              "type": "readonly",
-                                              "label": "失效日期",
-                                              "required": false,
-                                              "placeholder": "自动计算，生效日期+使用周期-1天",
-                                              "showWhen": {
-                                                "field": "变更前使用期限类型",
-                                                "eq": "固定期限"
-                                              }
-                                            }
-                                          ]
-                                        },
-                                        {
-                                          "title": "变更后信息",
-                                          "fields": [
-                                            {
-                                              "name": "变更后文件名称",
-                                              "type": "input",
-                                              "label": "文件名称",
-                                              "required": true,
-                                              "placeholder": "自动带入，可修改"
-                                            },
-                                            {
-                                              "name": "变更后客户名称",
-                                              "type": "input",
-                                              "label": "客户名称",
-                                              "required": false,
-                                              "placeholder": "自动带入，可修改"
-                                            },
-                                            {
-                                              "name": "变更后内容描述",
-                                              "type": "textarea",
-                                              "label": "内容描述",
-                                              "required": false,
-                                              "placeholder": "自动带入，可修改",
-                                              "fullRow": true,
-                                              "readonly": false
-                                            },
-                                            {
-                                              "name": "变更后文件",
-                                              "type": "upload",
-                                              "label": "文件",
-                                              "required": true,
-                                              "placeholder": "自动带入，可修改",
-                                              "preview": false
-                                            },
-                                            {
-                                              "name": "变更后使用期限类型",
-                                              "type": "radio",
-                                              "label": "使用期限类型",
-                                              "required": true,
-                                              "options": [
-                                                "固定期限",
-                                                "永久使用"
-                                              ],
-                                              "halfRow": true,
-                                              "readonly": false
-                                            },
-                                            {
-                                              "name": "变更后生效日期",
-                                              "type": "date",
-                                              "label": "生效日期",
-                                              "required": true,
-                                              "placeholder": "自动带入",
-                                              "showWhen": {
-                                                "field": "变更后使用期限类型",
-                                                "eq": "固定期限"
-                                              }
-                                            },
-                                            {
-                                              "name": "变更后使用周期",
-                                              "type": "number-unit",
-                                              "label": "使用周期",
-                                              "required": true,
-                                              "placeholder": "输入, 正整数",
-                                              "unitName": "变更后使用周期单位",
-                                              "defaultUnit": "天",
-                                              "options": [
-                                                "天",
-                                                "月",
-                                                "年"
-                                              ],
-                                              "showWhen": {
-                                                "field": "变更后使用期限类型",
-                                                "eq": "固定期限"
-                                              },
-                                              "readonly": false
-                                            },
-                                            {
-                                              "name": "变更后提前预警",
-                                              "type": "number-unit",
-                                              "label": "提前预警",
-                                              "required": true,
-                                              "placeholder": "输入, 正整数",
-                                              "unitName": "变更后提前预警单位",
-                                              "defaultUnit": "天",
-                                              "options": [
-                                                "天",
-                                                "月",
-                                                "年"
-                                              ],
-                                              "showWhen": {
-                                                "field": "变更后使用期限类型",
-                                                "eq": "固定期限"
-                                              },
-                                              "readonly": false
-                                            },
-                                            {
-                                              "name": "变更后失效日期",
-                                              "type": "readonly",
-                                              "label": "失效日期",
-                                              "required": false,
-                                              "placeholder": "自动计算，生效日期+使用周期-1天",
-                                              "showWhen": {
-                                                "field": "变更后使用期限类型",
-                                                "eq": "固定期限"
-                                              }
-                                            }
-                                          ]
-                                        }
-                                      ],
-                                      "detailFields": [],
-                                      "hasEdit": true,
-                                      "hasDetail": false,
-                                      "stub": false,
-                                      "formFlat": true,
-                                      "formGridCols": 3,
-                                      "formLineFields": [],
-                                      "formLineActions": []
-                                    },
-    "np-0215-05":                                                                                                                               {
-                                                                          "id": "np-0215-05",
-                                                                          "title": "文件导入",
-                                                                          "groups": [
-                                                                            "质量管理",
-                                                                            "有害物质管理"
-                                                                          ],
-                                                                          "breadcrumb": [
-                                                                            "质量管理",
-                                                                            "有害物质管理",
-                                                                            "文件导入"
-                                                                          ],
-                                                                          "tabs": [],
-                                                                          "tabViews": [
-                                                                            {
-                                                                              "name": "main",
-                                                                              "label": "",
-                                                                              "queryFields": [
-                                                                                {
-                                                                                  "name": "申请单号",
-                                                                                  "type": "input"
-                                                                                },
-                                                                                {
-                                                                                  "name": "文件编号",
-                                                                                  "type": "input"
-                                                                                },
-                                                                                {
-                                                                                  "name": "文件名称",
-                                                                                  "type": "input"
-                                                                                },
-                                                                                {
-                                                                                  "name": "导入状态",
-                                                                                  "type": "select",
-                                                                                  "options": [
-                                                                                    "未导入",
-                                                                                    "已导入"
-                                                                                  ]
-                                                                                },
-                                                                                {
-                                                                                  "name": "文件类型",
-                                                                                  "type": "select",
-                                                                                  "options": [
-                                                                                    "厂内文件",
-                                                                                    "客户文件",
-                                                                                    "法规文件"
-                                                                                  ]
-                                                                                },
-                                                                                {
-                                                                                  "name": "物料类",
-                                                                                  "type": "select",
-                                                                                  "options": [
-                                                                                    "光刻胶原料",
-                                                                                    "OLED有机材料",
-                                                                                    "包装辅材"
-                                                                                  ]
-                                                                                },
-                                                                                {
-                                                                                  "name": "客户名称",
-                                                                                  "type": "input"
-                                                                                },
-                                                                                {
-                                                                                  "name": "法规名称",
-                                                                                  "type": "input"
-                                                                                },
-                                                                                {
-                                                                                  "name": "使用期限类型",
-                                                                                  "type": "select",
-                                                                                  "options": [
-                                                                                    "固定期限",
-                                                                                    "永久使用"
-                                                                                  ]
-                                                                                },
-                                                                                {
-                                                                                  "name": "创建人",
-                                                                                  "type": "input"
-                                                                                },
-                                                                                {
-                                                                                  "name": "创建时间",
-                                                                                  "type": "daterange"
-                                                                                }
-                                                                              ],
-                                                                              "queryDefault": [
-                                                                                "申请单号",
-                                                                                "文件编号",
-                                                                                "文件名称",
-                                                                                "导入状态"
-                                                                              ],
-                                                                              "queryMore": [
-                                                                                "物料类",
-                                                                                "文件类型",
-                                                                                "客户名称",
-                                                                                "法规名称",
-                                                                                "使用期限类型",
-                                                                                "创建人",
-                                                                                "创建时间"
-                                                                              ],
-                                                                              "toolbar": [
-                                                                                {
-                                                                                  "name": "新增",
-                                                                                  "type": "primary"
-                                                                                },
-                                                                                {
-                                                                                  "name": "导出数据",
-                                                                                  "type": "default"
-                                                                                },
-                                                                                {
-                                                                                  "name": "批量删除",
-                                                                                  "type": "danger"
-                                                                                }
-                                                                              ],
-                                                                              "columns": [
-                                                                                {
-                                                                                  "title": "导入状态",
-                                                                                  "field": "导入状态",
-                                                                                  "name": "导入状态",
-                                                                                  "slot": "tag",
-                                                                                  "width": 90
-                                                                                },
-                                                                                {
-                                                                                  "title": "申请单号",
-                                                                                  "field": "申请单号",
-                                                                                  "name": "申请单号",
-                                                                                  "width": 100
-                                                                                },
-                                                                                {
-                                                                                  "title": "物料类",
-                                                                                  "field": "物料类",
-                                                                                  "name": "物料类",
-                                                                                  "width": 120
-                                                                                },
-                                                                                {
-                                                                                  "title": "文件编号",
-                                                                                  "field": "文件编号",
-                                                                                  "name": "文件编号",
-                                                                                  "width": 140
-                                                                                },
-                                                                                {
-                                                                                  "title": "文件名称",
-                                                                                  "field": "文件名称",
-                                                                                  "name": "文件名称",
-                                                                                  "width": 180
-                                                                                },
-                                                                                {
-                                                                                  "title": "文件",
-                                                                                  "field": "文件",
-                                                                                  "name": "文件",
-                                                                                  "width": 160,
-                                                                                  "slot": "files"
-                                                                                },
-                                                                                {
-                                                                                  "title": "内容描述",
-                                                                                  "field": "内容描述",
-                                                                                  "name": "内容描述",
-                                                                                  "width": 180
-                                                                                },
-                                                                                {
-                                                                                  "title": "文件类型",
-                                                                                  "field": "文件类型",
-                                                                                  "name": "文件类型",
-                                                                                  "width": 100
-                                                                                },
-                                                                                {
-                                                                                  "title": "客户名称",
-                                                                                  "field": "客户名称",
-                                                                                  "name": "客户名称",
-                                                                                  "width": 160
-                                                                                },
-                                                                                {
-                                                                                  "title": "法规名称",
-                                                                                  "field": "法规名称",
-                                                                                  "name": "法规名称",
-                                                                                  "width": 160
-                                                                                },
-                                                                                {
-                                                                                  "title": "使用期限类型",
-                                                                                  "field": "使用期限类型",
-                                                                                  "name": "使用期限类型",
-                                                                                  "width": 110
-                                                                                },
-                                                                                {
-                                                                                  "title": "生效日期",
-                                                                                  "field": "生效日期",
-                                                                                  "name": "生效日期",
-                                                                                  "width": 110
-                                                                                },
-                                                                                {
-                                                                                  "title": "使用周期",
-                                                                                  "field": "使用周期",
-                                                                                  "name": "使用周期",
-                                                                                  "width": 100
-                                                                                },
-                                                                                {
-                                                                                  "title": "失效日期",
-                                                                                  "field": "失效日期",
-                                                                                  "name": "失效日期",
-                                                                                  "width": 110
-                                                                                },
-                                                                                {
-                                                                                  "title": "创建人",
-                                                                                  "field": "创建人",
-                                                                                  "name": "创建人",
-                                                                                  "width": 90
-                                                                                },
-                                                                                {
-                                                                                  "title": "创建时间",
-                                                                                  "field": "创建时间",
-                                                                                  "name": "创建时间",
-                                                                                  "width": 160
-                                                                                },
-                                                                                {
-                                                                                  "title": "操作",
-                                                                                  "field": "_actions",
-                                                                                  "name": "_actions",
-                                                                                  "width": 220,
-                                                                                  "fixed": "right",
-                                                                                  "slot": "row_actions"
-                                                                                }
-                                                                              ],
-                                                                              "rowOps": [
-                                                                                {
-                                                                                  "name": "确认导入"
-                                                                                },
-                                                                                {
-                                                                                  "name": "编辑"
-                                                                                },
-                                                                                {
-                                                                                  "name": "详情"
-                                                                                }
-                                                                              ]
-                                                                            }
-                                                                          ],
-                                                                          "formFields": [
-                                                                            {
-                                                                              "name": "申请单号",
-                                                                              "type": "readonly",
-                                                                              "required": true,
-                                                                              "refreshable": true,
-                                                                              "placeholder": "自动生成"
-                                                                            },
-                                                                            {
-                                                                              "name": "文件编号",
-                                                                              "type": "readonly",
-                                                                              "required": true,
-                                                                              "refreshable": true,
-                                                                              "placeholder": "自动生成"
-                                                                            },
-                                                                            {
-                                                                              "name": "物料类",
-                                                                              "type": "select",
-                                                                              "required": true,
-                                                                              "placeholder": "请选择",
-                                                                              "options": [
-                                                                                "光刻胶原料",
-                                                                                "OLED有机材料",
-                                                                                "包装辅材"
-                                                                              ],
-                                                                              "ctrl": "来自有害物质档案库物料类"
-                                                                            },
-                                                                            {
-                                                                              "name": "文件名称",
-                                                                              "type": "input",
-                                                                              "required": true,
-                                                                              "placeholder": "输入"
-                                                                            },
-                                                                            {
-                                                                              "name": "文件类型",
-                                                                              "type": "select",
-                                                                              "required": true,
-                                                                              "options": [
-                                                                                "厂内文件",
-                                                                                "客户文件",
-                                                                                "法规文件"
-                                                                              ],
-                                                                              "filterable": true,
-                                                                              "placeholder": "下拉，单选"
-                                                                            },
-                                                                            {
-                                                                              "name": "客户信息",
-                                                                              "type": "picker",
-                                                                              "required": true,
-                                                                              "placeholder": "点击选择客户",
-                                                                              "showWhen": {
-                                                                                "field": "文件类型",
-                                                                                "eq": "客户文件"
-                                                                              }
-                                                                            },
-                                                                            {
-                                                                              "name": "法规名称",
-                                                                              "type": "input",
-                                                                              "required": true,
-                                                                              "placeholder": "输入",
-                                                                              "showWhen": {
-                                                                                "field": "文件类型",
-                                                                                "eq": "法规文件"
-                                                                              }
-                                                                            },
-                                                                            {
-                                                                              "name": "内容描述",
-                                                                              "type": "textarea",
-                                                                              "required": false,
-                                                                              "placeholder": "输入",
-                                                                              "fullRow": true
-                                                                            },
-                                                                            {
-                                                                              "name": "文件",
-                                                                              "type": "upload",
-                                                                              "required": true,
-                                                                              "placeholder": "+点击上传"
-                                                                            },
-                                                                            {
-                                                                              "name": "使用期限类型",
-                                                                              "type": "radio",
-                                                                              "required": true,
-                                                                              "options": [
-                                                                                "固定期限",
-                                                                                "永久使用"
-                                                                              ],
-                                                                              "default": "固定期限"
-                                                                            },
-                                                                            {
-                                                                              "name": "生效日期",
-                                                                              "type": "date",
-                                                                              "required": true,
-                                                                              "placeholder": "下拉，年月日",
-                                                                              "showWhen": {
-                                                                                "field": "使用期限类型",
-                                                                                "eq": "固定期限"
-                                                                              }
-                                                                            },
-                                                                            {
-                                                                              "name": "使用周期",
-                                                                              "type": "number-unit",
-                                                                              "required": true,
-                                                                              "placeholder": "输入，正整数",
-                                                                              "options": [
-                                                                                "天",
-                                                                                "月",
-                                                                                "年"
-                                                                              ],
-                                                                              "defaultUnit": "天",
-                                                                              "unitName": "使用周期单位",
-                                                                              "showWhen": {
-                                                                                "field": "使用期限类型",
-                                                                                "eq": "固定期限"
-                                                                              }
-                                                                            },
-                                                                            {
-                                                                              "name": "提前预警",
-                                                                              "type": "number-unit",
-                                                                              "required": true,
-                                                                              "placeholder": "输入，正整数",
-                                                                              "options": [
-                                                                                "天",
-                                                                                "月",
-                                                                                "年"
-                                                                              ],
-                                                                              "defaultUnit": "天",
-                                                                              "unitName": "提前预警单位",
-                                                                              "showWhen": {
-                                                                                "field": "使用期限类型",
-                                                                                "eq": "固定期限"
-                                                                              }
-                                                                            },
-                                                                            {
-                                                                              "name": "失效日期",
-                                                                              "type": "readonly",
-                                                                              "required": true,
-                                                                              "placeholder": "自动计算，生效日期+使用周期-1天",
-                                                                              "showWhen": {
-                                                                                "field": "使用期限类型",
-                                                                                "eq": "固定期限"
-                                                                              }
-                                                                            },
-                                                                            {
-                                                                              "name": "备注",
-                                                                              "type": "textarea",
-                                                                              "required": false,
-                                                                              "placeholder": "输入",
-                                                                              "fullRow": true
-                                                                            }
-                                                                          ],
-                                                                          "detailFields": [],
-                                                                          "hasEdit": true,
-                                                                          "hasDetail": true,
-                                                                          "stub": false,
-                                                                          "formFlat": true,
-                                                                          "formLineFields": [],
-                                                                          "formLineActions": [],
-                                                                          "formFullscreen": true
-                                                                        },
-    "np-0215-04": {
-  "id": "np-0215-04",
-  "title": "回收站",
-  "groups": [
-    "质量管理",
-    "有害物质管理"
-  ],
-  "breadcrumb": [
-    "质量管理",
-    "有害物质管理",
-    "回收站"
-  ],
-  "tabs": [],
-  "tabViews": [
-    {
-      "name": "main",
-      "label": "",
-      "queryFields": [
+    "np-0215-07": {
+      "id": "np-0215-07",
+      "title": "文件作废",
+      "groups": [
+        "质量管理",
+        "有害物质管理"
+      ],
+      "breadcrumb": [
+        "质量管理",
+        "有害物质管理",
+        "文件作废"
+      ],
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [
+            {
+              "name": "申请单号",
+              "type": "input"
+            },
+            {
+              "name": "文件编号",
+              "type": "input"
+            },
+            {
+              "name": "文件名称",
+              "type": "input"
+            },
+            {
+              "name": "作废状态",
+              "type": "select",
+              "options": [
+                "未作废",
+                "已作废"
+              ]
+            },
+            {
+              "name": "文件类型",
+              "type": "select",
+              "options": [
+                "厂内文件",
+                "客户文件",
+                "法规文件"
+              ]
+            },
+            {
+              "name": "客户名称",
+              "type": "input"
+            },
+            {
+              "name": "法规名称",
+              "type": "input"
+            },
+            {
+              "name": "创建人",
+              "type": "input"
+            },
+            {
+              "name": "创建时间",
+              "type": "daterange"
+            }
+          ],
+          "queryDefault": [
+            "申请单号",
+            "文件编号",
+            "文件名称",
+            "作废状态"
+          ],
+          "queryMore": [
+            "文件类型",
+            "客户名称",
+            "法规名称",
+            "创建人",
+            "创建时间"
+          ],
+          "toolbar": [
+            {
+              "name": "新增",
+              "type": "primary"
+            },
+            {
+              "name": "导出数据",
+              "type": "default"
+            },
+            {
+              "name": "批量删除",
+              "type": "danger"
+            }
+          ],
+          "columns": [
+            {
+              "title": "作废状态",
+              "field": "作废状态",
+              "name": "作废状态",
+              "slot": "tag",
+              "width": 90
+            },
+            {
+              "title": "申请单号",
+              "field": "申请单号",
+              "name": "申请单号",
+              "width": 100
+            },
+            {
+              "title": "文件编号",
+              "field": "文件编号",
+              "name": "文件编号",
+              "width": 140
+            },
+            {
+              "title": "文件名称",
+              "field": "文件名称",
+              "name": "文件名称",
+              "width": 180
+            },
+            {
+              "title": "文件类型",
+              "field": "文件类型",
+              "name": "文件类型",
+              "width": 100,
+              "slot": "tag"
+            },
+            {
+              "title": "客户名称",
+              "field": "客户名称",
+              "name": "客户名称",
+              "width": 160
+            },
+            {
+              "title": "法规名称",
+              "field": "法规名称",
+              "name": "法规名称",
+              "width": 160
+            },
+            {
+              "title": "作废原因",
+              "field": "作废原因",
+              "name": "作废原因",
+              "width": 180
+            },
+            {
+              "title": "创建人",
+              "field": "创建人",
+              "name": "创建人",
+              "width": 90
+            },
+            {
+              "title": "创建时间",
+              "field": "创建时间",
+              "name": "创建时间",
+              "width": 160
+            },
+            {
+              "title": "操作",
+              "field": "_actions",
+              "name": "_actions",
+              "width": 160,
+              "fixed": "right",
+              "slot": "row_actions"
+            }
+          ],
+          "rowOps": [
+            {
+              "name": "编辑"
+            },
+            {
+              "name": "确认作废"
+            }
+          ]
+        }
+      ],
+      "formFields": [
+        {
+          "name": "申请单号",
+          "type": "readonly",
+          "required": true,
+          "refreshable": true,
+          "placeholder": "自动生成"
+        },
         {
           "name": "文件编号",
-          "type": "input"
+          "type": "picker",
+          "required": true,
+          "placeholder": "点击选择资料库文件"
         },
         {
           "name": "文件名称",
-          "type": "input"
+          "type": "readonly",
+          "required": false
+        },
+        {
+          "name": "文件类型",
+          "type": "readonly",
+          "required": false
+        },
+        {
+          "name": "客户名称",
+          "type": "readonly",
+          "required": false
+        },
+        {
+          "name": "法规名称",
+          "type": "readonly",
+          "required": false
+        },
+        {
+          "name": "文件",
+          "type": "readonly",
+          "required": false
+        },
+        {
+          "name": "作废原因",
+          "type": "textarea",
+          "required": true,
+          "placeholder": "输入",
+          "fullRow": true
+        },
+        {
+          "name": "备注",
+          "type": "textarea",
+          "required": false,
+          "placeholder": "输入",
+          "fullRow": true
+        }
+      ],
+      "detailFields": [],
+      "hasEdit": true,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true,
+      "formLineFields": [],
+      "formLineActions": []
+    },
+    "np-0215-06": {
+      "id": "np-0215-06",
+      "title": "文件变更",
+      "groups": [
+        "质量管理",
+        "有害物质管理"
+      ],
+      "breadcrumb": [
+        "质量管理",
+        "有害物质管理",
+        "文件变更"
+      ],
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [
+            {
+              "name": "申请单号",
+              "type": "input"
+            },
+            {
+              "name": "文件编号",
+              "type": "input"
+            },
+            {
+              "name": "文件名称",
+              "type": "input"
+            },
+            {
+              "name": "变更状态",
+              "type": "select",
+              "options": [
+                "未变更",
+                "已变更"
+              ]
+            },
+            {
+              "name": "变更类型",
+              "type": "select",
+              "options": [
+                "内容修订",
+                "客户信息变更",
+                "有效期调整",
+                "文件替换"
+              ]
+            },
+            {
+              "name": "客户名称",
+              "type": "input"
+            },
+            {
+              "name": "创建人",
+              "type": "input"
+            },
+            {
+              "name": "创建时间",
+              "type": "daterange"
+            }
+          ],
+          "queryDefault": [
+            "申请单号",
+            "文件编号",
+            "文件名称",
+            "变更状态"
+          ],
+          "queryMore": [
+            "变更类型",
+            "客户名称",
+            "创建人",
+            "创建时间"
+          ],
+          "toolbar": [
+            {
+              "name": "新增",
+              "type": "primary"
+            },
+            {
+              "name": "导出数据",
+              "type": "default"
+            },
+            {
+              "name": "批量删除",
+              "type": "danger"
+            }
+          ],
+          "columns": [
+            {
+              "title": "变更状态",
+              "field": "变更状态",
+              "name": "变更状态",
+              "slot": "tag",
+              "width": 90
+            },
+            {
+              "title": "申请单号",
+              "field": "申请单号",
+              "name": "申请单号",
+              "width": 100
+            },
+            {
+              "title": "文件编号",
+              "field": "文件编号",
+              "name": "文件编号",
+              "width": 140
+            },
+            {
+              "title": "文件类型",
+              "field": "文件类型",
+              "name": "文件类型",
+              "width": 100
+            },
+            {
+              "title": "变更类型",
+              "field": "变更类型",
+              "name": "变更类型",
+              "width": 120
+            },
+            {
+              "title": "变更前文件名称",
+              "field": "变更前文件名称",
+              "name": "变更前文件名称",
+              "width": 180
+            },
+            {
+              "title": "变更后文件名称",
+              "field": "变更后文件名称",
+              "name": "变更后文件名称",
+              "width": 180
+            },
+            {
+              "title": "变更前客户名称",
+              "field": "变更前客户名称",
+              "name": "变更前客户名称",
+              "width": 140
+            },
+            {
+              "title": "变更后客户名称",
+              "field": "变更后客户名称",
+              "name": "变更后客户名称",
+              "width": 140
+            },
+            {
+              "title": "变更前内容描述",
+              "field": "变更前内容描述",
+              "name": "变更前内容描述",
+              "width": 180
+            },
+            {
+              "title": "变更后内容描述",
+              "field": "变更后内容描述",
+              "name": "变更后内容描述",
+              "width": 180
+            },
+            {
+              "title": "变更前使用期限类型",
+              "field": "变更前使用期限类型",
+              "name": "变更前使用期限类型",
+              "width": 140
+            },
+            {
+              "title": "变更后使用期限类型",
+              "field": "变更后使用期限类型",
+              "name": "变更后使用期限类型",
+              "width": 140
+            },
+            {
+              "title": "变更前生效日期",
+              "field": "变更前生效日期",
+              "name": "变更前生效日期",
+              "width": 120
+            },
+            {
+              "title": "变更后生效日期",
+              "field": "变更后生效日期",
+              "name": "变更后生效日期",
+              "width": 120
+            },
+            {
+              "title": "变更前使用周期",
+              "field": "变更前使用周期",
+              "name": "变更前使用周期",
+              "width": 120
+            },
+            {
+              "title": "变更后使用周期",
+              "field": "变更后使用周期",
+              "name": "变更后使用周期",
+              "width": 120
+            },
+            {
+              "title": "创建人",
+              "field": "创建人",
+              "name": "创建人",
+              "width": 90
+            },
+            {
+              "title": "创建时间",
+              "field": "创建时间",
+              "name": "创建时间",
+              "width": 160
+            },
+            {
+              "title": "操作",
+              "field": "_actions",
+              "name": "_actions",
+              "width": 160,
+              "fixed": "right",
+              "slot": "row_actions"
+            }
+          ],
+          "rowOps": [
+            {
+              "name": "编辑"
+            },
+            {
+              "name": "确认变更"
+            }
+          ]
+        }
+      ],
+      "formFields": [],
+      "formSections": [
+        {
+          "title": "",
+          "fields": [
+            {
+              "name": "申请单号",
+              "type": "readonly",
+              "required": true,
+              "refreshable": true,
+              "placeholder": "自动生成"
+            },
+            {
+              "name": "原文件",
+              "type": "picker",
+              "required": true,
+              "placeholder": "点击选择，单选后回显文件编号/文件名称"
+            },
+            {
+              "name": "变更类型",
+              "type": "select",
+              "required": true,
+              "filterable": true,
+              "placeholder": "模糊下拉，字典表",
+              "options": [
+                "内容修订",
+                "客户信息变更",
+                "有效期调整",
+                "文件替换"
+              ]
+            },
+            {
+              "name": "文件类型",
+              "type": "readonly",
+              "required": false,
+              "placeholder": "选择原文件后带出"
+            },
+            {
+              "name": "变更内容说明",
+              "type": "textarea",
+              "required": false,
+              "placeholder": "输入",
+              "fullRow": true
+            }
+          ]
+        },
+        {
+          "title": "变更前信息",
+          "fields": [
+            {
+              "name": "变更前文件名称",
+              "type": "readonly",
+              "label": "文件名称",
+              "required": true,
+              "placeholder": "自动带入"
+            },
+            {
+              "name": "变更前客户名称",
+              "type": "readonly",
+              "label": "客户名称",
+              "required": false,
+              "placeholder": "自动带入"
+            },
+            {
+              "name": "变更前内容描述",
+              "type": "textarea",
+              "label": "内容描述",
+              "required": false,
+              "placeholder": "自动带入",
+              "fullRow": true,
+              "readonly": true
+            },
+            {
+              "name": "变更前文件",
+              "type": "readonly",
+              "label": "文件",
+              "required": true,
+              "placeholder": "点击预览",
+              "preview": true
+            },
+            {
+              "name": "变更前使用期限类型",
+              "type": "radio",
+              "label": "使用期限类型",
+              "required": true,
+              "options": [
+                "固定期限",
+                "永久使用"
+              ],
+              "halfRow": true,
+              "readonly": true
+            },
+            {
+              "name": "变更前生效日期",
+              "type": "readonly",
+              "label": "生效日期",
+              "required": false,
+              "placeholder": "自动带入",
+              "showWhen": {
+                "field": "变更前使用期限类型",
+                "eq": "固定期限"
+              }
+            },
+            {
+              "name": "变更前使用周期",
+              "type": "number-unit",
+              "label": "使用周期",
+              "required": false,
+              "placeholder": "自动带入",
+              "unitName": "变更前使用周期单位",
+              "defaultUnit": "天",
+              "options": [
+                "天",
+                "月",
+                "年"
+              ],
+              "showWhen": {
+                "field": "变更前使用期限类型",
+                "eq": "固定期限"
+              },
+              "readonly": true
+            },
+            {
+              "name": "变更前提前预警",
+              "type": "number-unit",
+              "label": "提前预警",
+              "required": false,
+              "placeholder": "自动带入",
+              "unitName": "变更前提前预警单位",
+              "defaultUnit": "天",
+              "options": [
+                "天",
+                "月",
+                "年"
+              ],
+              "showWhen": {
+                "field": "变更前使用期限类型",
+                "eq": "固定期限"
+              },
+              "readonly": true
+            },
+            {
+              "name": "变更前失效日期",
+              "type": "readonly",
+              "label": "失效日期",
+              "required": false,
+              "placeholder": "自动计算，生效日期+使用周期-1天",
+              "showWhen": {
+                "field": "变更前使用期限类型",
+                "eq": "固定期限"
+              }
+            }
+          ]
+        },
+        {
+          "title": "变更后信息",
+          "fields": [
+            {
+              "name": "变更后文件名称",
+              "type": "input",
+              "label": "文件名称",
+              "required": true,
+              "placeholder": "自动带入，可修改"
+            },
+            {
+              "name": "变更后客户名称",
+              "type": "input",
+              "label": "客户名称",
+              "required": false,
+              "placeholder": "自动带入，可修改"
+            },
+            {
+              "name": "变更后内容描述",
+              "type": "textarea",
+              "label": "内容描述",
+              "required": false,
+              "placeholder": "自动带入，可修改",
+              "fullRow": true,
+              "readonly": false
+            },
+            {
+              "name": "变更后文件",
+              "type": "upload",
+              "label": "文件",
+              "required": true,
+              "placeholder": "自动带入，可修改",
+              "preview": false
+            },
+            {
+              "name": "变更后使用期限类型",
+              "type": "radio",
+              "label": "使用期限类型",
+              "required": true,
+              "options": [
+                "固定期限",
+                "永久使用"
+              ],
+              "halfRow": true,
+              "readonly": false
+            },
+            {
+              "name": "变更后生效日期",
+              "type": "date",
+              "label": "生效日期",
+              "required": true,
+              "placeholder": "自动带入",
+              "showWhen": {
+                "field": "变更后使用期限类型",
+                "eq": "固定期限"
+              }
+            },
+            {
+              "name": "变更后使用周期",
+              "type": "number-unit",
+              "label": "使用周期",
+              "required": true,
+              "placeholder": "输入, 正整数",
+              "unitName": "变更后使用周期单位",
+              "defaultUnit": "天",
+              "options": [
+                "天",
+                "月",
+                "年"
+              ],
+              "showWhen": {
+                "field": "变更后使用期限类型",
+                "eq": "固定期限"
+              },
+              "readonly": false
+            },
+            {
+              "name": "变更后提前预警",
+              "type": "number-unit",
+              "label": "提前预警",
+              "required": true,
+              "placeholder": "输入, 正整数",
+              "unitName": "变更后提前预警单位",
+              "defaultUnit": "天",
+              "options": [
+                "天",
+                "月",
+                "年"
+              ],
+              "showWhen": {
+                "field": "变更后使用期限类型",
+                "eq": "固定期限"
+              },
+              "readonly": false
+            },
+            {
+              "name": "变更后失效日期",
+              "type": "readonly",
+              "label": "失效日期",
+              "required": false,
+              "placeholder": "自动计算，生效日期+使用周期-1天",
+              "showWhen": {
+                "field": "变更后使用期限类型",
+                "eq": "固定期限"
+              }
+            }
+          ]
+        }
+      ],
+      "detailFields": [],
+      "hasEdit": true,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true,
+      "formGridCols": 3,
+      "formLineFields": [],
+      "formLineActions": []
+    },
+    "np-0215-05": {
+      "id": "np-0215-05",
+      "title": "文件导入",
+      "groups": [
+        "质量管理",
+        "有害物质管理"
+      ],
+      "breadcrumb": [
+        "质量管理",
+        "有害物质管理",
+        "文件导入"
+      ],
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [
+            {
+              "name": "申请单号",
+              "type": "input"
+            },
+            {
+              "name": "文件编号",
+              "type": "input"
+            },
+            {
+              "name": "文件名称",
+              "type": "input"
+            },
+            {
+              "name": "导入状态",
+              "type": "select",
+              "options": [
+                "未导入",
+                "已导入"
+              ]
+            },
+            {
+              "name": "文件类型",
+              "type": "select",
+              "options": [
+                "厂内文件",
+                "客户文件",
+                "法规文件"
+              ]
+            },
+            {
+              "name": "物料类",
+              "type": "select",
+              "options": [
+                "光刻胶原料",
+                "OLED有机材料",
+                "包装辅材"
+              ]
+            },
+            {
+              "name": "客户名称",
+              "type": "input"
+            },
+            {
+              "name": "法规名称",
+              "type": "input"
+            },
+            {
+              "name": "使用期限类型",
+              "type": "select",
+              "options": [
+                "固定期限",
+                "永久使用"
+              ]
+            },
+            {
+              "name": "创建人",
+              "type": "input"
+            },
+            {
+              "name": "创建时间",
+              "type": "daterange"
+            }
+          ],
+          "queryDefault": [
+            "申请单号",
+            "文件编号",
+            "文件名称",
+            "导入状态"
+          ],
+          "queryMore": [
+            "物料类",
+            "文件类型",
+            "客户名称",
+            "法规名称",
+            "使用期限类型",
+            "创建人",
+            "创建时间"
+          ],
+          "toolbar": [
+            {
+              "name": "新增",
+              "type": "primary"
+            },
+            {
+              "name": "导出数据",
+              "type": "default"
+            },
+            {
+              "name": "批量删除",
+              "type": "danger"
+            }
+          ],
+          "columns": [
+            {
+              "title": "导入状态",
+              "field": "导入状态",
+              "name": "导入状态",
+              "slot": "tag",
+              "width": 90
+            },
+            {
+              "title": "申请单号",
+              "field": "申请单号",
+              "name": "申请单号",
+              "width": 100
+            },
+            {
+              "title": "物料类",
+              "field": "物料类",
+              "name": "物料类",
+              "width": 120
+            },
+            {
+              "title": "文件编号",
+              "field": "文件编号",
+              "name": "文件编号",
+              "width": 140
+            },
+            {
+              "title": "文件名称",
+              "field": "文件名称",
+              "name": "文件名称",
+              "width": 180
+            },
+            {
+              "title": "文件",
+              "field": "文件",
+              "name": "文件",
+              "width": 160,
+              "slot": "files"
+            },
+            {
+              "title": "内容描述",
+              "field": "内容描述",
+              "name": "内容描述",
+              "width": 180
+            },
+            {
+              "title": "文件类型",
+              "field": "文件类型",
+              "name": "文件类型",
+              "width": 100
+            },
+            {
+              "title": "客户名称",
+              "field": "客户名称",
+              "name": "客户名称",
+              "width": 160
+            },
+            {
+              "title": "法规名称",
+              "field": "法规名称",
+              "name": "法规名称",
+              "width": 160
+            },
+            {
+              "title": "使用期限类型",
+              "field": "使用期限类型",
+              "name": "使用期限类型",
+              "width": 110
+            },
+            {
+              "title": "生效日期",
+              "field": "生效日期",
+              "name": "生效日期",
+              "width": 110
+            },
+            {
+              "title": "使用周期",
+              "field": "使用周期",
+              "name": "使用周期",
+              "width": 100
+            },
+            {
+              "title": "失效日期",
+              "field": "失效日期",
+              "name": "失效日期",
+              "width": 110
+            },
+            {
+              "title": "创建人",
+              "field": "创建人",
+              "name": "创建人",
+              "width": 90
+            },
+            {
+              "title": "创建时间",
+              "field": "创建时间",
+              "name": "创建时间",
+              "width": 160
+            },
+            {
+              "title": "操作",
+              "field": "_actions",
+              "name": "_actions",
+              "width": 220,
+              "fixed": "right",
+              "slot": "row_actions"
+            }
+          ],
+          "rowOps": [
+            {
+              "name": "确认导入"
+            },
+            {
+              "name": "编辑"
+            },
+            {
+              "name": "详情"
+            }
+          ]
+        }
+      ],
+      "formFields": [
+        {
+          "name": "申请单号",
+          "type": "readonly",
+          "required": true,
+          "refreshable": true,
+          "placeholder": "自动生成"
+        },
+        {
+          "name": "文件编号",
+          "type": "readonly",
+          "required": true,
+          "refreshable": true,
+          "placeholder": "自动生成"
+        },
+        {
+          "name": "物料类",
+          "type": "select",
+          "required": true,
+          "placeholder": "请选择",
+          "options": [
+            "光刻胶原料",
+            "OLED有机材料",
+            "包装辅材"
+          ],
+          "ctrl": "来自有害物质档案库物料类"
+        },
+        {
+          "name": "文件名称",
+          "type": "input",
+          "required": true,
+          "placeholder": "输入"
         },
         {
           "name": "文件类型",
           "type": "select",
+          "required": true,
           "options": [
             "厂内文件",
             "客户文件",
             "法规文件"
-          ]
+          ],
+          "filterable": true,
+          "placeholder": "下拉，单选"
         },
         {
-          "name": "客户名称",
-          "type": "input"
+          "name": "客户信息",
+          "type": "picker",
+          "required": true,
+          "placeholder": "点击选择客户",
+          "showWhen": {
+            "field": "文件类型",
+            "eq": "客户文件"
+          }
         },
         {
           "name": "法规名称",
-          "type": "input"
+          "type": "input",
+          "required": true,
+          "placeholder": "输入",
+          "showWhen": {
+            "field": "文件类型",
+            "eq": "法规文件"
+          }
         },
         {
-          "name": "作废时间",
-          "type": "daterange"
-        }
-      ],
-      "queryDefault": [
-        "文件编号",
-        "文件名称",
-        "文件类型",
-        "客户名称"
-      ],
-      "queryMore": [
-        "法规名称",
-        "作废时间"
-      ],
-      "toolbar": [
-        {
-          "name": "导出数据",
-          "type": "default",
-          "desc": "勾选数据后，导出所选；未勾选导出当前查询结果"
-        }
-      ],
-      "columns": [
-        {
-          "title": "文件编号",
-          "field": "文件编号",
-          "name": "文件编号",
-          "width": 140
-        },
-        {
-          "title": "文件名称",
-          "field": "文件名称",
-          "name": "文件名称",
-          "width": 180
-        },
-        {
-          "title": "文件",
-          "field": "文件",
-          "name": "文件",
-          "width": 160,
-          "slot": "files"
-        },
-        {
-          "title": "内容描述",
-          "field": "内容描述",
           "name": "内容描述",
-          "width": 180
+          "type": "textarea",
+          "required": false,
+          "placeholder": "输入",
+          "fullRow": true
         },
         {
-          "title": "文件类型",
-          "field": "文件类型",
-          "name": "文件类型",
-          "width": 100,
-          "slot": "tag"
+          "name": "文件",
+          "type": "upload",
+          "required": true,
+          "placeholder": "+点击上传"
         },
         {
-          "title": "客户名称",
-          "field": "客户名称",
-          "name": "客户名称",
-          "width": 160
-        },
-        {
-          "title": "法规名称",
-          "field": "法规名称",
-          "name": "法规名称",
-          "width": 160
-        },
-        {
-          "title": "使用期限类型",
-          "field": "使用期限类型",
           "name": "使用期限类型",
-          "width": 110
+          "type": "radio",
+          "required": true,
+          "options": [
+            "固定期限",
+            "永久使用"
+          ],
+          "default": "固定期限"
         },
         {
-          "title": "生效日期",
-          "field": "生效日期",
           "name": "生效日期",
-          "width": 110
+          "type": "date",
+          "required": true,
+          "placeholder": "下拉，年月日",
+          "showWhen": {
+            "field": "使用期限类型",
+            "eq": "固定期限"
+          }
         },
         {
-          "title": "使用周期",
-          "field": "使用周期",
           "name": "使用周期",
-          "width": 100
+          "type": "number-unit",
+          "required": true,
+          "placeholder": "输入，正整数",
+          "options": [
+            "天",
+            "月",
+            "年"
+          ],
+          "defaultUnit": "天",
+          "unitName": "使用周期单位",
+          "showWhen": {
+            "field": "使用期限类型",
+            "eq": "固定期限"
+          }
         },
         {
-          "title": "失效日期",
-          "field": "失效日期",
+          "name": "提前预警",
+          "type": "number-unit",
+          "required": true,
+          "placeholder": "输入，正整数",
+          "options": [
+            "天",
+            "月",
+            "年"
+          ],
+          "defaultUnit": "天",
+          "unitName": "提前预警单位",
+          "showWhen": {
+            "field": "使用期限类型",
+            "eq": "固定期限"
+          }
+        },
+        {
           "name": "失效日期",
-          "width": 110
+          "type": "readonly",
+          "required": true,
+          "placeholder": "自动计算，生效日期+使用周期-1天",
+          "showWhen": {
+            "field": "使用期限类型",
+            "eq": "固定期限"
+          }
         },
         {
-          "title": "作废原因",
-          "field": "作废原因",
-          "name": "作废原因",
-          "width": 180
-        },
-        {
-          "title": "作废申请人",
-          "field": "作废申请人",
-          "name": "作废申请人",
-          "width": 100
-        },
-        {
-          "title": "作废时间",
-          "field": "作废时间",
-          "name": "作废时间",
-          "width": 160
-        },
-        {
-          "title": "来源申请单号",
-          "field": "来源申请单号",
-          "name": "来源申请单号",
-          "width": 120
+          "name": "备注",
+          "type": "textarea",
+          "required": false,
+          "placeholder": "输入",
+          "fullRow": true
         }
       ],
-      "rowOps": []
-    }
-  ],
-  "formFields": [],
-  "detailFields": [],
-  "hasEdit": false,
-  "hasDetail": false,
-  "stub": false,
-  "formFlat": true,
-  "formLineFields": [],
-  "formLineActions": []
-},
+      "detailFields": [],
+      "hasEdit": true,
+      "hasDetail": true,
+      "stub": false,
+      "formFlat": true,
+      "formLineFields": [],
+      "formLineActions": [],
+      "formFullscreen": true
+    },
+    "np-0215-04": {
+      "id": "np-0215-04",
+      "title": "回收站",
+      "groups": [
+        "质量管理",
+        "有害物质管理"
+      ],
+      "breadcrumb": [
+        "质量管理",
+        "有害物质管理",
+        "回收站"
+      ],
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [
+            {
+              "name": "文件编号",
+              "type": "input"
+            },
+            {
+              "name": "文件名称",
+              "type": "input"
+            },
+            {
+              "name": "文件类型",
+              "type": "select",
+              "options": [
+                "厂内文件",
+                "客户文件",
+                "法规文件"
+              ]
+            },
+            {
+              "name": "客户名称",
+              "type": "input"
+            },
+            {
+              "name": "法规名称",
+              "type": "input"
+            },
+            {
+              "name": "作废时间",
+              "type": "daterange"
+            }
+          ],
+          "queryDefault": [
+            "文件编号",
+            "文件名称",
+            "文件类型",
+            "客户名称"
+          ],
+          "queryMore": [
+            "法规名称",
+            "作废时间"
+          ],
+          "toolbar": [
+            {
+              "name": "导出数据",
+              "type": "default",
+              "desc": "勾选数据后，导出所选；未勾选导出当前查询结果"
+            }
+          ],
+          "columns": [
+            {
+              "title": "文件编号",
+              "field": "文件编号",
+              "name": "文件编号",
+              "width": 140
+            },
+            {
+              "title": "文件名称",
+              "field": "文件名称",
+              "name": "文件名称",
+              "width": 180
+            },
+            {
+              "title": "文件",
+              "field": "文件",
+              "name": "文件",
+              "width": 160,
+              "slot": "files"
+            },
+            {
+              "title": "内容描述",
+              "field": "内容描述",
+              "name": "内容描述",
+              "width": 180
+            },
+            {
+              "title": "文件类型",
+              "field": "文件类型",
+              "name": "文件类型",
+              "width": 100,
+              "slot": "tag"
+            },
+            {
+              "title": "客户名称",
+              "field": "客户名称",
+              "name": "客户名称",
+              "width": 160
+            },
+            {
+              "title": "法规名称",
+              "field": "法规名称",
+              "name": "法规名称",
+              "width": 160
+            },
+            {
+              "title": "使用期限类型",
+              "field": "使用期限类型",
+              "name": "使用期限类型",
+              "width": 110
+            },
+            {
+              "title": "生效日期",
+              "field": "生效日期",
+              "name": "生效日期",
+              "width": 110
+            },
+            {
+              "title": "使用周期",
+              "field": "使用周期",
+              "name": "使用周期",
+              "width": 100
+            },
+            {
+              "title": "失效日期",
+              "field": "失效日期",
+              "name": "失效日期",
+              "width": 110
+            },
+            {
+              "title": "作废原因",
+              "field": "作废原因",
+              "name": "作废原因",
+              "width": 180
+            },
+            {
+              "title": "作废申请人",
+              "field": "作废申请人",
+              "name": "作废申请人",
+              "width": 100
+            },
+            {
+              "title": "作废时间",
+              "field": "作废时间",
+              "name": "作废时间",
+              "width": 160
+            },
+            {
+              "title": "来源申请单号",
+              "field": "来源申请单号",
+              "name": "来源申请单号",
+              "width": 120
+            }
+          ],
+          "rowOps": []
+        }
+      ],
+      "formFields": [],
+      "detailFields": [],
+      "hasEdit": false,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true,
+      "formLineFields": [],
+      "formLineActions": []
+    },
     "np-0301-02": {
       "id": "np-0301-02",
       "title": "仪器履历",
@@ -79622,258 +79552,258 @@ window.WMS_PAGE_CONFIGS = {
       "formFullscreen": true
     },
     "np-0409-01": {
-  "id": "np-0409-01",
-  "title": "检验项流水表",
-  "groups": [
-    "质量管理",
-    "检验成本统计"
-  ],
-  "breadcrumb": [
-    "质量管理",
-    "检验成本统计",
-    "检验项流水表"
-  ],
-  "tabs": [],
-  "tabViews": [
-    {
-      "name": "main",
-      "label": "",
-      "queryFields": [
+      "id": "np-0409-01",
+      "title": "检验项流水表",
+      "groups": [
+        "质量管理",
+        "检验成本统计"
+      ],
+      "breadcrumb": [
+        "质量管理",
+        "检验成本统计",
+        "检验项流水表"
+      ],
+      "tabs": [],
+      "tabViews": [
         {
-          "name": "检验完成时间",
-          "type": "daterange"
-        },
-        {
-          "name": "报检类型",
-          "type": "select"
-        },
-        {
-          "name": "送检人",
-          "type": "select"
-        },
-        {
-          "name": "部门",
-          "type": "select"
-        },
-        {
-          "name": "检验类",
-          "type": "select"
-        },
-        {
-          "name": "物料种类",
-          "type": "select"
-        },
-        {
-          "name": "检验班组",
-          "type": "select"
-        },
-        {
-          "name": "检验结论",
-          "type": "select"
-        },
-        {
-          "name": "报检单号",
-          "type": "input"
-        },
-        {
-          "name": "样品编号",
-          "type": "input"
-        },
-        {
-          "name": "物料编码",
-          "type": "input"
-        },
-        {
-          "name": "研发项目号",
-          "type": "input"
+          "name": "main",
+          "label": "",
+          "queryFields": [
+            {
+              "name": "检验完成时间",
+              "type": "daterange"
+            },
+            {
+              "name": "报检类型",
+              "type": "select"
+            },
+            {
+              "name": "送检人",
+              "type": "select"
+            },
+            {
+              "name": "部门",
+              "type": "select"
+            },
+            {
+              "name": "检验类",
+              "type": "select"
+            },
+            {
+              "name": "物料种类",
+              "type": "select"
+            },
+            {
+              "name": "检验班组",
+              "type": "select"
+            },
+            {
+              "name": "检验结论",
+              "type": "select"
+            },
+            {
+              "name": "报检单号",
+              "type": "input"
+            },
+            {
+              "name": "样品编号",
+              "type": "input"
+            },
+            {
+              "name": "物料编码",
+              "type": "input"
+            },
+            {
+              "name": "研发项目号",
+              "type": "input"
+            }
+          ],
+          "queryDefault": [
+            "检验完成时间",
+            "报检类型",
+            "送检人",
+            "部门"
+          ],
+          "queryMore": [
+            "检验类",
+            "物料种类",
+            "检验班组",
+            "检验结论",
+            "报检单号",
+            "样品编号",
+            "物料编码",
+            "研发项目号"
+          ],
+          "toolbar": [
+            {
+              "name": "批量编辑",
+              "type": "default"
+            },
+            {
+              "name": "导出",
+              "type": "default",
+              "desc": "按当前查询条件导出"
+            }
+          ],
+          "columns": [
+            {
+              "field": "报检单号",
+              "title": "报检单号",
+              "width": 150,
+              "fixed": "left"
+            },
+            {
+              "field": "样品编号",
+              "title": "样品编号",
+              "width": 130
+            },
+            {
+              "field": "报检类型",
+              "title": "报检类型",
+              "width": 110
+            },
+            {
+              "field": "报检批号",
+              "title": "报检批号",
+              "width": 140
+            },
+            {
+              "field": "样品来源",
+              "title": "样品来源",
+              "width": 100
+            },
+            {
+              "field": "检验结论",
+              "title": "检验结论",
+              "width": 90
+            },
+            {
+              "field": "送检人",
+              "title": "送检人",
+              "width": 90
+            },
+            {
+              "field": "部门",
+              "title": "部门",
+              "width": 120
+            },
+            {
+              "field": "报检时间",
+              "title": "报检时间",
+              "width": 160
+            },
+            {
+              "field": "物料编码",
+              "title": "物料编码",
+              "width": 130
+            },
+            {
+              "field": "物料名称",
+              "title": "物料名称",
+              "width": 160
+            },
+            {
+              "field": "物料规格",
+              "title": "物料规格",
+              "width": 110
+            },
+            {
+              "field": "物料种类",
+              "title": "物料种类",
+              "width": 110
+            },
+            {
+              "field": "供应商名称",
+              "title": "供应商名称",
+              "width": 180
+            },
+            {
+              "field": "客户名称",
+              "title": "客户名称",
+              "width": 200
+            },
+            {
+              "field": "车间名称",
+              "title": "车间名称",
+              "width": 130
+            },
+            {
+              "field": "产线名称",
+              "title": "产线名称",
+              "width": 110
+            },
+            {
+              "field": "研发项目号",
+              "title": "研发项目号",
+              "width": 140
+            },
+            {
+              "field": "来样单位",
+              "title": "来样单位",
+              "width": 180
+            },
+            {
+              "field": "检验类",
+              "title": "检验类",
+              "width": 110
+            },
+            {
+              "field": "检验方案",
+              "title": "检验方案",
+              "width": 150
+            },
+            {
+              "field": "检验班组",
+              "title": "检验班组",
+              "width": 120
+            },
+            {
+              "field": "检验人",
+              "title": "检验人",
+              "width": 80
+            },
+            {
+              "field": "标准系数",
+              "title": "标准系数",
+              "width": 100,
+              "name": "标准系数"
+            },
+            {
+              "field": "取样时间",
+              "title": "取样时间",
+              "width": 160
+            },
+            {
+              "field": "检验完成时间",
+              "title": "检验完成时间",
+              "width": 160
+            },
+            {
+              "title": "操作",
+              "field": "_actions",
+              "name": "_actions",
+              "width": 80,
+              "fixed": "right",
+              "slot": "row_actions"
+            }
+          ],
+          "rowOps": [
+            {
+              "name": "编辑"
+            }
+          ]
         }
       ],
-      "queryDefault": [
-        "检验完成时间",
-        "报检类型",
-        "送检人",
-        "部门"
-      ],
-      "queryMore": [
-        "检验类",
-        "物料种类",
-        "检验班组",
-        "检验结论",
-        "报检单号",
-        "样品编号",
-        "物料编码",
-        "研发项目号"
-      ],
-      "toolbar": [
-        {
-          "name": "批量编辑",
-          "type": "default"
-        },
-        {
-          "name": "导出",
-          "type": "default",
-          "desc": "按当前查询条件导出"
-        }
-      ],
-      "columns": [
-        {
-          "field": "报检单号",
-          "title": "报检单号",
-          "width": 150,
-          "fixed": "left"
-        },
-        {
-          "field": "样品编号",
-          "title": "样品编号",
-          "width": 130
-        },
-        {
-          "field": "报检类型",
-          "title": "报检类型",
-          "width": 110
-        },
-        {
-          "field": "报检批号",
-          "title": "报检批号",
-          "width": 140
-        },
-        {
-          "field": "样品来源",
-          "title": "样品来源",
-          "width": 100
-        },
-        {
-          "field": "检验结论",
-          "title": "检验结论",
-          "width": 90
-        },
-        {
-          "field": "送检人",
-          "title": "送检人",
-          "width": 90
-        },
-        {
-          "field": "部门",
-          "title": "部门",
-          "width": 120
-        },
-        {
-          "field": "报检时间",
-          "title": "报检时间",
-          "width": 160
-        },
-        {
-          "field": "物料编码",
-          "title": "物料编码",
-          "width": 130
-        },
-        {
-          "field": "物料名称",
-          "title": "物料名称",
-          "width": 160
-        },
-        {
-          "field": "物料规格",
-          "title": "物料规格",
-          "width": 110
-        },
-        {
-          "field": "物料种类",
-          "title": "物料种类",
-          "width": 110
-        },
-        {
-          "field": "供应商名称",
-          "title": "供应商名称",
-          "width": 180
-        },
-        {
-          "field": "客户名称",
-          "title": "客户名称",
-          "width": 200
-        },
-        {
-          "field": "车间名称",
-          "title": "车间名称",
-          "width": 130
-        },
-        {
-          "field": "产线名称",
-          "title": "产线名称",
-          "width": 110
-        },
-        {
-          "field": "研发项目号",
-          "title": "研发项目号",
-          "width": 140
-        },
-        {
-          "field": "来样单位",
-          "title": "来样单位",
-          "width": 180
-        },
-        {
-          "field": "检验类",
-          "title": "检验类",
-          "width": 110
-        },
-        {
-          "field": "检验方案",
-          "title": "检验方案",
-          "width": 150
-        },
-        {
-          "field": "检验班组",
-          "title": "检验班组",
-          "width": 120
-        },
-        {
-          "field": "检验人",
-          "title": "检验人",
-          "width": 80
-        },
-        {
-          "field": "标准系数",
-          "title": "标准系数",
-          "width": 100,
-          "name": "标准系数"
-        },
-        {
-          "field": "取样时间",
-          "title": "取样时间",
-          "width": 160
-        },
-        {
-          "field": "检验完成时间",
-          "title": "检验完成时间",
-          "width": 160
-        },
-        {
-          "title": "操作",
-          "field": "_actions",
-          "name": "_actions",
-          "width": 80,
-          "fixed": "right",
-          "slot": "row_actions"
-        }
-      ],
-      "rowOps": [
-        {
-          "name": "编辑"
-        }
-      ]
-    }
-  ],
-  "formFields": [],
-  "detailFields": [],
-  "hasEdit": true,
-  "hasDetail": false,
-  "stub": false,
-  "formFlat": true,
-  "formLineFields": [],
-  "formLineActions": [],
-  "formOkText": "确定"
-},
+      "formFields": [],
+      "detailFields": [],
+      "hasEdit": true,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true,
+      "formLineFields": [],
+      "formLineActions": [],
+      "formOkText": "确定"
+    },
     "np-0409-02": {
       "id": "np-0409-02",
       "title": "多维度统计表",
@@ -126270,20 +126200,6 @@ window.WMS_PAGE_CONFIGS = {
           "ctrl": "自动计算：生产日期 + 有效期 - 1 天"
         },
         {
-          "name": "存储库位",
-          "type": "select",
-          "required": false,
-          "filterable": true,
-          "clearable": true,
-          "ctrl": "下拉单选启用库位"
-        },
-        {
-          "name": "存储仓库",
-          "type": "readonly",
-          "required": false,
-          "ctrl": "根据存储库位自动带出，只读"
-        },
-        {
           "name": "备注",
           "type": "input",
           "required": false,
@@ -126574,20 +126490,6 @@ window.WMS_PAGE_CONFIGS = {
           "type": "readonly",
           "required": false,
           "ctrl": "自动计算：生产日期 + 有效期 - 1 天"
-        },
-        {
-          "name": "存储库位",
-          "type": "select",
-          "required": false,
-          "filterable": true,
-          "clearable": true,
-          "ctrl": "下拉单选启用库位"
-        },
-        {
-          "name": "存储仓库",
-          "type": "readonly",
-          "required": false,
-          "ctrl": "根据存储库位自动带出，只读"
         },
         {
           "name": "备注",
@@ -126908,20 +126810,6 @@ window.WMS_PAGE_CONFIGS = {
           "label": "原失效日期"
         },
         {
-          "name": "存储库位",
-          "type": "select",
-          "required": false,
-          "filterable": true,
-          "clearable": true,
-          "ctrl": "下拉单选启用库位"
-        },
-        {
-          "name": "存储仓库",
-          "type": "readonly",
-          "required": false,
-          "ctrl": "根据存储库位自动带出，只读"
-        },
-        {
           "name": "备注",
           "type": "input",
           "required": false,
@@ -127234,24 +127122,10 @@ window.WMS_PAGE_CONFIGS = {
           "ctrl": "下拉单选，是 / 否；默认否"
         },
         {
-          "name": "存储库位",
-          "type": "select",
-          "required": false,
-          "filterable": true,
-          "clearable": true,
-          "ctrl": "下拉单选启用库位"
-        },
-        {
-          "name": "存储仓库",
-          "type": "readonly",
-          "required": false,
-          "ctrl": "根据存储库位自动带出，只读"
-        },
-        {
           "name": "样品位置",
           "type": "readonly",
           "required": false,
-          "ctrl": "自动写入，只读：存储仓库 / 存储库位"
+          "ctrl": "由入库单反写，建档时可为空"
         },
         {
           "name": "备注",
@@ -127544,20 +127418,6 @@ window.WMS_PAGE_CONFIGS = {
           "type": "readonly",
           "required": false,
           "ctrl": "自动计算：生产日期 + 有效期 - 1 天"
-        },
-        {
-          "name": "存储库位",
-          "type": "select",
-          "required": false,
-          "filterable": true,
-          "clearable": true,
-          "ctrl": "下拉单选启用库位"
-        },
-        {
-          "name": "存储仓库",
-          "type": "readonly",
-          "required": false,
-          "ctrl": "根据存储库位自动带出，只读"
         },
         {
           "name": "备注",
@@ -139331,452 +139191,452 @@ window.WMS_PAGE_CONFIGS = {
       },
       "formDialogWidth": "480px"
     },
-                {
-          "id": "np-0215-02",
-          "title": "有害物质文件库",
-          "groups": [
-            "质量管理",
-            "有害物质管理"
-          ],
-          "breadcrumb": [
-            "质量管理",
-            "有害物质管理",
-            "有害物质文件库"
-          ],
-          "tabs": [],
-          "tabViews": [
+    {
+      "id": "np-0215-02",
+      "title": "有害物质文件库",
+      "groups": [
+        "质量管理",
+        "有害物质管理"
+      ],
+      "breadcrumb": [
+        "质量管理",
+        "有害物质管理",
+        "有害物质文件库"
+      ],
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "有害物质文件库",
+          "queryFields": [
             {
-              "name": "main",
-              "label": "有害物质文件库",
-              "queryFields": [
-                {
-                  "name": "文件编号",
-                  "type": "input"
-                },
-                {
-                  "name": "文件名称",
-                  "type": "input"
-                },
-                {
-                  "name": "文件类型",
-                  "type": "select",
-                  "options": [
-                    "厂内文件",
-                    "客户文件",
-                    "法规文件"
-                  ]
-                },
-                {
-                  "name": "使用状态",
-                  "type": "select",
-                  "options": [
-                    "正常",
-                    "临期",
-                    "过期"
-                  ]
-                },
-                {
-                  "name": "客户名称",
-                  "type": "input"
-                },
-                {
-                  "name": "法规名称",
-                  "type": "input"
-                },
-                {
-                  "name": "使用期限类型",
-                  "type": "select",
-                  "options": [
-                    "固定期限",
-                    "永久使用"
-                  ]
-                },
-                {
-                  "name": "失效日期",
-                  "type": "daterange"
-                },
-                {
-                  "name": "创建人",
-                  "type": "input"
-                },
-                {
-                  "name": "创建时间",
-                  "type": "daterange"
-                }
-              ],
-              "queryDefault": [
-                "文件编号",
-                "文件名称",
-                "文件类型",
-                "使用状态"
-              ],
-              "queryMore": [
-                "客户名称",
-                "法规名称",
-                "使用期限类型",
-                "失效日期",
-                "创建人",
-                "创建时间"
-              ],
-              "toolbar": [
-                {
-                  "name": "导出数据",
-                  "type": "default",
-                  "desc": "勾选数据后，导出所选；未勾选导出当前查询结果（限当前物料类）"
-                }
-              ],
-              "columns": [
-                {
-                  "title": "使用状态",
-                  "field": "使用状态",
-                  "name": "使用状态",
-                  "slot": "tag",
-                  "width": 90
-                },
-                {
-                  "title": "物料类",
-                  "field": "物料类",
-                  "name": "物料类",
-                  "width": 120
-                },
-                {
-                  "title": "文件编号",
-                  "field": "文件编号",
-                  "name": "文件编号",
-                  "width": 150
-                },
-                {
-                  "title": "文件名称",
-                  "field": "文件名称",
-                  "name": "文件名称",
-                  "minWidth": 180
-                },
-                {
-                  "title": "文件类型",
-                  "field": "文件类型",
-                  "name": "文件类型",
-                  "slot": "tag",
-                  "width": 100
-                },
-                {
-                  "title": "文件",
-                  "field": "文件",
-                  "name": "文件",
-                  "slot": "files",
-                  "width": 160
-                },
-                {
-                  "title": "内容描述",
-                  "field": "内容描述",
-                  "name": "内容描述",
-                  "minWidth": 180
-                },
-                {
-                  "title": "客户名称",
-                  "field": "客户名称",
-                  "name": "客户名称",
-                  "minWidth": 160
-                },
-                {
-                  "title": "法规名称",
-                  "field": "法规名称",
-                  "name": "法规名称",
-                  "minWidth": 140
-                },
-                {
-                  "title": "使用期限类型",
-                  "field": "使用期限类型",
-                  "name": "使用期限类型",
-                  "width": 110
-                },
-                {
-                  "title": "生效日期",
-                  "field": "生效日期",
-                  "name": "生效日期",
-                  "width": 110
-                },
-                {
-                  "title": "使用周期",
-                  "field": "使用周期",
-                  "name": "使用周期",
-                  "width": 100
-                },
-                {
-                  "title": "提前预警",
-                  "field": "提前预警",
-                  "name": "提前预警",
-                  "width": 100
-                },
-                {
-                  "title": "失效日期",
-                  "field": "失效日期",
-                  "name": "失效日期",
-                  "width": 110
-                },
-                {
-                  "title": "备注",
-                  "field": "备注",
-                  "name": "备注",
-                  "minWidth": 140
-                },
-                {
-                  "title": "创建人",
-                  "field": "创建人",
-                  "name": "创建人",
-                  "width": 90
-                },
-                {
-                  "title": "创建时间",
-                  "field": "创建时间",
-                  "name": "创建时间",
-                  "width": 170
-                },
-                {
-                  "title": "操作",
-                  "field": "_actions",
-                  "name": "操作",
-                  "width": 120,
-                  "fixed": "right",
-                  "slot": "row_actions"
-                }
-              ],
-              "rowOps": [
-                {
-                  "name": "历史树"
-                }
-              ]
-            }
-          ],
-          "formFields": [],
-          "detailFields": [],
-          "formSections": [
+              "name": "文件编号",
+              "type": "input"
+            },
             {
-              "title": "文件信息",
-              "fields": [
-                {
-                  "name": "文件编号",
-                  "type": "readonly",
-                  "required": true,
-                  "ctrl": "系统自动生成",
-                  "placeholder": "HM-FILE-000001"
-                },
-                {
-                  "name": "物料类",
-                  "type": "readonly",
-                  "required": true,
-                  "ctrl": "来自左侧选中物料类，不可改",
-                  "placeholder": "自动带入"
-                },
-                {
-                  "name": "文件名称",
-                  "type": "input",
-                  "required": true,
-                  "placeholder": "请输入"
-                },
-                {
-                  "name": "文件类型",
-                  "type": "select",
-                  "required": true,
-                  "placeholder": "请选择",
-                  "options": [
-                    "厂内文件",
-                    "客户文件",
-                    "法规文件"
-                  ]
-                },
-                {
-                  "name": "客户信息",
-                  "type": "picker",
-                  "required": true,
-                  "placeholder": "点击右侧抽屉选择客户",
-                  "showWhen": {
-                    "field": "文件类型",
-                    "eq": "客户文件"
-                  }
-                },
-                {
-                  "name": "法规名称",
-                  "type": "input",
-                  "required": true,
-                  "placeholder": "如 EU RoHS、IEC 62321",
-                  "showWhen": {
-                    "field": "文件类型",
-                    "eq": "法规文件"
-                  }
-                },
-                {
-                  "name": "文件",
-                  "type": "upload",
-                  "placeholder": "点击上传"
-                },
-                {
-                  "name": "内容描述",
-                  "type": "textarea",
-                  "placeholder": "请输入",
-                  "fullRow": true
-                },
-                {
-                  "name": "备注",
-                  "type": "input",
-                  "placeholder": "请输入"
-                }
+              "name": "文件名称",
+              "type": "input"
+            },
+            {
+              "name": "文件类型",
+              "type": "select",
+              "options": [
+                "厂内文件",
+                "客户文件",
+                "法规文件"
               ]
             },
             {
-              "title": "有效期",
-              "fields": [
-                {
-                  "name": "使用期限类型",
-                  "type": "select",
-                  "required": true,
-                  "placeholder": "请选择",
-                  "options": [
-                    "固定期限",
-                    "永久使用"
-                  ]
-                },
-                {
-                  "name": "生效日期",
-                  "type": "date",
-                  "required": true,
-                  "placeholder": "选择日期",
-                  "showWhen": {
-                    "field": "使用期限类型",
-                    "eq": "固定期限"
-                  }
-                },
-                {
-                  "name": "使用周期",
-                  "type": "number-unit",
-                  "required": true,
-                  "placeholder": "正整数",
-                  "options": [
-                    "天",
-                    "月",
-                    "年"
-                  ],
-                  "defaultUnit": "天",
-                  "showWhen": {
-                    "field": "使用期限类型",
-                    "eq": "固定期限"
-                  }
-                },
-                {
-                  "name": "提前预警",
-                  "type": "number-unit",
-                  "required": true,
-                  "placeholder": "正整数",
-                  "options": [
-                    "天",
-                    "月",
-                    "年"
-                  ],
-                  "defaultUnit": "天",
-                  "showWhen": {
-                    "field": "使用期限类型",
-                    "eq": "固定期限"
-                  }
-                },
-                {
-                  "name": "失效日期",
-                  "type": "readonly",
-                  "ctrl": "自动计算",
-                  "placeholder": "自动计算",
-                  "showWhen": {
-                    "field": "使用期限类型",
-                    "eq": "固定期限"
-                  }
-                }
-              ]
-            }
-          ],
-          "detailSections": [
-            {
-              "title": "文件信息",
-              "fields": [
-                {
-                  "name": "文件编号"
-                },
-                {
-                  "name": "文件名称"
-                },
-                {
-                  "name": "文件类型"
-                },
-                {
-                  "name": "客户名称"
-                },
-                {
-                  "name": "法规名称"
-                },
-                {
-                  "name": "文件"
-                },
-                {
-                  "name": "内容描述"
-                },
-                {
-                  "name": "备注"
-                }
+              "name": "使用状态",
+              "type": "select",
+              "options": [
+                "正常",
+                "临期",
+                "过期"
               ]
             },
             {
-              "title": "有效期",
-              "fields": [
-                {
-                  "name": "使用状态"
-                },
-                {
-                  "name": "使用期限类型"
-                },
-                {
-                  "name": "生效日期"
-                },
-                {
-                  "name": "使用周期"
-                },
-                {
-                  "name": "提前预警"
-                },
-                {
-                  "name": "失效日期"
-                },
-                {
-                  "name": "创建人"
-                },
-                {
-                  "name": "创建时间"
-                }
+              "name": "客户名称",
+              "type": "input"
+            },
+            {
+              "name": "法规名称",
+              "type": "input"
+            },
+            {
+              "name": "使用期限类型",
+              "type": "select",
+              "options": [
+                "固定期限",
+                "永久使用"
               ]
+            },
+            {
+              "name": "失效日期",
+              "type": "daterange"
+            },
+            {
+              "name": "创建人",
+              "type": "input"
+            },
+            {
+              "name": "创建时间",
+              "type": "daterange"
             }
           ],
-          "hasEdit": false,
-          "hasDetail": false,
-          "stub": false,
-          "formFullscreen": true,
-          "detailFullscreen": true,
-          "formFlat": true,
-          "formGridCols": 3,
-          "formLineFields": [],
-          "formLineActions": [],
-          "layout": "tree-list",
-          "treeTitle": "物料类",
-          "treeField": "物料类",
-          "treeNodes": [
-            "光刻胶原料",
-            "OLED有机材料",
-            "包装辅材"
+          "queryDefault": [
+            "文件编号",
+            "文件名称",
+            "文件类型",
+            "使用状态"
           ],
-          "treeNodeDescs": {
-            "光刻胶原料": "光刻工艺相关原料的有害物质管控标准",
-            "OLED有机材料": "OLED 有机材料管控，限值通常更严",
-            "包装辅材": "包装及辅材类物料管控标准"
-          },
-          "treeToolbar": [],
-          "treeOps": [],
-          "treeReadonly": true,
-          "treeSourcePage": "np-0215-01"
+          "queryMore": [
+            "客户名称",
+            "法规名称",
+            "使用期限类型",
+            "失效日期",
+            "创建人",
+            "创建时间"
+          ],
+          "toolbar": [
+            {
+              "name": "导出数据",
+              "type": "default",
+              "desc": "勾选数据后，导出所选；未勾选导出当前查询结果（限当前物料类）"
+            }
+          ],
+          "columns": [
+            {
+              "title": "使用状态",
+              "field": "使用状态",
+              "name": "使用状态",
+              "slot": "tag",
+              "width": 90
+            },
+            {
+              "title": "物料类",
+              "field": "物料类",
+              "name": "物料类",
+              "width": 120
+            },
+            {
+              "title": "文件编号",
+              "field": "文件编号",
+              "name": "文件编号",
+              "width": 150
+            },
+            {
+              "title": "文件名称",
+              "field": "文件名称",
+              "name": "文件名称",
+              "minWidth": 180
+            },
+            {
+              "title": "文件类型",
+              "field": "文件类型",
+              "name": "文件类型",
+              "slot": "tag",
+              "width": 100
+            },
+            {
+              "title": "文件",
+              "field": "文件",
+              "name": "文件",
+              "slot": "files",
+              "width": 160
+            },
+            {
+              "title": "内容描述",
+              "field": "内容描述",
+              "name": "内容描述",
+              "minWidth": 180
+            },
+            {
+              "title": "客户名称",
+              "field": "客户名称",
+              "name": "客户名称",
+              "minWidth": 160
+            },
+            {
+              "title": "法规名称",
+              "field": "法规名称",
+              "name": "法规名称",
+              "minWidth": 140
+            },
+            {
+              "title": "使用期限类型",
+              "field": "使用期限类型",
+              "name": "使用期限类型",
+              "width": 110
+            },
+            {
+              "title": "生效日期",
+              "field": "生效日期",
+              "name": "生效日期",
+              "width": 110
+            },
+            {
+              "title": "使用周期",
+              "field": "使用周期",
+              "name": "使用周期",
+              "width": 100
+            },
+            {
+              "title": "提前预警",
+              "field": "提前预警",
+              "name": "提前预警",
+              "width": 100
+            },
+            {
+              "title": "失效日期",
+              "field": "失效日期",
+              "name": "失效日期",
+              "width": 110
+            },
+            {
+              "title": "备注",
+              "field": "备注",
+              "name": "备注",
+              "minWidth": 140
+            },
+            {
+              "title": "创建人",
+              "field": "创建人",
+              "name": "创建人",
+              "width": 90
+            },
+            {
+              "title": "创建时间",
+              "field": "创建时间",
+              "name": "创建时间",
+              "width": 170
+            },
+            {
+              "title": "操作",
+              "field": "_actions",
+              "name": "操作",
+              "width": 120,
+              "fixed": "right",
+              "slot": "row_actions"
+            }
+          ],
+          "rowOps": [
+            {
+              "name": "历史树"
+            }
+          ]
+        }
+      ],
+      "formFields": [],
+      "detailFields": [],
+      "formSections": [
+        {
+          "title": "文件信息",
+          "fields": [
+            {
+              "name": "文件编号",
+              "type": "readonly",
+              "required": true,
+              "ctrl": "系统自动生成",
+              "placeholder": "HM-FILE-000001"
+            },
+            {
+              "name": "物料类",
+              "type": "readonly",
+              "required": true,
+              "ctrl": "来自左侧选中物料类，不可改",
+              "placeholder": "自动带入"
+            },
+            {
+              "name": "文件名称",
+              "type": "input",
+              "required": true,
+              "placeholder": "请输入"
+            },
+            {
+              "name": "文件类型",
+              "type": "select",
+              "required": true,
+              "placeholder": "请选择",
+              "options": [
+                "厂内文件",
+                "客户文件",
+                "法规文件"
+              ]
+            },
+            {
+              "name": "客户信息",
+              "type": "picker",
+              "required": true,
+              "placeholder": "点击右侧抽屉选择客户",
+              "showWhen": {
+                "field": "文件类型",
+                "eq": "客户文件"
+              }
+            },
+            {
+              "name": "法规名称",
+              "type": "input",
+              "required": true,
+              "placeholder": "如 EU RoHS、IEC 62321",
+              "showWhen": {
+                "field": "文件类型",
+                "eq": "法规文件"
+              }
+            },
+            {
+              "name": "文件",
+              "type": "upload",
+              "placeholder": "点击上传"
+            },
+            {
+              "name": "内容描述",
+              "type": "textarea",
+              "placeholder": "请输入",
+              "fullRow": true
+            },
+            {
+              "name": "备注",
+              "type": "input",
+              "placeholder": "请输入"
+            }
+          ]
         },
+        {
+          "title": "有效期",
+          "fields": [
+            {
+              "name": "使用期限类型",
+              "type": "select",
+              "required": true,
+              "placeholder": "请选择",
+              "options": [
+                "固定期限",
+                "永久使用"
+              ]
+            },
+            {
+              "name": "生效日期",
+              "type": "date",
+              "required": true,
+              "placeholder": "选择日期",
+              "showWhen": {
+                "field": "使用期限类型",
+                "eq": "固定期限"
+              }
+            },
+            {
+              "name": "使用周期",
+              "type": "number-unit",
+              "required": true,
+              "placeholder": "正整数",
+              "options": [
+                "天",
+                "月",
+                "年"
+              ],
+              "defaultUnit": "天",
+              "showWhen": {
+                "field": "使用期限类型",
+                "eq": "固定期限"
+              }
+            },
+            {
+              "name": "提前预警",
+              "type": "number-unit",
+              "required": true,
+              "placeholder": "正整数",
+              "options": [
+                "天",
+                "月",
+                "年"
+              ],
+              "defaultUnit": "天",
+              "showWhen": {
+                "field": "使用期限类型",
+                "eq": "固定期限"
+              }
+            },
+            {
+              "name": "失效日期",
+              "type": "readonly",
+              "ctrl": "自动计算",
+              "placeholder": "自动计算",
+              "showWhen": {
+                "field": "使用期限类型",
+                "eq": "固定期限"
+              }
+            }
+          ]
+        }
+      ],
+      "detailSections": [
+        {
+          "title": "文件信息",
+          "fields": [
+            {
+              "name": "文件编号"
+            },
+            {
+              "name": "文件名称"
+            },
+            {
+              "name": "文件类型"
+            },
+            {
+              "name": "客户名称"
+            },
+            {
+              "name": "法规名称"
+            },
+            {
+              "name": "文件"
+            },
+            {
+              "name": "内容描述"
+            },
+            {
+              "name": "备注"
+            }
+          ]
+        },
+        {
+          "title": "有效期",
+          "fields": [
+            {
+              "name": "使用状态"
+            },
+            {
+              "name": "使用期限类型"
+            },
+            {
+              "name": "生效日期"
+            },
+            {
+              "name": "使用周期"
+            },
+            {
+              "name": "提前预警"
+            },
+            {
+              "name": "失效日期"
+            },
+            {
+              "name": "创建人"
+            },
+            {
+              "name": "创建时间"
+            }
+          ]
+        }
+      ],
+      "hasEdit": false,
+      "hasDetail": false,
+      "stub": false,
+      "formFullscreen": true,
+      "detailFullscreen": true,
+      "formFlat": true,
+      "formGridCols": 3,
+      "formLineFields": [],
+      "formLineActions": [],
+      "layout": "tree-list",
+      "treeTitle": "物料类",
+      "treeField": "物料类",
+      "treeNodes": [
+        "光刻胶原料",
+        "OLED有机材料",
+        "包装辅材"
+      ],
+      "treeNodeDescs": {
+        "光刻胶原料": "光刻工艺相关原料的有害物质管控标准",
+        "OLED有机材料": "OLED 有机材料管控，限值通常更严",
+        "包装辅材": "包装及辅材类物料管控标准"
+      },
+      "treeToolbar": [],
+      "treeOps": [],
+      "treeReadonly": true,
+      "treeSourcePage": "np-0215-01"
+    },
     {
       "id": "np-0215-03",
       "title": "临期文件",
@@ -139943,180 +139803,468 @@ window.WMS_PAGE_CONFIGS = {
       "formLineFields": [],
       "formLineActions": []
     },
-                {
-          "id": "np-0215-07",
-          "title": "文件作废",
-          "groups": [
-            "质量管理",
-            "有害物质管理"
-          ],
-          "breadcrumb": [
-            "质量管理",
-            "有害物质管理",
-            "文件作废"
-          ],
-          "tabs": [],
-          "tabViews": [
+    {
+      "id": "np-0215-07",
+      "title": "文件作废",
+      "groups": [
+        "质量管理",
+        "有害物质管理"
+      ],
+      "breadcrumb": [
+        "质量管理",
+        "有害物质管理",
+        "文件作废"
+      ],
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [
             {
-              "name": "main",
-              "label": "",
-              "queryFields": [
-                {
-                  "name": "申请单号",
-                  "type": "input"
-                },
-                {
-                  "name": "文件编号",
-                  "type": "input"
-                },
-                {
-                  "name": "文件名称",
-                  "type": "input"
-                },
-                {
-                  "name": "作废状态",
-                  "type": "select",
-                  "options": [
-                    "未作废",
-                    "已作废"
-                  ]
-                },
-                {
-                  "name": "文件类型",
-                  "type": "select",
-                  "options": [
-                    "厂内文件",
-                    "客户文件",
-                    "法规文件"
-                  ]
-                },
-                {
-                  "name": "客户名称",
-                  "type": "input"
-                },
-                {
-                  "name": "法规名称",
-                  "type": "input"
-                },
-                {
-                  "name": "创建人",
-                  "type": "input"
-                },
-                {
-                  "name": "创建时间",
-                  "type": "daterange"
-                }
-              ],
-              "queryDefault": [
-                "申请单号",
-                "文件编号",
-                "文件名称",
-                "作废状态"
-              ],
-              "queryMore": [
-                "文件类型",
-                "客户名称",
-                "法规名称",
-                "创建人",
-                "创建时间"
-              ],
-              "toolbar": [
-                {
-                  "name": "新增",
-                  "type": "primary"
-                },
-                {
-                  "name": "导出数据",
-                  "type": "default"
-                },
-                {
-                  "name": "批量删除",
-                  "type": "danger"
-                }
-              ],
-              "columns": [
-                {
-                  "title": "作废状态",
-                  "field": "作废状态",
-                  "name": "作废状态",
-                  "slot": "tag",
-                  "width": 90
-                },
-                {
-                  "title": "申请单号",
-                  "field": "申请单号",
-                  "name": "申请单号",
-                  "width": 100
-                },
-                {
-                  "title": "文件编号",
-                  "field": "文件编号",
-                  "name": "文件编号",
-                  "width": 140
-                },
-                {
-                  "title": "文件名称",
-                  "field": "文件名称",
-                  "name": "文件名称",
-                  "width": 180
-                },
-                {
-                  "title": "文件类型",
-                  "field": "文件类型",
-                  "name": "文件类型",
-                  "width": 100,
-                  "slot": "tag"
-                },
-                {
-                  "title": "客户名称",
-                  "field": "客户名称",
-                  "name": "客户名称",
-                  "width": 160
-                },
-                {
-                  "title": "法规名称",
-                  "field": "法规名称",
-                  "name": "法规名称",
-                  "width": 160
-                },
-                {
-                  "title": "作废原因",
-                  "field": "作废原因",
-                  "name": "作废原因",
-                  "width": 180
-                },
-                {
-                  "title": "创建人",
-                  "field": "创建人",
-                  "name": "创建人",
-                  "width": 90
-                },
-                {
-                  "title": "创建时间",
-                  "field": "创建时间",
-                  "name": "创建时间",
-                  "width": 160
-                },
-                {
-                  "title": "操作",
-                  "field": "_actions",
-                  "name": "_actions",
-                  "width": 160,
-                  "fixed": "right",
-                  "slot": "row_actions"
-                }
-              ],
-              "rowOps": [
-                {
-                  "name": "编辑"
-                },
-                {
-                  "name": "确认作废"
-                }
+              "name": "申请单号",
+              "type": "input"
+            },
+            {
+              "name": "文件编号",
+              "type": "input"
+            },
+            {
+              "name": "文件名称",
+              "type": "input"
+            },
+            {
+              "name": "作废状态",
+              "type": "select",
+              "options": [
+                "未作废",
+                "已作废"
               ]
+            },
+            {
+              "name": "文件类型",
+              "type": "select",
+              "options": [
+                "厂内文件",
+                "客户文件",
+                "法规文件"
+              ]
+            },
+            {
+              "name": "客户名称",
+              "type": "input"
+            },
+            {
+              "name": "法规名称",
+              "type": "input"
+            },
+            {
+              "name": "创建人",
+              "type": "input"
+            },
+            {
+              "name": "创建时间",
+              "type": "daterange"
             }
           ],
-          "formFields": [
+          "queryDefault": [
+            "申请单号",
+            "文件编号",
+            "文件名称",
+            "作废状态"
+          ],
+          "queryMore": [
+            "文件类型",
+            "客户名称",
+            "法规名称",
+            "创建人",
+            "创建时间"
+          ],
+          "toolbar": [
+            {
+              "name": "新增",
+              "type": "primary"
+            },
+            {
+              "name": "导出数据",
+              "type": "default"
+            },
+            {
+              "name": "批量删除",
+              "type": "danger"
+            }
+          ],
+          "columns": [
+            {
+              "title": "作废状态",
+              "field": "作废状态",
+              "name": "作废状态",
+              "slot": "tag",
+              "width": 90
+            },
+            {
+              "title": "申请单号",
+              "field": "申请单号",
+              "name": "申请单号",
+              "width": 100
+            },
+            {
+              "title": "文件编号",
+              "field": "文件编号",
+              "name": "文件编号",
+              "width": 140
+            },
+            {
+              "title": "文件名称",
+              "field": "文件名称",
+              "name": "文件名称",
+              "width": 180
+            },
+            {
+              "title": "文件类型",
+              "field": "文件类型",
+              "name": "文件类型",
+              "width": 100,
+              "slot": "tag"
+            },
+            {
+              "title": "客户名称",
+              "field": "客户名称",
+              "name": "客户名称",
+              "width": 160
+            },
+            {
+              "title": "法规名称",
+              "field": "法规名称",
+              "name": "法规名称",
+              "width": 160
+            },
+            {
+              "title": "作废原因",
+              "field": "作废原因",
+              "name": "作废原因",
+              "width": 180
+            },
+            {
+              "title": "创建人",
+              "field": "创建人",
+              "name": "创建人",
+              "width": 90
+            },
+            {
+              "title": "创建时间",
+              "field": "创建时间",
+              "name": "创建时间",
+              "width": 160
+            },
+            {
+              "title": "操作",
+              "field": "_actions",
+              "name": "_actions",
+              "width": 160,
+              "fixed": "right",
+              "slot": "row_actions"
+            }
+          ],
+          "rowOps": [
+            {
+              "name": "编辑"
+            },
+            {
+              "name": "确认作废"
+            }
+          ]
+        }
+      ],
+      "formFields": [
+        {
+          "name": "申请单号",
+          "type": "readonly",
+          "required": true,
+          "refreshable": true,
+          "placeholder": "自动生成"
+        },
+        {
+          "name": "文件编号",
+          "type": "picker",
+          "required": true,
+          "placeholder": "点击选择资料库文件"
+        },
+        {
+          "name": "文件名称",
+          "type": "readonly",
+          "required": false
+        },
+        {
+          "name": "文件类型",
+          "type": "readonly",
+          "required": false
+        },
+        {
+          "name": "客户名称",
+          "type": "readonly",
+          "required": false
+        },
+        {
+          "name": "法规名称",
+          "type": "readonly",
+          "required": false
+        },
+        {
+          "name": "文件",
+          "type": "readonly",
+          "required": false
+        },
+        {
+          "name": "作废原因",
+          "type": "textarea",
+          "required": true,
+          "placeholder": "输入",
+          "fullRow": true
+        },
+        {
+          "name": "备注",
+          "type": "textarea",
+          "required": false,
+          "placeholder": "输入",
+          "fullRow": true
+        }
+      ],
+      "detailFields": [],
+      "hasEdit": true,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true,
+      "formLineFields": [],
+      "formLineActions": []
+    },
+    {
+      "id": "np-0215-06",
+      "title": "文件变更",
+      "groups": [
+        "质量管理",
+        "有害物质管理"
+      ],
+      "breadcrumb": [
+        "质量管理",
+        "有害物质管理",
+        "文件变更"
+      ],
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [
+            {
+              "name": "申请单号",
+              "type": "input"
+            },
+            {
+              "name": "文件编号",
+              "type": "input"
+            },
+            {
+              "name": "文件名称",
+              "type": "input"
+            },
+            {
+              "name": "变更状态",
+              "type": "select",
+              "options": [
+                "未变更",
+                "已变更"
+              ]
+            },
+            {
+              "name": "变更类型",
+              "type": "select",
+              "options": [
+                "内容修订",
+                "客户信息变更",
+                "有效期调整",
+                "文件替换"
+              ]
+            },
+            {
+              "name": "客户名称",
+              "type": "input"
+            },
+            {
+              "name": "创建人",
+              "type": "input"
+            },
+            {
+              "name": "创建时间",
+              "type": "daterange"
+            }
+          ],
+          "queryDefault": [
+            "申请单号",
+            "文件编号",
+            "文件名称",
+            "变更状态"
+          ],
+          "queryMore": [
+            "变更类型",
+            "客户名称",
+            "创建人",
+            "创建时间"
+          ],
+          "toolbar": [
+            {
+              "name": "新增",
+              "type": "primary"
+            },
+            {
+              "name": "导出数据",
+              "type": "default"
+            },
+            {
+              "name": "批量删除",
+              "type": "danger"
+            }
+          ],
+          "columns": [
+            {
+              "title": "变更状态",
+              "field": "变更状态",
+              "name": "变更状态",
+              "slot": "tag",
+              "width": 90
+            },
+            {
+              "title": "申请单号",
+              "field": "申请单号",
+              "name": "申请单号",
+              "width": 100
+            },
+            {
+              "title": "文件编号",
+              "field": "文件编号",
+              "name": "文件编号",
+              "width": 140
+            },
+            {
+              "title": "文件类型",
+              "field": "文件类型",
+              "name": "文件类型",
+              "width": 100
+            },
+            {
+              "title": "变更类型",
+              "field": "变更类型",
+              "name": "变更类型",
+              "width": 120
+            },
+            {
+              "title": "变更前文件名称",
+              "field": "变更前文件名称",
+              "name": "变更前文件名称",
+              "width": 180
+            },
+            {
+              "title": "变更后文件名称",
+              "field": "变更后文件名称",
+              "name": "变更后文件名称",
+              "width": 180
+            },
+            {
+              "title": "变更前客户名称",
+              "field": "变更前客户名称",
+              "name": "变更前客户名称",
+              "width": 140
+            },
+            {
+              "title": "变更后客户名称",
+              "field": "变更后客户名称",
+              "name": "变更后客户名称",
+              "width": 140
+            },
+            {
+              "title": "变更前内容描述",
+              "field": "变更前内容描述",
+              "name": "变更前内容描述",
+              "width": 180
+            },
+            {
+              "title": "变更后内容描述",
+              "field": "变更后内容描述",
+              "name": "变更后内容描述",
+              "width": 180
+            },
+            {
+              "title": "变更前使用期限类型",
+              "field": "变更前使用期限类型",
+              "name": "变更前使用期限类型",
+              "width": 140
+            },
+            {
+              "title": "变更后使用期限类型",
+              "field": "变更后使用期限类型",
+              "name": "变更后使用期限类型",
+              "width": 140
+            },
+            {
+              "title": "变更前生效日期",
+              "field": "变更前生效日期",
+              "name": "变更前生效日期",
+              "width": 120
+            },
+            {
+              "title": "变更后生效日期",
+              "field": "变更后生效日期",
+              "name": "变更后生效日期",
+              "width": 120
+            },
+            {
+              "title": "变更前使用周期",
+              "field": "变更前使用周期",
+              "name": "变更前使用周期",
+              "width": 120
+            },
+            {
+              "title": "变更后使用周期",
+              "field": "变更后使用周期",
+              "name": "变更后使用周期",
+              "width": 120
+            },
+            {
+              "title": "创建人",
+              "field": "创建人",
+              "name": "创建人",
+              "width": 90
+            },
+            {
+              "title": "创建时间",
+              "field": "创建时间",
+              "name": "创建时间",
+              "width": 160
+            },
+            {
+              "title": "操作",
+              "field": "_actions",
+              "name": "_actions",
+              "width": 160,
+              "fixed": "right",
+              "slot": "row_actions"
+            }
+          ],
+          "rowOps": [
+            {
+              "name": "编辑"
+            },
+            {
+              "name": "确认变更"
+            }
+          ]
+        }
+      ],
+      "formFields": [],
+      "formSections": [
+        {
+          "title": "",
+          "fields": [
             {
               "name": "申请单号",
               "type": "readonly",
@@ -140125,1114 +140273,826 @@ window.WMS_PAGE_CONFIGS = {
               "placeholder": "自动生成"
             },
             {
-              "name": "文件编号",
+              "name": "原文件",
               "type": "picker",
               "required": true,
-              "placeholder": "点击选择资料库文件"
+              "placeholder": "点击选择，单选后回显文件编号/文件名称"
             },
             {
-              "name": "文件名称",
-              "type": "readonly",
-              "required": false
+              "name": "变更类型",
+              "type": "select",
+              "required": true,
+              "filterable": true,
+              "placeholder": "模糊下拉，字典表",
+              "options": [
+                "内容修订",
+                "客户信息变更",
+                "有效期调整",
+                "文件替换"
+              ]
             },
             {
               "name": "文件类型",
               "type": "readonly",
-              "required": false
+              "required": false,
+              "placeholder": "选择原文件后带出"
             },
             {
-              "name": "客户名称",
-              "type": "readonly",
-              "required": false
-            },
-            {
-              "name": "法规名称",
-              "type": "readonly",
-              "required": false
-            },
-            {
-              "name": "文件",
-              "type": "readonly",
-              "required": false
-            },
-            {
-              "name": "作废原因",
-              "type": "textarea",
-              "required": true,
-              "placeholder": "输入",
-              "fullRow": true
-            },
-            {
-              "name": "备注",
+              "name": "变更内容说明",
               "type": "textarea",
               "required": false,
               "placeholder": "输入",
               "fullRow": true
             }
-          ],
-          "detailFields": [],
-          "hasEdit": true,
-          "hasDetail": false,
-          "stub": false,
-          "formFlat": true,
-          "formLineFields": [],
-          "formLineActions": []
+          ]
         },
-                {
-          "id": "np-0215-06",
-          "title": "文件变更",
-          "groups": [
-            "质量管理",
-            "有害物质管理"
-          ],
-          "breadcrumb": [
-            "质量管理",
-            "有害物质管理",
-            "文件变更"
-          ],
-          "tabs": [],
-          "tabViews": [
+        {
+          "title": "变更前信息",
+          "fields": [
             {
-              "name": "main",
-              "label": "",
-              "queryFields": [
-                {
-                  "name": "申请单号",
-                  "type": "input"
-                },
-                {
-                  "name": "文件编号",
-                  "type": "input"
-                },
-                {
-                  "name": "文件名称",
-                  "type": "input"
-                },
-                {
-                  "name": "变更状态",
-                  "type": "select",
-                  "options": [
-                    "未变更",
-                    "已变更"
-                  ]
-                },
-                {
-                  "name": "变更类型",
-                  "type": "select",
-                  "options": [
-                    "内容修订",
-                    "客户信息变更",
-                    "有效期调整",
-                    "文件替换"
-                  ]
-                },
-                {
-                  "name": "客户名称",
-                  "type": "input"
-                },
-                {
-                  "name": "创建人",
-                  "type": "input"
-                },
-                {
-                  "name": "创建时间",
-                  "type": "daterange"
-                }
+              "name": "变更前文件名称",
+              "type": "readonly",
+              "label": "文件名称",
+              "required": true,
+              "placeholder": "自动带入"
+            },
+            {
+              "name": "变更前客户名称",
+              "type": "readonly",
+              "label": "客户名称",
+              "required": false,
+              "placeholder": "自动带入"
+            },
+            {
+              "name": "变更前内容描述",
+              "type": "textarea",
+              "label": "内容描述",
+              "required": false,
+              "placeholder": "自动带入",
+              "fullRow": true,
+              "readonly": true
+            },
+            {
+              "name": "变更前文件",
+              "type": "readonly",
+              "label": "文件",
+              "required": true,
+              "placeholder": "点击预览",
+              "preview": true
+            },
+            {
+              "name": "变更前使用期限类型",
+              "type": "radio",
+              "label": "使用期限类型",
+              "required": true,
+              "options": [
+                "固定期限",
+                "永久使用"
               ],
-              "queryDefault": [
-                "申请单号",
-                "文件编号",
-                "文件名称",
-                "变更状态"
+              "halfRow": true,
+              "readonly": true
+            },
+            {
+              "name": "变更前生效日期",
+              "type": "readonly",
+              "label": "生效日期",
+              "required": false,
+              "placeholder": "自动带入",
+              "showWhen": {
+                "field": "变更前使用期限类型",
+                "eq": "固定期限"
+              }
+            },
+            {
+              "name": "变更前使用周期",
+              "type": "number-unit",
+              "label": "使用周期",
+              "required": false,
+              "placeholder": "自动带入",
+              "unitName": "变更前使用周期单位",
+              "defaultUnit": "天",
+              "options": [
+                "天",
+                "月",
+                "年"
               ],
-              "queryMore": [
-                "变更类型",
-                "客户名称",
-                "创建人",
-                "创建时间"
+              "showWhen": {
+                "field": "变更前使用期限类型",
+                "eq": "固定期限"
+              },
+              "readonly": true
+            },
+            {
+              "name": "变更前提前预警",
+              "type": "number-unit",
+              "label": "提前预警",
+              "required": false,
+              "placeholder": "自动带入",
+              "unitName": "变更前提前预警单位",
+              "defaultUnit": "天",
+              "options": [
+                "天",
+                "月",
+                "年"
               ],
-              "toolbar": [
-                {
-                  "name": "新增",
-                  "type": "primary"
-                },
-                {
-                  "name": "导出数据",
-                  "type": "default"
-                },
-                {
-                  "name": "批量删除",
-                  "type": "danger"
-                }
-              ],
-              "columns": [
-                {
-                  "title": "变更状态",
-                  "field": "变更状态",
-                  "name": "变更状态",
-                  "slot": "tag",
-                  "width": 90
-                },
-                {
-                  "title": "申请单号",
-                  "field": "申请单号",
-                  "name": "申请单号",
-                  "width": 100
-                },
-                {
-                  "title": "文件编号",
-                  "field": "文件编号",
-                  "name": "文件编号",
-                  "width": 140
-                },
-                {
-                  "title": "文件类型",
-                  "field": "文件类型",
-                  "name": "文件类型",
-                  "width": 100
-                },
-                {
-                  "title": "变更类型",
-                  "field": "变更类型",
-                  "name": "变更类型",
-                  "width": 120
-                },
-                {
-                  "title": "变更前文件名称",
-                  "field": "变更前文件名称",
-                  "name": "变更前文件名称",
-                  "width": 180
-                },
-                {
-                  "title": "变更后文件名称",
-                  "field": "变更后文件名称",
-                  "name": "变更后文件名称",
-                  "width": 180
-                },
-                {
-                  "title": "变更前客户名称",
-                  "field": "变更前客户名称",
-                  "name": "变更前客户名称",
-                  "width": 140
-                },
-                {
-                  "title": "变更后客户名称",
-                  "field": "变更后客户名称",
-                  "name": "变更后客户名称",
-                  "width": 140
-                },
-                {
-                  "title": "变更前内容描述",
-                  "field": "变更前内容描述",
-                  "name": "变更前内容描述",
-                  "width": 180
-                },
-                {
-                  "title": "变更后内容描述",
-                  "field": "变更后内容描述",
-                  "name": "变更后内容描述",
-                  "width": 180
-                },
-                {
-                  "title": "变更前使用期限类型",
-                  "field": "变更前使用期限类型",
-                  "name": "变更前使用期限类型",
-                  "width": 140
-                },
-                {
-                  "title": "变更后使用期限类型",
-                  "field": "变更后使用期限类型",
-                  "name": "变更后使用期限类型",
-                  "width": 140
-                },
-                {
-                  "title": "变更前生效日期",
-                  "field": "变更前生效日期",
-                  "name": "变更前生效日期",
-                  "width": 120
-                },
-                {
-                  "title": "变更后生效日期",
-                  "field": "变更后生效日期",
-                  "name": "变更后生效日期",
-                  "width": 120
-                },
-                {
-                  "title": "变更前使用周期",
-                  "field": "变更前使用周期",
-                  "name": "变更前使用周期",
-                  "width": 120
-                },
-                {
-                  "title": "变更后使用周期",
-                  "field": "变更后使用周期",
-                  "name": "变更后使用周期",
-                  "width": 120
-                },
-                {
-                  "title": "创建人",
-                  "field": "创建人",
-                  "name": "创建人",
-                  "width": 90
-                },
-                {
-                  "title": "创建时间",
-                  "field": "创建时间",
-                  "name": "创建时间",
-                  "width": 160
-                },
-                {
-                  "title": "操作",
-                  "field": "_actions",
-                  "name": "_actions",
-                  "width": 160,
-                  "fixed": "right",
-                  "slot": "row_actions"
-                }
-              ],
-              "rowOps": [
-                {
-                  "name": "编辑"
-                },
-                {
-                  "name": "确认变更"
-                }
-              ]
+              "showWhen": {
+                "field": "变更前使用期限类型",
+                "eq": "固定期限"
+              },
+              "readonly": true
+            },
+            {
+              "name": "变更前失效日期",
+              "type": "readonly",
+              "label": "失效日期",
+              "required": false,
+              "placeholder": "自动计算，生效日期+使用周期-1天",
+              "showWhen": {
+                "field": "变更前使用期限类型",
+                "eq": "固定期限"
+              }
             }
-          ],
-          "formFields": [],
-          "formSections": [
+          ]
+        },
+        {
+          "title": "变更后信息",
+          "fields": [
             {
-              "title": "",
-              "fields": [
-                {
-                  "name": "申请单号",
-                  "type": "readonly",
-                  "required": true,
-                  "refreshable": true,
-                  "placeholder": "自动生成"
-                },
-                {
-                  "name": "原文件",
-                  "type": "picker",
-                  "required": true,
-                  "placeholder": "点击选择，单选后回显文件编号/文件名称"
-                },
-                {
-                  "name": "变更类型",
-                  "type": "select",
-                  "required": true,
-                  "filterable": true,
-                  "placeholder": "模糊下拉，字典表",
-                  "options": [
-                    "内容修订",
-                    "客户信息变更",
-                    "有效期调整",
-                    "文件替换"
-                  ]
-                },
-                {
-                  "name": "文件类型",
-                  "type": "readonly",
-                  "required": false,
-                  "placeholder": "选择原文件后带出"
-                },
-                {
-                  "name": "变更内容说明",
-                  "type": "textarea",
-                  "required": false,
-                  "placeholder": "输入",
-                  "fullRow": true
-                }
+              "name": "变更后文件名称",
+              "type": "input",
+              "label": "文件名称",
+              "required": true,
+              "placeholder": "自动带入，可修改"
+            },
+            {
+              "name": "变更后客户名称",
+              "type": "input",
+              "label": "客户名称",
+              "required": false,
+              "placeholder": "自动带入，可修改"
+            },
+            {
+              "name": "变更后内容描述",
+              "type": "textarea",
+              "label": "内容描述",
+              "required": false,
+              "placeholder": "自动带入，可修改",
+              "fullRow": true,
+              "readonly": false
+            },
+            {
+              "name": "变更后文件",
+              "type": "upload",
+              "label": "文件",
+              "required": true,
+              "placeholder": "自动带入，可修改",
+              "preview": false
+            },
+            {
+              "name": "变更后使用期限类型",
+              "type": "radio",
+              "label": "使用期限类型",
+              "required": true,
+              "options": [
+                "固定期限",
+                "永久使用"
+              ],
+              "halfRow": true,
+              "readonly": false
+            },
+            {
+              "name": "变更后生效日期",
+              "type": "date",
+              "label": "生效日期",
+              "required": true,
+              "placeholder": "自动带入",
+              "showWhen": {
+                "field": "变更后使用期限类型",
+                "eq": "固定期限"
+              }
+            },
+            {
+              "name": "变更后使用周期",
+              "type": "number-unit",
+              "label": "使用周期",
+              "required": true,
+              "placeholder": "输入, 正整数",
+              "unitName": "变更后使用周期单位",
+              "defaultUnit": "天",
+              "options": [
+                "天",
+                "月",
+                "年"
+              ],
+              "showWhen": {
+                "field": "变更后使用期限类型",
+                "eq": "固定期限"
+              },
+              "readonly": false
+            },
+            {
+              "name": "变更后提前预警",
+              "type": "number-unit",
+              "label": "提前预警",
+              "required": true,
+              "placeholder": "输入, 正整数",
+              "unitName": "变更后提前预警单位",
+              "defaultUnit": "天",
+              "options": [
+                "天",
+                "月",
+                "年"
+              ],
+              "showWhen": {
+                "field": "变更后使用期限类型",
+                "eq": "固定期限"
+              },
+              "readonly": false
+            },
+            {
+              "name": "变更后失效日期",
+              "type": "readonly",
+              "label": "失效日期",
+              "required": false,
+              "placeholder": "自动计算，生效日期+使用周期-1天",
+              "showWhen": {
+                "field": "变更后使用期限类型",
+                "eq": "固定期限"
+              }
+            }
+          ]
+        }
+      ],
+      "detailFields": [],
+      "hasEdit": true,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true,
+      "formGridCols": 3,
+      "formLineFields": [],
+      "formLineActions": []
+    },
+    {
+      "id": "np-0215-05",
+      "title": "文件导入",
+      "groups": [
+        "质量管理",
+        "有害物质管理"
+      ],
+      "breadcrumb": [
+        "质量管理",
+        "有害物质管理",
+        "文件导入"
+      ],
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [
+            {
+              "name": "申请单号",
+              "type": "input"
+            },
+            {
+              "name": "文件编号",
+              "type": "input"
+            },
+            {
+              "name": "文件名称",
+              "type": "input"
+            },
+            {
+              "name": "导入状态",
+              "type": "select",
+              "options": [
+                "未导入",
+                "已导入"
               ]
             },
             {
-              "title": "变更前信息",
-              "fields": [
-                {
-                  "name": "变更前文件名称",
-                  "type": "readonly",
-                  "label": "文件名称",
-                  "required": true,
-                  "placeholder": "自动带入"
-                },
-                {
-                  "name": "变更前客户名称",
-                  "type": "readonly",
-                  "label": "客户名称",
-                  "required": false,
-                  "placeholder": "自动带入"
-                },
-                {
-                  "name": "变更前内容描述",
-                  "type": "textarea",
-                  "label": "内容描述",
-                  "required": false,
-                  "placeholder": "自动带入",
-                  "fullRow": true,
-                  "readonly": true
-                },
-                {
-                  "name": "变更前文件",
-                  "type": "readonly",
-                  "label": "文件",
-                  "required": true,
-                  "placeholder": "点击预览",
-                  "preview": true
-                },
-                {
-                  "name": "变更前使用期限类型",
-                  "type": "radio",
-                  "label": "使用期限类型",
-                  "required": true,
-                  "options": [
-                    "固定期限",
-                    "永久使用"
-                  ],
-                  "halfRow": true,
-                  "readonly": true
-                },
-                {
-                  "name": "变更前生效日期",
-                  "type": "readonly",
-                  "label": "生效日期",
-                  "required": false,
-                  "placeholder": "自动带入",
-                  "showWhen": {
-                    "field": "变更前使用期限类型",
-                    "eq": "固定期限"
-                  }
-                },
-                {
-                  "name": "变更前使用周期",
-                  "type": "number-unit",
-                  "label": "使用周期",
-                  "required": false,
-                  "placeholder": "自动带入",
-                  "unitName": "变更前使用周期单位",
-                  "defaultUnit": "天",
-                  "options": [
-                    "天",
-                    "月",
-                    "年"
-                  ],
-                  "showWhen": {
-                    "field": "变更前使用期限类型",
-                    "eq": "固定期限"
-                  },
-                  "readonly": true
-                },
-                {
-                  "name": "变更前提前预警",
-                  "type": "number-unit",
-                  "label": "提前预警",
-                  "required": false,
-                  "placeholder": "自动带入",
-                  "unitName": "变更前提前预警单位",
-                  "defaultUnit": "天",
-                  "options": [
-                    "天",
-                    "月",
-                    "年"
-                  ],
-                  "showWhen": {
-                    "field": "变更前使用期限类型",
-                    "eq": "固定期限"
-                  },
-                  "readonly": true
-                },
-                {
-                  "name": "变更前失效日期",
-                  "type": "readonly",
-                  "label": "失效日期",
-                  "required": false,
-                  "placeholder": "自动计算，生效日期+使用周期-1天",
-                  "showWhen": {
-                    "field": "变更前使用期限类型",
-                    "eq": "固定期限"
-                  }
-                }
+              "name": "文件类型",
+              "type": "select",
+              "options": [
+                "厂内文件",
+                "客户文件",
+                "法规文件"
               ]
             },
             {
-              "title": "变更后信息",
-              "fields": [
-                {
-                  "name": "变更后文件名称",
-                  "type": "input",
-                  "label": "文件名称",
-                  "required": true,
-                  "placeholder": "自动带入，可修改"
-                },
-                {
-                  "name": "变更后客户名称",
-                  "type": "input",
-                  "label": "客户名称",
-                  "required": false,
-                  "placeholder": "自动带入，可修改"
-                },
-                {
-                  "name": "变更后内容描述",
-                  "type": "textarea",
-                  "label": "内容描述",
-                  "required": false,
-                  "placeholder": "自动带入，可修改",
-                  "fullRow": true,
-                  "readonly": false
-                },
-                {
-                  "name": "变更后文件",
-                  "type": "upload",
-                  "label": "文件",
-                  "required": true,
-                  "placeholder": "自动带入，可修改",
-                  "preview": false
-                },
-                {
-                  "name": "变更后使用期限类型",
-                  "type": "radio",
-                  "label": "使用期限类型",
-                  "required": true,
-                  "options": [
-                    "固定期限",
-                    "永久使用"
-                  ],
-                  "halfRow": true,
-                  "readonly": false
-                },
-                {
-                  "name": "变更后生效日期",
-                  "type": "date",
-                  "label": "生效日期",
-                  "required": true,
-                  "placeholder": "自动带入",
-                  "showWhen": {
-                    "field": "变更后使用期限类型",
-                    "eq": "固定期限"
-                  }
-                },
-                {
-                  "name": "变更后使用周期",
-                  "type": "number-unit",
-                  "label": "使用周期",
-                  "required": true,
-                  "placeholder": "输入, 正整数",
-                  "unitName": "变更后使用周期单位",
-                  "defaultUnit": "天",
-                  "options": [
-                    "天",
-                    "月",
-                    "年"
-                  ],
-                  "showWhen": {
-                    "field": "变更后使用期限类型",
-                    "eq": "固定期限"
-                  },
-                  "readonly": false
-                },
-                {
-                  "name": "变更后提前预警",
-                  "type": "number-unit",
-                  "label": "提前预警",
-                  "required": true,
-                  "placeholder": "输入, 正整数",
-                  "unitName": "变更后提前预警单位",
-                  "defaultUnit": "天",
-                  "options": [
-                    "天",
-                    "月",
-                    "年"
-                  ],
-                  "showWhen": {
-                    "field": "变更后使用期限类型",
-                    "eq": "固定期限"
-                  },
-                  "readonly": false
-                },
-                {
-                  "name": "变更后失效日期",
-                  "type": "readonly",
-                  "label": "失效日期",
-                  "required": false,
-                  "placeholder": "自动计算，生效日期+使用周期-1天",
-                  "showWhen": {
-                    "field": "变更后使用期限类型",
-                    "eq": "固定期限"
-                  }
-                }
+              "name": "物料类",
+              "type": "select",
+              "options": [
+                "光刻胶原料",
+                "OLED有机材料",
+                "包装辅材"
               ]
+            },
+            {
+              "name": "客户名称",
+              "type": "input"
+            },
+            {
+              "name": "法规名称",
+              "type": "input"
+            },
+            {
+              "name": "使用期限类型",
+              "type": "select",
+              "options": [
+                "固定期限",
+                "永久使用"
+              ]
+            },
+            {
+              "name": "创建人",
+              "type": "input"
+            },
+            {
+              "name": "创建时间",
+              "type": "daterange"
             }
           ],
-          "detailFields": [],
-          "hasEdit": true,
-          "hasDetail": false,
-          "stub": false,
-          "formFlat": true,
-          "formGridCols": 3,
-          "formLineFields": [],
-          "formLineActions": []
+          "queryDefault": [
+            "申请单号",
+            "文件编号",
+            "文件名称",
+            "导入状态"
+          ],
+          "queryMore": [
+            "物料类",
+            "文件类型",
+            "客户名称",
+            "法规名称",
+            "使用期限类型",
+            "创建人",
+            "创建时间"
+          ],
+          "toolbar": [
+            {
+              "name": "新增",
+              "type": "primary"
+            },
+            {
+              "name": "导出数据",
+              "type": "default"
+            },
+            {
+              "name": "批量删除",
+              "type": "danger"
+            }
+          ],
+          "columns": [
+            {
+              "title": "导入状态",
+              "field": "导入状态",
+              "name": "导入状态",
+              "slot": "tag",
+              "width": 90
+            },
+            {
+              "title": "申请单号",
+              "field": "申请单号",
+              "name": "申请单号",
+              "width": 100
+            },
+            {
+              "title": "物料类",
+              "field": "物料类",
+              "name": "物料类",
+              "width": 120
+            },
+            {
+              "title": "文件编号",
+              "field": "文件编号",
+              "name": "文件编号",
+              "width": 140
+            },
+            {
+              "title": "文件名称",
+              "field": "文件名称",
+              "name": "文件名称",
+              "width": 180
+            },
+            {
+              "title": "文件",
+              "field": "文件",
+              "name": "文件",
+              "width": 160,
+              "slot": "files"
+            },
+            {
+              "title": "内容描述",
+              "field": "内容描述",
+              "name": "内容描述",
+              "width": 180
+            },
+            {
+              "title": "文件类型",
+              "field": "文件类型",
+              "name": "文件类型",
+              "width": 100
+            },
+            {
+              "title": "客户名称",
+              "field": "客户名称",
+              "name": "客户名称",
+              "width": 160
+            },
+            {
+              "title": "法规名称",
+              "field": "法规名称",
+              "name": "法规名称",
+              "width": 160
+            },
+            {
+              "title": "使用期限类型",
+              "field": "使用期限类型",
+              "name": "使用期限类型",
+              "width": 110
+            },
+            {
+              "title": "生效日期",
+              "field": "生效日期",
+              "name": "生效日期",
+              "width": 110
+            },
+            {
+              "title": "使用周期",
+              "field": "使用周期",
+              "name": "使用周期",
+              "width": 100
+            },
+            {
+              "title": "失效日期",
+              "field": "失效日期",
+              "name": "失效日期",
+              "width": 110
+            },
+            {
+              "title": "创建人",
+              "field": "创建人",
+              "name": "创建人",
+              "width": 90
+            },
+            {
+              "title": "创建时间",
+              "field": "创建时间",
+              "name": "创建时间",
+              "width": 160
+            },
+            {
+              "title": "操作",
+              "field": "_actions",
+              "name": "_actions",
+              "width": 220,
+              "fixed": "right",
+              "slot": "row_actions"
+            }
+          ],
+          "rowOps": [
+            {
+              "name": "确认导入"
+            },
+            {
+              "name": "编辑"
+            },
+            {
+              "name": "详情"
+            }
+          ]
+        }
+      ],
+      "formFields": [
+        {
+          "name": "申请单号",
+          "type": "readonly",
+          "required": true,
+          "refreshable": true,
+          "placeholder": "自动生成"
         },
-                                {
-                  "id": "np-0215-05",
-                  "title": "文件导入",
-                  "groups": [
-                    "质量管理",
-                    "有害物质管理"
-                  ],
-                  "breadcrumb": [
-                    "质量管理",
-                    "有害物质管理",
-                    "文件导入"
-                  ],
-                  "tabs": [],
-                  "tabViews": [
-                    {
-                      "name": "main",
-                      "label": "",
-                      "queryFields": [
-                        {
-                          "name": "申请单号",
-                          "type": "input"
-                        },
-                        {
-                          "name": "文件编号",
-                          "type": "input"
-                        },
-                        {
-                          "name": "文件名称",
-                          "type": "input"
-                        },
-                        {
-                          "name": "导入状态",
-                          "type": "select",
-                          "options": [
-                            "未导入",
-                            "已导入"
-                          ]
-                        },
-                        {
-                          "name": "文件类型",
-                          "type": "select",
-                          "options": [
-                            "厂内文件",
-                            "客户文件",
-                            "法规文件"
-                          ]
-                        },
-                        {
-                          "name": "物料类",
-                          "type": "select",
-                          "options": [
-                            "光刻胶原料",
-                            "OLED有机材料",
-                            "包装辅材"
-                          ]
-                        },
-                        {
-                          "name": "客户名称",
-                          "type": "input"
-                        },
-                        {
-                          "name": "法规名称",
-                          "type": "input"
-                        },
-                        {
-                          "name": "使用期限类型",
-                          "type": "select",
-                          "options": [
-                            "固定期限",
-                            "永久使用"
-                          ]
-                        },
-                        {
-                          "name": "创建人",
-                          "type": "input"
-                        },
-                        {
-                          "name": "创建时间",
-                          "type": "daterange"
-                        }
-                      ],
-                      "queryDefault": [
-                        "申请单号",
-                        "文件编号",
-                        "文件名称",
-                        "导入状态"
-                      ],
-                      "queryMore": [
-                        "物料类",
-                        "文件类型",
-                        "客户名称",
-                        "法规名称",
-                        "使用期限类型",
-                        "创建人",
-                        "创建时间"
-                      ],
-                      "toolbar": [
-                        {
-                          "name": "新增",
-                          "type": "primary"
-                        },
-                        {
-                          "name": "导出数据",
-                          "type": "default"
-                        },
-                        {
-                          "name": "批量删除",
-                          "type": "danger"
-                        }
-                      ],
-                      "columns": [
-                        {
-                          "title": "导入状态",
-                          "field": "导入状态",
-                          "name": "导入状态",
-                          "slot": "tag",
-                          "width": 90
-                        },
-                        {
-                          "title": "申请单号",
-                          "field": "申请单号",
-                          "name": "申请单号",
-                          "width": 100
-                        },
-                        {
-                          "title": "物料类",
-                          "field": "物料类",
-                          "name": "物料类",
-                          "width": 120
-                        },
-                        {
-                          "title": "文件编号",
-                          "field": "文件编号",
-                          "name": "文件编号",
-                          "width": 140
-                        },
-                        {
-                          "title": "文件名称",
-                          "field": "文件名称",
-                          "name": "文件名称",
-                          "width": 180
-                        },
-                        {
-                          "title": "文件",
-                          "field": "文件",
-                          "name": "文件",
-                          "width": 160,
-                          "slot": "files"
-                        },
-                        {
-                          "title": "内容描述",
-                          "field": "内容描述",
-                          "name": "内容描述",
-                          "width": 180
-                        },
-                        {
-                          "title": "文件类型",
-                          "field": "文件类型",
-                          "name": "文件类型",
-                          "width": 100
-                        },
-                        {
-                          "title": "客户名称",
-                          "field": "客户名称",
-                          "name": "客户名称",
-                          "width": 160
-                        },
-                        {
-                          "title": "法规名称",
-                          "field": "法规名称",
-                          "name": "法规名称",
-                          "width": 160
-                        },
-                        {
-                          "title": "使用期限类型",
-                          "field": "使用期限类型",
-                          "name": "使用期限类型",
-                          "width": 110
-                        },
-                        {
-                          "title": "生效日期",
-                          "field": "生效日期",
-                          "name": "生效日期",
-                          "width": 110
-                        },
-                        {
-                          "title": "使用周期",
-                          "field": "使用周期",
-                          "name": "使用周期",
-                          "width": 100
-                        },
-                        {
-                          "title": "失效日期",
-                          "field": "失效日期",
-                          "name": "失效日期",
-                          "width": 110
-                        },
-                        {
-                          "title": "创建人",
-                          "field": "创建人",
-                          "name": "创建人",
-                          "width": 90
-                        },
-                        {
-                          "title": "创建时间",
-                          "field": "创建时间",
-                          "name": "创建时间",
-                          "width": 160
-                        },
-                        {
-                          "title": "操作",
-                          "field": "_actions",
-                          "name": "_actions",
-                          "width": 220,
-                          "fixed": "right",
-                          "slot": "row_actions"
-                        }
-                      ],
-                      "rowOps": [
-                        {
-                          "name": "确认导入"
-                        },
-                        {
-                          "name": "编辑"
-                        },
-                        {
-                          "name": "详情"
-                        }
-                      ]
-                    }
-                  ],
-                  "formFields": [
-                    {
-                      "name": "申请单号",
-                      "type": "readonly",
-                      "required": true,
-                      "refreshable": true,
-                      "placeholder": "自动生成"
-                    },
-                    {
-                      "name": "文件编号",
-                      "type": "readonly",
-                      "required": true,
-                      "refreshable": true,
-                      "placeholder": "自动生成"
-                    },
-                    {
-                      "name": "物料类",
-                      "type": "select",
-                      "required": true,
-                      "placeholder": "请选择",
-                      "options": [
-                        "光刻胶原料",
-                        "OLED有机材料",
-                        "包装辅材"
-                      ],
-                      "ctrl": "来自有害物质档案库物料类"
-                    },
-                    {
-                      "name": "文件名称",
-                      "type": "input",
-                      "required": true,
-                      "placeholder": "输入"
-                    },
-                    {
-                      "name": "文件类型",
-                      "type": "select",
-                      "required": true,
-                      "options": [
-                        "厂内文件",
-                        "客户文件",
-                        "法规文件"
-                      ],
-                      "filterable": true,
-                      "placeholder": "下拉，单选"
-                    },
-                    {
-                      "name": "客户信息",
-                      "type": "picker",
-                      "required": true,
-                      "placeholder": "点击选择客户",
-                      "showWhen": {
-                        "field": "文件类型",
-                        "eq": "客户文件"
-                      }
-                    },
-                    {
-                      "name": "法规名称",
-                      "type": "input",
-                      "required": true,
-                      "placeholder": "输入",
-                      "showWhen": {
-                        "field": "文件类型",
-                        "eq": "法规文件"
-                      }
-                    },
-                    {
-                      "name": "内容描述",
-                      "type": "textarea",
-                      "required": false,
-                      "placeholder": "输入",
-                      "fullRow": true
-                    },
-                    {
-                      "name": "文件",
-                      "type": "upload",
-                      "required": true,
-                      "placeholder": "+点击上传"
-                    },
-                    {
-                      "name": "使用期限类型",
-                      "type": "radio",
-                      "required": true,
-                      "options": [
-                        "固定期限",
-                        "永久使用"
-                      ],
-                      "default": "固定期限"
-                    },
-                    {
-                      "name": "生效日期",
-                      "type": "date",
-                      "required": true,
-                      "placeholder": "下拉，年月日",
-                      "showWhen": {
-                        "field": "使用期限类型",
-                        "eq": "固定期限"
-                      }
-                    },
-                    {
-                      "name": "使用周期",
-                      "type": "number-unit",
-                      "required": true,
-                      "placeholder": "输入，正整数",
-                      "options": [
-                        "天",
-                        "月",
-                        "年"
-                      ],
-                      "defaultUnit": "天",
-                      "unitName": "使用周期单位",
-                      "showWhen": {
-                        "field": "使用期限类型",
-                        "eq": "固定期限"
-                      }
-                    },
-                    {
-                      "name": "提前预警",
-                      "type": "number-unit",
-                      "required": true,
-                      "placeholder": "输入，正整数",
-                      "options": [
-                        "天",
-                        "月",
-                        "年"
-                      ],
-                      "defaultUnit": "天",
-                      "unitName": "提前预警单位",
-                      "showWhen": {
-                        "field": "使用期限类型",
-                        "eq": "固定期限"
-                      }
-                    },
-                    {
-                      "name": "失效日期",
-                      "type": "readonly",
-                      "required": true,
-                      "placeholder": "自动计算，生效日期+使用周期-1天",
-                      "showWhen": {
-                        "field": "使用期限类型",
-                        "eq": "固定期限"
-                      }
-                    },
-                    {
-                      "name": "备注",
-                      "type": "textarea",
-                      "required": false,
-                      "placeholder": "输入",
-                      "fullRow": true
-                    }
-                  ],
-                  "detailFields": [],
-                  "hasEdit": true,
-                  "hasDetail": true,
-                  "stub": false,
-                  "formFlat": true,
-                  "formLineFields": [],
-                  "formLineActions": [],
-                                                                          "formFullscreen": true
-                },
-    {
-  "id": "np-0215-04",
-  "title": "回收站",
-  "groups": [
-    "质量管理",
-    "有害物质管理"
-  ],
-  "breadcrumb": [
-    "质量管理",
-    "有害物质管理",
-    "回收站"
-  ],
-  "tabs": [],
-  "tabViews": [
-    {
-      "name": "main",
-      "label": "",
-      "queryFields": [
         {
           "name": "文件编号",
-          "type": "input"
+          "type": "readonly",
+          "required": true,
+          "refreshable": true,
+          "placeholder": "自动生成"
+        },
+        {
+          "name": "物料类",
+          "type": "select",
+          "required": true,
+          "placeholder": "请选择",
+          "options": [
+            "光刻胶原料",
+            "OLED有机材料",
+            "包装辅材"
+          ],
+          "ctrl": "来自有害物质档案库物料类"
         },
         {
           "name": "文件名称",
-          "type": "input"
+          "type": "input",
+          "required": true,
+          "placeholder": "输入"
         },
         {
           "name": "文件类型",
           "type": "select",
+          "required": true,
           "options": [
             "厂内文件",
             "客户文件",
             "法规文件"
-          ]
+          ],
+          "filterable": true,
+          "placeholder": "下拉，单选"
         },
         {
-          "name": "客户名称",
-          "type": "input"
+          "name": "客户信息",
+          "type": "picker",
+          "required": true,
+          "placeholder": "点击选择客户",
+          "showWhen": {
+            "field": "文件类型",
+            "eq": "客户文件"
+          }
         },
         {
           "name": "法规名称",
-          "type": "input"
+          "type": "input",
+          "required": true,
+          "placeholder": "输入",
+          "showWhen": {
+            "field": "文件类型",
+            "eq": "法规文件"
+          }
         },
         {
-          "name": "作废时间",
-          "type": "daterange"
-        }
-      ],
-      "queryDefault": [
-        "文件编号",
-        "文件名称",
-        "文件类型",
-        "客户名称"
-      ],
-      "queryMore": [
-        "法规名称",
-        "作废时间"
-      ],
-      "toolbar": [
-        {
-          "name": "导出数据",
-          "type": "default",
-          "desc": "勾选数据后，导出所选；未勾选导出当前查询结果"
-        }
-      ],
-      "columns": [
-        {
-          "title": "文件编号",
-          "field": "文件编号",
-          "name": "文件编号",
-          "width": 140
-        },
-        {
-          "title": "文件名称",
-          "field": "文件名称",
-          "name": "文件名称",
-          "width": 180
-        },
-        {
-          "title": "文件",
-          "field": "文件",
-          "name": "文件",
-          "width": 160,
-          "slot": "files"
-        },
-        {
-          "title": "内容描述",
-          "field": "内容描述",
           "name": "内容描述",
-          "width": 180
+          "type": "textarea",
+          "required": false,
+          "placeholder": "输入",
+          "fullRow": true
         },
         {
-          "title": "文件类型",
-          "field": "文件类型",
-          "name": "文件类型",
-          "width": 100,
-          "slot": "tag"
+          "name": "文件",
+          "type": "upload",
+          "required": true,
+          "placeholder": "+点击上传"
         },
         {
-          "title": "客户名称",
-          "field": "客户名称",
-          "name": "客户名称",
-          "width": 160
-        },
-        {
-          "title": "法规名称",
-          "field": "法规名称",
-          "name": "法规名称",
-          "width": 160
-        },
-        {
-          "title": "使用期限类型",
-          "field": "使用期限类型",
           "name": "使用期限类型",
-          "width": 110
+          "type": "radio",
+          "required": true,
+          "options": [
+            "固定期限",
+            "永久使用"
+          ],
+          "default": "固定期限"
         },
         {
-          "title": "生效日期",
-          "field": "生效日期",
           "name": "生效日期",
-          "width": 110
+          "type": "date",
+          "required": true,
+          "placeholder": "下拉，年月日",
+          "showWhen": {
+            "field": "使用期限类型",
+            "eq": "固定期限"
+          }
         },
         {
-          "title": "使用周期",
-          "field": "使用周期",
           "name": "使用周期",
-          "width": 100
+          "type": "number-unit",
+          "required": true,
+          "placeholder": "输入，正整数",
+          "options": [
+            "天",
+            "月",
+            "年"
+          ],
+          "defaultUnit": "天",
+          "unitName": "使用周期单位",
+          "showWhen": {
+            "field": "使用期限类型",
+            "eq": "固定期限"
+          }
         },
         {
-          "title": "失效日期",
-          "field": "失效日期",
+          "name": "提前预警",
+          "type": "number-unit",
+          "required": true,
+          "placeholder": "输入，正整数",
+          "options": [
+            "天",
+            "月",
+            "年"
+          ],
+          "defaultUnit": "天",
+          "unitName": "提前预警单位",
+          "showWhen": {
+            "field": "使用期限类型",
+            "eq": "固定期限"
+          }
+        },
+        {
           "name": "失效日期",
-          "width": 110
+          "type": "readonly",
+          "required": true,
+          "placeholder": "自动计算，生效日期+使用周期-1天",
+          "showWhen": {
+            "field": "使用期限类型",
+            "eq": "固定期限"
+          }
         },
         {
-          "title": "作废原因",
-          "field": "作废原因",
-          "name": "作废原因",
-          "width": 180
-        },
-        {
-          "title": "作废申请人",
-          "field": "作废申请人",
-          "name": "作废申请人",
-          "width": 100
-        },
-        {
-          "title": "作废时间",
-          "field": "作废时间",
-          "name": "作废时间",
-          "width": 160
-        },
-        {
-          "title": "来源申请单号",
-          "field": "来源申请单号",
-          "name": "来源申请单号",
-          "width": 120
+          "name": "备注",
+          "type": "textarea",
+          "required": false,
+          "placeholder": "输入",
+          "fullRow": true
         }
       ],
-      "rowOps": []
-    }
-  ],
-  "formFields": [],
-  "detailFields": [],
-  "hasEdit": false,
-  "hasDetail": false,
-  "stub": false,
-  "formFlat": true,
-  "formLineFields": [],
-  "formLineActions": []
-},
+      "detailFields": [],
+      "hasEdit": true,
+      "hasDetail": true,
+      "stub": false,
+      "formFlat": true,
+      "formLineFields": [],
+      "formLineActions": [],
+      "formFullscreen": true
+    },
+    {
+      "id": "np-0215-04",
+      "title": "回收站",
+      "groups": [
+        "质量管理",
+        "有害物质管理"
+      ],
+      "breadcrumb": [
+        "质量管理",
+        "有害物质管理",
+        "回收站"
+      ],
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [
+            {
+              "name": "文件编号",
+              "type": "input"
+            },
+            {
+              "name": "文件名称",
+              "type": "input"
+            },
+            {
+              "name": "文件类型",
+              "type": "select",
+              "options": [
+                "厂内文件",
+                "客户文件",
+                "法规文件"
+              ]
+            },
+            {
+              "name": "客户名称",
+              "type": "input"
+            },
+            {
+              "name": "法规名称",
+              "type": "input"
+            },
+            {
+              "name": "作废时间",
+              "type": "daterange"
+            }
+          ],
+          "queryDefault": [
+            "文件编号",
+            "文件名称",
+            "文件类型",
+            "客户名称"
+          ],
+          "queryMore": [
+            "法规名称",
+            "作废时间"
+          ],
+          "toolbar": [
+            {
+              "name": "导出数据",
+              "type": "default",
+              "desc": "勾选数据后，导出所选；未勾选导出当前查询结果"
+            }
+          ],
+          "columns": [
+            {
+              "title": "文件编号",
+              "field": "文件编号",
+              "name": "文件编号",
+              "width": 140
+            },
+            {
+              "title": "文件名称",
+              "field": "文件名称",
+              "name": "文件名称",
+              "width": 180
+            },
+            {
+              "title": "文件",
+              "field": "文件",
+              "name": "文件",
+              "width": 160,
+              "slot": "files"
+            },
+            {
+              "title": "内容描述",
+              "field": "内容描述",
+              "name": "内容描述",
+              "width": 180
+            },
+            {
+              "title": "文件类型",
+              "field": "文件类型",
+              "name": "文件类型",
+              "width": 100,
+              "slot": "tag"
+            },
+            {
+              "title": "客户名称",
+              "field": "客户名称",
+              "name": "客户名称",
+              "width": 160
+            },
+            {
+              "title": "法规名称",
+              "field": "法规名称",
+              "name": "法规名称",
+              "width": 160
+            },
+            {
+              "title": "使用期限类型",
+              "field": "使用期限类型",
+              "name": "使用期限类型",
+              "width": 110
+            },
+            {
+              "title": "生效日期",
+              "field": "生效日期",
+              "name": "生效日期",
+              "width": 110
+            },
+            {
+              "title": "使用周期",
+              "field": "使用周期",
+              "name": "使用周期",
+              "width": 100
+            },
+            {
+              "title": "失效日期",
+              "field": "失效日期",
+              "name": "失效日期",
+              "width": 110
+            },
+            {
+              "title": "作废原因",
+              "field": "作废原因",
+              "name": "作废原因",
+              "width": 180
+            },
+            {
+              "title": "作废申请人",
+              "field": "作废申请人",
+              "name": "作废申请人",
+              "width": 100
+            },
+            {
+              "title": "作废时间",
+              "field": "作废时间",
+              "name": "作废时间",
+              "width": 160
+            },
+            {
+              "title": "来源申请单号",
+              "field": "来源申请单号",
+              "name": "来源申请单号",
+              "width": 120
+            }
+          ],
+          "rowOps": []
+        }
+      ],
+      "formFields": [],
+      "detailFields": [],
+      "hasEdit": false,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true,
+      "formLineFields": [],
+      "formLineActions": []
+    },
     {
       "id": "np-0301-02",
       "title": "仪器履历",
@@ -161845,257 +161705,257 @@ window.WMS_PAGE_CONFIGS = {
       "formFullscreen": true
     },
     {
-  "id": "np-0409-01",
-  "title": "检验项流水表",
-  "groups": [
-    "质量管理",
-    "检验成本统计"
-  ],
-  "breadcrumb": [
-    "质量管理",
-    "检验成本统计",
-    "检验项流水表"
-  ],
-  "tabs": [],
-  "tabViews": [
-    {
-      "name": "main",
-      "label": "",
-      "queryFields": [
+      "id": "np-0409-01",
+      "title": "检验项流水表",
+      "groups": [
+        "质量管理",
+        "检验成本统计"
+      ],
+      "breadcrumb": [
+        "质量管理",
+        "检验成本统计",
+        "检验项流水表"
+      ],
+      "tabs": [],
+      "tabViews": [
         {
-          "name": "检验完成时间",
-          "type": "daterange"
-        },
-        {
-          "name": "报检类型",
-          "type": "select"
-        },
-        {
-          "name": "送检人",
-          "type": "select"
-        },
-        {
-          "name": "部门",
-          "type": "select"
-        },
-        {
-          "name": "检验类",
-          "type": "select"
-        },
-        {
-          "name": "物料种类",
-          "type": "select"
-        },
-        {
-          "name": "检验班组",
-          "type": "select"
-        },
-        {
-          "name": "检验结论",
-          "type": "select"
-        },
-        {
-          "name": "报检单号",
-          "type": "input"
-        },
-        {
-          "name": "样品编号",
-          "type": "input"
-        },
-        {
-          "name": "物料编码",
-          "type": "input"
-        },
-        {
-          "name": "研发项目号",
-          "type": "input"
+          "name": "main",
+          "label": "",
+          "queryFields": [
+            {
+              "name": "检验完成时间",
+              "type": "daterange"
+            },
+            {
+              "name": "报检类型",
+              "type": "select"
+            },
+            {
+              "name": "送检人",
+              "type": "select"
+            },
+            {
+              "name": "部门",
+              "type": "select"
+            },
+            {
+              "name": "检验类",
+              "type": "select"
+            },
+            {
+              "name": "物料种类",
+              "type": "select"
+            },
+            {
+              "name": "检验班组",
+              "type": "select"
+            },
+            {
+              "name": "检验结论",
+              "type": "select"
+            },
+            {
+              "name": "报检单号",
+              "type": "input"
+            },
+            {
+              "name": "样品编号",
+              "type": "input"
+            },
+            {
+              "name": "物料编码",
+              "type": "input"
+            },
+            {
+              "name": "研发项目号",
+              "type": "input"
+            }
+          ],
+          "queryDefault": [
+            "检验完成时间",
+            "报检类型",
+            "送检人",
+            "部门"
+          ],
+          "queryMore": [
+            "检验类",
+            "物料种类",
+            "检验班组",
+            "检验结论",
+            "报检单号",
+            "样品编号",
+            "物料编码",
+            "研发项目号"
+          ],
+          "toolbar": [
+            {
+              "name": "批量编辑",
+              "type": "default"
+            },
+            {
+              "name": "导出",
+              "type": "default",
+              "desc": "按当前查询条件导出"
+            }
+          ],
+          "columns": [
+            {
+              "field": "报检单号",
+              "title": "报检单号",
+              "width": 150,
+              "fixed": "left"
+            },
+            {
+              "field": "样品编号",
+              "title": "样品编号",
+              "width": 130
+            },
+            {
+              "field": "报检类型",
+              "title": "报检类型",
+              "width": 110
+            },
+            {
+              "field": "报检批号",
+              "title": "报检批号",
+              "width": 140
+            },
+            {
+              "field": "样品来源",
+              "title": "样品来源",
+              "width": 100
+            },
+            {
+              "field": "检验结论",
+              "title": "检验结论",
+              "width": 90
+            },
+            {
+              "field": "送检人",
+              "title": "送检人",
+              "width": 90
+            },
+            {
+              "field": "部门",
+              "title": "部门",
+              "width": 120
+            },
+            {
+              "field": "报检时间",
+              "title": "报检时间",
+              "width": 160
+            },
+            {
+              "field": "物料编码",
+              "title": "物料编码",
+              "width": 130
+            },
+            {
+              "field": "物料名称",
+              "title": "物料名称",
+              "width": 160
+            },
+            {
+              "field": "物料规格",
+              "title": "物料规格",
+              "width": 110
+            },
+            {
+              "field": "物料种类",
+              "title": "物料种类",
+              "width": 110
+            },
+            {
+              "field": "供应商名称",
+              "title": "供应商名称",
+              "width": 180
+            },
+            {
+              "field": "客户名称",
+              "title": "客户名称",
+              "width": 200
+            },
+            {
+              "field": "车间名称",
+              "title": "车间名称",
+              "width": 130
+            },
+            {
+              "field": "产线名称",
+              "title": "产线名称",
+              "width": 110
+            },
+            {
+              "field": "研发项目号",
+              "title": "研发项目号",
+              "width": 140
+            },
+            {
+              "field": "来样单位",
+              "title": "来样单位",
+              "width": 180
+            },
+            {
+              "field": "检验类",
+              "title": "检验类",
+              "width": 110
+            },
+            {
+              "field": "检验方案",
+              "title": "检验方案",
+              "width": 150
+            },
+            {
+              "field": "检验班组",
+              "title": "检验班组",
+              "width": 120
+            },
+            {
+              "field": "检验人",
+              "title": "检验人",
+              "width": 80
+            },
+            {
+              "field": "标准系数",
+              "title": "标准系数",
+              "width": 100
+            },
+            {
+              "field": "取样时间",
+              "title": "取样时间",
+              "width": 160
+            },
+            {
+              "field": "检验完成时间",
+              "title": "检验完成时间",
+              "width": 160
+            },
+            {
+              "title": "操作",
+              "field": "_actions",
+              "name": "_actions",
+              "width": 80,
+              "fixed": "right",
+              "slot": "row_actions"
+            }
+          ],
+          "rowOps": [
+            {
+              "name": "编辑"
+            }
+          ]
         }
       ],
-      "queryDefault": [
-        "检验完成时间",
-        "报检类型",
-        "送检人",
-        "部门"
-      ],
-      "queryMore": [
-        "检验类",
-        "物料种类",
-        "检验班组",
-        "检验结论",
-        "报检单号",
-        "样品编号",
-        "物料编码",
-        "研发项目号"
-      ],
-      "toolbar": [
-        {
-          "name": "批量编辑",
-          "type": "default"
-        },
-        {
-          "name": "导出",
-          "type": "default",
-          "desc": "按当前查询条件导出"
-        }
-      ],
-      "columns": [
-        {
-          "field": "报检单号",
-          "title": "报检单号",
-          "width": 150,
-          "fixed": "left"
-        },
-        {
-          "field": "样品编号",
-          "title": "样品编号",
-          "width": 130
-        },
-        {
-          "field": "报检类型",
-          "title": "报检类型",
-          "width": 110
-        },
-        {
-          "field": "报检批号",
-          "title": "报检批号",
-          "width": 140
-        },
-        {
-          "field": "样品来源",
-          "title": "样品来源",
-          "width": 100
-        },
-        {
-          "field": "检验结论",
-          "title": "检验结论",
-          "width": 90
-        },
-        {
-          "field": "送检人",
-          "title": "送检人",
-          "width": 90
-        },
-        {
-          "field": "部门",
-          "title": "部门",
-          "width": 120
-        },
-        {
-          "field": "报检时间",
-          "title": "报检时间",
-          "width": 160
-        },
-        {
-          "field": "物料编码",
-          "title": "物料编码",
-          "width": 130
-        },
-        {
-          "field": "物料名称",
-          "title": "物料名称",
-          "width": 160
-        },
-        {
-          "field": "物料规格",
-          "title": "物料规格",
-          "width": 110
-        },
-        {
-          "field": "物料种类",
-          "title": "物料种类",
-          "width": 110
-        },
-        {
-          "field": "供应商名称",
-          "title": "供应商名称",
-          "width": 180
-        },
-        {
-          "field": "客户名称",
-          "title": "客户名称",
-          "width": 200
-        },
-        {
-          "field": "车间名称",
-          "title": "车间名称",
-          "width": 130
-        },
-        {
-          "field": "产线名称",
-          "title": "产线名称",
-          "width": 110
-        },
-        {
-          "field": "研发项目号",
-          "title": "研发项目号",
-          "width": 140
-        },
-        {
-          "field": "来样单位",
-          "title": "来样单位",
-          "width": 180
-        },
-        {
-          "field": "检验类",
-          "title": "检验类",
-          "width": 110
-        },
-        {
-          "field": "检验方案",
-          "title": "检验方案",
-          "width": 150
-        },
-        {
-          "field": "检验班组",
-          "title": "检验班组",
-          "width": 120
-        },
-        {
-          "field": "检验人",
-          "title": "检验人",
-          "width": 80
-        },
-        {
-          "field": "标准系数",
-          "title": "标准系数",
-          "width": 100
-        },
-        {
-          "field": "取样时间",
-          "title": "取样时间",
-          "width": 160
-        },
-        {
-          "field": "检验完成时间",
-          "title": "检验完成时间",
-          "width": 160
-        },
-        {
-          "title": "操作",
-          "field": "_actions",
-          "name": "_actions",
-          "width": 80,
-          "fixed": "right",
-          "slot": "row_actions"
-        }
-      ],
-      "rowOps": [
-        {
-          "name": "编辑"
-        }
-      ]
-    }
-  ],
-  "formFields": [],
-  "detailFields": [],
-  "hasEdit": true,
-  "hasDetail": false,
-  "stub": false,
-  "formFlat": true,
-  "formLineFields": [],
-  "formLineActions": [],
-  "formOkText": "确定"
-},
+      "formFields": [],
+      "detailFields": [],
+      "hasEdit": true,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true,
+      "formLineFields": [],
+      "formLineActions": [],
+      "formOkText": "确定"
+    },
     {
       "id": "np-0409-02",
       "title": "多维度统计表",
