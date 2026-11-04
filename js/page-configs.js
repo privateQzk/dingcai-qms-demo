@@ -596,11 +596,6 @@ window.WMS_PAGE_CONFIGS = {
           "index": "g-质量管理/色谱漂移",
           "children": [
             {
-              "title": "色谱柱台账",
-              "index": "np-0208-01",
-              "pageId": "np-0208-01"
-            },
-            {
               "title": "漂移规则设置",
               "index": "np-0208-02",
               "pageId": "np-0208-02"
@@ -611,15 +606,19 @@ window.WMS_PAGE_CONFIGS = {
               "pageId": "np-0208-03"
             },
             {
-              "title": "数据台账",
+              "title": "色谱柱台账",
+              "index": "np-0208-01",
+              "pageId": "np-0208-01"
+            },
+            {
+              "title": "GC台账",
               "index": "np-0208-04",
               "pageId": "np-0208-04"
             },
             {
-              "title": "数据比对",
+              "title": "LC台账",
               "index": "np-0208-05",
-              "pageId": "np-0208-05",
-              "hidden": true
+              "pageId": "np-0208-05"
             }
           ]
         },
@@ -732,17 +731,17 @@ window.WMS_PAGE_CONFIGS = {
           "index": "g-质量管理/测量系统分析",
           "children": [
             {
-              "title": "重复性与再现性",
+              "title": "GR&R分析",
               "index": "np-0313-01",
               "pageId": "np-0313-01"
             },
             {
-              "title": "稳定性",
+              "title": "稳定性分析",
               "index": "np-0313-02",
               "pageId": "np-0313-02"
             },
             {
-              "title": "偏倚",
+              "title": "偏倚分析",
               "index": "np-0313-03",
               "pageId": "np-0313-03"
             }
@@ -42186,12 +42185,6 @@ window.WMS_PAGE_CONFIGS = {
           "ctrl": "自动写入，只读"
         },
         {
-          "name": "失效日期",
-          "type": "readonly",
-          "required": false,
-          "ctrl": "自动计算：留样日期 + 有效期 - 1 天"
-        },
-        {
           "name": "是否玻璃片",
           "type": "select",
           "required": false,
@@ -42201,6 +42194,12 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "default": "否",
           "ctrl": "下拉单选，是 / 否；默认否"
+        },
+        {
+          "name": "失效日期",
+          "type": "readonly",
+          "required": false,
+          "ctrl": "自动计算：留样日期 + 有效期 - 1 天"
         },
         {
           "name": "样品位置",
@@ -44065,15 +44064,10 @@ window.WMS_PAGE_CONFIGS = {
         },
         {
           "name": "标准系数",
-          "type": "number-unit",
+          "type": "number",
           "required": true,
           "placeholder": "输入数字",
-          "ctrl": "数字输入 + 下拉选单位",
-          "options": [
-            "分",
-            "时"
-          ],
-          "defaultUnit": "时"
+          "ctrl": "≥0，2 位小数"
         },
         {
           "name": "备注",
@@ -50379,20 +50373,11 @@ window.WMS_PAGE_CONFIGS = {
         "色谱漂移",
         "色谱柱台账"
       ],
-      "tabs": [
-        {
-          "name": "tab-1",
-          "label": "GC色谱柱"
-        },
-        {
-          "name": "tab-2",
-          "label": "LC色谱柱"
-        }
-      ],
+      "tabs": [],
       "tabViews": [
         {
-          "name": "tab-1",
-          "label": "GC色谱柱",
+          "name": "main",
+          "label": "",
           "queryFields": [
             {
               "name": "色谱柱编号",
@@ -50401,6 +50386,11 @@ window.WMS_PAGE_CONFIGS = {
             {
               "name": "色谱柱名称",
               "type": "input"
+            },
+            {
+              "name": "色谱柱型号",
+              "type": "input",
+              "placeholder": "色谱柱型号"
             },
             {
               "name": "使用状态",
@@ -50412,48 +50402,51 @@ window.WMS_PAGE_CONFIGS = {
               ]
             },
             {
-              "name": "色谱柱条码",
-              "type": "input"
-            },
-            {
-              "name": "存放位置",
-              "type": "input"
+              "name": "责任部门",
+              "type": "input",
+              "placeholder": "责任部门"
             },
             {
               "name": "责任人",
-              "type": "input"
+              "type": "input",
+              "placeholder": "责任人"
             }
           ],
           "queryDefault": [
             "色谱柱编号",
             "色谱柱名称",
+            "色谱柱型号",
             "使用状态"
           ],
           "queryMore": [
-            "色谱柱条码",
-            "存放位置",
+            "责任部门",
             "责任人"
           ],
           "toolbar": [
             {
               "name": "新增",
-              "type": "primary"
+              "type": "primary",
+              "desc": "打开新增色谱柱弹窗"
             },
             {
               "name": "打印标签",
-              "type": "default"
+              "type": "default",
+              "desc": "选择标签模板后批量打印"
             },
             {
               "name": "导入数据",
-              "type": "default"
+              "type": "default",
+              "desc": "按模板批量导入色谱柱数据"
             },
             {
               "name": "导出数据",
-              "type": "default"
+              "type": "default",
+              "desc": "导出当前筛选结果"
             },
             {
               "name": "批量删除",
-              "type": "danger"
+              "type": "danger",
+              "desc": "删除勾选行；已被引用则不可删"
             }
           ],
           "columns": [
@@ -50486,13 +50479,14 @@ window.WMS_PAGE_CONFIGS = {
               "title": "色谱柱型号",
               "field": "色谱柱型号",
               "name": "色谱柱型号",
-              "width": 200
+              "width": 150,
+              "slot": "chrom_model"
             },
             {
               "title": "规格型号",
               "field": "规格型号",
               "name": "规格型号",
-              "width": 160
+              "width": 150
             },
             {
               "title": "使用状态",
@@ -50505,19 +50499,19 @@ window.WMS_PAGE_CONFIGS = {
               "title": "存放位置",
               "field": "存放位置",
               "name": "存放位置",
-              "width": 130
+              "width": 140
             },
             {
               "title": "责任部门",
               "field": "责任部门",
               "name": "责任部门",
-              "width": 160
+              "width": 100
             },
             {
               "title": "责任人",
               "field": "责任人",
               "name": "责任人",
-              "width": 90
+              "width": 80
             },
             {
               "title": "购置日期",
@@ -50526,203 +50520,47 @@ window.WMS_PAGE_CONFIGS = {
               "width": 110
             },
             {
-              "title": "创建人",
-              "field": "创建人",
-              "name": "创建人",
-              "width": 90
-            },
-            {
-              "title": "创建时间",
-              "field": "创建时间",
-              "name": "创建时间",
-              "width": 160
-            },
-            {
-              "title": "操作",
-              "field": "_actions",
-              "name": "操作",
-              "width": 130,
-              "slot": "row_actions"
-            }
-          ],
-          "rowOps": [
-            {
-              "name": "详情"
-            },
-            {
-              "name": "更多",
-              "children": [
-                "复制",
-                "编辑"
-              ]
-            }
-          ]
-        },
-        {
-          "name": "tab-2",
-          "label": "LC色谱柱",
-          "queryFields": [
-            {
-              "name": "色谱柱编号",
-              "type": "input"
-            },
-            {
-              "name": "色谱柱名称",
-              "type": "input"
-            },
-            {
-              "name": "使用状态",
-              "type": "select",
-              "options": [
-                "在用",
-                "停用",
-                "报废"
-              ]
-            },
-            {
-              "name": "色谱柱条码",
-              "type": "input"
-            },
-            {
-              "name": "存放位置",
-              "type": "input"
-            },
-            {
-              "name": "责任人",
-              "type": "input"
-            }
-          ],
-          "queryDefault": [
-            "色谱柱编号",
-            "色谱柱名称",
-            "使用状态"
-          ],
-          "queryMore": [
-            "色谱柱条码",
-            "存放位置",
-            "责任人"
-          ],
-          "toolbar": [
-            {
-              "name": "新增",
-              "type": "primary"
-            },
-            {
-              "name": "打印标签",
-              "type": "default"
-            },
-            {
-              "name": "导入数据",
-              "type": "default"
-            },
-            {
-              "name": "导出数据",
-              "type": "default"
-            },
-            {
-              "name": "批量删除",
-              "type": "danger"
-            }
-          ],
-          "columns": [
-            {
-              "title": "色谱柱图片",
-              "field": "色谱柱图片",
-              "name": "色谱柱图片",
-              "width": 100,
-              "slot": "link"
-            },
-            {
-              "title": "色谱柱编号",
-              "field": "色谱柱编号",
-              "name": "色谱柱编号",
-              "width": 120
-            },
-            {
-              "title": "色谱柱名称",
-              "field": "色谱柱名称",
-              "name": "色谱柱名称",
-              "width": 180
-            },
-            {
-              "title": "色谱柱条码",
-              "field": "色谱柱条码",
-              "name": "色谱柱条码",
-              "width": 120
-            },
-            {
-              "title": "色谱柱型号",
-              "field": "色谱柱型号",
-              "name": "色谱柱型号",
-              "width": 200
-            },
-            {
-              "title": "规格型号",
-              "field": "规格型号",
-              "name": "规格型号",
-              "width": 160
-            },
-            {
-              "title": "使用状态",
-              "field": "使用状态",
-              "name": "使用状态",
-              "width": 90,
-              "slot": "tag"
-            },
-            {
-              "title": "存放位置",
-              "field": "存放位置",
-              "name": "存放位置",
-              "width": 130
-            },
-            {
-              "title": "责任部门",
-              "field": "责任部门",
-              "name": "责任部门",
-              "width": 160
-            },
-            {
-              "title": "责任人",
-              "field": "责任人",
-              "name": "责任人",
-              "width": 90
-            },
-            {
-              "title": "购置日期",
-              "field": "购置日期",
-              "name": "购置日期",
+              "title": "色谱柱厂家",
+              "field": "色谱柱厂家",
+              "name": "色谱柱厂家",
               "width": 110
             },
             {
-              "title": "创建人",
-              "field": "创建人",
-              "name": "创建人",
-              "width": 90
+              "title": "出厂编号",
+              "field": "出厂编号",
+              "name": "出厂编号",
+              "width": 120
             },
             {
               "title": "创建时间",
               "field": "创建时间",
               "name": "创建时间",
-              "width": 160
+              "width": 150
             },
             {
               "title": "操作",
               "field": "_actions",
               "name": "操作",
-              "width": 130,
+              "width": 220,
               "slot": "row_actions"
             }
           ],
           "rowOps": [
             {
-              "name": "详情"
+              "name": "详情",
+              "desc": "查看完整信息"
             },
             {
-              "name": "更多",
-              "children": [
-                "复制",
-                "编辑"
-              ]
+              "name": "编辑",
+              "desc": "编辑当前色谱柱"
+            },
+            {
+              "name": "查看履历",
+              "desc": "查看使用/维护/校准履历"
+            },
+            {
+              "name": "删除",
+              "desc": "删除当前色谱柱"
             }
           ]
         }
@@ -50750,18 +50588,20 @@ window.WMS_PAGE_CONFIGS = {
         {
           "name": "色谱柱条码",
           "type": "input",
-          "placeholder": "默认与色谱柱编号一致"
+          "required": true,
+          "placeholder": "唯一，默认与编号一致"
         },
         {
           "name": "色谱柱型号",
           "type": "select",
           "required": true,
           "filterable": true,
-          "placeholder": "自动代入，可修改"
+          "placeholder": "选择色谱柱型号（取左侧型号字典）"
         },
         {
           "name": "规格型号",
           "type": "input",
+          "required": true,
           "placeholder": "输入"
         },
         {
@@ -50778,37 +50618,44 @@ window.WMS_PAGE_CONFIGS = {
         {
           "name": "存放位置",
           "type": "input",
+          "required": true,
           "placeholder": "输入"
         },
         {
           "name": "责任部门",
           "type": "select",
-          "multiple": true,
-          "placeholder": "请选择，多选"
+          "required": true,
+          "filterable": true,
+          "placeholder": "选择部门"
         },
         {
           "name": "责任人",
           "type": "select",
+          "required": true,
           "filterable": true,
-          "placeholder": "选择用户"
+          "placeholder": "选择责任部门下的用户"
         },
         {
           "name": "购置日期",
-          "type": "date"
+          "type": "date",
+          "required": true
         },
         {
           "name": "色谱柱厂家",
           "type": "input",
+          "required": true,
           "placeholder": "输入"
         },
         {
           "name": "出厂编号",
           "type": "input",
+          "required": true,
           "placeholder": "输入"
         },
         {
           "name": "出厂日期",
-          "type": "date"
+          "type": "date",
+          "required": true
         },
         {
           "name": "厂家联系人",
@@ -50856,7 +50703,24 @@ window.WMS_PAGE_CONFIGS = {
       "formGridCols": 4,
       "formDialogWidth": "1200px",
       "formLabelWidth": "100px",
-      "hideFormSectionTitle": true
+      "hideFormSectionTitle": true,
+      "typeFormFields": [
+        {
+          "name": "名称",
+          "label": "色谱柱型号",
+          "type": "input",
+          "required": true,
+          "ctrl": "唯一"
+        },
+        {
+          "name": "备注",
+          "label": "备注",
+          "type": "input",
+          "required": false
+        }
+      ],
+      "treeTitle": "色谱柱型号",
+      "formFullscreenOnAdd": true
     },
     "np-0208-02": {
       "id": "np-0208-02",
@@ -50870,20 +50734,11 @@ window.WMS_PAGE_CONFIGS = {
         "色谱漂移",
         "漂移规则设置"
       ],
-      "tabs": [
-        {
-          "name": "tab-1",
-          "label": "GC规则"
-        },
-        {
-          "name": "tab-2",
-          "label": "LC规则"
-        }
-      ],
+      "tabs": [],
       "tabViews": [
         {
-          "name": "tab-1",
-          "label": "GC规则",
+          "name": "main",
+          "label": "",
           "queryFields": [
             {
               "name": "规则编码",
@@ -50894,12 +50749,11 @@ window.WMS_PAGE_CONFIGS = {
               "type": "input"
             },
             {
-              "name": "TR规则",
+              "name": "规则分类",
               "type": "select",
               "options": [
-                "按固定值不叠加",
-                "按批次新建流动叠加",
-                "首批次新建流动叠加，其余批次不叠加"
+                "GC",
+                "LC"
               ]
             },
             {
@@ -50924,28 +50778,23 @@ window.WMS_PAGE_CONFIGS = {
           "queryDefault": [
             "规则编码",
             "规则名称",
-            "TR规则",
-            "适用检验类型"
-          ],
-          "queryMore": [
+            "规则分类",
+            "适用检验类型",
             "启用状态"
           ],
+          "queryMore": [],
           "toolbar": [
             {
               "name": "新增",
               "type": "primary"
             },
             {
+              "name": "导入",
+              "type": "default"
+            },
+            {
               "name": "批量删除",
               "type": "danger"
-            },
-            {
-              "name": "导入数据",
-              "type": "default"
-            },
-            {
-              "name": "导出数据",
-              "type": "default"
             }
           ],
           "columns": [
@@ -50953,61 +50802,43 @@ window.WMS_PAGE_CONFIGS = {
               "title": "规则编码",
               "field": "规则编码",
               "name": "规则编码",
-              "width": 100
+              "width": 110
             },
             {
               "title": "规则名称",
               "field": "规则名称",
               "name": "规则名称",
-              "width": 140
-            },
-            {
-              "title": "TR规则",
-              "field": "TR规则",
-              "name": "TR规则",
               "width": 180
             },
             {
-              "title": "RRT&TR的偏差范围",
-              "field": "RRT&TR的偏差范围",
-              "name": "RRT&TR的偏差范围",
-              "width": 160
+              "title": "规则分类",
+              "field": "规则分类",
+              "name": "规则分类",
+              "width": 90
+            },
+            {
+              "title": "典型保留时间规则",
+              "field": "TR规则",
+              "name": "TR规则",
+              "width": 170
+            },
+            {
+              "title": "RRT&TR偏差范围",
+              "field": "偏差范围",
+              "name": "偏差范围",
+              "width": 150
             },
             {
               "title": "适用检验类型",
               "field": "适用检验类型",
               "name": "适用检验类型",
-              "width": 120
+              "width": 160
             },
             {
               "title": "杂质个数",
               "field": "杂质个数",
               "name": "杂质个数",
               "width": 90
-            },
-            {
-              "title": "适用物料",
-              "field": "适用物料",
-              "name": "适用物料",
-              "width": 200
-            },
-            {
-              "title": "适用采样点",
-              "field": "适用采样点",
-              "name": "适用采样点",
-              "width": 160
-            },
-            {
-              "title": "适用色谱柱",
-              "field": "适用色谱柱",
-              "name": "适用色谱柱",
-              "width": 180
-            },
-            {
-              "title": "备注",
-              "field": "备注",
-              "name": "备注",
-              "width": 120
             },
             {
               "title": "启用状态",
@@ -51017,172 +50848,10 @@ window.WMS_PAGE_CONFIGS = {
               "slot": "tag"
             },
             {
-              "title": "创建时间",
-              "field": "创建时间",
-              "name": "创建时间",
-              "width": 160
-            },
-            {
               "title": "创建人",
               "field": "创建人",
               "name": "创建人",
               "width": 90
-            },
-            {
-              "title": "操作",
-              "field": "_actions",
-              "name": "操作",
-              "width": 130,
-              "slot": "row_actions"
-            }
-          ],
-          "rowOps": [
-            {
-              "name": "详情"
-            },
-            {
-              "name": "更多",
-              "children": [
-                "复制",
-                "编辑"
-              ]
-            }
-          ]
-        },
-        {
-          "name": "tab-2",
-          "label": "LC规则",
-          "queryFields": [
-            {
-              "name": "规则编码",
-              "type": "input"
-            },
-            {
-              "name": "规则名称",
-              "type": "input"
-            },
-            {
-              "name": "TR规则",
-              "type": "select",
-              "options": [
-                "按固定值不叠加",
-                "按批次新建流动叠加",
-                "首批次新建流动叠加，其余批次不叠加"
-              ]
-            },
-            {
-              "name": "适用检验类型",
-              "type": "select",
-              "options": [
-                "采购来料检",
-                "生产过程检",
-                "生产物料检",
-                "研发检"
-              ]
-            },
-            {
-              "name": "启用状态",
-              "type": "select",
-              "options": [
-                "启用",
-                "禁用"
-              ]
-            }
-          ],
-          "queryDefault": [
-            "规则编码",
-            "规则名称",
-            "TR规则",
-            "适用检验类型"
-          ],
-          "queryMore": [
-            "启用状态"
-          ],
-          "toolbar": [
-            {
-              "name": "新增",
-              "type": "primary"
-            },
-            {
-              "name": "批量删除",
-              "type": "danger"
-            },
-            {
-              "name": "导入数据",
-              "type": "default"
-            },
-            {
-              "name": "导出数据",
-              "type": "default"
-            }
-          ],
-          "columns": [
-            {
-              "title": "规则编码",
-              "field": "规则编码",
-              "name": "规则编码",
-              "width": 100
-            },
-            {
-              "title": "规则名称",
-              "field": "规则名称",
-              "name": "规则名称",
-              "width": 140
-            },
-            {
-              "title": "TR规则",
-              "field": "TR规则",
-              "name": "TR规则",
-              "width": 180
-            },
-            {
-              "title": "RRT&TR的偏差范围",
-              "field": "RRT&TR的偏差范围",
-              "name": "RRT&TR的偏差范围",
-              "width": 160
-            },
-            {
-              "title": "适用检验类型",
-              "field": "适用检验类型",
-              "name": "适用检验类型",
-              "width": 120
-            },
-            {
-              "title": "杂质个数",
-              "field": "杂质个数",
-              "name": "杂质个数",
-              "width": 90
-            },
-            {
-              "title": "适用物料",
-              "field": "适用物料",
-              "name": "适用物料",
-              "width": 200
-            },
-            {
-              "title": "适用采样点",
-              "field": "适用采样点",
-              "name": "适用采样点",
-              "width": 160
-            },
-            {
-              "title": "适用色谱柱",
-              "field": "适用色谱柱",
-              "name": "适用色谱柱",
-              "width": 180
-            },
-            {
-              "title": "备注",
-              "field": "备注",
-              "name": "备注",
-              "width": 120
-            },
-            {
-              "title": "启用状态",
-              "field": "启用状态",
-              "name": "启用状态",
-              "width": 90,
-              "slot": "tag"
             },
             {
               "title": "创建时间",
@@ -51191,29 +50860,20 @@ window.WMS_PAGE_CONFIGS = {
               "width": 160
             },
             {
-              "title": "创建人",
-              "field": "创建人",
-              "name": "创建人",
-              "width": 90
-            },
-            {
               "title": "操作",
               "field": "_actions",
               "name": "操作",
-              "width": 130,
-              "slot": "row_actions"
+              "width": 120,
+              "slot": "row_actions",
+              "fixed": "right"
             }
           ],
           "rowOps": [
             {
-              "name": "详情"
+              "name": "编辑"
             },
             {
-              "name": "更多",
-              "children": [
-                "复制",
-                "编辑"
-              ]
+              "name": "删除"
             }
           ]
         }
@@ -51222,44 +50882,58 @@ window.WMS_PAGE_CONFIGS = {
         {
           "name": "规则编码",
           "type": "input",
-          "required": true
+          "required": true,
+          "ctrl": "唯一"
         },
         {
           "name": "规则名称",
           "type": "input",
-          "required": true
+          "required": true,
+          "ctrl": "唯一"
         },
         {
-          "name": "典型保留时间规则",
+          "name": "规则分类",
+          "type": "select",
+          "required": true,
+          "options": [
+            "GC",
+            "LC"
+          ],
+          "ctrl": "GC / LC 分类"
+        },
+        {
+          "name": "TR规则",
           "type": "select",
           "required": true,
           "options": [
             "按固定值不叠加",
-            "按批次新建流动叠加",
-            "首批次新建流动叠加，其余批次不叠加"
+            "按批次新增自动叠加"
           ],
-          "default": "按固定值不叠加"
+          "ctrl": "默认按固定值不叠加"
         },
         {
           "name": "适用检验类型",
           "type": "select",
           "required": true,
+          "multiple": true,
           "options": [
             "采购来料检",
             "生产过程检",
             "生产物料检",
             "研发检"
-          ]
+          ],
+          "ctrl": "多选；采购来料检 / 生产过程检 / 生产物料检 / 研发检"
         },
         {
           "name": "备注",
-          "type": "textarea"
+          "type": "textarea",
+          "required": false
         },
         {
           "name": "启用状态",
           "type": "switch",
           "required": true,
-          "default": "启用"
+          "ctrl": "默认启用"
         }
       ],
       "detailFields": [
@@ -51278,12 +50952,150 @@ window.WMS_PAGE_CONFIGS = {
         "创建时间"
       ],
       "hasEdit": true,
-      "hasDetail": true,
+      "hasDetail": false,
       "formFlat": true,
       "formLineFields": [],
       "formLineActions": [],
       "formFullscreen": true,
-      "formDialogWidth": "100%"
+      "formDialogWidth": "min(1000px, 96vw)",
+      "queryFields": [
+        {
+          "name": "规则编码",
+          "type": "input"
+        },
+        {
+          "name": "规则名称",
+          "type": "input"
+        },
+        {
+          "name": "规则分类",
+          "type": "select",
+          "options": [
+            "GC",
+            "LC"
+          ]
+        },
+        {
+          "name": "适用检验类型",
+          "type": "select",
+          "options": [
+            "采购来料检",
+            "生产过程检",
+            "生产物料检",
+            "研发检"
+          ]
+        },
+        {
+          "name": "启用状态",
+          "type": "select",
+          "options": [
+            "启用",
+            "禁用"
+          ]
+        }
+      ],
+      "queryDefault": [
+        "规则编码",
+        "规则名称",
+        "规则分类",
+        "适用检验类型",
+        "启用状态"
+      ],
+      "queryMore": [],
+      "toolbar": [
+        {
+          "name": "新增",
+          "type": "primary"
+        },
+        {
+          "name": "导入",
+          "type": "default"
+        },
+        {
+          "name": "批量删除",
+          "type": "danger"
+        }
+      ],
+      "columns": [
+        {
+          "title": "规则编码",
+          "field": "规则编码",
+          "name": "规则编码",
+          "width": 110
+        },
+        {
+          "title": "规则名称",
+          "field": "规则名称",
+          "name": "规则名称",
+          "width": 180
+        },
+        {
+          "title": "规则分类",
+          "field": "规则分类",
+          "name": "规则分类",
+          "width": 90
+        },
+        {
+          "title": "典型保留时间规则",
+          "field": "TR规则",
+          "name": "TR规则",
+          "width": 170
+        },
+        {
+          "title": "RRT&TR偏差范围",
+          "field": "偏差范围",
+          "name": "偏差范围",
+          "width": 150
+        },
+        {
+          "title": "适用检验类型",
+          "field": "适用检验类型",
+          "name": "适用检验类型",
+          "width": 160
+        },
+        {
+          "title": "杂质个数",
+          "field": "杂质个数",
+          "name": "杂质个数",
+          "width": 90
+        },
+        {
+          "title": "启用状态",
+          "field": "启用状态",
+          "name": "启用状态",
+          "width": 90,
+          "slot": "tag"
+        },
+        {
+          "title": "创建人",
+          "field": "创建人",
+          "name": "创建人",
+          "width": 90
+        },
+        {
+          "title": "创建时间",
+          "field": "创建时间",
+          "name": "创建时间",
+          "width": 160
+        },
+        {
+          "title": "操作",
+          "field": "_actions",
+          "name": "操作",
+          "width": 120,
+          "slot": "row_actions",
+          "fixed": "right"
+        }
+      ],
+      "rowOps": [
+        {
+          "name": "编辑"
+        },
+        {
+          "name": "删除"
+        }
+      ],
+      "formFullscreenOnAdd": true
     },
     "np-0208-03": {
       "id": "np-0208-03",
@@ -51297,35 +51109,14 @@ window.WMS_PAGE_CONFIGS = {
         "色谱漂移",
         "谱图识别"
       ],
-      "tabs": [
-        {
-          "name": "tab-1",
-          "label": "GC识别"
-        },
-        {
-          "name": "tab-2",
-          "label": "LC识别"
-        }
-      ],
+      "tabs": [],
       "tabViews": [
         {
-          "name": "tab-1",
-          "label": "GC识别",
+          "name": "main",
+          "label": "",
           "queryFields": [
             {
-              "name": "谱图流水",
-              "type": "input"
-            },
-            {
-              "name": "文件名称",
-              "type": "input"
-            },
-            {
-              "name": "物料名称",
-              "type": "input"
-            },
-            {
-              "name": "批号",
+              "name": "谱图编号",
               "type": "input"
             },
             {
@@ -51339,159 +51130,91 @@ window.WMS_PAGE_CONFIGS = {
               ]
             },
             {
-              "name": "漂移规则名称",
+              "name": "物料编码",
               "type": "input"
             },
             {
-              "name": "色谱柱编号",
+              "name": "批号",
               "type": "input"
-            },
-            {
-              "name": "是否存在新杂",
-              "type": "select",
-              "options": [
-                "是",
-                "否"
-              ]
-            },
-            {
-              "name": "杂质偏差结论",
-              "type": "select",
-              "options": [
-                "正常",
-                "异常"
-              ]
-            },
-            {
-              "name": "使用状态",
-              "type": "select",
-              "options": [
-                "启用",
-                "禁用"
-              ]
             }
           ],
           "queryDefault": [
-            "谱图流水",
-            "文件名称",
-            "物料名称",
+            "谱图编号",
+            "检验类型",
+            "物料编码",
             "批号"
           ],
-          "queryMore": [
-            "检验类型",
-            "漂移规则名称",
-            "色谱柱编号",
-            "是否存在新杂",
-            "杂质偏差结论",
-            "使用状态"
-          ],
+          "queryMore": [],
           "toolbar": [
             {
               "name": "新增",
-              "type": "primary"
+              "type": "primary",
+              "desc": "打开新增谱图识别弹窗"
             },
             {
-              "name": "批量启用",
-              "type": "default"
+              "name": "导入",
+              "type": "default",
+              "desc": "批量导入谱图"
             },
             {
-              "name": "批量禁用",
-              "type": "default"
+              "name": "导出",
+              "type": "default",
+              "desc": "导出识别结果"
             },
             {
               "name": "批量删除",
-              "type": "danger"
-            },
-            {
-              "name": "导出数据",
-              "type": "default"
+              "type": "danger",
+              "desc": "删除勾选行"
             }
           ],
           "columns": [
             {
-              "title": "使用状态",
-              "field": "使用状态",
-              "name": "使用状态",
-              "width": 90,
-              "slot": "tag"
-            },
-            {
-              "title": "谱图流水",
-              "field": "谱图流水",
-              "name": "谱图流水",
-              "width": 140
+              "title": "谱图编号",
+              "field": "谱图编号",
+              "name": "谱图编号",
+              "width": 130
             },
             {
               "title": "文件名称",
               "field": "文件名称",
               "name": "文件名称",
-              "width": 180
+              "width": 220
             },
             {
               "title": "检验类型",
               "field": "检验类型",
               "name": "检验类型",
-              "width": 100
+              "width": 110
             },
             {
               "title": "物料编码",
               "field": "物料编码",
               "name": "物料编码",
-              "width": 130
+              "width": 140
             },
             {
               "title": "物料名称",
               "field": "物料名称",
               "name": "物料名称",
-              "width": 150
-            },
-            {
-              "title": "物料规格",
-              "field": "物料规格",
-              "name": "物料规格",
-              "width": 110
-            },
-            {
-              "title": "物料种类",
-              "field": "物料种类",
-              "name": "物料种类",
-              "width": 110
-            },
-            {
-              "title": "采样点",
-              "field": "采样点",
-              "name": "采样点",
-              "width": 150
-            },
-            {
-              "title": "漂移规则名称",
-              "field": "漂移规则名称",
-              "name": "漂移规则名称",
-              "width": 140
-            },
-            {
-              "title": "色谱柱编号",
-              "field": "色谱柱编号",
-              "name": "色谱柱编号",
-              "width": 100
+              "width": 160
             },
             {
               "title": "色谱柱型号",
               "field": "色谱柱型号",
               "name": "色谱柱型号",
-              "width": 150
+              "width": 130
             },
             {
-              "title": "仪器编号",
-              "field": "仪器编号",
-              "name": "仪器编号",
-              "width": 110
-            },
-            {
-              "title": "仪器名称",
-              "field": "仪器名称",
-              "name": "仪器名称",
+              "title": "色谱柱编号",
+              "field": "色谱柱编号",
+              "name": "色谱柱编号",
               "width": 120
+            },
+            {
+              "title": "漂移规格名称",
+              "field": "漂移规格名称",
+              "name": "漂移规格名称",
+              "width": 170
             },
             {
               "title": "批号",
@@ -51500,312 +51223,17 @@ window.WMS_PAGE_CONFIGS = {
               "width": 130
             },
             {
-              "title": "样品编号",
-              "field": "样品编号",
-              "name": "样品编号",
-              "width": 120
-            },
-            {
-              "title": "杂质个数",
-              "field": "杂质个数",
-              "name": "杂质个数",
-              "width": 90
-            },
-            {
-              "title": "新杂个数",
-              "field": "新杂个数",
-              "name": "新杂个数",
-              "width": 90
-            },
-            {
-              "title": "是否存在新杂",
-              "field": "是否存在新杂",
-              "name": "是否存在新杂",
-              "width": 110
-            },
-            {
-              "title": "杂质偏差结论",
-              "field": "杂质偏差结论",
-              "name": "杂质偏差结论",
-              "width": 110,
-              "slot": "tag"
-            },
-            {
-              "title": "异常描述",
-              "field": "异常描述",
-              "name": "异常描述",
-              "width": 100,
-              "slot": "spi_abn"
-            },
-            {
-              "title": "备注",
-              "field": "备注",
-              "name": "备注",
-              "width": 140
-            },
-            {
-              "title": "创建时间",
-              "field": "创建时间",
-              "name": "创建时间",
-              "width": 160
-            },
-            {
-              "title": "创建人",
-              "field": "创建人",
-              "name": "创建人",
-              "width": 90
-            },
-            {
-              "title": "操作",
-              "field": "_actions",
-              "name": "操作",
-              "width": 120,
-              "slot": "row_actions"
-            }
-          ],
-          "rowOps": [
-            {
-              "name": "详情"
-            },
-            {
-              "name": "编辑"
-            }
-          ]
-        },
-        {
-          "name": "tab-2",
-          "label": "LC识别",
-          "queryFields": [
-            {
-              "name": "谱图流水",
-              "type": "input"
-            },
-            {
-              "name": "文件名称",
-              "type": "input"
-            },
-            {
-              "name": "物料名称",
-              "type": "input"
-            },
-            {
-              "name": "批号",
-              "type": "input"
-            },
-            {
-              "name": "检验类型",
-              "type": "select",
-              "options": [
-                "采购来料检",
-                "生产过程检",
-                "生产物料检",
-                "研发检"
-              ]
-            },
-            {
-              "name": "漂移规则名称",
-              "type": "input"
-            },
-            {
-              "name": "色谱柱编号",
-              "type": "input"
-            },
-            {
-              "name": "是否存在新杂",
-              "type": "select",
-              "options": [
-                "是",
-                "否"
-              ]
-            },
-            {
-              "name": "杂质偏差结论",
-              "type": "select",
-              "options": [
-                "正常",
-                "异常"
-              ]
-            },
-            {
-              "name": "使用状态",
-              "type": "select",
-              "options": [
-                "启用",
-                "禁用"
-              ]
-            }
-          ],
-          "queryDefault": [
-            "谱图流水",
-            "文件名称",
-            "物料名称",
-            "批号"
-          ],
-          "queryMore": [
-            "检验类型",
-            "漂移规则名称",
-            "色谱柱编号",
-            "是否存在新杂",
-            "杂质偏差结论",
-            "使用状态"
-          ],
-          "toolbar": [
-            {
-              "name": "新增",
-              "type": "primary"
-            },
-            {
-              "name": "批量启用",
-              "type": "default"
-            },
-            {
-              "name": "批量禁用",
-              "type": "default"
-            },
-            {
-              "name": "批量删除",
-              "type": "danger"
-            },
-            {
-              "name": "导出数据",
-              "type": "default"
-            }
-          ],
-          "columns": [
-            {
-              "title": "使用状态",
-              "field": "使用状态",
-              "name": "使用状态",
-              "width": 90,
-              "slot": "tag"
-            },
-            {
-              "title": "谱图流水",
-              "field": "谱图流水",
-              "name": "谱图流水",
-              "width": 140
-            },
-            {
-              "title": "文件名称",
-              "field": "文件名称",
-              "name": "文件名称",
-              "width": 180
-            },
-            {
-              "title": "检验类型",
-              "field": "检验类型",
-              "name": "检验类型",
-              "width": 100
-            },
-            {
-              "title": "物料编码",
-              "field": "物料编码",
-              "name": "物料编码",
-              "width": 130
-            },
-            {
-              "title": "物料名称",
-              "field": "物料名称",
-              "name": "物料名称",
-              "width": 150
-            },
-            {
-              "title": "物料规格",
-              "field": "物料规格",
-              "name": "物料规格",
-              "width": 110
-            },
-            {
-              "title": "物料种类",
-              "field": "物料种类",
-              "name": "物料种类",
-              "width": 110
-            },
-            {
-              "title": "采样点",
-              "field": "采样点",
-              "name": "采样点",
-              "width": 150
-            },
-            {
-              "title": "漂移规则名称",
-              "field": "漂移规则名称",
-              "name": "漂移规则名称",
-              "width": 140
-            },
-            {
-              "title": "色谱柱编号",
-              "field": "色谱柱编号",
-              "name": "色谱柱编号",
-              "width": 100
-            },
-            {
-              "title": "色谱柱型号",
-              "field": "色谱柱型号",
-              "name": "色谱柱型号",
-              "width": 150
-            },
-            {
               "title": "仪器编号",
               "field": "仪器编号",
               "name": "仪器编号",
               "width": 110
             },
             {
-              "title": "仪器名称",
-              "field": "仪器名称",
-              "name": "仪器名称",
-              "width": 120
-            },
-            {
-              "title": "批号",
-              "field": "批号",
-              "name": "批号",
-              "width": 130
-            },
-            {
-              "title": "样品编号",
-              "field": "样品编号",
-              "name": "样品编号",
-              "width": 120
-            },
-            {
-              "title": "杂质个数",
-              "field": "杂质个数",
-              "name": "杂质个数",
-              "width": 90
-            },
-            {
-              "title": "新杂个数",
-              "field": "新杂个数",
-              "name": "新杂个数",
-              "width": 90
-            },
-            {
-              "title": "是否存在新杂",
-              "field": "是否存在新杂",
-              "name": "是否存在新杂",
-              "width": 110
-            },
-            {
-              "title": "杂质偏差结论",
-              "field": "杂质偏差结论",
-              "name": "杂质偏差结论",
-              "width": 110,
-              "slot": "tag"
-            },
-            {
-              "title": "异常描述",
-              "field": "异常描述",
-              "name": "异常描述",
+              "title": "识别状态",
+              "field": "识别状态",
+              "name": "识别状态",
               "width": 100,
-              "slot": "spi_abn"
-            },
-            {
-              "title": "备注",
-              "field": "备注",
-              "name": "备注",
-              "width": 140
+              "slot": "tag"
             },
             {
               "title": "创建时间",
@@ -51814,55 +51242,158 @@ window.WMS_PAGE_CONFIGS = {
               "width": 160
             },
             {
-              "title": "创建人",
-              "field": "创建人",
-              "name": "创建人",
-              "width": 90
-            },
-            {
               "title": "操作",
               "field": "_actions",
               "name": "操作",
-              "width": 120,
+              "width": 200,
               "slot": "row_actions"
             }
           ],
           "rowOps": [
             {
-              "name": "详情"
+              "name": "详情",
+              "desc": "查看识别结果"
             },
             {
-              "name": "编辑"
+              "name": "编辑",
+              "desc": "编辑识别任务与联动字段"
+            },
+            {
+              "name": "重新识别",
+              "desc": "重新识别并计算"
+            },
+            {
+              "name": "删除",
+              "desc": "删除当前记录"
             }
           ]
         }
       ],
-      "formFields": [],
+      "formFields": [
+        {
+          "name": "检验类型",
+          "type": "select",
+          "required": true,
+          "options": [
+            "采购来料检",
+            "生产过程检",
+            "生产物料检",
+            "研发检"
+          ],
+          "ctrl": "单选，选项取自报检单页签类型"
+        },
+        {
+          "name": "源文件",
+          "type": "picker",
+          "required": true,
+          "placeholder": "点击选择源文件",
+          "ctrl": "弹窗选择图谱文件台账（仅未使用）；未选检验类型时不可选"
+        },
+        {
+          "name": "文件名称",
+          "type": "input",
+          "readonly": true,
+          "ctrl": "由源文件自动带出，不可修改"
+        },
+        {
+          "name": "规则分类",
+          "type": "input",
+          "readonly": true,
+          "placeholder": "未匹配到规则方案",
+          "ctrl": "按当前源文件匹配到的规则方案自动带出，全场景只读且不可清空"
+        },
+        {
+          "name": "物料编码",
+          "type": "picker",
+          "required": true,
+          "placeholder": "选择物料编码",
+          "ctrl": "源文件带出并锁定；源文件无物料信息时可手动选择"
+        },
+        {
+          "name": "物料名称",
+          "type": "input",
+          "readonly": true,
+          "ctrl": "按物料编码查询物料列表带出，不可编辑"
+        },
+        {
+          "name": "物料规格",
+          "type": "input",
+          "readonly": true,
+          "ctrl": "按物料编码查询物料列表带出，不可编辑"
+        },
+        {
+          "name": "物料种类",
+          "type": "input",
+          "readonly": true,
+          "ctrl": "按物料编码查询物料列表带出，不可编辑"
+        },
+        {
+          "name": "漂移规格名称",
+          "type": "select",
+          "filterable": true,
+          "placeholder": "选择漂移规格",
+          "ctrl": "按物料编码 + 色谱柱型号匹配漂移规则带出，多条取最新，可手动修改"
+        },
+        {
+          "name": "色谱柱型号",
+          "type": "select",
+          "required": true,
+          "filterable": true,
+          "placeholder": "选择色谱柱型号",
+          "ctrl": "取色谱柱台账型号字典"
+        },
+        {
+          "name": "色谱柱编号",
+          "type": "select",
+          "required": true,
+          "filterable": true,
+          "placeholder": "请先选择色谱柱型号",
+          "ctrl": "按色谱柱型号过滤色谱柱台账（排除报废）后单选"
+        },
+        {
+          "name": "仪器编号",
+          "type": "input",
+          "required": true,
+          "readonly": true,
+          "ctrl": "由源文件自动带出，不可修改"
+        },
+        {
+          "name": "仪器名称",
+          "type": "input",
+          "readonly": true,
+          "ctrl": "按仪器编号查询仪器台账带出，不可修改"
+        },
+        {
+          "name": "批号",
+          "type": "input",
+          "required": true,
+          "readonly": true,
+          "ctrl": "由源文件自动带出，不可修改"
+        },
+        {
+          "name": "备注",
+          "type": "textarea"
+        }
+      ],
       "detailFields": [
-        "使用状态",
-        "谱图流水",
+        "谱图编号",
         "文件名称",
         "检验类型",
+        "规则分类",
         "物料编码",
         "物料名称",
         "物料规格",
         "物料种类",
-        "采样点",
-        "漂移规则名称",
-        "色谱柱编号",
+        "漂移规格名称",
         "色谱柱型号",
+        "色谱柱编号",
         "仪器编号",
         "仪器名称",
         "批号",
-        "样品编号",
-        "杂质个数",
-        "新杂个数",
-        "是否存在新杂",
-        "杂质偏差结论",
-        "异常描述",
+        "识别状态",
         "备注",
-        "创建时间",
-        "创建人"
+        "创建人",
+        "创建时间"
       ],
       "hasEdit": true,
       "hasDetail": true,
@@ -51873,11 +51404,13 @@ window.WMS_PAGE_CONFIGS = {
       "formFullscreen": true,
       "formDialogWidth": "100%",
       "detailFullscreen": true,
-      "detailHeaderAsTable": true
+      "detailHeaderAsTable": true,
+      "formFullscreenOnAdd": true,
+      "formFullscreenOnEdit": true
     },
     "np-0208-04": {
       "id": "np-0208-04",
-      "title": "数据台账",
+      "title": "GC台账",
       "groups": [
         "质量管理",
         "色谱漂移"
@@ -51885,42 +51418,37 @@ window.WMS_PAGE_CONFIGS = {
       "breadcrumb": [
         "质量管理",
         "色谱漂移",
-        "数据台账"
+        "GC台账"
       ],
+      "layout": "dict-split",
+      "treeTitle": "物料编码/色谱柱型号",
       "tabs": [
         {
-          "name": "tab-1",
-          "label": "GC台账"
+          "name": "tab-pi",
+          "label": "采购来料检"
         },
         {
-          "name": "tab-2",
-          "label": "LC台账"
+          "name": "tab-pp",
+          "label": "生产过程检"
+        },
+        {
+          "name": "tab-pm",
+          "label": "生产物料检"
+        },
+        {
+          "name": "tab-rd",
+          "label": "研发检"
         }
       ],
       "tabViews": [
         {
-          "name": "tab-1",
-          "label": "GC台账",
+          "name": "tab-pi",
+          "label": "采购来料检",
           "queryFields": [
             {
               "name": "批号",
-              "type": "input"
-            },
-            {
-              "name": "谱图流水",
-              "type": "input"
-            },
-            {
-              "name": "样品编号",
-              "type": "input"
-            },
-            {
-              "name": "杂质偏差结论",
-              "type": "select",
-              "options": [
-                "正常",
-                "异常"
-              ]
+              "type": "input",
+              "placeholder": "模糊"
             },
             {
               "name": "是否存在新杂",
@@ -51931,177 +51459,89 @@ window.WMS_PAGE_CONFIGS = {
               ]
             },
             {
-              "name": "色谱柱编号",
-              "type": "input"
-            },
-            {
-              "name": "仪器编号",
-              "type": "input"
-            },
-            {
-              "name": "创建时间",
-              "type": "daterange"
+              "name": "杂质偏差结论",
+              "label": "状态",
+              "type": "select",
+              "options": [
+                "正常",
+                "异常"
+              ]
             }
           ],
           "queryDefault": [
             "批号",
-            "谱图流水",
-            "样品编号",
+            "是否存在新杂",
             "杂质偏差结论"
           ],
-          "queryMore": [
-            "是否存在新杂",
-            "色谱柱编号",
-            "仪器编号",
-            "创建时间"
-          ],
+          "queryMore": [],
           "toolbar": [
             {
               "name": "关联查询",
-              "type": "primary"
+              "type": "default",
+              "desc": "勾选数据后，跳转至谱图识别并按批号过滤"
             },
             {
               "name": "导出数据",
-              "type": "default"
+              "type": "default",
+              "desc": "导出台账数据"
             }
           ],
           "columns": [
             {
-              "title": "杂质个数",
-              "field": "杂质个数",
-              "name": "杂质个数"
-            },
-            {
-              "title": "新杂个数",
-              "field": "新杂个数",
-              "name": "新杂个数"
-            },
-            {
-              "title": "是否存在新杂",
-              "field": "是否存在新杂",
-              "name": "是否存在新杂"
-            },
-            {
-              "title": "杂质偏差结论",
-              "field": "杂质偏差结论",
-              "name": "杂质偏差结论"
-            },
-            {
-              "title": "异常描述",
-              "field": "异常描述",
-              "name": "异常描述"
-            },
-            {
-              "title": "谱图流水",
-              "field": "谱图流水",
-              "name": "谱图流水"
-            },
-            {
-              "title": "检验类型",
-              "field": "检验类型",
-              "name": "检验类型"
-            },
-            {
-              "title": "物料编码",
-              "field": "物料编码",
-              "name": "物料编码"
-            },
-            {
-              "title": "物料名称",
-              "field": "物料名称",
-              "name": "物料名称"
-            },
-            {
-              "title": "物料规格",
-              "field": "物料规格",
-              "name": "物料规格"
-            },
-            {
-              "title": "物料种类",
-              "field": "物料种类",
-              "name": "物料种类"
-            },
-            {
-              "title": "采样点",
-              "field": "采样点",
-              "name": "采样点"
-            },
-            {
-              "title": "漂移规则名称",
-              "field": "漂移规则名称",
-              "name": "漂移规则名称"
-            },
-            {
-              "title": "色谱柱编号",
-              "field": "色谱柱编号",
-              "name": "色谱柱编号"
-            },
-            {
-              "title": "色谱柱型号",
-              "field": "色谱柱型号",
-              "name": "色谱柱型号"
-            },
-            {
-              "title": "仪器编号",
-              "field": "仪器编号",
-              "name": "仪器编号"
-            },
-            {
-              "title": "仪器名称",
-              "field": "仪器名称",
-              "name": "仪器名称"
-            },
-            {
-              "title": "批号",
               "field": "批号",
-              "name": "批号"
+              "title": "批号",
+              "width": 150,
+              "fixed": "left"
             },
             {
-              "title": "样品编号",
-              "field": "样品编号",
-              "name": "样品编号"
+              "field": "杂质个数",
+              "title": "杂质个数",
+              "width": 90
             },
             {
-              "title": "备注",
-              "field": "备注",
-              "name": "备注"
+              "field": "新杂个数",
+              "title": "新杂个数",
+              "width": 90
             },
             {
-              "title": "创建时间",
-              "field": "创建时间",
-              "name": "创建时间"
+              "field": "是否存在新杂",
+              "title": "是否存在新杂",
+              "width": 110,
+              "slot": "tag"
             },
             {
-              "title": "创建人",
-              "field": "创建人",
-              "name": "创建人"
+              "field": "杂质偏差结论",
+              "title": "杂质偏差结论",
+              "width": 120,
+              "slot": "tag"
+            },
+            {
+              "field": "_actions",
+              "title": "操作",
+              "width": 130,
+              "fixed": "right",
+              "slot": "row_actions"
             }
           ],
-          "rowOps": []
+          "rowOps": [
+            {
+              "name": "编辑",
+              "desc": "编辑台账数据"
+            },
+            {
+              "name": "删除",
+              "desc": "删除台账数据"
+            }
+          ]
         },
         {
-          "name": "tab-2",
-          "label": "LC台账",
+          "name": "tab-pp",
+          "label": "生产过程检",
           "queryFields": [
             {
               "name": "批号",
-              "type": "input"
-            },
-            {
-              "name": "谱图流水",
-              "type": "input"
-            },
-            {
-              "name": "样品编号",
-              "type": "input"
-            },
-            {
-              "name": "杂质偏差结论",
-              "type": "select",
-              "options": [
-                "正常",
-                "异常"
-              ]
+              "type": "input",
+              "placeholder": "模糊"
             },
             {
               "name": "是否存在新杂",
@@ -52112,153 +51552,266 @@ window.WMS_PAGE_CONFIGS = {
               ]
             },
             {
-              "name": "色谱柱编号",
-              "type": "input"
-            },
-            {
-              "name": "仪器编号",
-              "type": "input"
-            },
-            {
-              "name": "创建时间",
-              "type": "daterange"
+              "name": "杂质偏差结论",
+              "label": "状态",
+              "type": "select",
+              "options": [
+                "正常",
+                "异常"
+              ]
             }
           ],
           "queryDefault": [
             "批号",
-            "谱图流水",
-            "样品编号",
+            "是否存在新杂",
             "杂质偏差结论"
           ],
-          "queryMore": [
-            "是否存在新杂",
-            "色谱柱编号",
-            "仪器编号",
-            "创建时间"
-          ],
+          "queryMore": [],
           "toolbar": [
             {
               "name": "关联查询",
-              "type": "primary"
+              "type": "default",
+              "desc": "勾选数据后，跳转至谱图识别并按批号过滤"
             },
             {
               "name": "导出数据",
-              "type": "default"
+              "type": "default",
+              "desc": "导出台账数据"
             }
           ],
           "columns": [
             {
-              "title": "杂质个数",
-              "field": "杂质个数",
-              "name": "杂质个数"
-            },
-            {
-              "title": "新杂个数",
-              "field": "新杂个数",
-              "name": "新杂个数"
-            },
-            {
-              "title": "是否存在新杂",
-              "field": "是否存在新杂",
-              "name": "是否存在新杂"
-            },
-            {
-              "title": "杂质偏差结论",
-              "field": "杂质偏差结论",
-              "name": "杂质偏差结论"
-            },
-            {
-              "title": "异常描述",
-              "field": "异常描述",
-              "name": "异常描述"
-            },
-            {
-              "title": "谱图流水",
-              "field": "谱图流水",
-              "name": "谱图流水"
-            },
-            {
-              "title": "检验类型",
-              "field": "检验类型",
-              "name": "检验类型"
-            },
-            {
-              "title": "物料编码",
-              "field": "物料编码",
-              "name": "物料编码"
-            },
-            {
-              "title": "物料名称",
-              "field": "物料名称",
-              "name": "物料名称"
-            },
-            {
-              "title": "物料规格",
-              "field": "物料规格",
-              "name": "物料规格"
-            },
-            {
-              "title": "物料种类",
-              "field": "物料种类",
-              "name": "物料种类"
-            },
-            {
-              "title": "采样点",
-              "field": "采样点",
-              "name": "采样点"
-            },
-            {
-              "title": "漂移规则名称",
-              "field": "漂移规则名称",
-              "name": "漂移规则名称"
-            },
-            {
-              "title": "色谱柱编号",
-              "field": "色谱柱编号",
-              "name": "色谱柱编号"
-            },
-            {
-              "title": "色谱柱型号",
-              "field": "色谱柱型号",
-              "name": "色谱柱型号"
-            },
-            {
-              "title": "仪器编号",
-              "field": "仪器编号",
-              "name": "仪器编号"
-            },
-            {
-              "title": "仪器名称",
-              "field": "仪器名称",
-              "name": "仪器名称"
-            },
-            {
-              "title": "批号",
               "field": "批号",
-              "name": "批号"
+              "title": "批号",
+              "width": 150,
+              "fixed": "left"
             },
             {
-              "title": "样品编号",
-              "field": "样品编号",
-              "name": "样品编号"
+              "field": "杂质个数",
+              "title": "杂质个数",
+              "width": 90
             },
             {
-              "title": "备注",
-              "field": "备注",
-              "name": "备注"
+              "field": "新杂个数",
+              "title": "新杂个数",
+              "width": 90
             },
             {
-              "title": "创建时间",
-              "field": "创建时间",
-              "name": "创建时间"
+              "field": "是否存在新杂",
+              "title": "是否存在新杂",
+              "width": 110,
+              "slot": "tag"
             },
             {
-              "title": "创建人",
-              "field": "创建人",
-              "name": "创建人"
+              "field": "杂质偏差结论",
+              "title": "杂质偏差结论",
+              "width": 120,
+              "slot": "tag"
+            },
+            {
+              "field": "_actions",
+              "title": "操作",
+              "width": 130,
+              "fixed": "right",
+              "slot": "row_actions"
             }
           ],
-          "rowOps": []
+          "rowOps": [
+            {
+              "name": "编辑",
+              "desc": "编辑台账数据"
+            },
+            {
+              "name": "删除",
+              "desc": "删除台账数据"
+            }
+          ]
+        },
+        {
+          "name": "tab-pm",
+          "label": "生产物料检",
+          "queryFields": [
+            {
+              "name": "批号",
+              "type": "input",
+              "placeholder": "模糊"
+            },
+            {
+              "name": "是否存在新杂",
+              "type": "select",
+              "options": [
+                "是",
+                "否"
+              ]
+            },
+            {
+              "name": "杂质偏差结论",
+              "label": "状态",
+              "type": "select",
+              "options": [
+                "正常",
+                "异常"
+              ]
+            }
+          ],
+          "queryDefault": [
+            "批号",
+            "是否存在新杂",
+            "杂质偏差结论"
+          ],
+          "queryMore": [],
+          "toolbar": [
+            {
+              "name": "关联查询",
+              "type": "default",
+              "desc": "勾选数据后，跳转至谱图识别并按批号过滤"
+            },
+            {
+              "name": "导出数据",
+              "type": "default",
+              "desc": "导出台账数据"
+            }
+          ],
+          "columns": [
+            {
+              "field": "批号",
+              "title": "批号",
+              "width": 150,
+              "fixed": "left"
+            },
+            {
+              "field": "杂质个数",
+              "title": "杂质个数",
+              "width": 90
+            },
+            {
+              "field": "新杂个数",
+              "title": "新杂个数",
+              "width": 90
+            },
+            {
+              "field": "是否存在新杂",
+              "title": "是否存在新杂",
+              "width": 110,
+              "slot": "tag"
+            },
+            {
+              "field": "杂质偏差结论",
+              "title": "杂质偏差结论",
+              "width": 120,
+              "slot": "tag"
+            },
+            {
+              "field": "_actions",
+              "title": "操作",
+              "width": 130,
+              "fixed": "right",
+              "slot": "row_actions"
+            }
+          ],
+          "rowOps": [
+            {
+              "name": "编辑",
+              "desc": "编辑台账数据"
+            },
+            {
+              "name": "删除",
+              "desc": "删除台账数据"
+            }
+          ]
+        },
+        {
+          "name": "tab-rd",
+          "label": "研发检",
+          "queryFields": [
+            {
+              "name": "批号",
+              "type": "input",
+              "placeholder": "模糊"
+            },
+            {
+              "name": "是否存在新杂",
+              "type": "select",
+              "options": [
+                "是",
+                "否"
+              ]
+            },
+            {
+              "name": "杂质偏差结论",
+              "label": "状态",
+              "type": "select",
+              "options": [
+                "正常",
+                "异常"
+              ]
+            }
+          ],
+          "queryDefault": [
+            "批号",
+            "是否存在新杂",
+            "杂质偏差结论"
+          ],
+          "queryMore": [],
+          "toolbar": [
+            {
+              "name": "关联查询",
+              "type": "default",
+              "desc": "勾选数据后，跳转至谱图识别并按批号过滤"
+            },
+            {
+              "name": "导出数据",
+              "type": "default",
+              "desc": "导出台账数据"
+            }
+          ],
+          "columns": [
+            {
+              "field": "批号",
+              "title": "批号",
+              "width": 150,
+              "fixed": "left"
+            },
+            {
+              "field": "杂质个数",
+              "title": "杂质个数",
+              "width": 90
+            },
+            {
+              "field": "新杂个数",
+              "title": "新杂个数",
+              "width": 90
+            },
+            {
+              "field": "是否存在新杂",
+              "title": "是否存在新杂",
+              "width": 110,
+              "slot": "tag"
+            },
+            {
+              "field": "杂质偏差结论",
+              "title": "杂质偏差结论",
+              "width": 120,
+              "slot": "tag"
+            },
+            {
+              "field": "_actions",
+              "title": "操作",
+              "width": 130,
+              "fixed": "right",
+              "slot": "row_actions"
+            }
+          ],
+          "rowOps": [
+            {
+              "name": "编辑",
+              "desc": "编辑台账数据"
+            },
+            {
+              "name": "删除",
+              "desc": "删除台账数据"
+            }
+          ]
         }
       ],
       "formFields": [],
@@ -52268,12 +51821,11 @@ window.WMS_PAGE_CONFIGS = {
       "stub": false,
       "formFlat": true,
       "formLineFields": [],
-      "formLineActions": [],
-      "layout": "ledger-split"
+      "formLineActions": []
     },
     "np-0208-05": {
       "id": "np-0208-05",
-      "title": "数据比对",
+      "title": "LC台账",
       "groups": [
         "质量管理",
         "色谱漂移"
@@ -52281,284 +51833,400 @@ window.WMS_PAGE_CONFIGS = {
       "breadcrumb": [
         "质量管理",
         "色谱漂移",
-        "数据比对"
+        "LC台账"
       ],
+      "layout": "dict-split",
+      "treeTitle": "物料编码/色谱柱型号",
       "tabs": [
         {
-          "name": "tab-1",
-          "label": "GC比对"
+          "name": "tab-pi",
+          "label": "采购来料检"
         },
         {
-          "name": "tab-2",
-          "label": "LC比对"
+          "name": "tab-pp",
+          "label": "生产过程检"
+        },
+        {
+          "name": "tab-pm",
+          "label": "生产物料检"
+        },
+        {
+          "name": "tab-rd",
+          "label": "研发检"
         }
       ],
       "tabViews": [
         {
-          "name": "tab-1",
-          "label": "GC比对",
-          "queryFields": [],
+          "name": "tab-pi",
+          "label": "采购来料检",
+          "queryFields": [
+            {
+              "name": "批号",
+              "type": "input",
+              "placeholder": "模糊"
+            },
+            {
+              "name": "是否存在新杂",
+              "type": "select",
+              "options": [
+                "是",
+                "否"
+              ]
+            },
+            {
+              "name": "杂质偏差结论",
+              "label": "状态",
+              "type": "select",
+              "options": [
+                "正常",
+                "异常"
+              ]
+            }
+          ],
+          "queryDefault": [
+            "批号",
+            "是否存在新杂",
+            "杂质偏差结论"
+          ],
+          "queryMore": [],
           "toolbar": [
             {
               "name": "关联查询",
-              "type": "primary"
+              "type": "default",
+              "desc": "勾选数据后，跳转至谱图识别并按批号过滤"
             },
             {
               "name": "导出数据",
-              "type": "default"
+              "type": "default",
+              "desc": "导出台账数据"
             }
           ],
           "columns": [
             {
-              "title": "典型保留时间",
               "field": "批号",
-              "name": "典型保留时间"
-            },
-            {
-              "title": "杂质个数",
-              "field": "杂质个数",
-              "name": "杂质个数"
-            },
-            {
-              "title": "新杂个数",
-              "field": "新杂个数",
-              "name": "新杂个数"
-            },
-            {
-              "title": "是否存在新杂",
-              "field": "是否存在新杂",
-              "name": "是否存在新杂"
-            },
-            {
-              "title": "杂质偏差结论",
-              "field": "杂质偏差结论",
-              "name": "杂质偏差结论"
-            },
-            {
-              "title": "异常描述",
-              "field": "异常描述",
-              "name": "异常描述"
-            },
-            {
-              "title": "谱图流水",
-              "field": "谱图流水",
-              "name": "谱图流水"
-            },
-            {
-              "title": "检验类型",
-              "field": "检验类型",
-              "name": "检验类型"
-            },
-            {
-              "title": "物料编码",
-              "field": "物料编码",
-              "name": "物料编码"
-            },
-            {
-              "title": "物料名称",
-              "field": "物料名称",
-              "name": "物料名称"
-            },
-            {
-              "title": "物料规格",
-              "field": "物料规格",
-              "name": "物料规格"
-            },
-            {
-              "title": "物料种类",
-              "field": "物料种类",
-              "name": "物料种类"
-            },
-            {
-              "title": "采样点",
-              "field": "采样点",
-              "name": "采样点"
-            },
-            {
-              "title": "漂移规则名称",
-              "field": "漂移规则名称",
-              "name": "漂移规则名称"
-            },
-            {
-              "title": "色谱柱编号",
-              "field": "色谱柱编号",
-              "name": "色谱柱编号"
-            },
-            {
-              "title": "色谱柱型号",
-              "field": "色谱柱型号",
-              "name": "色谱柱型号"
-            },
-            {
-              "title": "仪器编号",
-              "field": "仪器编号",
-              "name": "仪器编号"
-            },
-            {
-              "title": "仪器名称",
-              "field": "仪器名称",
-              "name": "仪器名称"
-            },
-            {
               "title": "批号",
-              "field": "批号",
-              "name": "批号"
+              "width": 150,
+              "fixed": "left"
             },
             {
-              "title": "样品编号",
-              "field": "样品编号",
-              "name": "样品编号"
+              "field": "杂质个数",
+              "title": "杂质个数",
+              "width": 90
             },
             {
-              "title": "备注",
-              "field": "备注",
-              "name": "备注"
+              "field": "新杂个数",
+              "title": "新杂个数",
+              "width": 90
             },
             {
-              "title": "创建时间",
-              "field": "创建时间",
-              "name": "创建时间"
+              "field": "是否存在新杂",
+              "title": "是否存在新杂",
+              "width": 110,
+              "slot": "tag"
             },
             {
-              "title": "创建人",
-              "field": "创建人",
-              "name": "创建人"
+              "field": "杂质偏差结论",
+              "title": "杂质偏差结论",
+              "width": 120,
+              "slot": "tag"
+            },
+            {
+              "field": "_actions",
+              "title": "操作",
+              "width": 130,
+              "fixed": "right",
+              "slot": "row_actions"
             }
           ],
-          "rowOps": []
+          "rowOps": [
+            {
+              "name": "编辑",
+              "desc": "编辑台账数据"
+            },
+            {
+              "name": "删除",
+              "desc": "删除台账数据"
+            }
+          ]
         },
         {
-          "name": "tab-2",
-          "label": "LC比对",
-          "queryFields": [],
+          "name": "tab-pp",
+          "label": "生产过程检",
+          "queryFields": [
+            {
+              "name": "批号",
+              "type": "input",
+              "placeholder": "模糊"
+            },
+            {
+              "name": "是否存在新杂",
+              "type": "select",
+              "options": [
+                "是",
+                "否"
+              ]
+            },
+            {
+              "name": "杂质偏差结论",
+              "label": "状态",
+              "type": "select",
+              "options": [
+                "正常",
+                "异常"
+              ]
+            }
+          ],
+          "queryDefault": [
+            "批号",
+            "是否存在新杂",
+            "杂质偏差结论"
+          ],
+          "queryMore": [],
           "toolbar": [
             {
               "name": "关联查询",
-              "type": "primary"
+              "type": "default",
+              "desc": "勾选数据后，跳转至谱图识别并按批号过滤"
             },
             {
               "name": "导出数据",
-              "type": "default"
+              "type": "default",
+              "desc": "导出台账数据"
             }
           ],
           "columns": [
             {
-              "title": "典型保留时间",
               "field": "批号",
-              "name": "典型保留时间"
-            },
-            {
-              "title": "杂质个数",
-              "field": "杂质个数",
-              "name": "杂质个数"
-            },
-            {
-              "title": "新杂个数",
-              "field": "新杂个数",
-              "name": "新杂个数"
-            },
-            {
-              "title": "是否存在新杂",
-              "field": "是否存在新杂",
-              "name": "是否存在新杂"
-            },
-            {
-              "title": "杂质偏差结论",
-              "field": "杂质偏差结论",
-              "name": "杂质偏差结论"
-            },
-            {
-              "title": "异常描述",
-              "field": "异常描述",
-              "name": "异常描述"
-            },
-            {
-              "title": "谱图流水",
-              "field": "谱图流水",
-              "name": "谱图流水"
-            },
-            {
-              "title": "检验类型",
-              "field": "检验类型",
-              "name": "检验类型"
-            },
-            {
-              "title": "物料编码",
-              "field": "物料编码",
-              "name": "物料编码"
-            },
-            {
-              "title": "物料名称",
-              "field": "物料名称",
-              "name": "物料名称"
-            },
-            {
-              "title": "物料规格",
-              "field": "物料规格",
-              "name": "物料规格"
-            },
-            {
-              "title": "物料种类",
-              "field": "物料种类",
-              "name": "物料种类"
-            },
-            {
-              "title": "采样点",
-              "field": "采样点",
-              "name": "采样点"
-            },
-            {
-              "title": "漂移规则名称",
-              "field": "漂移规则名称",
-              "name": "漂移规则名称"
-            },
-            {
-              "title": "色谱柱编号",
-              "field": "色谱柱编号",
-              "name": "色谱柱编号"
-            },
-            {
-              "title": "色谱柱型号",
-              "field": "色谱柱型号",
-              "name": "色谱柱型号"
-            },
-            {
-              "title": "仪器编号",
-              "field": "仪器编号",
-              "name": "仪器编号"
-            },
-            {
-              "title": "仪器名称",
-              "field": "仪器名称",
-              "name": "仪器名称"
-            },
-            {
               "title": "批号",
-              "field": "批号",
-              "name": "批号"
+              "width": 150,
+              "fixed": "left"
             },
             {
-              "title": "样品编号",
-              "field": "样品编号",
-              "name": "样品编号"
+              "field": "杂质个数",
+              "title": "杂质个数",
+              "width": 90
             },
             {
-              "title": "备注",
-              "field": "备注",
-              "name": "备注"
+              "field": "新杂个数",
+              "title": "新杂个数",
+              "width": 90
             },
             {
-              "title": "创建时间",
-              "field": "创建时间",
-              "name": "创建时间"
+              "field": "是否存在新杂",
+              "title": "是否存在新杂",
+              "width": 110,
+              "slot": "tag"
             },
             {
-              "title": "创建人",
-              "field": "创建人",
-              "name": "创建人"
+              "field": "杂质偏差结论",
+              "title": "杂质偏差结论",
+              "width": 120,
+              "slot": "tag"
+            },
+            {
+              "field": "_actions",
+              "title": "操作",
+              "width": 130,
+              "fixed": "right",
+              "slot": "row_actions"
             }
           ],
-          "rowOps": []
+          "rowOps": [
+            {
+              "name": "编辑",
+              "desc": "编辑台账数据"
+            },
+            {
+              "name": "删除",
+              "desc": "删除台账数据"
+            }
+          ]
+        },
+        {
+          "name": "tab-pm",
+          "label": "生产物料检",
+          "queryFields": [
+            {
+              "name": "批号",
+              "type": "input",
+              "placeholder": "模糊"
+            },
+            {
+              "name": "是否存在新杂",
+              "type": "select",
+              "options": [
+                "是",
+                "否"
+              ]
+            },
+            {
+              "name": "杂质偏差结论",
+              "label": "状态",
+              "type": "select",
+              "options": [
+                "正常",
+                "异常"
+              ]
+            }
+          ],
+          "queryDefault": [
+            "批号",
+            "是否存在新杂",
+            "杂质偏差结论"
+          ],
+          "queryMore": [],
+          "toolbar": [
+            {
+              "name": "关联查询",
+              "type": "default",
+              "desc": "勾选数据后，跳转至谱图识别并按批号过滤"
+            },
+            {
+              "name": "导出数据",
+              "type": "default",
+              "desc": "导出台账数据"
+            }
+          ],
+          "columns": [
+            {
+              "field": "批号",
+              "title": "批号",
+              "width": 150,
+              "fixed": "left"
+            },
+            {
+              "field": "杂质个数",
+              "title": "杂质个数",
+              "width": 90
+            },
+            {
+              "field": "新杂个数",
+              "title": "新杂个数",
+              "width": 90
+            },
+            {
+              "field": "是否存在新杂",
+              "title": "是否存在新杂",
+              "width": 110,
+              "slot": "tag"
+            },
+            {
+              "field": "杂质偏差结论",
+              "title": "杂质偏差结论",
+              "width": 120,
+              "slot": "tag"
+            },
+            {
+              "field": "_actions",
+              "title": "操作",
+              "width": 130,
+              "fixed": "right",
+              "slot": "row_actions"
+            }
+          ],
+          "rowOps": [
+            {
+              "name": "编辑",
+              "desc": "编辑台账数据"
+            },
+            {
+              "name": "删除",
+              "desc": "删除台账数据"
+            }
+          ]
+        },
+        {
+          "name": "tab-rd",
+          "label": "研发检",
+          "queryFields": [
+            {
+              "name": "批号",
+              "type": "input",
+              "placeholder": "模糊"
+            },
+            {
+              "name": "是否存在新杂",
+              "type": "select",
+              "options": [
+                "是",
+                "否"
+              ]
+            },
+            {
+              "name": "杂质偏差结论",
+              "label": "状态",
+              "type": "select",
+              "options": [
+                "正常",
+                "异常"
+              ]
+            }
+          ],
+          "queryDefault": [
+            "批号",
+            "是否存在新杂",
+            "杂质偏差结论"
+          ],
+          "queryMore": [],
+          "toolbar": [
+            {
+              "name": "关联查询",
+              "type": "default",
+              "desc": "勾选数据后，跳转至谱图识别并按批号过滤"
+            },
+            {
+              "name": "导出数据",
+              "type": "default",
+              "desc": "导出台账数据"
+            }
+          ],
+          "columns": [
+            {
+              "field": "批号",
+              "title": "批号",
+              "width": 150,
+              "fixed": "left"
+            },
+            {
+              "field": "杂质个数",
+              "title": "杂质个数",
+              "width": 90
+            },
+            {
+              "field": "新杂个数",
+              "title": "新杂个数",
+              "width": 90
+            },
+            {
+              "field": "是否存在新杂",
+              "title": "是否存在新杂",
+              "width": 110,
+              "slot": "tag"
+            },
+            {
+              "field": "杂质偏差结论",
+              "title": "杂质偏差结论",
+              "width": 120,
+              "slot": "tag"
+            },
+            {
+              "field": "_actions",
+              "title": "操作",
+              "width": 130,
+              "fixed": "right",
+              "slot": "row_actions"
+            }
+          ],
+          "rowOps": [
+            {
+              "name": "编辑",
+              "desc": "编辑台账数据"
+            },
+            {
+              "name": "删除",
+              "desc": "删除台账数据"
+            }
+          ]
         }
       ],
       "formFields": [],
@@ -52568,8 +52236,7 @@ window.WMS_PAGE_CONFIGS = {
       "stub": false,
       "formFlat": true,
       "formLineFields": [],
-      "formLineActions": [],
-      "layout": "drift-compare"
+      "formLineActions": []
     },
     "np-0209-01": {
       "id": "np-0209-01",
@@ -68268,16 +67935,15 @@ window.WMS_PAGE_CONFIGS = {
     },
     "np-0313-01": {
       "id": "np-0313-01",
-      "title": "重复性与再现性",
+      "title": "GR&R分析",
       "groups": [
-        "质量管理",
         "测量系统分析"
       ],
       "breadcrumb": [
-        "质量管理",
         "测量系统分析",
-        "重复性与再现性"
+        "GR&R分析"
       ],
+      "layout": "",
       "tabs": [],
       "tabViews": [
         {
@@ -68285,521 +67951,81 @@ window.WMS_PAGE_CONFIGS = {
           "label": "",
           "queryFields": [
             {
-              "name": "计划单号",
-              "type": "input"
-            },
-            {
-              "name": "仪器编号",
-              "type": "input"
+              "name": "计划编号",
+              "type": "input",
+              "placeholder": "请输入"
             },
             {
               "name": "仪器名称",
-              "type": "input"
-            },
-            {
-              "name": "计划状态",
-              "type": "select",
-              "options": [
-                "待执行",
-                "执行中",
-                "已完成",
-                "已关闭"
-              ]
-            },
-            {
-              "name": "逾期状态",
-              "type": "select",
-              "options": [
-                "正常",
-                "逾期"
-              ]
-            },
-            {
-              "name": "标准物质条码号",
-              "type": "input"
-            },
-            {
-              "name": "计划时间",
-              "type": "daterange"
-            },
-            {
-              "name": "创建时间",
-              "type": "daterange"
-            }
-          ],
-          "toolbar": [
-            {
-              "name": "下载报告",
-              "type": "default"
-            },
-            {
-              "name": "新增",
-              "type": "primary"
-            },
-            {
-              "name": "关闭",
-              "type": "default"
-            },
-            {
-              "name": "批量删除",
-              "type": "danger"
-            },
-            {
-              "name": "导出数据",
-              "type": "default"
-            }
-          ],
-          "columns": [
-            {
-              "field": "计划状态",
-              "title": "计划状态",
-              "width": 100,
-              "slot": "tag",
-              "fixed": "left"
-            },
-            {
-              "field": "计划单号",
-              "title": "计划单号",
-              "minWidth": 110,
-              "fixed": "left"
-            },
-            {
-              "field": "内容描述",
-              "title": "内容描述",
-              "minWidth": 170
-            },
-            {
-              "field": "仪器编号",
-              "title": "仪器编号",
-              "minWidth": 130
-            },
-            {
-              "field": "仪器名称",
-              "title": "仪器名称",
-              "minWidth": 170
-            },
-            {
-              "field": "仪器类型",
-              "title": "仪器类型",
-              "minWidth": 100
-            },
-            {
-              "field": "存放位置",
-              "title": "存放位置",
-              "minWidth": 150
-            },
-            {
-              "field": "测量日期",
-              "title": "测量日期",
-              "minWidth": 90
-            },
-            {
-              "field": "测量人员",
-              "title": "测量人员",
-              "minWidth": 90
-            },
-            {
-              "field": "样本个数",
-              "title": "样本个数",
-              "minWidth": 90
-            },
-            {
-              "field": "平行测量次数",
-              "title": "平行测量次数",
-              "minWidth": 110
-            },
-            {
-              "field": "计划时间",
-              "title": "计划时间",
-              "minWidth": 150
-            },
-            {
-              "field": "逾期时长",
-              "title": "逾期时长",
-              "minWidth": 170
-            },
-            {
-              "field": "逾期状态",
-              "title": "逾期状态",
-              "width": 90,
-              "slot": "tag"
-            },
-            {
-              "field": "标准物质条码号",
-              "title": "标准物质条码号",
-              "minWidth": 150
-            },
-            {
-              "field": "标准物质名称",
-              "title": "标准物质名称",
-              "minWidth": 170
-            },
-            {
-              "field": "标准物质批号",
-              "title": "标准物质批号",
-              "minWidth": 130
-            },
-            {
-              "field": "供应商名称",
-              "title": "供应商名称",
-              "minWidth": 200
-            },
-            {
-              "field": "备注",
-              "title": "备注",
-              "minWidth": 180
-            },
-            {
-              "field": "创建人",
-              "title": "创建人",
-              "minWidth": 90
-            },
-            {
-              "field": "创建时间",
-              "title": "创建时间",
-              "minWidth": 160
-            },
-            {
-              "field": "_actions",
-              "title": "操作",
-              "width": 130,
-              "fixed": "right",
-              "slot": "row_actions"
-            }
-          ],
-          "rowOps": [
-            {
-              "name": "详情"
-            },
-            {
-              "name": "更多",
-              "children": [
-                "复制",
-                "编辑",
-                "预览"
-              ]
-            }
-          ]
-        }
-      ],
-      "formFields": [],
-      "detailFields": [],
-      "hasEdit": false,
-      "hasDetail": false,
-      "stub": false,
-      "formFlat": true,
-      "formLineFields": [],
-      "formLineActions": []
-    },
-    "np-0313-02": {
-      "id": "np-0313-02",
-      "title": "稳定性",
-      "groups": [
-        "质量管理",
-        "测量系统分析"
-      ],
-      "breadcrumb": [
-        "质量管理",
-        "测量系统分析",
-        "稳定性"
-      ],
-      "tabs": [],
-      "tabViews": [
-        {
-          "name": "main",
-          "label": "",
-          "queryFields": [
-            {
-              "name": "计划单号",
-              "type": "input"
+              "type": "input",
+              "placeholder": "请输入"
             },
             {
               "name": "仪器编号",
-              "type": "input"
+              "type": "input",
+              "placeholder": "请输入"
             },
-            {
-              "name": "仪器名称",
-              "type": "input"
-            },
-            {
-              "name": "计划状态",
-              "type": "select",
-              "options": [
-                "待执行",
-                "执行中",
-                "已完成",
-                "已关闭"
-              ]
-            },
-            {
-              "name": "逾期状态",
-              "type": "select",
-              "options": [
-                "正常",
-                "逾期"
-              ]
-            },
-            {
-              "name": "标准物质条码号",
-              "type": "input"
-            },
-            {
-              "name": "计划时间",
-              "type": "daterange"
-            },
-            {
-              "name": "创建时间",
-              "type": "daterange"
-            }
-          ],
-          "queryDefault": [
-            "计划单号",
-            "仪器编号",
-            "仪器名称",
-            "计划状态"
-          ],
-          "queryMore": [
-            "逾期状态",
-            "标准物质条码号",
-            "计划时间",
-            "创建时间"
-          ],
-          "toolbar": [
-            {
-              "name": "下载报告",
-              "type": "default"
-            },
-            {
-              "name": "新增",
-              "type": "primary"
-            },
-            {
-              "name": "关闭",
-              "type": "default"
-            },
-            {
-              "name": "批量删除",
-              "type": "danger"
-            },
-            {
-              "name": "导出数据",
-              "type": "default"
-            }
-          ],
-          "columns": [
-            {
-              "field": "计划状态",
-              "title": "计划状态",
-              "width": 100,
-              "slot": "tag",
-              "fixed": "left"
-            },
-            {
-              "field": "计划单号",
-              "title": "计划单号",
-              "minWidth": 110,
-              "fixed": "left"
-            },
-            {
-              "field": "内容描述",
-              "title": "内容描述",
-              "minWidth": 170
-            },
-            {
-              "field": "仪器编号",
-              "title": "仪器编号",
-              "minWidth": 130
-            },
-            {
-              "field": "仪器名称",
-              "title": "仪器名称",
-              "minWidth": 170
-            },
-            {
-              "field": "仪器类型",
-              "title": "仪器类型",
-              "minWidth": 100
-            },
-            {
-              "field": "存放位置",
-              "title": "存放位置",
-              "minWidth": 150
-            },
-            {
-              "field": "样本个数",
-              "title": "样本个数",
-              "minWidth": 90
-            },
-            {
-              "field": "计划时间",
-              "title": "计划时间",
-              "minWidth": 120
-            },
-            {
-              "field": "逾期时长",
-              "title": "逾期时长",
-              "minWidth": 170
-            },
-            {
-              "field": "逾期状态",
-              "title": "逾期状态",
-              "width": 90,
-              "slot": "tag"
-            },
-            {
-              "field": "标准物质条码号",
-              "title": "标准物质条码号",
-              "minWidth": 150
-            },
-            {
-              "field": "标准物质名称",
-              "title": "标准物质名称",
-              "minWidth": 170
-            },
-            {
-              "field": "标准物质批号",
-              "title": "标准物质批号",
-              "minWidth": 130
-            },
-            {
-              "field": "供应商名称",
-              "title": "供应商名称",
-              "minWidth": 200
-            },
-            {
-              "field": "备注",
-              "title": "备注",
-              "minWidth": 180
-            },
-            {
-              "field": "创建人",
-              "title": "创建人",
-              "minWidth": 90
-            },
-            {
-              "field": "创建时间",
-              "title": "创建时间",
-              "minWidth": 160
-            },
-            {
-              "field": "_actions",
-              "title": "操作",
-              "width": 130,
-              "fixed": "right",
-              "slot": "row_actions"
-            }
-          ],
-          "rowOps": [
-            {
-              "name": "详情"
-            },
-            {
-              "name": "更多",
-              "children": [
-                "复制",
-                "编辑",
-                "预览"
-              ]
-            }
-          ]
-        }
-      ],
-      "formFields": [],
-      "detailFields": [],
-      "hasEdit": false,
-      "hasDetail": false,
-      "stub": false,
-      "formFlat": true,
-      "formLineFields": [],
-      "formLineActions": []
-    },
-    "np-0313-03": {
-      "id": "np-0313-03",
-      "title": "偏倚",
-      "groups": [
-        "质量管理",
-        "测量系统分析"
-      ],
-      "breadcrumb": [
-        "质量管理",
-        "测量系统分析",
-        "偏倚"
-      ],
-      "tabs": [],
-      "tabViews": [
-        {
-          "name": "main",
-          "label": "",
-          "queryFields": [
             {
               "name": "状态",
               "type": "select",
               "options": [
                 "待执行",
-                "已完成"
-              ]
+                "执行中",
+                "已完成",
+                "已关闭"
+              ],
+              "placeholder": "全部"
             },
             {
-              "name": "计划单号",
-              "type": "input"
+              "name": "评价人",
+              "type": "input",
+              "placeholder": "请输入"
             },
             {
-              "name": "设备编号",
-              "type": "input"
+              "name": "测量日期",
+              "type": "date",
+              "placeholder": "测量日期"
             },
             {
-              "name": "设备名称",
-              "type": "input"
-            },
-            {
-              "name": "测量类型",
+              "name": "判定结果",
               "type": "select",
               "options": [
-                "称量",
-                "气压计算",
-                "色谱",
-                "光谱"
-              ]
-            },
-            {
-              "name": "分析结果",
-              "type": "select",
-              "options": [
+                "优秀",
                 "可接受",
                 "不可接受"
-              ]
-            },
-            {
-              "name": "创建时间",
-              "type": "daterange"
+              ],
+              "placeholder": "全部"
             }
-          ],
-          "queryDefault": [
-            "状态",
-            "计划单号"
-          ],
-          "queryMore": [
-            "设备编号",
-            "设备名称",
-            "测量类型",
-            "分析结果",
-            "创建时间"
           ],
           "toolbar": [
             {
               "name": "新增",
-              "type": "primary"
-            },
-            {
-              "name": "批量删除",
-              "type": "danger"
+              "type": "primary",
+              "desc": "新增 GR&R 计划"
             },
             {
               "name": "导出",
-              "type": "default"
+              "type": "default",
+              "desc": "导出"
+            },
+            {
+              "name": "批量删除",
+              "type": "danger",
+              "desc": "删除勾选计划"
             }
           ],
           "columns": [
+            {
+              "type": "checkbox",
+              "width": 50,
+              "fixed": "left"
+            },
+            {
+              "type": "seq",
+              "title": "序号",
+              "width": 60,
+              "fixed": "left"
+            },
             {
               "field": "状态",
               "title": "状态",
@@ -68807,129 +68033,692 @@ window.WMS_PAGE_CONFIGS = {
               "slot": "tag"
             },
             {
-              "field": "分析结果",
-              "title": "分析结果",
+              "field": "计划编号",
+              "title": "计划编号",
+              "width": 175
+            },
+            {
+              "field": "仪器名称",
+              "title": "仪器名称",
+              "width": 130
+            },
+            {
+              "field": "仪器编号",
+              "title": "仪器编号",
+              "width": 120
+            },
+            {
+              "field": "检测项目",
+              "title": "检测项目",
+              "width": 120
+            },
+            {
+              "field": "评价人",
+              "title": "评价人",
+              "width": 160
+            },
+            {
+              "field": "样品数量",
+              "title": "样品数量",
+              "width": 90
+            },
+            {
+              "field": "评价人数量",
+              "title": "评价人数量",
+              "width": 95
+            },
+            {
+              "field": "试验次数",
+              "title": "试验次数",
+              "width": 90
+            },
+            {
+              "field": "测量日期",
+              "title": "测量日期",
+              "width": 110
+            },
+            {
+              "field": "判定",
+              "title": "判定",
               "width": 100,
               "slot": "tag"
             },
             {
-              "field": "计划单号",
-              "title": "计划单号",
-              "minWidth": 170
-            },
-            {
-              "field": "创建时间",
-              "title": "创建时间",
-              "minWidth": 160
-            },
-            {
-              "field": "内容描述",
-              "title": "内容描述",
-              "minWidth": 160
-            },
-            {
-              "field": "设备名称",
-              "title": "设备名称",
-              "minWidth": 180
-            },
-            {
-              "field": "设备编号",
-              "title": "设备编号",
-              "minWidth": 120
-            },
-            {
-              "field": "规格型号",
-              "title": "规格型号",
-              "minWidth": 150
-            },
-            {
-              "field": "测量类型",
-              "title": "测量类型",
-              "minWidth": 100
-            },
-            {
-              "field": "测量人员",
-              "title": "测量人员",
-              "minWidth": 90
-            },
-            {
-              "field": "测试次数",
-              "title": "测试次数",
-              "minWidth": 90
-            },
-            {
-              "field": "样本个数",
-              "title": "样本个数",
-              "minWidth": 90
-            },
-            {
-              "field": "基准件名称",
-              "title": "基准件名称",
-              "minWidth": 160
-            },
-            {
-              "field": "测量参数",
-              "title": "测量参数",
-              "minWidth": 120
-            },
-            {
-              "field": "参数规格",
-              "title": "参数规格",
-              "minWidth": 100
-            },
-            {
-              "field": "测量日期范围",
-              "title": "测量日期范围",
-              "minWidth": 200
-            },
-            {
-              "field": "组数",
-              "title": "组数",
-              "minWidth": 70
-            },
-            {
-              "field": "备注",
-              "title": "备注",
-              "minWidth": 160
-            },
-            {
-              "field": "创建人",
-              "title": "创建人",
-              "minWidth": 90
-            },
-            {
               "field": "_actions",
               "title": "操作",
-              "width": 230,
+              "width": 220,
               "fixed": "right",
               "slot": "row_actions"
             }
           ],
           "rowOps": [
             {
-              "name": "测量数据录入"
+              "name": "数据录入",
+              "desc": "按评价人录入测量数据"
             },
             {
-              "name": "编辑"
+              "name": "报告",
+              "desc": "查看 GR&R 分析报告"
+            },
+            {
+              "name": "编辑",
+              "desc": "编辑计划"
+            },
+            {
+              "name": "复制",
+              "desc": "复制为新计划"
+            },
+            {
+              "name": "关闭",
+              "desc": "关闭计划"
+            },
+            {
+              "name": "删除",
+              "desc": "删除计划"
+            }
+          ]
+        }
+      ],
+      "formSections": [
+        {
+          "title": "基本信息",
+          "fields": [
+            {
+              "name": "计划编号",
+              "type": "readonly",
+              "placeholder": "提交后自动生成"
+            },
+            {
+              "name": "仪器名称",
+              "type": "picker",
+              "required": true,
+              "placeholder": "选择在用仪器"
+            },
+            {
+              "name": "仪器编号",
+              "type": "readonly",
+              "placeholder": "选择仪器后自动带出"
+            },
+            {
+              "name": "仪器规格",
+              "type": "readonly",
+              "placeholder": "选择仪器后自动带出"
+            },
+            {
+              "name": "仪器类型",
+              "type": "readonly",
+              "placeholder": "选择仪器后自动带出"
+            },
+            {
+              "name": "检测项目",
+              "type": "input",
+              "required": true,
+              "placeholder": "请输入检测项目"
+            },
+            {
+              "name": "样品数量",
+              "type": "number",
+              "required": true,
+              "placeholder": "n"
+            },
+            {
+              "name": "试验次数",
+              "type": "number",
+              "required": true,
+              "placeholder": "r"
+            },
+            {
+              "name": "评价人数量",
+              "type": "select",
+              "required": true,
+              "options": [
+                "2",
+                "3"
+              ],
+              "placeholder": "评价人数量"
+            },
+            {
+              "name": "评价人1",
+              "type": "input",
+              "required": true
+            },
+            {
+              "name": "评价人2",
+              "type": "input",
+              "required": true
+            },
+            {
+              "name": "评价人3",
+              "type": "input"
+            },
+            {
+              "name": "计划测量日期",
+              "type": "date",
+              "required": true
+            },
+            {
+              "name": "备注",
+              "type": "textarea",
+              "placeholder": "选填"
+            }
+          ]
+        }
+      ],
+      "hasEdit": true
+    },
+    "np-0313-02": {
+      "id": "np-0313-02",
+      "title": "稳定性分析",
+      "groups": [
+        "测量系统分析"
+      ],
+      "breadcrumb": [
+        "测量系统分析",
+        "稳定性分析"
+      ],
+      "layout": "",
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [
+            {
+              "name": "计划编号",
+              "type": "input",
+              "placeholder": "计划编号"
+            },
+            {
+              "name": "仪器名称",
+              "type": "input",
+              "placeholder": "仪器名称"
+            },
+            {
+              "name": "仪器编号",
+              "type": "input",
+              "placeholder": "仪器编号"
+            },
+            {
+              "name": "状态",
+              "type": "select",
+              "options": [
+                "待执行",
+                "执行中",
+                "已完成",
+                "已关闭"
+              ],
+              "placeholder": "状态"
+            },
+            {
+              "name": "测量人",
+              "type": "input",
+              "placeholder": "评价人"
+            },
+            {
+              "name": "测量日期",
+              "type": "date",
+              "placeholder": "测量日期"
+            },
+            {
+              "name": "判定结果",
+              "type": "select",
+              "options": [
+                "可接受",
+                "不可接受"
+              ],
+              "placeholder": "判定结果"
+            }
+          ],
+          "toolbar": [
+            {
+              "name": "新增",
+              "type": "primary",
+              "desc": "新增稳定性分析计划"
+            },
+            {
+              "name": "导出",
+              "type": "default",
+              "desc": "导出稳定性分析报告"
+            },
+            {
+              "name": "批量删除",
+              "type": "danger",
+              "desc": "删除勾选的稳定性计划"
+            }
+          ],
+          "columns": [
+            {
+              "type": "checkbox",
+              "width": 50,
+              "fixed": "left"
+            },
+            {
+              "type": "seq",
+              "title": "序号",
+              "width": 60,
+              "fixed": "left"
+            },
+            {
+              "field": "状态",
+              "title": "状态",
+              "width": 90,
+              "slot": "tag"
+            },
+            {
+              "field": "计划编号",
+              "title": "计划编号",
+              "width": 175
+            },
+            {
+              "field": "仪器名称",
+              "title": "仪器名称",
+              "width": 130
+            },
+            {
+              "field": "仪器编号",
+              "title": "仪器编号",
+              "width": 120
+            },
+            {
+              "field": "检测项目",
+              "title": "检测项目",
+              "width": 120
+            },
+            {
+              "field": "测量人",
+              "title": "评价人",
+              "width": 90
+            },
+            {
+              "field": "评价人数量",
+              "title": "评价人数量",
+              "width": 95
+            },
+            {
+              "field": "试验次数",
+              "title": "试验次数",
+              "width": 90
+            },
+            {
+              "field": "测量日期",
+              "title": "测量日期",
+              "width": 110
+            },
+            {
+              "field": "判定",
+              "title": "判定",
+              "width": 100,
+              "slot": "tag"
+            },
+            {
+              "field": "_actions",
+              "title": "操作",
+              "width": 260,
+              "fixed": "right",
+              "slot": "row_actions"
+            }
+          ],
+          "rowOps": [
+            {
+              "name": "数据录入",
+              "desc": "录入时间样本测量数据并实时计算 X̄–R"
+            },
+            {
+              "name": "报告",
+              "desc": "查看稳定性分析报告"
+            },
+            {
+              "name": "更多",
+              "desc": "编辑 / 复制 / 关闭 / 删除"
+            },
+            {
+              "name": "编辑",
+              "desc": "编辑稳定性计划；收入「更多」"
+            },
+            {
+              "name": "复制",
+              "desc": "复制为新计划；收入「更多」"
+            },
+            {
+              "name": "关闭",
+              "desc": "关闭稳定性计划；收入「更多」"
+            },
+            {
+              "name": "删除",
+              "desc": "删除稳定性计划；收入「更多」"
+            }
+          ]
+        }
+      ],
+      "formSections": [
+        {
+          "title": "基本信息",
+          "fields": [
+            {
+              "name": "计划编号",
+              "type": "readonly",
+              "placeholder": "提交后自动生成"
+            },
+            {
+              "name": "仪器",
+              "type": "picker",
+              "required": true,
+              "placeholder": "点击右侧抽屉选择仪器台账（单选）"
+            },
+            {
+              "name": "仪器编号",
+              "type": "readonly",
+              "placeholder": "选择仪器后自动带出"
+            },
+            {
+              "name": "仪器规格",
+              "type": "readonly",
+              "placeholder": "选择仪器后自动带出"
+            },
+            {
+              "name": "仪器类型",
+              "type": "readonly",
+              "placeholder": "选择仪器后自动带出"
+            },
+            {
+              "name": "检测项目",
+              "type": "input",
+              "required": true,
+              "placeholder": "请输入"
+            },
+            {
+              "name": "测量参数",
+              "type": "input",
+              "placeholder": "选填"
+            },
+            {
+              "name": "测量人",
+              "type": "select",
+              "required": true,
+              "placeholder": "选择测量人"
+            },
+            {
+              "name": "试验次数",
+              "type": "select",
+              "required": true,
+              "options": [
+                "2",
+                "3",
+                "4",
+                "5"
+              ],
+              "placeholder": "子组容量 n（2~5，默认 3）"
+            },
+            {
+              "name": "样本数",
+              "type": "select",
+              "required": true,
+              "options": [
+                "10",
+                "11",
+                "12",
+                "13",
+                "14",
+                "15",
+                "16",
+                "17",
+                "18",
+                "19",
+                "20",
+                "21",
+                "22",
+                "23",
+                "24",
+                "25",
+                "26",
+                "27",
+                "28",
+                "29",
+                "30"
+              ],
+              "placeholder": "时间点数 k（10~30，默认 25）"
+            },
+            {
+              "name": "测量日期",
+              "type": "date",
+              "required": true,
+              "placeholder": "选择日期"
+            },
+            {
+              "name": "备注",
+              "type": "textarea",
+              "placeholder": "选填"
+            }
+          ]
+        }
+      ],
+      "hasEdit": true
+    },
+    "np-0313-03": {
+      "id": "np-0313-03",
+      "title": "偏倚分析",
+      "groups": [
+        "测量系统分析"
+      ],
+      "breadcrumb": [
+        "测量系统分析",
+        "偏倚分析"
+      ],
+      "layout": "",
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [
+            {
+              "name": "计划编号",
+              "type": "input",
+              "placeholder": "计划编号"
+            },
+            {
+              "name": "仪器名称",
+              "type": "input",
+              "placeholder": "仪器名称"
+            },
+            {
+              "name": "仪器编号",
+              "type": "input",
+              "placeholder": "仪器编号"
+            },
+            {
+              "name": "状态",
+              "type": "select",
+              "options": [
+                "待执行",
+                "执行中",
+                "已完成",
+                "已关闭"
+              ],
+              "placeholder": "状态"
+            },
+            {
+              "name": "测量人",
+              "type": "input",
+              "placeholder": "测量人"
+            },
+            {
+              "name": "判定",
+              "type": "select",
+              "options": [
+                "可接受",
+                "不可接受"
+              ],
+              "placeholder": "判定结果"
+            }
+          ],
+          "toolbar": [
+            {
+              "name": "新增",
+              "type": "primary",
+              "desc": "新增偏倚分析计划"
+            },
+            {
+              "name": "导出",
+              "type": "default",
+              "desc": "导出偏倚分析报告"
+            },
+            {
+              "name": "批量删除",
+              "type": "danger",
+              "desc": "删除勾选的偏倚计划"
+            }
+          ],
+          "columns": [
+            {
+              "type": "checkbox",
+              "width": 50,
+              "fixed": "left"
+            },
+            {
+              "type": "seq",
+              "title": "序号",
+              "width": 60,
+              "fixed": "left"
+            },
+            {
+              "field": "状态",
+              "title": "状态",
+              "width": 90,
+              "slot": "tag"
+            },
+            {
+              "field": "计划编号",
+              "title": "计划编号",
+              "width": 170
+            },
+            {
+              "field": "仪器名称",
+              "title": "仪器名称",
+              "width": 130
+            },
+            {
+              "field": "仪器编号",
+              "title": "仪器编号",
+              "width": 120
+            },
+            {
+              "field": "基准件名称",
+              "title": "基准件名称",
+              "width": 120
+            },
+            {
+              "field": "测量参数",
+              "title": "测量参数",
+              "width": 100
+            },
+            {
+              "field": "测量人",
+              "title": "测量人",
+              "width": 90
+            },
+            {
+              "field": "测量次数",
+              "title": "测量次数",
+              "width": 90
+            },
+            {
+              "field": "测试日期",
+              "title": "测试日期",
+              "width": 110
+            },
+            {
+              "field": "判定",
+              "title": "判定",
+              "width": 100,
+              "slot": "tag"
+            },
+            {
+              "field": "_actions",
+              "title": "操作",
+              "width": 260,
+              "fixed": "right",
+              "slot": "row_actions"
+            }
+          ],
+          "rowOps": [
+            {
+              "name": "数据录入",
+              "desc": "录入 10 次测量数据并实时计算偏倚"
+            },
+            {
+              "name": "报告",
+              "desc": "查看偏倚分析报告"
             },
             {
               "name": "更多",
               "children": [
-                "详情",
+                "编辑",
+                "复制",
+                "关闭",
                 "删除"
               ]
             }
           ]
         }
       ],
-      "formFields": [],
-      "detailFields": [],
-      "hasEdit": false,
-      "hasDetail": false,
-      "stub": false,
-      "formFlat": true,
-      "formLineFields": [],
-      "formLineActions": []
+      "formSections": [
+        {
+          "title": "基本信息",
+          "fields": [
+            {
+              "name": "计划编号",
+              "type": "readonly",
+              "required": false,
+              "placeholder": "提交后自动生成"
+            },
+            {
+              "name": "仪器名称",
+              "type": "select",
+              "required": true,
+              "filterable": true,
+              "placeholder": "选择在用仪器（关联仪器台账）"
+            },
+            {
+              "name": "基准件名称",
+              "type": "input",
+              "required": true,
+              "placeholder": "输入"
+            },
+            {
+              "name": "测量参数",
+              "type": "input",
+              "required": false,
+              "placeholder": "选填"
+            },
+            {
+              "name": "参数规格",
+              "type": "input",
+              "required": false,
+              "placeholder": "选填"
+            },
+            {
+              "name": "基准值",
+              "type": "input",
+              "required": true,
+              "placeholder": "输入基准值（有效数字）"
+            },
+            {
+              "name": "测量人",
+              "type": "select",
+              "required": true,
+              "placeholder": "选择测量人"
+            },
+            {
+              "name": "测试日期",
+              "type": "date",
+              "required": true,
+              "placeholder": "选择日期"
+            }
+          ]
+        }
+      ],
+      "hasEdit": true
     },
     "np-0401-01": {
       "id": "np-0401-01",
@@ -127105,12 +126894,6 @@ window.WMS_PAGE_CONFIGS = {
           "ctrl": "自动写入，只读"
         },
         {
-          "name": "失效日期",
-          "type": "readonly",
-          "required": false,
-          "ctrl": "自动计算：留样日期 + 有效期 - 1 天"
-        },
-        {
           "name": "是否玻璃片",
           "type": "select",
           "required": false,
@@ -127120,6 +126903,12 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "default": "否",
           "ctrl": "下拉单选，是 / 否；默认否"
+        },
+        {
+          "name": "失效日期",
+          "type": "readonly",
+          "required": false,
+          "ctrl": "自动计算：留样日期 + 有效期 - 1 天"
         },
         {
           "name": "样品位置",
@@ -129217,15 +129006,10 @@ window.WMS_PAGE_CONFIGS = {
         },
         {
           "name": "标准系数",
-          "type": "number-unit",
+          "type": "number",
           "required": true,
           "placeholder": "输入数字",
-          "ctrl": "数字输入 + 下拉选单位",
-          "options": [
-            "分",
-            "时"
-          ],
-          "defaultUnit": "时"
+          "ctrl": "≥0，2 位小数"
         },
         {
           "name": "备注",
@@ -132532,20 +132316,11 @@ window.WMS_PAGE_CONFIGS = {
         "色谱漂移",
         "色谱柱台账"
       ],
-      "tabs": [
-        {
-          "name": "tab-1",
-          "label": "GC色谱柱"
-        },
-        {
-          "name": "tab-2",
-          "label": "LC色谱柱"
-        }
-      ],
+      "tabs": [],
       "tabViews": [
         {
-          "name": "tab-1",
-          "label": "GC色谱柱",
+          "name": "main",
+          "label": "",
           "queryFields": [
             {
               "name": "色谱柱编号",
@@ -132554,6 +132329,11 @@ window.WMS_PAGE_CONFIGS = {
             {
               "name": "色谱柱名称",
               "type": "input"
+            },
+            {
+              "name": "色谱柱型号",
+              "type": "input",
+              "placeholder": "色谱柱型号"
             },
             {
               "name": "使用状态",
@@ -132565,48 +132345,51 @@ window.WMS_PAGE_CONFIGS = {
               ]
             },
             {
-              "name": "色谱柱条码",
-              "type": "input"
-            },
-            {
-              "name": "存放位置",
-              "type": "input"
+              "name": "责任部门",
+              "type": "input",
+              "placeholder": "责任部门"
             },
             {
               "name": "责任人",
-              "type": "input"
+              "type": "input",
+              "placeholder": "责任人"
             }
           ],
           "queryDefault": [
             "色谱柱编号",
             "色谱柱名称",
+            "色谱柱型号",
             "使用状态"
           ],
           "queryMore": [
-            "色谱柱条码",
-            "存放位置",
+            "责任部门",
             "责任人"
           ],
           "toolbar": [
             {
               "name": "新增",
-              "type": "primary"
+              "type": "primary",
+              "desc": "打开新增色谱柱弹窗"
             },
             {
               "name": "打印标签",
-              "type": "default"
+              "type": "default",
+              "desc": "选择标签模板后批量打印"
             },
             {
               "name": "导入数据",
-              "type": "default"
+              "type": "default",
+              "desc": "按模板批量导入色谱柱数据"
             },
             {
               "name": "导出数据",
-              "type": "default"
+              "type": "default",
+              "desc": "导出当前筛选结果"
             },
             {
               "name": "批量删除",
-              "type": "danger"
+              "type": "danger",
+              "desc": "删除勾选行；已被引用则不可删"
             }
           ],
           "columns": [
@@ -132639,13 +132422,14 @@ window.WMS_PAGE_CONFIGS = {
               "title": "色谱柱型号",
               "field": "色谱柱型号",
               "name": "色谱柱型号",
-              "width": 200
+              "width": 150,
+              "slot": "chrom_model"
             },
             {
               "title": "规格型号",
               "field": "规格型号",
               "name": "规格型号",
-              "width": 160
+              "width": 150
             },
             {
               "title": "使用状态",
@@ -132658,19 +132442,19 @@ window.WMS_PAGE_CONFIGS = {
               "title": "存放位置",
               "field": "存放位置",
               "name": "存放位置",
-              "width": 130
+              "width": 140
             },
             {
               "title": "责任部门",
               "field": "责任部门",
               "name": "责任部门",
-              "width": 160
+              "width": 100
             },
             {
               "title": "责任人",
               "field": "责任人",
               "name": "责任人",
-              "width": 90
+              "width": 80
             },
             {
               "title": "购置日期",
@@ -132679,203 +132463,47 @@ window.WMS_PAGE_CONFIGS = {
               "width": 110
             },
             {
-              "title": "创建人",
-              "field": "创建人",
-              "name": "创建人",
-              "width": 90
-            },
-            {
-              "title": "创建时间",
-              "field": "创建时间",
-              "name": "创建时间",
-              "width": 160
-            },
-            {
-              "title": "操作",
-              "field": "_actions",
-              "name": "操作",
-              "width": 130,
-              "slot": "row_actions"
-            }
-          ],
-          "rowOps": [
-            {
-              "name": "详情"
-            },
-            {
-              "name": "更多",
-              "children": [
-                "复制",
-                "编辑"
-              ]
-            }
-          ]
-        },
-        {
-          "name": "tab-2",
-          "label": "LC色谱柱",
-          "queryFields": [
-            {
-              "name": "色谱柱编号",
-              "type": "input"
-            },
-            {
-              "name": "色谱柱名称",
-              "type": "input"
-            },
-            {
-              "name": "使用状态",
-              "type": "select",
-              "options": [
-                "在用",
-                "停用",
-                "报废"
-              ]
-            },
-            {
-              "name": "色谱柱条码",
-              "type": "input"
-            },
-            {
-              "name": "存放位置",
-              "type": "input"
-            },
-            {
-              "name": "责任人",
-              "type": "input"
-            }
-          ],
-          "queryDefault": [
-            "色谱柱编号",
-            "色谱柱名称",
-            "使用状态"
-          ],
-          "queryMore": [
-            "色谱柱条码",
-            "存放位置",
-            "责任人"
-          ],
-          "toolbar": [
-            {
-              "name": "新增",
-              "type": "primary"
-            },
-            {
-              "name": "打印标签",
-              "type": "default"
-            },
-            {
-              "name": "导入数据",
-              "type": "default"
-            },
-            {
-              "name": "导出数据",
-              "type": "default"
-            },
-            {
-              "name": "批量删除",
-              "type": "danger"
-            }
-          ],
-          "columns": [
-            {
-              "title": "色谱柱图片",
-              "field": "色谱柱图片",
-              "name": "色谱柱图片",
-              "width": 100,
-              "slot": "link"
-            },
-            {
-              "title": "色谱柱编号",
-              "field": "色谱柱编号",
-              "name": "色谱柱编号",
-              "width": 120
-            },
-            {
-              "title": "色谱柱名称",
-              "field": "色谱柱名称",
-              "name": "色谱柱名称",
-              "width": 180
-            },
-            {
-              "title": "色谱柱条码",
-              "field": "色谱柱条码",
-              "name": "色谱柱条码",
-              "width": 120
-            },
-            {
-              "title": "色谱柱型号",
-              "field": "色谱柱型号",
-              "name": "色谱柱型号",
-              "width": 200
-            },
-            {
-              "title": "规格型号",
-              "field": "规格型号",
-              "name": "规格型号",
-              "width": 160
-            },
-            {
-              "title": "使用状态",
-              "field": "使用状态",
-              "name": "使用状态",
-              "width": 90,
-              "slot": "tag"
-            },
-            {
-              "title": "存放位置",
-              "field": "存放位置",
-              "name": "存放位置",
-              "width": 130
-            },
-            {
-              "title": "责任部门",
-              "field": "责任部门",
-              "name": "责任部门",
-              "width": 160
-            },
-            {
-              "title": "责任人",
-              "field": "责任人",
-              "name": "责任人",
-              "width": 90
-            },
-            {
-              "title": "购置日期",
-              "field": "购置日期",
-              "name": "购置日期",
+              "title": "色谱柱厂家",
+              "field": "色谱柱厂家",
+              "name": "色谱柱厂家",
               "width": 110
             },
             {
-              "title": "创建人",
-              "field": "创建人",
-              "name": "创建人",
-              "width": 90
+              "title": "出厂编号",
+              "field": "出厂编号",
+              "name": "出厂编号",
+              "width": 120
             },
             {
               "title": "创建时间",
               "field": "创建时间",
               "name": "创建时间",
-              "width": 160
+              "width": 150
             },
             {
               "title": "操作",
               "field": "_actions",
               "name": "操作",
-              "width": 130,
+              "width": 220,
               "slot": "row_actions"
             }
           ],
           "rowOps": [
             {
-              "name": "详情"
+              "name": "详情",
+              "desc": "查看完整信息"
             },
             {
-              "name": "更多",
-              "children": [
-                "复制",
-                "编辑"
-              ]
+              "name": "编辑",
+              "desc": "编辑当前色谱柱"
+            },
+            {
+              "name": "查看履历",
+              "desc": "查看使用/维护/校准履历"
+            },
+            {
+              "name": "删除",
+              "desc": "删除当前色谱柱"
             }
           ]
         }
@@ -132903,18 +132531,20 @@ window.WMS_PAGE_CONFIGS = {
         {
           "name": "色谱柱条码",
           "type": "input",
-          "placeholder": "默认与色谱柱编号一致"
+          "required": true,
+          "placeholder": "唯一，默认与编号一致"
         },
         {
           "name": "色谱柱型号",
           "type": "select",
           "required": true,
           "filterable": true,
-          "placeholder": "自动代入，可修改"
+          "placeholder": "选择色谱柱型号（取左侧型号字典）"
         },
         {
           "name": "规格型号",
           "type": "input",
+          "required": true,
           "placeholder": "输入"
         },
         {
@@ -132931,37 +132561,44 @@ window.WMS_PAGE_CONFIGS = {
         {
           "name": "存放位置",
           "type": "input",
+          "required": true,
           "placeholder": "输入"
         },
         {
           "name": "责任部门",
           "type": "select",
-          "multiple": true,
-          "placeholder": "请选择，多选"
+          "required": true,
+          "filterable": true,
+          "placeholder": "选择部门"
         },
         {
           "name": "责任人",
           "type": "select",
+          "required": true,
           "filterable": true,
-          "placeholder": "选择用户"
+          "placeholder": "选择责任部门下的用户"
         },
         {
           "name": "购置日期",
-          "type": "date"
+          "type": "date",
+          "required": true
         },
         {
           "name": "色谱柱厂家",
           "type": "input",
+          "required": true,
           "placeholder": "输入"
         },
         {
           "name": "出厂编号",
           "type": "input",
+          "required": true,
           "placeholder": "输入"
         },
         {
           "name": "出厂日期",
-          "type": "date"
+          "type": "date",
+          "required": true
         },
         {
           "name": "厂家联系人",
@@ -133009,7 +132646,24 @@ window.WMS_PAGE_CONFIGS = {
       "formGridCols": 4,
       "formDialogWidth": "1200px",
       "formLabelWidth": "100px",
-      "hideFormSectionTitle": true
+      "hideFormSectionTitle": true,
+      "typeFormFields": [
+        {
+          "name": "名称",
+          "label": "色谱柱型号",
+          "type": "input",
+          "required": true,
+          "ctrl": "唯一"
+        },
+        {
+          "name": "备注",
+          "label": "备注",
+          "type": "input",
+          "required": false
+        }
+      ],
+      "treeTitle": "色谱柱型号",
+      "formFullscreenOnAdd": true
     },
     {
       "id": "np-0208-02",
@@ -133023,20 +132677,11 @@ window.WMS_PAGE_CONFIGS = {
         "色谱漂移",
         "漂移规则设置"
       ],
-      "tabs": [
-        {
-          "name": "tab-1",
-          "label": "GC规则"
-        },
-        {
-          "name": "tab-2",
-          "label": "LC规则"
-        }
-      ],
+      "tabs": [],
       "tabViews": [
         {
-          "name": "tab-1",
-          "label": "GC规则",
+          "name": "main",
+          "label": "",
           "queryFields": [
             {
               "name": "规则编码",
@@ -133047,12 +132692,11 @@ window.WMS_PAGE_CONFIGS = {
               "type": "input"
             },
             {
-              "name": "TR规则",
+              "name": "规则分类",
               "type": "select",
               "options": [
-                "按固定值不叠加",
-                "按批次新建流动叠加",
-                "首批次新建流动叠加，其余批次不叠加"
+                "GC",
+                "LC"
               ]
             },
             {
@@ -133077,28 +132721,23 @@ window.WMS_PAGE_CONFIGS = {
           "queryDefault": [
             "规则编码",
             "规则名称",
-            "TR规则",
-            "适用检验类型"
-          ],
-          "queryMore": [
+            "规则分类",
+            "适用检验类型",
             "启用状态"
           ],
+          "queryMore": [],
           "toolbar": [
             {
               "name": "新增",
               "type": "primary"
             },
             {
+              "name": "导入",
+              "type": "default"
+            },
+            {
               "name": "批量删除",
               "type": "danger"
-            },
-            {
-              "name": "导入数据",
-              "type": "default"
-            },
-            {
-              "name": "导出数据",
-              "type": "default"
             }
           ],
           "columns": [
@@ -133106,61 +132745,43 @@ window.WMS_PAGE_CONFIGS = {
               "title": "规则编码",
               "field": "规则编码",
               "name": "规则编码",
-              "width": 100
+              "width": 110
             },
             {
               "title": "规则名称",
               "field": "规则名称",
               "name": "规则名称",
-              "width": 140
-            },
-            {
-              "title": "TR规则",
-              "field": "TR规则",
-              "name": "TR规则",
               "width": 180
             },
             {
-              "title": "RRT&TR的偏差范围",
-              "field": "RRT&TR的偏差范围",
-              "name": "RRT&TR的偏差范围",
-              "width": 160
+              "title": "规则分类",
+              "field": "规则分类",
+              "name": "规则分类",
+              "width": 90
+            },
+            {
+              "title": "典型保留时间规则",
+              "field": "TR规则",
+              "name": "TR规则",
+              "width": 170
+            },
+            {
+              "title": "RRT&TR偏差范围",
+              "field": "偏差范围",
+              "name": "偏差范围",
+              "width": 150
             },
             {
               "title": "适用检验类型",
               "field": "适用检验类型",
               "name": "适用检验类型",
-              "width": 120
+              "width": 160
             },
             {
               "title": "杂质个数",
               "field": "杂质个数",
               "name": "杂质个数",
               "width": 90
-            },
-            {
-              "title": "适用物料",
-              "field": "适用物料",
-              "name": "适用物料",
-              "width": 200
-            },
-            {
-              "title": "适用采样点",
-              "field": "适用采样点",
-              "name": "适用采样点",
-              "width": 160
-            },
-            {
-              "title": "适用色谱柱",
-              "field": "适用色谱柱",
-              "name": "适用色谱柱",
-              "width": 180
-            },
-            {
-              "title": "备注",
-              "field": "备注",
-              "name": "备注",
-              "width": 120
             },
             {
               "title": "启用状态",
@@ -133170,172 +132791,10 @@ window.WMS_PAGE_CONFIGS = {
               "slot": "tag"
             },
             {
-              "title": "创建时间",
-              "field": "创建时间",
-              "name": "创建时间",
-              "width": 160
-            },
-            {
               "title": "创建人",
               "field": "创建人",
               "name": "创建人",
               "width": 90
-            },
-            {
-              "title": "操作",
-              "field": "_actions",
-              "name": "操作",
-              "width": 130,
-              "slot": "row_actions"
-            }
-          ],
-          "rowOps": [
-            {
-              "name": "详情"
-            },
-            {
-              "name": "更多",
-              "children": [
-                "复制",
-                "编辑"
-              ]
-            }
-          ]
-        },
-        {
-          "name": "tab-2",
-          "label": "LC规则",
-          "queryFields": [
-            {
-              "name": "规则编码",
-              "type": "input"
-            },
-            {
-              "name": "规则名称",
-              "type": "input"
-            },
-            {
-              "name": "TR规则",
-              "type": "select",
-              "options": [
-                "按固定值不叠加",
-                "按批次新建流动叠加",
-                "首批次新建流动叠加，其余批次不叠加"
-              ]
-            },
-            {
-              "name": "适用检验类型",
-              "type": "select",
-              "options": [
-                "采购来料检",
-                "生产过程检",
-                "生产物料检",
-                "研发检"
-              ]
-            },
-            {
-              "name": "启用状态",
-              "type": "select",
-              "options": [
-                "启用",
-                "禁用"
-              ]
-            }
-          ],
-          "queryDefault": [
-            "规则编码",
-            "规则名称",
-            "TR规则",
-            "适用检验类型"
-          ],
-          "queryMore": [
-            "启用状态"
-          ],
-          "toolbar": [
-            {
-              "name": "新增",
-              "type": "primary"
-            },
-            {
-              "name": "批量删除",
-              "type": "danger"
-            },
-            {
-              "name": "导入数据",
-              "type": "default"
-            },
-            {
-              "name": "导出数据",
-              "type": "default"
-            }
-          ],
-          "columns": [
-            {
-              "title": "规则编码",
-              "field": "规则编码",
-              "name": "规则编码",
-              "width": 100
-            },
-            {
-              "title": "规则名称",
-              "field": "规则名称",
-              "name": "规则名称",
-              "width": 140
-            },
-            {
-              "title": "TR规则",
-              "field": "TR规则",
-              "name": "TR规则",
-              "width": 180
-            },
-            {
-              "title": "RRT&TR的偏差范围",
-              "field": "RRT&TR的偏差范围",
-              "name": "RRT&TR的偏差范围",
-              "width": 160
-            },
-            {
-              "title": "适用检验类型",
-              "field": "适用检验类型",
-              "name": "适用检验类型",
-              "width": 120
-            },
-            {
-              "title": "杂质个数",
-              "field": "杂质个数",
-              "name": "杂质个数",
-              "width": 90
-            },
-            {
-              "title": "适用物料",
-              "field": "适用物料",
-              "name": "适用物料",
-              "width": 200
-            },
-            {
-              "title": "适用采样点",
-              "field": "适用采样点",
-              "name": "适用采样点",
-              "width": 160
-            },
-            {
-              "title": "适用色谱柱",
-              "field": "适用色谱柱",
-              "name": "适用色谱柱",
-              "width": 180
-            },
-            {
-              "title": "备注",
-              "field": "备注",
-              "name": "备注",
-              "width": 120
-            },
-            {
-              "title": "启用状态",
-              "field": "启用状态",
-              "name": "启用状态",
-              "width": 90,
-              "slot": "tag"
             },
             {
               "title": "创建时间",
@@ -133344,29 +132803,20 @@ window.WMS_PAGE_CONFIGS = {
               "width": 160
             },
             {
-              "title": "创建人",
-              "field": "创建人",
-              "name": "创建人",
-              "width": 90
-            },
-            {
               "title": "操作",
               "field": "_actions",
               "name": "操作",
-              "width": 130,
-              "slot": "row_actions"
+              "width": 120,
+              "slot": "row_actions",
+              "fixed": "right"
             }
           ],
           "rowOps": [
             {
-              "name": "详情"
+              "name": "编辑"
             },
             {
-              "name": "更多",
-              "children": [
-                "复制",
-                "编辑"
-              ]
+              "name": "删除"
             }
           ]
         }
@@ -133375,44 +132825,58 @@ window.WMS_PAGE_CONFIGS = {
         {
           "name": "规则编码",
           "type": "input",
-          "required": true
+          "required": true,
+          "ctrl": "唯一"
         },
         {
           "name": "规则名称",
           "type": "input",
-          "required": true
+          "required": true,
+          "ctrl": "唯一"
         },
         {
-          "name": "典型保留时间规则",
+          "name": "规则分类",
+          "type": "select",
+          "required": true,
+          "options": [
+            "GC",
+            "LC"
+          ],
+          "ctrl": "GC / LC 分类"
+        },
+        {
+          "name": "TR规则",
           "type": "select",
           "required": true,
           "options": [
             "按固定值不叠加",
-            "按批次新建流动叠加",
-            "首批次新建流动叠加，其余批次不叠加"
+            "按批次新增自动叠加"
           ],
-          "default": "按固定值不叠加"
+          "ctrl": "默认按固定值不叠加"
         },
         {
           "name": "适用检验类型",
           "type": "select",
           "required": true,
+          "multiple": true,
           "options": [
             "采购来料检",
             "生产过程检",
             "生产物料检",
             "研发检"
-          ]
+          ],
+          "ctrl": "多选；采购来料检 / 生产过程检 / 生产物料检 / 研发检"
         },
         {
           "name": "备注",
-          "type": "textarea"
+          "type": "textarea",
+          "required": false
         },
         {
           "name": "启用状态",
           "type": "switch",
           "required": true,
-          "default": "启用"
+          "ctrl": "默认启用"
         }
       ],
       "detailFields": [
@@ -133431,12 +132895,150 @@ window.WMS_PAGE_CONFIGS = {
         "创建时间"
       ],
       "hasEdit": true,
-      "hasDetail": true,
+      "hasDetail": false,
       "formFlat": true,
       "formLineFields": [],
       "formLineActions": [],
       "formFullscreen": true,
-      "formDialogWidth": "100%"
+      "formDialogWidth": "min(1000px, 96vw)",
+      "queryFields": [
+        {
+          "name": "规则编码",
+          "type": "input"
+        },
+        {
+          "name": "规则名称",
+          "type": "input"
+        },
+        {
+          "name": "规则分类",
+          "type": "select",
+          "options": [
+            "GC",
+            "LC"
+          ]
+        },
+        {
+          "name": "适用检验类型",
+          "type": "select",
+          "options": [
+            "采购来料检",
+            "生产过程检",
+            "生产物料检",
+            "研发检"
+          ]
+        },
+        {
+          "name": "启用状态",
+          "type": "select",
+          "options": [
+            "启用",
+            "禁用"
+          ]
+        }
+      ],
+      "queryDefault": [
+        "规则编码",
+        "规则名称",
+        "规则分类",
+        "适用检验类型",
+        "启用状态"
+      ],
+      "queryMore": [],
+      "toolbar": [
+        {
+          "name": "新增",
+          "type": "primary"
+        },
+        {
+          "name": "导入",
+          "type": "default"
+        },
+        {
+          "name": "批量删除",
+          "type": "danger"
+        }
+      ],
+      "columns": [
+        {
+          "title": "规则编码",
+          "field": "规则编码",
+          "name": "规则编码",
+          "width": 110
+        },
+        {
+          "title": "规则名称",
+          "field": "规则名称",
+          "name": "规则名称",
+          "width": 180
+        },
+        {
+          "title": "规则分类",
+          "field": "规则分类",
+          "name": "规则分类",
+          "width": 90
+        },
+        {
+          "title": "典型保留时间规则",
+          "field": "TR规则",
+          "name": "TR规则",
+          "width": 170
+        },
+        {
+          "title": "RRT&TR偏差范围",
+          "field": "偏差范围",
+          "name": "偏差范围",
+          "width": 150
+        },
+        {
+          "title": "适用检验类型",
+          "field": "适用检验类型",
+          "name": "适用检验类型",
+          "width": 160
+        },
+        {
+          "title": "杂质个数",
+          "field": "杂质个数",
+          "name": "杂质个数",
+          "width": 90
+        },
+        {
+          "title": "启用状态",
+          "field": "启用状态",
+          "name": "启用状态",
+          "width": 90,
+          "slot": "tag"
+        },
+        {
+          "title": "创建人",
+          "field": "创建人",
+          "name": "创建人",
+          "width": 90
+        },
+        {
+          "title": "创建时间",
+          "field": "创建时间",
+          "name": "创建时间",
+          "width": 160
+        },
+        {
+          "title": "操作",
+          "field": "_actions",
+          "name": "操作",
+          "width": 120,
+          "slot": "row_actions",
+          "fixed": "right"
+        }
+      ],
+      "rowOps": [
+        {
+          "name": "编辑"
+        },
+        {
+          "name": "删除"
+        }
+      ],
+      "formFullscreenOnAdd": true
     },
     {
       "id": "np-0208-03",
@@ -133450,35 +133052,14 @@ window.WMS_PAGE_CONFIGS = {
         "色谱漂移",
         "谱图识别"
       ],
-      "tabs": [
-        {
-          "name": "tab-1",
-          "label": "GC识别"
-        },
-        {
-          "name": "tab-2",
-          "label": "LC识别"
-        }
-      ],
+      "tabs": [],
       "tabViews": [
         {
-          "name": "tab-1",
-          "label": "GC识别",
+          "name": "main",
+          "label": "",
           "queryFields": [
             {
-              "name": "谱图流水",
-              "type": "input"
-            },
-            {
-              "name": "文件名称",
-              "type": "input"
-            },
-            {
-              "name": "物料名称",
-              "type": "input"
-            },
-            {
-              "name": "批号",
+              "name": "谱图编号",
               "type": "input"
             },
             {
@@ -133492,159 +133073,91 @@ window.WMS_PAGE_CONFIGS = {
               ]
             },
             {
-              "name": "漂移规则名称",
+              "name": "物料编码",
               "type": "input"
             },
             {
-              "name": "色谱柱编号",
+              "name": "批号",
               "type": "input"
-            },
-            {
-              "name": "是否存在新杂",
-              "type": "select",
-              "options": [
-                "是",
-                "否"
-              ]
-            },
-            {
-              "name": "杂质偏差结论",
-              "type": "select",
-              "options": [
-                "正常",
-                "异常"
-              ]
-            },
-            {
-              "name": "使用状态",
-              "type": "select",
-              "options": [
-                "启用",
-                "禁用"
-              ]
             }
           ],
           "queryDefault": [
-            "谱图流水",
-            "文件名称",
-            "物料名称",
+            "谱图编号",
+            "检验类型",
+            "物料编码",
             "批号"
           ],
-          "queryMore": [
-            "检验类型",
-            "漂移规则名称",
-            "色谱柱编号",
-            "是否存在新杂",
-            "杂质偏差结论",
-            "使用状态"
-          ],
+          "queryMore": [],
           "toolbar": [
             {
               "name": "新增",
-              "type": "primary"
+              "type": "primary",
+              "desc": "打开新增谱图识别弹窗"
             },
             {
-              "name": "批量启用",
-              "type": "default"
+              "name": "导入",
+              "type": "default",
+              "desc": "批量导入谱图"
             },
             {
-              "name": "批量禁用",
-              "type": "default"
+              "name": "导出",
+              "type": "default",
+              "desc": "导出识别结果"
             },
             {
               "name": "批量删除",
-              "type": "danger"
-            },
-            {
-              "name": "导出数据",
-              "type": "default"
+              "type": "danger",
+              "desc": "删除勾选行"
             }
           ],
           "columns": [
             {
-              "title": "使用状态",
-              "field": "使用状态",
-              "name": "使用状态",
-              "width": 90,
-              "slot": "tag"
-            },
-            {
-              "title": "谱图流水",
-              "field": "谱图流水",
-              "name": "谱图流水",
-              "width": 140
+              "title": "谱图编号",
+              "field": "谱图编号",
+              "name": "谱图编号",
+              "width": 130
             },
             {
               "title": "文件名称",
               "field": "文件名称",
               "name": "文件名称",
-              "width": 180
+              "width": 220
             },
             {
               "title": "检验类型",
               "field": "检验类型",
               "name": "检验类型",
-              "width": 100
+              "width": 110
             },
             {
               "title": "物料编码",
               "field": "物料编码",
               "name": "物料编码",
-              "width": 130
+              "width": 140
             },
             {
               "title": "物料名称",
               "field": "物料名称",
               "name": "物料名称",
-              "width": 150
-            },
-            {
-              "title": "物料规格",
-              "field": "物料规格",
-              "name": "物料规格",
-              "width": 110
-            },
-            {
-              "title": "物料种类",
-              "field": "物料种类",
-              "name": "物料种类",
-              "width": 110
-            },
-            {
-              "title": "采样点",
-              "field": "采样点",
-              "name": "采样点",
-              "width": 150
-            },
-            {
-              "title": "漂移规则名称",
-              "field": "漂移规则名称",
-              "name": "漂移规则名称",
-              "width": 140
-            },
-            {
-              "title": "色谱柱编号",
-              "field": "色谱柱编号",
-              "name": "色谱柱编号",
-              "width": 100
+              "width": 160
             },
             {
               "title": "色谱柱型号",
               "field": "色谱柱型号",
               "name": "色谱柱型号",
-              "width": 150
+              "width": 130
             },
             {
-              "title": "仪器编号",
-              "field": "仪器编号",
-              "name": "仪器编号",
-              "width": 110
-            },
-            {
-              "title": "仪器名称",
-              "field": "仪器名称",
-              "name": "仪器名称",
+              "title": "色谱柱编号",
+              "field": "色谱柱编号",
+              "name": "色谱柱编号",
               "width": 120
+            },
+            {
+              "title": "漂移规格名称",
+              "field": "漂移规格名称",
+              "name": "漂移规格名称",
+              "width": 170
             },
             {
               "title": "批号",
@@ -133653,312 +133166,17 @@ window.WMS_PAGE_CONFIGS = {
               "width": 130
             },
             {
-              "title": "样品编号",
-              "field": "样品编号",
-              "name": "样品编号",
-              "width": 120
-            },
-            {
-              "title": "杂质个数",
-              "field": "杂质个数",
-              "name": "杂质个数",
-              "width": 90
-            },
-            {
-              "title": "新杂个数",
-              "field": "新杂个数",
-              "name": "新杂个数",
-              "width": 90
-            },
-            {
-              "title": "是否存在新杂",
-              "field": "是否存在新杂",
-              "name": "是否存在新杂",
-              "width": 110
-            },
-            {
-              "title": "杂质偏差结论",
-              "field": "杂质偏差结论",
-              "name": "杂质偏差结论",
-              "width": 110,
-              "slot": "tag"
-            },
-            {
-              "title": "异常描述",
-              "field": "异常描述",
-              "name": "异常描述",
-              "width": 100,
-              "slot": "spi_abn"
-            },
-            {
-              "title": "备注",
-              "field": "备注",
-              "name": "备注",
-              "width": 140
-            },
-            {
-              "title": "创建时间",
-              "field": "创建时间",
-              "name": "创建时间",
-              "width": 160
-            },
-            {
-              "title": "创建人",
-              "field": "创建人",
-              "name": "创建人",
-              "width": 90
-            },
-            {
-              "title": "操作",
-              "field": "_actions",
-              "name": "操作",
-              "width": 120,
-              "slot": "row_actions"
-            }
-          ],
-          "rowOps": [
-            {
-              "name": "详情"
-            },
-            {
-              "name": "编辑"
-            }
-          ]
-        },
-        {
-          "name": "tab-2",
-          "label": "LC识别",
-          "queryFields": [
-            {
-              "name": "谱图流水",
-              "type": "input"
-            },
-            {
-              "name": "文件名称",
-              "type": "input"
-            },
-            {
-              "name": "物料名称",
-              "type": "input"
-            },
-            {
-              "name": "批号",
-              "type": "input"
-            },
-            {
-              "name": "检验类型",
-              "type": "select",
-              "options": [
-                "采购来料检",
-                "生产过程检",
-                "生产物料检",
-                "研发检"
-              ]
-            },
-            {
-              "name": "漂移规则名称",
-              "type": "input"
-            },
-            {
-              "name": "色谱柱编号",
-              "type": "input"
-            },
-            {
-              "name": "是否存在新杂",
-              "type": "select",
-              "options": [
-                "是",
-                "否"
-              ]
-            },
-            {
-              "name": "杂质偏差结论",
-              "type": "select",
-              "options": [
-                "正常",
-                "异常"
-              ]
-            },
-            {
-              "name": "使用状态",
-              "type": "select",
-              "options": [
-                "启用",
-                "禁用"
-              ]
-            }
-          ],
-          "queryDefault": [
-            "谱图流水",
-            "文件名称",
-            "物料名称",
-            "批号"
-          ],
-          "queryMore": [
-            "检验类型",
-            "漂移规则名称",
-            "色谱柱编号",
-            "是否存在新杂",
-            "杂质偏差结论",
-            "使用状态"
-          ],
-          "toolbar": [
-            {
-              "name": "新增",
-              "type": "primary"
-            },
-            {
-              "name": "批量启用",
-              "type": "default"
-            },
-            {
-              "name": "批量禁用",
-              "type": "default"
-            },
-            {
-              "name": "批量删除",
-              "type": "danger"
-            },
-            {
-              "name": "导出数据",
-              "type": "default"
-            }
-          ],
-          "columns": [
-            {
-              "title": "使用状态",
-              "field": "使用状态",
-              "name": "使用状态",
-              "width": 90,
-              "slot": "tag"
-            },
-            {
-              "title": "谱图流水",
-              "field": "谱图流水",
-              "name": "谱图流水",
-              "width": 140
-            },
-            {
-              "title": "文件名称",
-              "field": "文件名称",
-              "name": "文件名称",
-              "width": 180
-            },
-            {
-              "title": "检验类型",
-              "field": "检验类型",
-              "name": "检验类型",
-              "width": 100
-            },
-            {
-              "title": "物料编码",
-              "field": "物料编码",
-              "name": "物料编码",
-              "width": 130
-            },
-            {
-              "title": "物料名称",
-              "field": "物料名称",
-              "name": "物料名称",
-              "width": 150
-            },
-            {
-              "title": "物料规格",
-              "field": "物料规格",
-              "name": "物料规格",
-              "width": 110
-            },
-            {
-              "title": "物料种类",
-              "field": "物料种类",
-              "name": "物料种类",
-              "width": 110
-            },
-            {
-              "title": "采样点",
-              "field": "采样点",
-              "name": "采样点",
-              "width": 150
-            },
-            {
-              "title": "漂移规则名称",
-              "field": "漂移规则名称",
-              "name": "漂移规则名称",
-              "width": 140
-            },
-            {
-              "title": "色谱柱编号",
-              "field": "色谱柱编号",
-              "name": "色谱柱编号",
-              "width": 100
-            },
-            {
-              "title": "色谱柱型号",
-              "field": "色谱柱型号",
-              "name": "色谱柱型号",
-              "width": 150
-            },
-            {
               "title": "仪器编号",
               "field": "仪器编号",
               "name": "仪器编号",
               "width": 110
             },
             {
-              "title": "仪器名称",
-              "field": "仪器名称",
-              "name": "仪器名称",
-              "width": 120
-            },
-            {
-              "title": "批号",
-              "field": "批号",
-              "name": "批号",
-              "width": 130
-            },
-            {
-              "title": "样品编号",
-              "field": "样品编号",
-              "name": "样品编号",
-              "width": 120
-            },
-            {
-              "title": "杂质个数",
-              "field": "杂质个数",
-              "name": "杂质个数",
-              "width": 90
-            },
-            {
-              "title": "新杂个数",
-              "field": "新杂个数",
-              "name": "新杂个数",
-              "width": 90
-            },
-            {
-              "title": "是否存在新杂",
-              "field": "是否存在新杂",
-              "name": "是否存在新杂",
-              "width": 110
-            },
-            {
-              "title": "杂质偏差结论",
-              "field": "杂质偏差结论",
-              "name": "杂质偏差结论",
-              "width": 110,
-              "slot": "tag"
-            },
-            {
-              "title": "异常描述",
-              "field": "异常描述",
-              "name": "异常描述",
+              "title": "识别状态",
+              "field": "识别状态",
+              "name": "识别状态",
               "width": 100,
-              "slot": "spi_abn"
-            },
-            {
-              "title": "备注",
-              "field": "备注",
-              "name": "备注",
-              "width": 140
+              "slot": "tag"
             },
             {
               "title": "创建时间",
@@ -133967,55 +133185,158 @@ window.WMS_PAGE_CONFIGS = {
               "width": 160
             },
             {
-              "title": "创建人",
-              "field": "创建人",
-              "name": "创建人",
-              "width": 90
-            },
-            {
               "title": "操作",
               "field": "_actions",
               "name": "操作",
-              "width": 120,
+              "width": 200,
               "slot": "row_actions"
             }
           ],
           "rowOps": [
             {
-              "name": "详情"
+              "name": "详情",
+              "desc": "查看识别结果"
             },
             {
-              "name": "编辑"
+              "name": "编辑",
+              "desc": "编辑识别任务与联动字段"
+            },
+            {
+              "name": "重新识别",
+              "desc": "重新识别并计算"
+            },
+            {
+              "name": "删除",
+              "desc": "删除当前记录"
             }
           ]
         }
       ],
-      "formFields": [],
+      "formFields": [
+        {
+          "name": "检验类型",
+          "type": "select",
+          "required": true,
+          "options": [
+            "采购来料检",
+            "生产过程检",
+            "生产物料检",
+            "研发检"
+          ],
+          "ctrl": "单选，选项取自报检单页签类型"
+        },
+        {
+          "name": "源文件",
+          "type": "picker",
+          "required": true,
+          "placeholder": "点击选择源文件",
+          "ctrl": "弹窗选择图谱文件台账（仅未使用）；未选检验类型时不可选"
+        },
+        {
+          "name": "文件名称",
+          "type": "input",
+          "readonly": true,
+          "ctrl": "由源文件自动带出，不可修改"
+        },
+        {
+          "name": "规则分类",
+          "type": "input",
+          "readonly": true,
+          "placeholder": "未匹配到规则方案",
+          "ctrl": "按当前源文件匹配到的规则方案自动带出，全场景只读且不可清空"
+        },
+        {
+          "name": "物料编码",
+          "type": "picker",
+          "required": true,
+          "placeholder": "选择物料编码",
+          "ctrl": "源文件带出并锁定；源文件无物料信息时可手动选择"
+        },
+        {
+          "name": "物料名称",
+          "type": "input",
+          "readonly": true,
+          "ctrl": "按物料编码查询物料列表带出，不可编辑"
+        },
+        {
+          "name": "物料规格",
+          "type": "input",
+          "readonly": true,
+          "ctrl": "按物料编码查询物料列表带出，不可编辑"
+        },
+        {
+          "name": "物料种类",
+          "type": "input",
+          "readonly": true,
+          "ctrl": "按物料编码查询物料列表带出，不可编辑"
+        },
+        {
+          "name": "漂移规格名称",
+          "type": "select",
+          "filterable": true,
+          "placeholder": "选择漂移规格",
+          "ctrl": "按物料编码 + 色谱柱型号匹配漂移规则带出，多条取最新，可手动修改"
+        },
+        {
+          "name": "色谱柱型号",
+          "type": "select",
+          "required": true,
+          "filterable": true,
+          "placeholder": "选择色谱柱型号",
+          "ctrl": "取色谱柱台账型号字典"
+        },
+        {
+          "name": "色谱柱编号",
+          "type": "select",
+          "required": true,
+          "filterable": true,
+          "placeholder": "请先选择色谱柱型号",
+          "ctrl": "按色谱柱型号过滤色谱柱台账（排除报废）后单选"
+        },
+        {
+          "name": "仪器编号",
+          "type": "input",
+          "required": true,
+          "readonly": true,
+          "ctrl": "由源文件自动带出，不可修改"
+        },
+        {
+          "name": "仪器名称",
+          "type": "input",
+          "readonly": true,
+          "ctrl": "按仪器编号查询仪器台账带出，不可修改"
+        },
+        {
+          "name": "批号",
+          "type": "input",
+          "required": true,
+          "readonly": true,
+          "ctrl": "由源文件自动带出，不可修改"
+        },
+        {
+          "name": "备注",
+          "type": "textarea"
+        }
+      ],
       "detailFields": [
-        "使用状态",
-        "谱图流水",
+        "谱图编号",
         "文件名称",
         "检验类型",
+        "规则分类",
         "物料编码",
         "物料名称",
         "物料规格",
         "物料种类",
-        "采样点",
-        "漂移规则名称",
-        "色谱柱编号",
+        "漂移规格名称",
         "色谱柱型号",
+        "色谱柱编号",
         "仪器编号",
         "仪器名称",
         "批号",
-        "样品编号",
-        "杂质个数",
-        "新杂个数",
-        "是否存在新杂",
-        "杂质偏差结论",
-        "异常描述",
+        "识别状态",
         "备注",
-        "创建时间",
-        "创建人"
+        "创建人",
+        "创建时间"
       ],
       "hasEdit": true,
       "hasDetail": true,
@@ -134026,11 +133347,13 @@ window.WMS_PAGE_CONFIGS = {
       "formFullscreen": true,
       "formDialogWidth": "100%",
       "detailFullscreen": true,
-      "detailHeaderAsTable": true
+      "detailHeaderAsTable": true,
+      "formFullscreenOnAdd": true,
+      "formFullscreenOnEdit": true
     },
     {
       "id": "np-0208-04",
-      "title": "数据台账",
+      "title": "GC台账",
       "groups": [
         "质量管理",
         "色谱漂移"
@@ -134038,42 +133361,37 @@ window.WMS_PAGE_CONFIGS = {
       "breadcrumb": [
         "质量管理",
         "色谱漂移",
-        "数据台账"
+        "GC台账"
       ],
+      "layout": "dict-split",
+      "treeTitle": "物料编码/色谱柱型号",
       "tabs": [
         {
-          "name": "tab-1",
-          "label": "GC台账"
+          "name": "tab-pi",
+          "label": "采购来料检"
         },
         {
-          "name": "tab-2",
-          "label": "LC台账"
+          "name": "tab-pp",
+          "label": "生产过程检"
+        },
+        {
+          "name": "tab-pm",
+          "label": "生产物料检"
+        },
+        {
+          "name": "tab-rd",
+          "label": "研发检"
         }
       ],
       "tabViews": [
         {
-          "name": "tab-1",
-          "label": "GC台账",
+          "name": "tab-pi",
+          "label": "采购来料检",
           "queryFields": [
             {
               "name": "批号",
-              "type": "input"
-            },
-            {
-              "name": "谱图流水",
-              "type": "input"
-            },
-            {
-              "name": "样品编号",
-              "type": "input"
-            },
-            {
-              "name": "杂质偏差结论",
-              "type": "select",
-              "options": [
-                "正常",
-                "异常"
-              ]
+              "type": "input",
+              "placeholder": "模糊"
             },
             {
               "name": "是否存在新杂",
@@ -134084,177 +133402,89 @@ window.WMS_PAGE_CONFIGS = {
               ]
             },
             {
-              "name": "色谱柱编号",
-              "type": "input"
-            },
-            {
-              "name": "仪器编号",
-              "type": "input"
-            },
-            {
-              "name": "创建时间",
-              "type": "daterange"
+              "name": "杂质偏差结论",
+              "label": "状态",
+              "type": "select",
+              "options": [
+                "正常",
+                "异常"
+              ]
             }
           ],
           "queryDefault": [
             "批号",
-            "谱图流水",
-            "样品编号",
+            "是否存在新杂",
             "杂质偏差结论"
           ],
-          "queryMore": [
-            "是否存在新杂",
-            "色谱柱编号",
-            "仪器编号",
-            "创建时间"
-          ],
+          "queryMore": [],
           "toolbar": [
             {
               "name": "关联查询",
-              "type": "primary"
+              "type": "default",
+              "desc": "勾选数据后，跳转至谱图识别并按批号过滤"
             },
             {
               "name": "导出数据",
-              "type": "default"
+              "type": "default",
+              "desc": "导出台账数据"
             }
           ],
           "columns": [
             {
-              "title": "杂质个数",
-              "field": "杂质个数",
-              "name": "杂质个数"
-            },
-            {
-              "title": "新杂个数",
-              "field": "新杂个数",
-              "name": "新杂个数"
-            },
-            {
-              "title": "是否存在新杂",
-              "field": "是否存在新杂",
-              "name": "是否存在新杂"
-            },
-            {
-              "title": "杂质偏差结论",
-              "field": "杂质偏差结论",
-              "name": "杂质偏差结论"
-            },
-            {
-              "title": "异常描述",
-              "field": "异常描述",
-              "name": "异常描述"
-            },
-            {
-              "title": "谱图流水",
-              "field": "谱图流水",
-              "name": "谱图流水"
-            },
-            {
-              "title": "检验类型",
-              "field": "检验类型",
-              "name": "检验类型"
-            },
-            {
-              "title": "物料编码",
-              "field": "物料编码",
-              "name": "物料编码"
-            },
-            {
-              "title": "物料名称",
-              "field": "物料名称",
-              "name": "物料名称"
-            },
-            {
-              "title": "物料规格",
-              "field": "物料规格",
-              "name": "物料规格"
-            },
-            {
-              "title": "物料种类",
-              "field": "物料种类",
-              "name": "物料种类"
-            },
-            {
-              "title": "采样点",
-              "field": "采样点",
-              "name": "采样点"
-            },
-            {
-              "title": "漂移规则名称",
-              "field": "漂移规则名称",
-              "name": "漂移规则名称"
-            },
-            {
-              "title": "色谱柱编号",
-              "field": "色谱柱编号",
-              "name": "色谱柱编号"
-            },
-            {
-              "title": "色谱柱型号",
-              "field": "色谱柱型号",
-              "name": "色谱柱型号"
-            },
-            {
-              "title": "仪器编号",
-              "field": "仪器编号",
-              "name": "仪器编号"
-            },
-            {
-              "title": "仪器名称",
-              "field": "仪器名称",
-              "name": "仪器名称"
-            },
-            {
-              "title": "批号",
               "field": "批号",
-              "name": "批号"
+              "title": "批号",
+              "width": 150,
+              "fixed": "left"
             },
             {
-              "title": "样品编号",
-              "field": "样品编号",
-              "name": "样品编号"
+              "field": "杂质个数",
+              "title": "杂质个数",
+              "width": 90
             },
             {
-              "title": "备注",
-              "field": "备注",
-              "name": "备注"
+              "field": "新杂个数",
+              "title": "新杂个数",
+              "width": 90
             },
             {
-              "title": "创建时间",
-              "field": "创建时间",
-              "name": "创建时间"
+              "field": "是否存在新杂",
+              "title": "是否存在新杂",
+              "width": 110,
+              "slot": "tag"
             },
             {
-              "title": "创建人",
-              "field": "创建人",
-              "name": "创建人"
+              "field": "杂质偏差结论",
+              "title": "杂质偏差结论",
+              "width": 120,
+              "slot": "tag"
+            },
+            {
+              "field": "_actions",
+              "title": "操作",
+              "width": 130,
+              "fixed": "right",
+              "slot": "row_actions"
             }
           ],
-          "rowOps": []
+          "rowOps": [
+            {
+              "name": "编辑",
+              "desc": "编辑台账数据"
+            },
+            {
+              "name": "删除",
+              "desc": "删除台账数据"
+            }
+          ]
         },
         {
-          "name": "tab-2",
-          "label": "LC台账",
+          "name": "tab-pp",
+          "label": "生产过程检",
           "queryFields": [
             {
               "name": "批号",
-              "type": "input"
-            },
-            {
-              "name": "谱图流水",
-              "type": "input"
-            },
-            {
-              "name": "样品编号",
-              "type": "input"
-            },
-            {
-              "name": "杂质偏差结论",
-              "type": "select",
-              "options": [
-                "正常",
-                "异常"
-              ]
+              "type": "input",
+              "placeholder": "模糊"
             },
             {
               "name": "是否存在新杂",
@@ -134265,153 +133495,266 @@ window.WMS_PAGE_CONFIGS = {
               ]
             },
             {
-              "name": "色谱柱编号",
-              "type": "input"
-            },
-            {
-              "name": "仪器编号",
-              "type": "input"
-            },
-            {
-              "name": "创建时间",
-              "type": "daterange"
+              "name": "杂质偏差结论",
+              "label": "状态",
+              "type": "select",
+              "options": [
+                "正常",
+                "异常"
+              ]
             }
           ],
           "queryDefault": [
             "批号",
-            "谱图流水",
-            "样品编号",
+            "是否存在新杂",
             "杂质偏差结论"
           ],
-          "queryMore": [
-            "是否存在新杂",
-            "色谱柱编号",
-            "仪器编号",
-            "创建时间"
-          ],
+          "queryMore": [],
           "toolbar": [
             {
               "name": "关联查询",
-              "type": "primary"
+              "type": "default",
+              "desc": "勾选数据后，跳转至谱图识别并按批号过滤"
             },
             {
               "name": "导出数据",
-              "type": "default"
+              "type": "default",
+              "desc": "导出台账数据"
             }
           ],
           "columns": [
             {
-              "title": "杂质个数",
-              "field": "杂质个数",
-              "name": "杂质个数"
-            },
-            {
-              "title": "新杂个数",
-              "field": "新杂个数",
-              "name": "新杂个数"
-            },
-            {
-              "title": "是否存在新杂",
-              "field": "是否存在新杂",
-              "name": "是否存在新杂"
-            },
-            {
-              "title": "杂质偏差结论",
-              "field": "杂质偏差结论",
-              "name": "杂质偏差结论"
-            },
-            {
-              "title": "异常描述",
-              "field": "异常描述",
-              "name": "异常描述"
-            },
-            {
-              "title": "谱图流水",
-              "field": "谱图流水",
-              "name": "谱图流水"
-            },
-            {
-              "title": "检验类型",
-              "field": "检验类型",
-              "name": "检验类型"
-            },
-            {
-              "title": "物料编码",
-              "field": "物料编码",
-              "name": "物料编码"
-            },
-            {
-              "title": "物料名称",
-              "field": "物料名称",
-              "name": "物料名称"
-            },
-            {
-              "title": "物料规格",
-              "field": "物料规格",
-              "name": "物料规格"
-            },
-            {
-              "title": "物料种类",
-              "field": "物料种类",
-              "name": "物料种类"
-            },
-            {
-              "title": "采样点",
-              "field": "采样点",
-              "name": "采样点"
-            },
-            {
-              "title": "漂移规则名称",
-              "field": "漂移规则名称",
-              "name": "漂移规则名称"
-            },
-            {
-              "title": "色谱柱编号",
-              "field": "色谱柱编号",
-              "name": "色谱柱编号"
-            },
-            {
-              "title": "色谱柱型号",
-              "field": "色谱柱型号",
-              "name": "色谱柱型号"
-            },
-            {
-              "title": "仪器编号",
-              "field": "仪器编号",
-              "name": "仪器编号"
-            },
-            {
-              "title": "仪器名称",
-              "field": "仪器名称",
-              "name": "仪器名称"
-            },
-            {
-              "title": "批号",
               "field": "批号",
-              "name": "批号"
+              "title": "批号",
+              "width": 150,
+              "fixed": "left"
             },
             {
-              "title": "样品编号",
-              "field": "样品编号",
-              "name": "样品编号"
+              "field": "杂质个数",
+              "title": "杂质个数",
+              "width": 90
             },
             {
-              "title": "备注",
-              "field": "备注",
-              "name": "备注"
+              "field": "新杂个数",
+              "title": "新杂个数",
+              "width": 90
             },
             {
-              "title": "创建时间",
-              "field": "创建时间",
-              "name": "创建时间"
+              "field": "是否存在新杂",
+              "title": "是否存在新杂",
+              "width": 110,
+              "slot": "tag"
             },
             {
-              "title": "创建人",
-              "field": "创建人",
-              "name": "创建人"
+              "field": "杂质偏差结论",
+              "title": "杂质偏差结论",
+              "width": 120,
+              "slot": "tag"
+            },
+            {
+              "field": "_actions",
+              "title": "操作",
+              "width": 130,
+              "fixed": "right",
+              "slot": "row_actions"
             }
           ],
-          "rowOps": []
+          "rowOps": [
+            {
+              "name": "编辑",
+              "desc": "编辑台账数据"
+            },
+            {
+              "name": "删除",
+              "desc": "删除台账数据"
+            }
+          ]
+        },
+        {
+          "name": "tab-pm",
+          "label": "生产物料检",
+          "queryFields": [
+            {
+              "name": "批号",
+              "type": "input",
+              "placeholder": "模糊"
+            },
+            {
+              "name": "是否存在新杂",
+              "type": "select",
+              "options": [
+                "是",
+                "否"
+              ]
+            },
+            {
+              "name": "杂质偏差结论",
+              "label": "状态",
+              "type": "select",
+              "options": [
+                "正常",
+                "异常"
+              ]
+            }
+          ],
+          "queryDefault": [
+            "批号",
+            "是否存在新杂",
+            "杂质偏差结论"
+          ],
+          "queryMore": [],
+          "toolbar": [
+            {
+              "name": "关联查询",
+              "type": "default",
+              "desc": "勾选数据后，跳转至谱图识别并按批号过滤"
+            },
+            {
+              "name": "导出数据",
+              "type": "default",
+              "desc": "导出台账数据"
+            }
+          ],
+          "columns": [
+            {
+              "field": "批号",
+              "title": "批号",
+              "width": 150,
+              "fixed": "left"
+            },
+            {
+              "field": "杂质个数",
+              "title": "杂质个数",
+              "width": 90
+            },
+            {
+              "field": "新杂个数",
+              "title": "新杂个数",
+              "width": 90
+            },
+            {
+              "field": "是否存在新杂",
+              "title": "是否存在新杂",
+              "width": 110,
+              "slot": "tag"
+            },
+            {
+              "field": "杂质偏差结论",
+              "title": "杂质偏差结论",
+              "width": 120,
+              "slot": "tag"
+            },
+            {
+              "field": "_actions",
+              "title": "操作",
+              "width": 130,
+              "fixed": "right",
+              "slot": "row_actions"
+            }
+          ],
+          "rowOps": [
+            {
+              "name": "编辑",
+              "desc": "编辑台账数据"
+            },
+            {
+              "name": "删除",
+              "desc": "删除台账数据"
+            }
+          ]
+        },
+        {
+          "name": "tab-rd",
+          "label": "研发检",
+          "queryFields": [
+            {
+              "name": "批号",
+              "type": "input",
+              "placeholder": "模糊"
+            },
+            {
+              "name": "是否存在新杂",
+              "type": "select",
+              "options": [
+                "是",
+                "否"
+              ]
+            },
+            {
+              "name": "杂质偏差结论",
+              "label": "状态",
+              "type": "select",
+              "options": [
+                "正常",
+                "异常"
+              ]
+            }
+          ],
+          "queryDefault": [
+            "批号",
+            "是否存在新杂",
+            "杂质偏差结论"
+          ],
+          "queryMore": [],
+          "toolbar": [
+            {
+              "name": "关联查询",
+              "type": "default",
+              "desc": "勾选数据后，跳转至谱图识别并按批号过滤"
+            },
+            {
+              "name": "导出数据",
+              "type": "default",
+              "desc": "导出台账数据"
+            }
+          ],
+          "columns": [
+            {
+              "field": "批号",
+              "title": "批号",
+              "width": 150,
+              "fixed": "left"
+            },
+            {
+              "field": "杂质个数",
+              "title": "杂质个数",
+              "width": 90
+            },
+            {
+              "field": "新杂个数",
+              "title": "新杂个数",
+              "width": 90
+            },
+            {
+              "field": "是否存在新杂",
+              "title": "是否存在新杂",
+              "width": 110,
+              "slot": "tag"
+            },
+            {
+              "field": "杂质偏差结论",
+              "title": "杂质偏差结论",
+              "width": 120,
+              "slot": "tag"
+            },
+            {
+              "field": "_actions",
+              "title": "操作",
+              "width": 130,
+              "fixed": "right",
+              "slot": "row_actions"
+            }
+          ],
+          "rowOps": [
+            {
+              "name": "编辑",
+              "desc": "编辑台账数据"
+            },
+            {
+              "name": "删除",
+              "desc": "删除台账数据"
+            }
+          ]
         }
       ],
       "formFields": [],
@@ -134421,12 +133764,11 @@ window.WMS_PAGE_CONFIGS = {
       "stub": false,
       "formFlat": true,
       "formLineFields": [],
-      "formLineActions": [],
-      "layout": "ledger-split"
+      "formLineActions": []
     },
     {
       "id": "np-0208-05",
-      "title": "数据比对",
+      "title": "LC台账",
       "groups": [
         "质量管理",
         "色谱漂移"
@@ -134434,284 +133776,400 @@ window.WMS_PAGE_CONFIGS = {
       "breadcrumb": [
         "质量管理",
         "色谱漂移",
-        "数据比对"
+        "LC台账"
       ],
+      "layout": "dict-split",
+      "treeTitle": "物料编码/色谱柱型号",
       "tabs": [
         {
-          "name": "tab-1",
-          "label": "GC比对"
+          "name": "tab-pi",
+          "label": "采购来料检"
         },
         {
-          "name": "tab-2",
-          "label": "LC比对"
+          "name": "tab-pp",
+          "label": "生产过程检"
+        },
+        {
+          "name": "tab-pm",
+          "label": "生产物料检"
+        },
+        {
+          "name": "tab-rd",
+          "label": "研发检"
         }
       ],
       "tabViews": [
         {
-          "name": "tab-1",
-          "label": "GC比对",
-          "queryFields": [],
+          "name": "tab-pi",
+          "label": "采购来料检",
+          "queryFields": [
+            {
+              "name": "批号",
+              "type": "input",
+              "placeholder": "模糊"
+            },
+            {
+              "name": "是否存在新杂",
+              "type": "select",
+              "options": [
+                "是",
+                "否"
+              ]
+            },
+            {
+              "name": "杂质偏差结论",
+              "label": "状态",
+              "type": "select",
+              "options": [
+                "正常",
+                "异常"
+              ]
+            }
+          ],
+          "queryDefault": [
+            "批号",
+            "是否存在新杂",
+            "杂质偏差结论"
+          ],
+          "queryMore": [],
           "toolbar": [
             {
               "name": "关联查询",
-              "type": "primary"
+              "type": "default",
+              "desc": "勾选数据后，跳转至谱图识别并按批号过滤"
             },
             {
               "name": "导出数据",
-              "type": "default"
+              "type": "default",
+              "desc": "导出台账数据"
             }
           ],
           "columns": [
             {
-              "title": "典型保留时间",
               "field": "批号",
-              "name": "典型保留时间"
-            },
-            {
-              "title": "杂质个数",
-              "field": "杂质个数",
-              "name": "杂质个数"
-            },
-            {
-              "title": "新杂个数",
-              "field": "新杂个数",
-              "name": "新杂个数"
-            },
-            {
-              "title": "是否存在新杂",
-              "field": "是否存在新杂",
-              "name": "是否存在新杂"
-            },
-            {
-              "title": "杂质偏差结论",
-              "field": "杂质偏差结论",
-              "name": "杂质偏差结论"
-            },
-            {
-              "title": "异常描述",
-              "field": "异常描述",
-              "name": "异常描述"
-            },
-            {
-              "title": "谱图流水",
-              "field": "谱图流水",
-              "name": "谱图流水"
-            },
-            {
-              "title": "检验类型",
-              "field": "检验类型",
-              "name": "检验类型"
-            },
-            {
-              "title": "物料编码",
-              "field": "物料编码",
-              "name": "物料编码"
-            },
-            {
-              "title": "物料名称",
-              "field": "物料名称",
-              "name": "物料名称"
-            },
-            {
-              "title": "物料规格",
-              "field": "物料规格",
-              "name": "物料规格"
-            },
-            {
-              "title": "物料种类",
-              "field": "物料种类",
-              "name": "物料种类"
-            },
-            {
-              "title": "采样点",
-              "field": "采样点",
-              "name": "采样点"
-            },
-            {
-              "title": "漂移规则名称",
-              "field": "漂移规则名称",
-              "name": "漂移规则名称"
-            },
-            {
-              "title": "色谱柱编号",
-              "field": "色谱柱编号",
-              "name": "色谱柱编号"
-            },
-            {
-              "title": "色谱柱型号",
-              "field": "色谱柱型号",
-              "name": "色谱柱型号"
-            },
-            {
-              "title": "仪器编号",
-              "field": "仪器编号",
-              "name": "仪器编号"
-            },
-            {
-              "title": "仪器名称",
-              "field": "仪器名称",
-              "name": "仪器名称"
-            },
-            {
               "title": "批号",
-              "field": "批号",
-              "name": "批号"
+              "width": 150,
+              "fixed": "left"
             },
             {
-              "title": "样品编号",
-              "field": "样品编号",
-              "name": "样品编号"
+              "field": "杂质个数",
+              "title": "杂质个数",
+              "width": 90
             },
             {
-              "title": "备注",
-              "field": "备注",
-              "name": "备注"
+              "field": "新杂个数",
+              "title": "新杂个数",
+              "width": 90
             },
             {
-              "title": "创建时间",
-              "field": "创建时间",
-              "name": "创建时间"
+              "field": "是否存在新杂",
+              "title": "是否存在新杂",
+              "width": 110,
+              "slot": "tag"
             },
             {
-              "title": "创建人",
-              "field": "创建人",
-              "name": "创建人"
+              "field": "杂质偏差结论",
+              "title": "杂质偏差结论",
+              "width": 120,
+              "slot": "tag"
+            },
+            {
+              "field": "_actions",
+              "title": "操作",
+              "width": 130,
+              "fixed": "right",
+              "slot": "row_actions"
             }
           ],
-          "rowOps": []
+          "rowOps": [
+            {
+              "name": "编辑",
+              "desc": "编辑台账数据"
+            },
+            {
+              "name": "删除",
+              "desc": "删除台账数据"
+            }
+          ]
         },
         {
-          "name": "tab-2",
-          "label": "LC比对",
-          "queryFields": [],
+          "name": "tab-pp",
+          "label": "生产过程检",
+          "queryFields": [
+            {
+              "name": "批号",
+              "type": "input",
+              "placeholder": "模糊"
+            },
+            {
+              "name": "是否存在新杂",
+              "type": "select",
+              "options": [
+                "是",
+                "否"
+              ]
+            },
+            {
+              "name": "杂质偏差结论",
+              "label": "状态",
+              "type": "select",
+              "options": [
+                "正常",
+                "异常"
+              ]
+            }
+          ],
+          "queryDefault": [
+            "批号",
+            "是否存在新杂",
+            "杂质偏差结论"
+          ],
+          "queryMore": [],
           "toolbar": [
             {
               "name": "关联查询",
-              "type": "primary"
+              "type": "default",
+              "desc": "勾选数据后，跳转至谱图识别并按批号过滤"
             },
             {
               "name": "导出数据",
-              "type": "default"
+              "type": "default",
+              "desc": "导出台账数据"
             }
           ],
           "columns": [
             {
-              "title": "典型保留时间",
               "field": "批号",
-              "name": "典型保留时间"
-            },
-            {
-              "title": "杂质个数",
-              "field": "杂质个数",
-              "name": "杂质个数"
-            },
-            {
-              "title": "新杂个数",
-              "field": "新杂个数",
-              "name": "新杂个数"
-            },
-            {
-              "title": "是否存在新杂",
-              "field": "是否存在新杂",
-              "name": "是否存在新杂"
-            },
-            {
-              "title": "杂质偏差结论",
-              "field": "杂质偏差结论",
-              "name": "杂质偏差结论"
-            },
-            {
-              "title": "异常描述",
-              "field": "异常描述",
-              "name": "异常描述"
-            },
-            {
-              "title": "谱图流水",
-              "field": "谱图流水",
-              "name": "谱图流水"
-            },
-            {
-              "title": "检验类型",
-              "field": "检验类型",
-              "name": "检验类型"
-            },
-            {
-              "title": "物料编码",
-              "field": "物料编码",
-              "name": "物料编码"
-            },
-            {
-              "title": "物料名称",
-              "field": "物料名称",
-              "name": "物料名称"
-            },
-            {
-              "title": "物料规格",
-              "field": "物料规格",
-              "name": "物料规格"
-            },
-            {
-              "title": "物料种类",
-              "field": "物料种类",
-              "name": "物料种类"
-            },
-            {
-              "title": "采样点",
-              "field": "采样点",
-              "name": "采样点"
-            },
-            {
-              "title": "漂移规则名称",
-              "field": "漂移规则名称",
-              "name": "漂移规则名称"
-            },
-            {
-              "title": "色谱柱编号",
-              "field": "色谱柱编号",
-              "name": "色谱柱编号"
-            },
-            {
-              "title": "色谱柱型号",
-              "field": "色谱柱型号",
-              "name": "色谱柱型号"
-            },
-            {
-              "title": "仪器编号",
-              "field": "仪器编号",
-              "name": "仪器编号"
-            },
-            {
-              "title": "仪器名称",
-              "field": "仪器名称",
-              "name": "仪器名称"
-            },
-            {
               "title": "批号",
-              "field": "批号",
-              "name": "批号"
+              "width": 150,
+              "fixed": "left"
             },
             {
-              "title": "样品编号",
-              "field": "样品编号",
-              "name": "样品编号"
+              "field": "杂质个数",
+              "title": "杂质个数",
+              "width": 90
             },
             {
-              "title": "备注",
-              "field": "备注",
-              "name": "备注"
+              "field": "新杂个数",
+              "title": "新杂个数",
+              "width": 90
             },
             {
-              "title": "创建时间",
-              "field": "创建时间",
-              "name": "创建时间"
+              "field": "是否存在新杂",
+              "title": "是否存在新杂",
+              "width": 110,
+              "slot": "tag"
             },
             {
-              "title": "创建人",
-              "field": "创建人",
-              "name": "创建人"
+              "field": "杂质偏差结论",
+              "title": "杂质偏差结论",
+              "width": 120,
+              "slot": "tag"
+            },
+            {
+              "field": "_actions",
+              "title": "操作",
+              "width": 130,
+              "fixed": "right",
+              "slot": "row_actions"
             }
           ],
-          "rowOps": []
+          "rowOps": [
+            {
+              "name": "编辑",
+              "desc": "编辑台账数据"
+            },
+            {
+              "name": "删除",
+              "desc": "删除台账数据"
+            }
+          ]
+        },
+        {
+          "name": "tab-pm",
+          "label": "生产物料检",
+          "queryFields": [
+            {
+              "name": "批号",
+              "type": "input",
+              "placeholder": "模糊"
+            },
+            {
+              "name": "是否存在新杂",
+              "type": "select",
+              "options": [
+                "是",
+                "否"
+              ]
+            },
+            {
+              "name": "杂质偏差结论",
+              "label": "状态",
+              "type": "select",
+              "options": [
+                "正常",
+                "异常"
+              ]
+            }
+          ],
+          "queryDefault": [
+            "批号",
+            "是否存在新杂",
+            "杂质偏差结论"
+          ],
+          "queryMore": [],
+          "toolbar": [
+            {
+              "name": "关联查询",
+              "type": "default",
+              "desc": "勾选数据后，跳转至谱图识别并按批号过滤"
+            },
+            {
+              "name": "导出数据",
+              "type": "default",
+              "desc": "导出台账数据"
+            }
+          ],
+          "columns": [
+            {
+              "field": "批号",
+              "title": "批号",
+              "width": 150,
+              "fixed": "left"
+            },
+            {
+              "field": "杂质个数",
+              "title": "杂质个数",
+              "width": 90
+            },
+            {
+              "field": "新杂个数",
+              "title": "新杂个数",
+              "width": 90
+            },
+            {
+              "field": "是否存在新杂",
+              "title": "是否存在新杂",
+              "width": 110,
+              "slot": "tag"
+            },
+            {
+              "field": "杂质偏差结论",
+              "title": "杂质偏差结论",
+              "width": 120,
+              "slot": "tag"
+            },
+            {
+              "field": "_actions",
+              "title": "操作",
+              "width": 130,
+              "fixed": "right",
+              "slot": "row_actions"
+            }
+          ],
+          "rowOps": [
+            {
+              "name": "编辑",
+              "desc": "编辑台账数据"
+            },
+            {
+              "name": "删除",
+              "desc": "删除台账数据"
+            }
+          ]
+        },
+        {
+          "name": "tab-rd",
+          "label": "研发检",
+          "queryFields": [
+            {
+              "name": "批号",
+              "type": "input",
+              "placeholder": "模糊"
+            },
+            {
+              "name": "是否存在新杂",
+              "type": "select",
+              "options": [
+                "是",
+                "否"
+              ]
+            },
+            {
+              "name": "杂质偏差结论",
+              "label": "状态",
+              "type": "select",
+              "options": [
+                "正常",
+                "异常"
+              ]
+            }
+          ],
+          "queryDefault": [
+            "批号",
+            "是否存在新杂",
+            "杂质偏差结论"
+          ],
+          "queryMore": [],
+          "toolbar": [
+            {
+              "name": "关联查询",
+              "type": "default",
+              "desc": "勾选数据后，跳转至谱图识别并按批号过滤"
+            },
+            {
+              "name": "导出数据",
+              "type": "default",
+              "desc": "导出台账数据"
+            }
+          ],
+          "columns": [
+            {
+              "field": "批号",
+              "title": "批号",
+              "width": 150,
+              "fixed": "left"
+            },
+            {
+              "field": "杂质个数",
+              "title": "杂质个数",
+              "width": 90
+            },
+            {
+              "field": "新杂个数",
+              "title": "新杂个数",
+              "width": 90
+            },
+            {
+              "field": "是否存在新杂",
+              "title": "是否存在新杂",
+              "width": 110,
+              "slot": "tag"
+            },
+            {
+              "field": "杂质偏差结论",
+              "title": "杂质偏差结论",
+              "width": 120,
+              "slot": "tag"
+            },
+            {
+              "field": "_actions",
+              "title": "操作",
+              "width": 130,
+              "fixed": "right",
+              "slot": "row_actions"
+            }
+          ],
+          "rowOps": [
+            {
+              "name": "编辑",
+              "desc": "编辑台账数据"
+            },
+            {
+              "name": "删除",
+              "desc": "删除台账数据"
+            }
+          ]
         }
       ],
       "formFields": [],
@@ -134721,8 +134179,7 @@ window.WMS_PAGE_CONFIGS = {
       "stub": false,
       "formFlat": true,
       "formLineFields": [],
-      "formLineActions": [],
-      "layout": "drift-compare"
+      "formLineActions": []
     },
     {
       "id": "np-0209-01",
@@ -150421,16 +149878,15 @@ window.WMS_PAGE_CONFIGS = {
     },
     {
       "id": "np-0313-01",
-      "title": "重复性与再现性",
+      "title": "GR&R分析",
       "groups": [
-        "质量管理",
         "测量系统分析"
       ],
       "breadcrumb": [
-        "质量管理",
         "测量系统分析",
-        "重复性与再现性"
+        "GR&R分析"
       ],
+      "layout": "",
       "tabs": [],
       "tabViews": [
         {
@@ -150438,521 +149894,81 @@ window.WMS_PAGE_CONFIGS = {
           "label": "",
           "queryFields": [
             {
-              "name": "计划单号",
-              "type": "input"
-            },
-            {
-              "name": "仪器编号",
-              "type": "input"
+              "name": "计划编号",
+              "type": "input",
+              "placeholder": "请输入"
             },
             {
               "name": "仪器名称",
-              "type": "input"
-            },
-            {
-              "name": "计划状态",
-              "type": "select",
-              "options": [
-                "待执行",
-                "执行中",
-                "已完成",
-                "已关闭"
-              ]
-            },
-            {
-              "name": "逾期状态",
-              "type": "select",
-              "options": [
-                "正常",
-                "逾期"
-              ]
-            },
-            {
-              "name": "标准物质条码号",
-              "type": "input"
-            },
-            {
-              "name": "计划时间",
-              "type": "daterange"
-            },
-            {
-              "name": "创建时间",
-              "type": "daterange"
-            }
-          ],
-          "toolbar": [
-            {
-              "name": "下载报告",
-              "type": "default"
-            },
-            {
-              "name": "新增",
-              "type": "primary"
-            },
-            {
-              "name": "关闭",
-              "type": "default"
-            },
-            {
-              "name": "批量删除",
-              "type": "danger"
-            },
-            {
-              "name": "导出数据",
-              "type": "default"
-            }
-          ],
-          "columns": [
-            {
-              "field": "计划状态",
-              "title": "计划状态",
-              "width": 100,
-              "slot": "tag",
-              "fixed": "left"
-            },
-            {
-              "field": "计划单号",
-              "title": "计划单号",
-              "minWidth": 110,
-              "fixed": "left"
-            },
-            {
-              "field": "内容描述",
-              "title": "内容描述",
-              "minWidth": 170
-            },
-            {
-              "field": "仪器编号",
-              "title": "仪器编号",
-              "minWidth": 130
-            },
-            {
-              "field": "仪器名称",
-              "title": "仪器名称",
-              "minWidth": 170
-            },
-            {
-              "field": "仪器类型",
-              "title": "仪器类型",
-              "minWidth": 100
-            },
-            {
-              "field": "存放位置",
-              "title": "存放位置",
-              "minWidth": 150
-            },
-            {
-              "field": "测量日期",
-              "title": "测量日期",
-              "minWidth": 90
-            },
-            {
-              "field": "测量人员",
-              "title": "测量人员",
-              "minWidth": 90
-            },
-            {
-              "field": "样本个数",
-              "title": "样本个数",
-              "minWidth": 90
-            },
-            {
-              "field": "平行测量次数",
-              "title": "平行测量次数",
-              "minWidth": 110
-            },
-            {
-              "field": "计划时间",
-              "title": "计划时间",
-              "minWidth": 150
-            },
-            {
-              "field": "逾期时长",
-              "title": "逾期时长",
-              "minWidth": 170
-            },
-            {
-              "field": "逾期状态",
-              "title": "逾期状态",
-              "width": 90,
-              "slot": "tag"
-            },
-            {
-              "field": "标准物质条码号",
-              "title": "标准物质条码号",
-              "minWidth": 150
-            },
-            {
-              "field": "标准物质名称",
-              "title": "标准物质名称",
-              "minWidth": 170
-            },
-            {
-              "field": "标准物质批号",
-              "title": "标准物质批号",
-              "minWidth": 130
-            },
-            {
-              "field": "供应商名称",
-              "title": "供应商名称",
-              "minWidth": 200
-            },
-            {
-              "field": "备注",
-              "title": "备注",
-              "minWidth": 180
-            },
-            {
-              "field": "创建人",
-              "title": "创建人",
-              "minWidth": 90
-            },
-            {
-              "field": "创建时间",
-              "title": "创建时间",
-              "minWidth": 160
-            },
-            {
-              "field": "_actions",
-              "title": "操作",
-              "width": 130,
-              "fixed": "right",
-              "slot": "row_actions"
-            }
-          ],
-          "rowOps": [
-            {
-              "name": "详情"
-            },
-            {
-              "name": "更多",
-              "children": [
-                "复制",
-                "编辑",
-                "预览"
-              ]
-            }
-          ]
-        }
-      ],
-      "formFields": [],
-      "detailFields": [],
-      "hasEdit": false,
-      "hasDetail": false,
-      "stub": false,
-      "formFlat": true,
-      "formLineFields": [],
-      "formLineActions": []
-    },
-    {
-      "id": "np-0313-02",
-      "title": "稳定性",
-      "groups": [
-        "质量管理",
-        "测量系统分析"
-      ],
-      "breadcrumb": [
-        "质量管理",
-        "测量系统分析",
-        "稳定性"
-      ],
-      "tabs": [],
-      "tabViews": [
-        {
-          "name": "main",
-          "label": "",
-          "queryFields": [
-            {
-              "name": "计划单号",
-              "type": "input"
+              "type": "input",
+              "placeholder": "请输入"
             },
             {
               "name": "仪器编号",
-              "type": "input"
+              "type": "input",
+              "placeholder": "请输入"
             },
-            {
-              "name": "仪器名称",
-              "type": "input"
-            },
-            {
-              "name": "计划状态",
-              "type": "select",
-              "options": [
-                "待执行",
-                "执行中",
-                "已完成",
-                "已关闭"
-              ]
-            },
-            {
-              "name": "逾期状态",
-              "type": "select",
-              "options": [
-                "正常",
-                "逾期"
-              ]
-            },
-            {
-              "name": "标准物质条码号",
-              "type": "input"
-            },
-            {
-              "name": "计划时间",
-              "type": "daterange"
-            },
-            {
-              "name": "创建时间",
-              "type": "daterange"
-            }
-          ],
-          "queryDefault": [
-            "计划单号",
-            "仪器编号",
-            "仪器名称",
-            "计划状态"
-          ],
-          "queryMore": [
-            "逾期状态",
-            "标准物质条码号",
-            "计划时间",
-            "创建时间"
-          ],
-          "toolbar": [
-            {
-              "name": "下载报告",
-              "type": "default"
-            },
-            {
-              "name": "新增",
-              "type": "primary"
-            },
-            {
-              "name": "关闭",
-              "type": "default"
-            },
-            {
-              "name": "批量删除",
-              "type": "danger"
-            },
-            {
-              "name": "导出数据",
-              "type": "default"
-            }
-          ],
-          "columns": [
-            {
-              "field": "计划状态",
-              "title": "计划状态",
-              "width": 100,
-              "slot": "tag",
-              "fixed": "left"
-            },
-            {
-              "field": "计划单号",
-              "title": "计划单号",
-              "minWidth": 110,
-              "fixed": "left"
-            },
-            {
-              "field": "内容描述",
-              "title": "内容描述",
-              "minWidth": 170
-            },
-            {
-              "field": "仪器编号",
-              "title": "仪器编号",
-              "minWidth": 130
-            },
-            {
-              "field": "仪器名称",
-              "title": "仪器名称",
-              "minWidth": 170
-            },
-            {
-              "field": "仪器类型",
-              "title": "仪器类型",
-              "minWidth": 100
-            },
-            {
-              "field": "存放位置",
-              "title": "存放位置",
-              "minWidth": 150
-            },
-            {
-              "field": "样本个数",
-              "title": "样本个数",
-              "minWidth": 90
-            },
-            {
-              "field": "计划时间",
-              "title": "计划时间",
-              "minWidth": 120
-            },
-            {
-              "field": "逾期时长",
-              "title": "逾期时长",
-              "minWidth": 170
-            },
-            {
-              "field": "逾期状态",
-              "title": "逾期状态",
-              "width": 90,
-              "slot": "tag"
-            },
-            {
-              "field": "标准物质条码号",
-              "title": "标准物质条码号",
-              "minWidth": 150
-            },
-            {
-              "field": "标准物质名称",
-              "title": "标准物质名称",
-              "minWidth": 170
-            },
-            {
-              "field": "标准物质批号",
-              "title": "标准物质批号",
-              "minWidth": 130
-            },
-            {
-              "field": "供应商名称",
-              "title": "供应商名称",
-              "minWidth": 200
-            },
-            {
-              "field": "备注",
-              "title": "备注",
-              "minWidth": 180
-            },
-            {
-              "field": "创建人",
-              "title": "创建人",
-              "minWidth": 90
-            },
-            {
-              "field": "创建时间",
-              "title": "创建时间",
-              "minWidth": 160
-            },
-            {
-              "field": "_actions",
-              "title": "操作",
-              "width": 130,
-              "fixed": "right",
-              "slot": "row_actions"
-            }
-          ],
-          "rowOps": [
-            {
-              "name": "详情"
-            },
-            {
-              "name": "更多",
-              "children": [
-                "复制",
-                "编辑",
-                "预览"
-              ]
-            }
-          ]
-        }
-      ],
-      "formFields": [],
-      "detailFields": [],
-      "hasEdit": false,
-      "hasDetail": false,
-      "stub": false,
-      "formFlat": true,
-      "formLineFields": [],
-      "formLineActions": []
-    },
-    {
-      "id": "np-0313-03",
-      "title": "偏倚",
-      "groups": [
-        "质量管理",
-        "测量系统分析"
-      ],
-      "breadcrumb": [
-        "质量管理",
-        "测量系统分析",
-        "偏倚"
-      ],
-      "tabs": [],
-      "tabViews": [
-        {
-          "name": "main",
-          "label": "",
-          "queryFields": [
             {
               "name": "状态",
               "type": "select",
               "options": [
                 "待执行",
-                "已完成"
-              ]
+                "执行中",
+                "已完成",
+                "已关闭"
+              ],
+              "placeholder": "全部"
             },
             {
-              "name": "计划单号",
-              "type": "input"
+              "name": "评价人",
+              "type": "input",
+              "placeholder": "请输入"
             },
             {
-              "name": "设备编号",
-              "type": "input"
+              "name": "测量日期",
+              "type": "date",
+              "placeholder": "测量日期"
             },
             {
-              "name": "设备名称",
-              "type": "input"
-            },
-            {
-              "name": "测量类型",
+              "name": "判定结果",
               "type": "select",
               "options": [
-                "称量",
-                "气压计算",
-                "色谱",
-                "光谱"
-              ]
-            },
-            {
-              "name": "分析结果",
-              "type": "select",
-              "options": [
+                "优秀",
                 "可接受",
                 "不可接受"
-              ]
-            },
-            {
-              "name": "创建时间",
-              "type": "daterange"
+              ],
+              "placeholder": "全部"
             }
-          ],
-          "queryDefault": [
-            "状态",
-            "计划单号"
-          ],
-          "queryMore": [
-            "设备编号",
-            "设备名称",
-            "测量类型",
-            "分析结果",
-            "创建时间"
           ],
           "toolbar": [
             {
               "name": "新增",
-              "type": "primary"
-            },
-            {
-              "name": "批量删除",
-              "type": "danger"
+              "type": "primary",
+              "desc": "新增 GR&R 计划"
             },
             {
               "name": "导出",
-              "type": "default"
+              "type": "default",
+              "desc": "导出"
+            },
+            {
+              "name": "批量删除",
+              "type": "danger",
+              "desc": "删除勾选计划"
             }
           ],
           "columns": [
+            {
+              "type": "checkbox",
+              "width": 50,
+              "fixed": "left"
+            },
+            {
+              "type": "seq",
+              "title": "序号",
+              "width": 60,
+              "fixed": "left"
+            },
             {
               "field": "状态",
               "title": "状态",
@@ -150960,129 +149976,1148 @@ window.WMS_PAGE_CONFIGS = {
               "slot": "tag"
             },
             {
-              "field": "分析结果",
-              "title": "分析结果",
+              "field": "计划编号",
+              "title": "计划编号",
+              "width": 175
+            },
+            {
+              "field": "仪器名称",
+              "title": "仪器名称",
+              "width": 130
+            },
+            {
+              "field": "仪器编号",
+              "title": "仪器编号",
+              "width": 120
+            },
+            {
+              "field": "检测项目",
+              "title": "检测项目",
+              "width": 120
+            },
+            {
+              "field": "评价人",
+              "title": "评价人",
+              "width": 160
+            },
+            {
+              "field": "样品数量",
+              "title": "样品数量",
+              "width": 90
+            },
+            {
+              "field": "评价人数量",
+              "title": "评价人数量",
+              "width": 95
+            },
+            {
+              "field": "试验次数",
+              "title": "试验次数",
+              "width": 90
+            },
+            {
+              "field": "测量日期",
+              "title": "测量日期",
+              "width": 110
+            },
+            {
+              "field": "判定",
+              "title": "判定",
               "width": 100,
               "slot": "tag"
             },
             {
-              "field": "计划单号",
-              "title": "计划单号",
-              "minWidth": 170
-            },
-            {
-              "field": "创建时间",
-              "title": "创建时间",
-              "minWidth": 160
-            },
-            {
-              "field": "内容描述",
-              "title": "内容描述",
-              "minWidth": 160
-            },
-            {
-              "field": "设备名称",
-              "title": "设备名称",
-              "minWidth": 180
-            },
-            {
-              "field": "设备编号",
-              "title": "设备编号",
-              "minWidth": 120
-            },
-            {
-              "field": "规格型号",
-              "title": "规格型号",
-              "minWidth": 150
-            },
-            {
-              "field": "测量类型",
-              "title": "测量类型",
-              "minWidth": 100
-            },
-            {
-              "field": "测量人员",
-              "title": "测量人员",
-              "minWidth": 90
-            },
-            {
-              "field": "测试次数",
-              "title": "测试次数",
-              "minWidth": 90
-            },
-            {
-              "field": "样本个数",
-              "title": "样本个数",
-              "minWidth": 90
-            },
-            {
-              "field": "基准件名称",
-              "title": "基准件名称",
-              "minWidth": 160
-            },
-            {
-              "field": "测量参数",
-              "title": "测量参数",
-              "minWidth": 120
-            },
-            {
-              "field": "参数规格",
-              "title": "参数规格",
-              "minWidth": 100
-            },
-            {
-              "field": "测量日期范围",
-              "title": "测量日期范围",
-              "minWidth": 200
-            },
-            {
-              "field": "组数",
-              "title": "组数",
-              "minWidth": 70
-            },
-            {
-              "field": "备注",
-              "title": "备注",
-              "minWidth": 160
-            },
-            {
-              "field": "创建人",
-              "title": "创建人",
-              "minWidth": 90
-            },
-            {
               "field": "_actions",
               "title": "操作",
-              "width": 230,
+              "width": 220,
               "fixed": "right",
               "slot": "row_actions"
             }
           ],
           "rowOps": [
             {
-              "name": "测量数据录入"
+              "name": "数据录入",
+              "desc": "按评价人录入测量数据"
             },
             {
-              "name": "编辑"
+              "name": "报告",
+              "desc": "查看 GR&R 分析报告"
+            },
+            {
+              "name": "编辑",
+              "desc": "编辑计划"
+            },
+            {
+              "name": "复制",
+              "desc": "复制为新计划"
+            },
+            {
+              "name": "关闭",
+              "desc": "关闭计划"
+            },
+            {
+              "name": "删除",
+              "desc": "删除计划"
+            }
+          ]
+        }
+      ],
+      "formSections": [
+        {
+          "title": "基本信息",
+          "fields": [
+            {
+              "name": "计划编号",
+              "type": "readonly",
+              "placeholder": "提交后自动生成"
+            },
+            {
+              "name": "仪器名称",
+              "type": "picker",
+              "required": true,
+              "placeholder": "选择在用仪器"
+            },
+            {
+              "name": "仪器编号",
+              "type": "readonly",
+              "placeholder": "选择仪器后自动带出"
+            },
+            {
+              "name": "仪器规格",
+              "type": "readonly",
+              "placeholder": "选择仪器后自动带出"
+            },
+            {
+              "name": "仪器类型",
+              "type": "readonly",
+              "placeholder": "选择仪器后自动带出"
+            },
+            {
+              "name": "检测项目",
+              "type": "input",
+              "required": true,
+              "placeholder": "请输入检测项目"
+            },
+            {
+              "name": "样品数量",
+              "type": "number",
+              "required": true,
+              "placeholder": "n"
+            },
+            {
+              "name": "试验次数",
+              "type": "number",
+              "required": true,
+              "placeholder": "r"
+            },
+            {
+              "name": "评价人数量",
+              "type": "select",
+              "required": true,
+              "options": [
+                "2",
+                "3"
+              ],
+              "placeholder": "评价人数量"
+            },
+            {
+              "name": "评价人1",
+              "type": "input",
+              "required": true
+            },
+            {
+              "name": "评价人2",
+              "type": "input",
+              "required": true
+            },
+            {
+              "name": "评价人3",
+              "type": "input"
+            },
+            {
+              "name": "计划测量日期",
+              "type": "date",
+              "required": true
+            },
+            {
+              "name": "备注",
+              "type": "textarea",
+              "placeholder": "选填"
+            }
+          ]
+        }
+      ],
+      "hasEdit": true,
+      "formFields": [
+        {
+          "name": "计划编号",
+          "type": "readonly",
+          "placeholder": "提交后自动生成"
+        },
+        {
+          "name": "仪器名称",
+          "type": "picker",
+          "required": true,
+          "placeholder": "选择在用仪器"
+        },
+        {
+          "name": "仪器编号",
+          "type": "readonly",
+          "placeholder": "选择仪器后自动带出"
+        },
+        {
+          "name": "仪器规格",
+          "type": "readonly",
+          "placeholder": "选择仪器后自动带出"
+        },
+        {
+          "name": "仪器类型",
+          "type": "readonly",
+          "placeholder": "选择仪器后自动带出"
+        },
+        {
+          "name": "检测项目",
+          "type": "input",
+          "required": true,
+          "placeholder": "请输入检测项目"
+        },
+        {
+          "name": "样品数量",
+          "type": "number",
+          "required": true,
+          "placeholder": "n"
+        },
+        {
+          "name": "试验次数",
+          "type": "number",
+          "required": true,
+          "placeholder": "r"
+        },
+        {
+          "name": "评价人数量",
+          "type": "select",
+          "required": true,
+          "options": [
+            "2",
+            "3"
+          ],
+          "placeholder": "评价人数量"
+        },
+        {
+          "name": "评价人1",
+          "type": "input",
+          "required": true
+        },
+        {
+          "name": "评价人2",
+          "type": "input",
+          "required": true
+        },
+        {
+          "name": "评价人3",
+          "type": "input"
+        },
+        {
+          "name": "计划测量日期",
+          "type": "date",
+          "required": true
+        },
+        {
+          "name": "备注",
+          "type": "textarea",
+          "placeholder": "选填"
+        }
+      ],
+      "detailFields": [
+        {
+          "name": "计划编号",
+          "type": "readonly",
+          "placeholder": "提交后自动生成"
+        },
+        {
+          "name": "仪器名称",
+          "type": "picker",
+          "required": true,
+          "placeholder": "选择在用仪器"
+        },
+        {
+          "name": "仪器编号",
+          "type": "readonly",
+          "placeholder": "选择仪器后自动带出"
+        },
+        {
+          "name": "仪器规格",
+          "type": "readonly",
+          "placeholder": "选择仪器后自动带出"
+        },
+        {
+          "name": "仪器类型",
+          "type": "readonly",
+          "placeholder": "选择仪器后自动带出"
+        },
+        {
+          "name": "检测项目",
+          "type": "input",
+          "required": true,
+          "placeholder": "请输入检测项目"
+        },
+        {
+          "name": "样品数量",
+          "type": "number",
+          "required": true,
+          "placeholder": "n"
+        },
+        {
+          "name": "试验次数",
+          "type": "number",
+          "required": true,
+          "placeholder": "r"
+        },
+        {
+          "name": "评价人数量",
+          "type": "select",
+          "required": true,
+          "options": [
+            "2",
+            "3"
+          ],
+          "placeholder": "评价人数量"
+        },
+        {
+          "name": "评价人1",
+          "type": "input",
+          "required": true
+        },
+        {
+          "name": "评价人2",
+          "type": "input",
+          "required": true
+        },
+        {
+          "name": "评价人3",
+          "type": "input"
+        },
+        {
+          "name": "计划测量日期",
+          "type": "date",
+          "required": true
+        },
+        {
+          "name": "备注",
+          "type": "textarea",
+          "placeholder": "选填"
+        }
+      ]
+    },
+    {
+      "id": "np-0313-02",
+      "title": "稳定性分析",
+      "groups": [
+        "测量系统分析"
+      ],
+      "breadcrumb": [
+        "测量系统分析",
+        "稳定性分析"
+      ],
+      "layout": "",
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [
+            {
+              "name": "计划编号",
+              "type": "input",
+              "placeholder": "计划编号"
+            },
+            {
+              "name": "仪器名称",
+              "type": "input",
+              "placeholder": "仪器名称"
+            },
+            {
+              "name": "仪器编号",
+              "type": "input",
+              "placeholder": "仪器编号"
+            },
+            {
+              "name": "状态",
+              "type": "select",
+              "options": [
+                "待执行",
+                "执行中",
+                "已完成",
+                "已关闭"
+              ],
+              "placeholder": "状态"
+            },
+            {
+              "name": "测量人",
+              "type": "input",
+              "placeholder": "评价人"
+            },
+            {
+              "name": "测量日期",
+              "type": "date",
+              "placeholder": "测量日期"
+            },
+            {
+              "name": "判定结果",
+              "type": "select",
+              "options": [
+                "可接受",
+                "不可接受"
+              ],
+              "placeholder": "判定结果"
+            }
+          ],
+          "toolbar": [
+            {
+              "name": "新增",
+              "type": "primary",
+              "desc": "新增稳定性分析计划"
+            },
+            {
+              "name": "导出",
+              "type": "default",
+              "desc": "导出稳定性分析报告"
+            },
+            {
+              "name": "批量删除",
+              "type": "danger",
+              "desc": "删除勾选的稳定性计划"
+            }
+          ],
+          "columns": [
+            {
+              "type": "checkbox",
+              "width": 50,
+              "fixed": "left"
+            },
+            {
+              "type": "seq",
+              "title": "序号",
+              "width": 60,
+              "fixed": "left"
+            },
+            {
+              "field": "状态",
+              "title": "状态",
+              "width": 90,
+              "slot": "tag"
+            },
+            {
+              "field": "计划编号",
+              "title": "计划编号",
+              "width": 175
+            },
+            {
+              "field": "仪器名称",
+              "title": "仪器名称",
+              "width": 130
+            },
+            {
+              "field": "仪器编号",
+              "title": "仪器编号",
+              "width": 120
+            },
+            {
+              "field": "检测项目",
+              "title": "检测项目",
+              "width": 120
+            },
+            {
+              "field": "测量人",
+              "title": "评价人",
+              "width": 90
+            },
+            {
+              "field": "评价人数量",
+              "title": "评价人数量",
+              "width": 95
+            },
+            {
+              "field": "试验次数",
+              "title": "试验次数",
+              "width": 90
+            },
+            {
+              "field": "测量日期",
+              "title": "测量日期",
+              "width": 110
+            },
+            {
+              "field": "判定",
+              "title": "判定",
+              "width": 100,
+              "slot": "tag"
+            },
+            {
+              "field": "_actions",
+              "title": "操作",
+              "width": 260,
+              "fixed": "right",
+              "slot": "row_actions"
+            }
+          ],
+          "rowOps": [
+            {
+              "name": "数据录入",
+              "desc": "录入时间样本测量数据并实时计算 X̄–R"
+            },
+            {
+              "name": "报告",
+              "desc": "查看稳定性分析报告"
+            },
+            {
+              "name": "更多",
+              "desc": "编辑 / 复制 / 关闭 / 删除"
+            },
+            {
+              "name": "编辑",
+              "desc": "编辑稳定性计划；收入「更多」"
+            },
+            {
+              "name": "复制",
+              "desc": "复制为新计划；收入「更多」"
+            },
+            {
+              "name": "关闭",
+              "desc": "关闭稳定性计划；收入「更多」"
+            },
+            {
+              "name": "删除",
+              "desc": "删除稳定性计划；收入「更多」"
+            }
+          ]
+        }
+      ],
+      "formSections": [
+        {
+          "title": "基本信息",
+          "fields": [
+            {
+              "name": "计划编号",
+              "type": "readonly",
+              "placeholder": "提交后自动生成"
+            },
+            {
+              "name": "仪器",
+              "type": "picker",
+              "required": true,
+              "placeholder": "点击右侧抽屉选择仪器台账（单选）"
+            },
+            {
+              "name": "仪器编号",
+              "type": "readonly",
+              "placeholder": "选择仪器后自动带出"
+            },
+            {
+              "name": "仪器规格",
+              "type": "readonly",
+              "placeholder": "选择仪器后自动带出"
+            },
+            {
+              "name": "仪器类型",
+              "type": "readonly",
+              "placeholder": "选择仪器后自动带出"
+            },
+            {
+              "name": "检测项目",
+              "type": "input",
+              "required": true,
+              "placeholder": "请输入"
+            },
+            {
+              "name": "测量参数",
+              "type": "input",
+              "placeholder": "选填"
+            },
+            {
+              "name": "测量人",
+              "type": "select",
+              "required": true,
+              "placeholder": "选择测量人"
+            },
+            {
+              "name": "试验次数",
+              "type": "select",
+              "required": true,
+              "options": [
+                "2",
+                "3",
+                "4",
+                "5"
+              ],
+              "placeholder": "子组容量 n（2~5，默认 3）"
+            },
+            {
+              "name": "样本数",
+              "type": "select",
+              "required": true,
+              "options": [
+                "10",
+                "11",
+                "12",
+                "13",
+                "14",
+                "15",
+                "16",
+                "17",
+                "18",
+                "19",
+                "20",
+                "21",
+                "22",
+                "23",
+                "24",
+                "25",
+                "26",
+                "27",
+                "28",
+                "29",
+                "30"
+              ],
+              "placeholder": "时间点数 k（10~30，默认 25）"
+            },
+            {
+              "name": "测量日期",
+              "type": "date",
+              "required": true,
+              "placeholder": "选择日期"
+            },
+            {
+              "name": "备注",
+              "type": "textarea",
+              "placeholder": "选填"
+            }
+          ]
+        }
+      ],
+      "hasEdit": true,
+      "formFields": [
+        {
+          "name": "计划编号",
+          "type": "readonly",
+          "placeholder": "提交后自动生成"
+        },
+        {
+          "name": "仪器",
+          "type": "picker",
+          "required": true,
+          "placeholder": "点击右侧抽屉选择仪器台账（单选）"
+        },
+        {
+          "name": "仪器编号",
+          "type": "readonly",
+          "placeholder": "选择仪器后自动带出"
+        },
+        {
+          "name": "仪器规格",
+          "type": "readonly",
+          "placeholder": "选择仪器后自动带出"
+        },
+        {
+          "name": "仪器类型",
+          "type": "readonly",
+          "placeholder": "选择仪器后自动带出"
+        },
+        {
+          "name": "检测项目",
+          "type": "input",
+          "required": true,
+          "placeholder": "请输入"
+        },
+        {
+          "name": "测量参数",
+          "type": "input",
+          "placeholder": "选填"
+        },
+        {
+          "name": "测量人",
+          "type": "select",
+          "required": true,
+          "placeholder": "选择测量人"
+        },
+        {
+          "name": "试验次数",
+          "type": "select",
+          "required": true,
+          "options": [
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "placeholder": "子组容量 n（2~5，默认 3）"
+        },
+        {
+          "name": "样本数",
+          "type": "select",
+          "required": true,
+          "options": [
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "17",
+            "18",
+            "19",
+            "20",
+            "21",
+            "22",
+            "23",
+            "24",
+            "25",
+            "26",
+            "27",
+            "28",
+            "29",
+            "30"
+          ],
+          "placeholder": "时间点数 k（10~30，默认 25）"
+        },
+        {
+          "name": "测量日期",
+          "type": "date",
+          "required": true,
+          "placeholder": "选择日期"
+        },
+        {
+          "name": "备注",
+          "type": "textarea",
+          "placeholder": "选填"
+        }
+      ],
+      "detailFields": [
+        {
+          "name": "计划编号",
+          "type": "readonly",
+          "placeholder": "提交后自动生成"
+        },
+        {
+          "name": "仪器",
+          "type": "picker",
+          "required": true,
+          "placeholder": "点击右侧抽屉选择仪器台账（单选）"
+        },
+        {
+          "name": "仪器编号",
+          "type": "readonly",
+          "placeholder": "选择仪器后自动带出"
+        },
+        {
+          "name": "仪器规格",
+          "type": "readonly",
+          "placeholder": "选择仪器后自动带出"
+        },
+        {
+          "name": "仪器类型",
+          "type": "readonly",
+          "placeholder": "选择仪器后自动带出"
+        },
+        {
+          "name": "检测项目",
+          "type": "input",
+          "required": true,
+          "placeholder": "请输入"
+        },
+        {
+          "name": "测量参数",
+          "type": "input",
+          "placeholder": "选填"
+        },
+        {
+          "name": "测量人",
+          "type": "select",
+          "required": true,
+          "placeholder": "选择测量人"
+        },
+        {
+          "name": "试验次数",
+          "type": "select",
+          "required": true,
+          "options": [
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "placeholder": "子组容量 n（2~5，默认 3）"
+        },
+        {
+          "name": "样本数",
+          "type": "select",
+          "required": true,
+          "options": [
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "17",
+            "18",
+            "19",
+            "20",
+            "21",
+            "22",
+            "23",
+            "24",
+            "25",
+            "26",
+            "27",
+            "28",
+            "29",
+            "30"
+          ],
+          "placeholder": "时间点数 k（10~30，默认 25）"
+        },
+        {
+          "name": "测量日期",
+          "type": "date",
+          "required": true,
+          "placeholder": "选择日期"
+        },
+        {
+          "name": "备注",
+          "type": "textarea",
+          "placeholder": "选填"
+        }
+      ]
+    },
+    {
+      "id": "np-0313-03",
+      "title": "偏倚分析",
+      "groups": [
+        "测量系统分析"
+      ],
+      "breadcrumb": [
+        "测量系统分析",
+        "偏倚分析"
+      ],
+      "layout": "",
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [
+            {
+              "name": "计划编号",
+              "type": "input",
+              "placeholder": "计划编号"
+            },
+            {
+              "name": "仪器名称",
+              "type": "input",
+              "placeholder": "仪器名称"
+            },
+            {
+              "name": "仪器编号",
+              "type": "input",
+              "placeholder": "仪器编号"
+            },
+            {
+              "name": "状态",
+              "type": "select",
+              "options": [
+                "待执行",
+                "执行中",
+                "已完成",
+                "已关闭"
+              ],
+              "placeholder": "状态"
+            },
+            {
+              "name": "测量人",
+              "type": "input",
+              "placeholder": "测量人"
+            },
+            {
+              "name": "判定",
+              "type": "select",
+              "options": [
+                "可接受",
+                "不可接受"
+              ],
+              "placeholder": "判定结果"
+            }
+          ],
+          "toolbar": [
+            {
+              "name": "新增",
+              "type": "primary",
+              "desc": "新增偏倚分析计划"
+            },
+            {
+              "name": "导出",
+              "type": "default",
+              "desc": "导出偏倚分析报告"
+            },
+            {
+              "name": "批量删除",
+              "type": "danger",
+              "desc": "删除勾选的偏倚计划"
+            }
+          ],
+          "columns": [
+            {
+              "type": "checkbox",
+              "width": 50,
+              "fixed": "left"
+            },
+            {
+              "type": "seq",
+              "title": "序号",
+              "width": 60,
+              "fixed": "left"
+            },
+            {
+              "field": "状态",
+              "title": "状态",
+              "width": 90,
+              "slot": "tag"
+            },
+            {
+              "field": "计划编号",
+              "title": "计划编号",
+              "width": 170
+            },
+            {
+              "field": "仪器名称",
+              "title": "仪器名称",
+              "width": 130
+            },
+            {
+              "field": "仪器编号",
+              "title": "仪器编号",
+              "width": 120
+            },
+            {
+              "field": "基准件名称",
+              "title": "基准件名称",
+              "width": 120
+            },
+            {
+              "field": "测量参数",
+              "title": "测量参数",
+              "width": 100
+            },
+            {
+              "field": "测量人",
+              "title": "测量人",
+              "width": 90
+            },
+            {
+              "field": "测量次数",
+              "title": "测量次数",
+              "width": 90
+            },
+            {
+              "field": "测试日期",
+              "title": "测试日期",
+              "width": 110
+            },
+            {
+              "field": "判定",
+              "title": "判定",
+              "width": 100,
+              "slot": "tag"
+            },
+            {
+              "field": "_actions",
+              "title": "操作",
+              "width": 260,
+              "fixed": "right",
+              "slot": "row_actions"
+            }
+          ],
+          "rowOps": [
+            {
+              "name": "数据录入",
+              "desc": "录入 10 次测量数据并实时计算偏倚"
+            },
+            {
+              "name": "报告",
+              "desc": "查看偏倚分析报告"
             },
             {
               "name": "更多",
               "children": [
-                "详情",
+                "编辑",
+                "复制",
+                "关闭",
                 "删除"
               ]
             }
           ]
         }
       ],
-      "formFields": [],
-      "detailFields": [],
-      "hasEdit": false,
-      "hasDetail": false,
-      "stub": false,
-      "formFlat": true,
-      "formLineFields": [],
-      "formLineActions": []
+      "formSections": [
+        {
+          "title": "基本信息",
+          "fields": [
+            {
+              "name": "计划编号",
+              "type": "readonly",
+              "required": false,
+              "placeholder": "提交后自动生成"
+            },
+            {
+              "name": "仪器名称",
+              "type": "select",
+              "required": true,
+              "filterable": true,
+              "placeholder": "选择在用仪器（关联仪器台账）"
+            },
+            {
+              "name": "基准件名称",
+              "type": "input",
+              "required": true,
+              "placeholder": "输入"
+            },
+            {
+              "name": "测量参数",
+              "type": "input",
+              "required": false,
+              "placeholder": "选填"
+            },
+            {
+              "name": "参数规格",
+              "type": "input",
+              "required": false,
+              "placeholder": "选填"
+            },
+            {
+              "name": "基准值",
+              "type": "input",
+              "required": true,
+              "placeholder": "输入基准值（有效数字）"
+            },
+            {
+              "name": "测量人",
+              "type": "select",
+              "required": true,
+              "placeholder": "选择测量人"
+            },
+            {
+              "name": "测试日期",
+              "type": "date",
+              "required": true,
+              "placeholder": "选择日期"
+            }
+          ]
+        }
+      ],
+      "hasEdit": true,
+      "formFields": [
+        {
+          "name": "计划编号",
+          "type": "readonly",
+          "required": false,
+          "placeholder": "提交后自动生成"
+        },
+        {
+          "name": "仪器名称",
+          "type": "select",
+          "required": true,
+          "filterable": true,
+          "placeholder": "选择在用仪器（关联仪器台账）"
+        },
+        {
+          "name": "基准件名称",
+          "type": "input",
+          "required": true,
+          "placeholder": "输入"
+        },
+        {
+          "name": "测量参数",
+          "type": "input",
+          "required": false,
+          "placeholder": "选填"
+        },
+        {
+          "name": "参数规格",
+          "type": "input",
+          "required": false,
+          "placeholder": "选填"
+        },
+        {
+          "name": "基准值",
+          "type": "input",
+          "required": true,
+          "placeholder": "输入基准值（有效数字）"
+        },
+        {
+          "name": "测量人",
+          "type": "select",
+          "required": true,
+          "placeholder": "选择测量人"
+        },
+        {
+          "name": "测试日期",
+          "type": "date",
+          "required": true,
+          "placeholder": "选择日期"
+        }
+      ],
+      "detailFields": [
+        {
+          "name": "计划编号",
+          "type": "readonly",
+          "required": false,
+          "placeholder": "提交后自动生成"
+        },
+        {
+          "name": "仪器名称",
+          "type": "select",
+          "required": true,
+          "filterable": true,
+          "placeholder": "选择在用仪器（关联仪器台账）"
+        },
+        {
+          "name": "基准件名称",
+          "type": "input",
+          "required": true,
+          "placeholder": "输入"
+        },
+        {
+          "name": "测量参数",
+          "type": "input",
+          "required": false,
+          "placeholder": "选填"
+        },
+        {
+          "name": "参数规格",
+          "type": "input",
+          "required": false,
+          "placeholder": "选填"
+        },
+        {
+          "name": "基准值",
+          "type": "input",
+          "required": true,
+          "placeholder": "输入基准值（有效数字）"
+        },
+        {
+          "name": "测量人",
+          "type": "select",
+          "required": true,
+          "placeholder": "选择测量人"
+        },
+        {
+          "name": "测试日期",
+          "type": "date",
+          "required": true,
+          "placeholder": "选择日期"
+        }
+      ]
     },
     {
       "id": "np-0401-01",

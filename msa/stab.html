@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>稳定性计划列表</title>
+  <script>if (window.self !== window.top) document.documentElement.classList.add('embedded');</script>
+  <link rel="stylesheet" href="css/demo.css" />
+  <link rel="stylesheet" href="css/lims-theme.css" />
+<style>html.embedded .header,html.embedded .sidebar{display:none!important}
+
+.eq-drawer-mask{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1200;display:none}
+.eq-drawer-mask.show{display:block}
+.eq-drawer{position:absolute;top:0;right:0;width:60%;max-width:920px;height:100%;background:#fff;display:flex;flex-direction:column;box-shadow:-4px 0 24px rgba(0,0,0,.12)}
+.eq-drawer-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border,#ebedf0)}
+.eq-drawer-hd h3{margin:0;font-size:16px}
+.eq-drawer-bd{flex:1;min-height:0;overflow:auto;padding:16px 20px}
+.eq-drawer-ft{padding:12px 20px;border-top:1px solid var(--border,#ebedf0);display:flex;justify-content:flex-end;gap:8px}
+.eq-query{display:flex;flex-wrap:wrap;gap:12px 16px;margin-bottom:12px;align-items:flex-end}
+.eq-query .field{margin:0}
+.eq-query-btns{display:flex;gap:8px}
+</style></head>
+<body data-mod="stab">
+<div class="app">
+  <header class="header">
+    <div class="brand">计量 MSA</div>
+    <div class="header-right">
+      <span>角色</span>
+      <select id="roleSel" onchange="setRole(this.value)">
+        <option value="planner">计划员</option>
+        <option value="appraiser">测量人 · 王工</option>
+      </select>
+      <span>张明</span>
+    </div>
+  </header>
+  <aside class="sidebar">
+    <div id="msaNav"></div>
+  </aside>
+  <main class="list-main">
+    <div class="card">
+      <div class="query">
+        <div class="query-fields">
+          <div class="field"><label>计划编号</label><input placeholder="请输入" /></div>
+          <div class="field"><label>仪器名称</label><input placeholder="请输入" /></div>
+          <div class="field"><label>仪器编号</label><input placeholder="请输入" /></div>
+          <div class="field">
+            <label>状态</label>
+            <select>
+              <option>全部</option>
+              <option>待执行</option>
+              <option>执行中</option>
+              <option>已完成</option>
+              <option>已关闭</option>
+            </select>
+          </div>
+          <div class="field"><label>评价人</label><input placeholder="请输入" /></div>
+          <div class="field"><label>测量日期</label><input type="date" /></div>
+          <div class="field">
+            <label>判定结果</label>
+            <select>
+              <option>全部</option>
+              <option>可接受</option>
+              <option>不可接受</option>
+              <option>—</option>
+            </select>
+          </div>
+        </div>
+        <div class="query-actions">
+          <button class="btn btn-primary" type="button">查询</button>
+          <button class="btn" type="button">重置</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card fill">
+      <div class="toolbar">
+        <div class="toolbar-left"></div>
+        <div class="toolbar-right">
+          <button class="btn btn-primary" type="button" data-planner-only onclick="openPlan()">新增</button>
+          <button class="btn btn-danger" type="button" data-planner-only onclick="toast('请先勾选要删除的计划')">批量删除</button>
+          <button class="btn" type="button" onclick="return notExport()">导出</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="data pin-cols">
+          <thead>
+            <tr>
+              <th><input type="checkbox" /></th>
+              <th>序号</th>
+              <th>状态</th>
+              <th>计划编号</th>
+              <th>仪器名称</th>
+              <th>仪器编号</th>
+              <th>检测项目</th>
+              <th>评价人</th>
+              <th>评价人数量</th>
+              <th>试验次数</th>
+              <th>测量日期</th>
+              <th>判定</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input type="checkbox" /></td>
+              <td>1</td>
+              <td><span class="badge badge-info">执行中</span></td>
+              <td><a href="stab-data.html">STAB-20260901-001</a></td>
+              <td>数显卡尺</td>
+              <td>EQ-CAL-012</td>
+              <td>轴套 φ20</td>
+              <td>王工</td>
+              <td>1</td>
+              <td>3</td>
+              <td>2026-09-01</td>
+              <td><span class="badge badge-ok">可接受</span></td>
+              <td>
+                <div class="row-op">
+                  <a class="op-link" href="stab-data.html">数据录入</a>
+                  <a class="op-link" href="stab-report.html?id=running">报告</a>
+                  <button class="op-link op-more" type="button" onclick="openOpMenu(this)">更多</button>
+                  <span class="op-extra">
+                    <span class="op-link disabled" data-planner-only>编辑</span>
+                    <a class="op-link" href="stab.html" onclick="toast('已复制为新草稿 STAB-20260901-006');return false;">复制</a>
+                    <a class="op-link danger" href="#" data-planner-only onclick="toast('已关闭');return false;">关闭</a>
+                    <span class="op-link danger disabled" data-planner-only>删除</span>
+                  </span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" /></td>
+              <td>2</td>
+              <td><span class="badge badge-ok">已完成</span></td>
+              <td><a href="stab-report.html">STAB-20260827-003</a></td>
+              <td>外径千分尺</td>
+              <td>EQ-MIC-008</td>
+              <td>销轴</td>
+              <td>王工</td>
+              <td>1</td>
+              <td>3</td>
+              <td>2026-08-27</td>
+              <td><span class="badge badge-ok">可接受</span></td>
+              <td>
+                <div class="row-op">
+                  <a class="op-link" href="stab-data.html?id=done">数据录入</a>
+                  <a class="op-link" href="stab-report.html">报告</a>
+                  <button class="op-link op-more" type="button" onclick="openOpMenu(this)">更多</button>
+                  <span class="op-extra">
+                    <span class="op-link disabled" data-planner-only>编辑</span>
+                    <a class="op-link" href="#" onclick="toast('已复制为新草稿');return false;">复制</a>
+                    <span class="op-link danger disabled" data-planner-only>关闭</span>
+                    <a class="op-link danger" href="#" data-planner-only onclick="toast('已删除');return false;">删除</a>
+                  </span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" /></td>
+              <td>3</td>
+              <td><span class="badge badge-muted">待执行</span></td>
+              <td><a href="#" onclick="openPlan('edit-002');return false;">STAB-20260826-002</a></td>
+              <td>高度尺</td>
+              <td>EQ-HGT-003</td>
+              <td>支架</td>
+              <td>李工</td>
+              <td>1</td>
+              <td>3</td>
+              <td>2026-08-26</td>
+              <td>—</td>
+              <td>
+                <div class="row-op">
+                  <a class="op-link" href="stab-data.html?id=pending">数据录入</a>
+                  <a class="op-link" href="stab-report.html?id=pending">报告</a>
+                  <button class="op-link op-more" type="button" onclick="openOpMenu(this)">更多</button>
+                  <span class="op-extra">
+                    <a class="op-link" href="#" data-planner-only onclick="openPlan('edit-002');return false;">编辑</a>
+                    <a class="op-link" href="#" onclick="toast('已复制为新草稿');return false;">复制</a>
+                    <a class="op-link danger" href="#" data-planner-only onclick="toast('已关闭');return false;">关闭</a>
+                    <a class="op-link danger" href="#" data-planner-only onclick="toast('已删除');return false;">删除</a>
+                  </span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" /></td>
+              <td>4</td>
+              <td><span class="badge badge-ok">已完成</span></td>
+              <td><a href="stab-report.html?id=reject">STAB-20260825-001</a></td>
+              <td>数显卡尺</td>
+              <td>EQ-CAL-012</td>
+              <td>轴套 φ20</td>
+              <td>王工</td>
+              <td>1</td>
+              <td>3</td>
+              <td>2026-08-25</td>
+              <td><span class="badge badge-danger">不可接受</span></td>
+              <td>
+                <div class="row-op">
+                  <a class="op-link" href="stab-data.html?id=reject">数据录入</a>
+                  <a class="op-link" href="stab-report.html?id=reject">报告</a>
+                  <button class="op-link op-more" type="button" onclick="openOpMenu(this)">更多</button>
+                  <span class="op-extra">
+                    <span class="op-link disabled" data-planner-only>编辑</span>
+                    <a class="op-link" href="#" onclick="toast('已复制为新草稿');return false;">复制</a>
+                    <span class="op-link danger disabled" data-planner-only>关闭</span>
+                    <a class="op-link danger" href="#" data-planner-only onclick="toast('已删除');return false;">删除</a>
+                  </span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" /></td>
+              <td>5</td>
+              <td><span class="badge badge-danger">已关闭</span></td>
+              <td>STAB-20260820-004</td>
+              <td>深度尺</td>
+              <td>EQ-DEP-001</td>
+              <td>槽宽件</td>
+              <td>王工</td>
+              <td>1</td>
+              <td>4</td>
+              <td>2026-08-20</td>
+              <td>—</td>
+              <td>
+                <div class="row-op">
+                  <span class="op-link disabled">数据录入</span>
+                  <span class="op-link disabled">报告</span>
+                  <button class="op-link op-more" type="button" onclick="openOpMenu(this)">更多</button>
+                  <span class="op-extra">
+                    <span class="op-link disabled" data-planner-only>编辑</span>
+                    <a class="op-link" href="#" onclick="toast('已复制为新草稿');return false;">复制</a>
+                    <span class="op-link danger disabled" data-planner-only>关闭</span>
+                    <a class="op-link danger" href="#" data-planner-only onclick="toast('已删除');return false;">删除</a>
+                  </span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" /></td>
+              <td>6</td>
+              <td><span class="badge badge-muted">待执行</span></td>
+              <td><a href="#" onclick="openPlan('edit-003');return false;">STAB-20260818-002</a></td>
+              <td>外径千分尺</td>
+              <td>EQ-MIC-008</td>
+              <td>销轴</td>
+              <td>王工</td>
+              <td>1</td>
+              <td>3</td>
+              <td>2026-08-18</td>
+              <td>—</td>
+              <td>
+                <div class="row-op">
+                  <a class="op-link" href="stab-data.html?id=pending">数据录入</a>
+                  <a class="op-link" href="stab-report.html?id=pending">报告</a>
+                  <button class="op-link op-more" type="button" onclick="openOpMenu(this)">更多</button>
+                  <span class="op-extra">
+                    <a class="op-link" href="#" data-planner-only onclick="openPlan('edit-003');return false;">编辑</a>
+                    <a class="op-link" href="#" onclick="toast('已复制为新草稿');return false;">复制</a>
+                    <a class="op-link danger" href="#" data-planner-only onclick="toast('已关闭');return false;">关闭</a>
+                    <a class="op-link danger" href="#" data-planner-only onclick="toast('已删除');return false;">删除</a>
+                  </span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pager">
+        <span>共 6 条</span>
+        <div class="pager-right">
+          <button type="button">‹</button>
+          <button class="cur" type="button">1</button>
+          <button type="button">›</button>
+          <span>每页</span>
+          <select><option>20</option><option>50</option></select>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<div class="modal-mask" id="planMask" onclick="if(event.target===this)closePlan()">
+  <div class="modal modal-lg" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <h3 id="planTitle">新增计划</h3>
+      <button type="button" class="modal-close" onclick="closePlan()" aria-label="关闭">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field">
+          <label>计划编号</label>
+          <div class="ro" id="planNo">提交后生成 STAB-YYYYMMDD-序号</div>
+        </div>
+        <div class="field">
+          <label>仪器 <span style="color:var(--danger)">*</span></label>
+          <div class="ro picker-field" id="eqName" onclick="openEqPicker()" title="点击从仪器台账选择">
+            <span class="picker-text" id="eqNameText">请选择仪器</span>
+            <svg class="picker-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+          </div>
+        </div>
+        <div class="field">
+          <label>仪器编号</label>
+          <div class="ro" id="eqNum">—</div>
+        </div>
+        <div class="field">
+          <label>仪器规格</label>
+          <div class="ro" id="eqSpec">—</div>
+        </div>
+        <div class="field">
+          <label>仪器类型</label>
+          <div class="ro" id="eqType">—</div>
+        </div>
+        <div class="field">
+          <label>检测项目 <span style="color:var(--danger)">*</span></label>
+          <input id="partName" placeholder="请输入" />
+        </div>
+        <div class="field">
+          <label>测量参数</label>
+          <input id="param" placeholder="选填" />
+        </div>
+        <div class="field">
+          <label>测量人 <span style="color:var(--danger)">*</span></label>
+          <select id="measurer">
+            <option>王工</option>
+            <option>李工</option>
+            <option>赵工</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>试验次数 <span style="color:var(--danger)">*</span></label>
+          <select id="rSel">
+            <option>2</option>
+            <option selected>3</option>
+            <option>4</option>
+            <option>5</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>样本数 <span style="color:var(--danger)">*</span></label>
+          <select id="kSel"></select>
+        </div>
+        <div class="field">
+          <label>计划测量日期 <span style="color:var(--danger)">*</span></label>
+          <input id="planDate" type="date" />
+        </div>
+        <div class="field span-3">
+          <label>备注</label>
+          <textarea id="remark" placeholder="选填"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot" data-planner-only>
+      <button class="btn" type="button" onclick="saveDraft()">保存草稿</button>
+      <a class="btn btn-primary" href="stab-data.html">提交计划</a>
+    </div>
+  </div>
+</div>
+
+<!-- 选择仪器 · 右侧抽屉（数据源：仪器台账） -->
+<div class="eq-drawer-mask" id="eqMask" onclick="if(event.target===this)closeEqPicker()">
+  <aside class="eq-drawer" onclick="event.stopPropagation()">
+    <div class="eq-drawer-hd">
+      <h3>选择仪器</h3>
+      <button type="button" class="modal-close" onclick="closeEqPicker()" aria-label="关闭">×</button>
+    </div>
+    <div class="eq-drawer-bd">
+      <div class="eq-query query">
+        <div class="field"><label>仪器编号</label><input id="eqQCode" oninput="renderEqTable()" placeholder="请输入" /></div>
+        <div class="field"><label>仪器名称</label><input id="eqQName" oninput="renderEqTable()" placeholder="请输入" /></div>
+        <div class="field eq-query-btns">
+          <button class="btn btn-primary" type="button" onclick="renderEqTable()">查询</button>
+          <button class="btn" type="button" onclick="document.getElementById('eqQCode').value='';document.getElementById('eqQName').value='';renderEqTable()">重置</button>
+        </div>
+      </div>
+      <div class="eq-table-wrap">
+        <table class="data eq-table">
+          <thead>
+            <tr>
+              <th class="col-radio"></th>
+              <th>仪器状态</th>
+              <th>仪器编号</th>
+              <th>仪器名称</th>
+              <th>仪器类型</th>
+              <th>使用状态</th>
+              <th>规格型号</th>
+              <th>存放位置</th>
+            </tr>
+          </thead>
+          <tbody id="eqTbody"></tbody>
+        </table>
+      </div>
+      <div class="eq-tip">数据来源：仪器台账；仅「在用」可选择，单选。</div>
+    </div>
+    <div class="eq-drawer-ft">
+      <button class="btn" type="button" onclick="closeEqPicker()">取消</button>
+      <button class="btn btn-primary" type="button" onclick="confirmEqPick()">确定</button>
+    </div>
+  </aside>
+</div>
+<script src="js/app.js"></script>
+<script>
+
+var EQ_FALLBACK_ROWS = [
+  { insStatus: "正常", code: "EQ-CAL-012", name: "数显卡尺", type: "卡尺", barcode: "EQ-CAL-012", useStatus: "在用",
+    spec: "0–150 mm / 0.01 mm", range: "0–150 mm", location: "计量室 A-01" },
+  { insStatus: "正常", code: "EQ-MIC-008", name: "外径千分尺", type: "千分尺", barcode: "EQ-MIC-008", useStatus: "在用",
+    spec: "0–25 mm / 0.001 mm", range: "0–25 mm", location: "计量室 A-02" },
+  { insStatus: "正常", code: "EQ-HGT-003", name: "高度尺", type: "高度尺", barcode: "EQ-HGT-003", useStatus: "在用",
+    spec: "0–300 mm / 0.02 mm", range: "0–300 mm", location: "计量室 A-03" },
+  { insStatus: "正常", code: "EQ-DEP-001", name: "深度尺", type: "深度尺", barcode: "EQ-DEP-001", useStatus: "在用",
+    spec: "0–150 mm / 0.02 mm", range: "0–150 mm", location: "计量室 A-04" },
+  { insStatus: "待定检", code: "EQ-CAL-015", name: "数显卡尺（备用）", type: "卡尺", barcode: "EQ-CAL-015", useStatus: "停用",
+    spec: "0–200 mm / 0.01 mm", range: "0–200 mm", location: "计量室 B-01" }
+];
+var pickedEq = null;
+var pendingEqCode = '';
+
+function getEqLedger() {
+  try {
+    var host = (window.parent && window.parent !== window) ? window.parent : window;
+    var rows = host.WMS_MOCK_ROWS && host.WMS_MOCK_ROWS['instrument-ledger'] && host.WMS_MOCK_ROWS['instrument-ledger'].main;
+    if (rows && rows.length) {
+      return rows.map(function (r) {
+        return {
+          insStatus: r['仪器状态'] || '', code: r['仪器编号'] || '', name: r['仪器名称'] || '',
+          barcode: r['仪器条码'] || '', type: r['仪器类型'] || '', useStatus: r['使用状态'] || '',
+          spec: r['规格型号'] || '', range: r['测量范围'] || '', location: r['存放位置'] || ''
+        };
+      });
+    }
+  } catch (e) {}
+  return EQ_FALLBACK_ROWS;
+}
+function esc(v) {
+  return String(v == null ? '' : v).replace(/[&<>"]/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+  });
+}
+function openEqPicker() {
+  document.getElementById('eqQCode').value = '';
+  document.getElementById('eqQName').value = '';
+  pendingEqCode = pickedEq ? pickedEq.code : '';
+  renderEqTable();
+  document.getElementById('eqMask').classList.add('show');
+}
+function closeEqPicker() {
+  document.getElementById('eqMask').classList.remove('show');
+}
+function renderEqTable() {
+  var qc = (document.getElementById('eqQCode').value || '').trim().toLowerCase();
+  var qn = (document.getElementById('eqQName').value || '').trim().toLowerCase();
+  var rows = getEqLedger().filter(function (r) {
+    return (!qc || String(r.code).toLowerCase().indexOf(qc) > -1)
+      && (!qn || String(r.name).toLowerCase().indexOf(qn) > -1);
+  });
+  var html = rows.map(function (r) {
+    var disabled = r.useStatus !== '在用';
+    var picked = r.code === pendingEqCode;
+    var tagCls = r.useStatus === '在用' ? 'badge-ok' : (r.useStatus === '报废' ? 'badge-danger' : 'badge-muted');
+    return '<tr class="' + (disabled ? 'is-disabled' : '') + (picked ? ' is-picked' : '') + '"'
+      + (disabled
+          ? ' onclick="toast(\'该仪器当前「' + esc(r.useStatus) + '」，不可选用\')"'
+          : ' onclick="pickEqRow(\'' + esc(r.code) + '\')" ondblclick="pickEqRow(\'' + esc(r.code) + '\');confirmEqPick()"')
+      + '>'
+      + '<td class="col-radio"><input type="radio" name="eqPick" ' + (picked ? 'checked ' : '') + (disabled ? 'disabled ' : '')
+      + 'onclick="event.stopPropagation();pickEqRow(\'' + esc(r.code) + '\')" /></td>'
+      + '<td>' + esc(r.insStatus || '—') + '</td>'
+      + '<td>' + esc(r.code) + '</td>'
+      + '<td title="' + esc(r.name) + '">' + esc(r.name) + '</td>'
+      + '<td>' + esc(r.type) + '</td>'
+      + '<td><span class="badge ' + tagCls + '">' + esc(r.useStatus) + '</span></td>'
+      + '<td title="' + esc(r.spec) + '">' + esc(r.spec || '—') + '</td>'
+      + '<td title="' + esc(r.location) + '">' + esc(r.location || '—') + '</td>'
+      + '</tr>';
+  }).join('');
+  document.getElementById('eqTbody').innerHTML = html ||
+    '<tr><td colspan="8" class="eq-empty">未匹配到仪器</td></tr>';
+}
+function pickEqRow(code) {
+  pendingEqCode = code;
+  renderEqTable();
+}
+function confirmEqPick() {
+  if (!pendingEqCode) { toast('请选择一台仪器'); return; }
+  var row = getEqLedger().filter(function (r) { return r.code === pendingEqCode; })[0];
+  if (!row) { toast('仪器信息不存在'); return; }
+  if (row.useStatus !== '在用') { toast('该仪器当前「' + row.useStatus + '」，不可选用'); return; }
+  applyEq(row);
+  closeEqPicker();
+}
+function applyEq(row) {
+  pickedEq = row;
+  document.getElementById('eqNameText').textContent = row.name || '—';
+  document.getElementById('eqName').title = (row.code ? row.code + ' · ' : '') + (row.name || '');
+  document.getElementById('eqNum').textContent = row.code || '—';
+  document.getElementById('eqSpec').textContent = row.spec || '—';
+  document.getElementById('eqType').textContent = row.type || '—';
+}
+function clearEq() {
+  pickedEq = null;
+  document.getElementById('eqNameText').textContent = '请选择仪器';
+  document.getElementById('eqNum').textContent = '—';
+  document.getElementById('eqSpec').textContent = '—';
+  document.getElementById('eqType').textContent = '—';
+}
+(function fillK() {
+  var sel = document.getElementById("kSel");
+  for (var i = 10; i <= 30; i++) {
+    var o = document.createElement("option");
+    o.value = String(i);
+    o.textContent = String(i);
+    if (i === 25) o.selected = true;
+    sel.appendChild(o);
+  }
+})();
+function closePlan() {
+  document.getElementById("planMask").classList.remove("show");
+}
+function fillDefault() {
+  document.getElementById("planNo").textContent = "提交后生成 STAB-YYYYMMDD-序号";
+  clearEq();
+  applyEq(getEqLedger().filter(function (r) { return r.code === 'EQ-CAL-012'; })[0] || EQ_FALLBACK_ROWS[0]);
+  document.getElementById("partName").value = "轴套 φ20";
+  document.getElementById("param").value = "";
+  document.getElementById("measurer").value = "王工";
+  document.getElementById("rSel").value = "3";
+  document.getElementById("kSel").value = "25";
+  document.getElementById("planDate").value = "2026-09-01";
+  document.getElementById("remark").value = "";
+}
+function openPlan(id) {
+  document.getElementById("planTitle").textContent = id ? "编辑计划" : "新增计划";
+  fillDefault();
+  if (id === "edit-002") {
+    document.getElementById("planNo").textContent = "STAB-20260826-002";
+    applyEq(getEqLedger().filter(function (r) { return r.code === 'EQ-HGT-003'; })[0] || EQ_FALLBACK_ROWS[2]);
+    document.getElementById("partName").value = "支架";
+    document.getElementById("measurer").value = "李工";
+    document.getElementById("planDate").value = "2026-08-26";
+  }
+  if (id === "edit-003") {
+    document.getElementById("planNo").textContent = "STAB-20260818-002";
+    applyEq(getEqLedger().filter(function (r) { return r.code === 'EQ-MIC-008'; })[0] || EQ_FALLBACK_ROWS[1]);
+    document.getElementById("partName").value = "销轴";
+    document.getElementById("planDate").value = "2026-08-18";
+  }
+  document.getElementById("planMask").classList.add("show");
+}
+function saveDraft() {
+  closePlan();
+  toast("已保存草稿");
+}
+
+
+/* ---------- 行操作「更多」 ---------- */
+function closeOpMenu() {
+  var old = document.querySelector('.op-menu');
+  if (old) old.remove();
+}
+function openOpMenu(btn) {
+  closeOpMenu();
+  var extra = btn.parentNode.querySelector('.op-extra');
+  if (!extra) return;
+  var menu = document.createElement('div');
+  menu.className = 'op-menu show';
+  menu.innerHTML = extra.innerHTML;
+  var role = localStorage.getItem('grrRole') || 'planner';
+  if (role !== 'planner') {
+    menu.querySelectorAll('[data-planner-only]').forEach(function (n) { n.style.display = 'none'; });
+  }
+  document.body.appendChild(menu);
+  menu.addEventListener('click', function () { setTimeout(closeOpMenu, 0); });
+  var r = btn.getBoundingClientRect();
+  var mw = menu.offsetWidth;
+  var mh = menu.offsetHeight;
+  var left = Math.max(8, Math.min(r.left - 8, window.innerWidth - mw - 8));
+  var top = r.bottom + 4;
+  if (top + mh > window.innerHeight - 8) top = Math.max(8, r.top - mh - 4);
+  menu.style.left = left + 'px';
+  menu.style.top = top + 'px';
+}
+document.addEventListener('click', function (e) {
+  var menu = document.querySelector('.op-menu');
+  if (!menu || !menu.classList.contains('show')) return;
+  if (menu.contains(e.target) || e.target.closest('.op-more')) return;
+  closeOpMenu();
+});
+window.addEventListener('scroll', closeOpMenu, true);
+
+</script>
+</body>
+</html>
