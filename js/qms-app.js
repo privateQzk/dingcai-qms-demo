@@ -84,6 +84,18 @@ window.QMS_APP_MODULES = [
     "pcLabel": "库内复检"
   },
   {
+    "id": "app-insp-tab-gen",
+    "name": "通用检报检单",
+    "icon": "📋",
+    "group": "质量管理",
+    "section": "报检及取样",
+    "homeGroup": "质量管理 · 报检及取样",
+    "pageId": "insp-order",
+    "tab": "tab-gen",
+    "kind": "insp",
+    "pcLabel": "通用检"
+  },
+  {
     "id": "app-insp-tab-oe",
     "name": "内部委托报检单",
     "icon": "📋",
@@ -138,6 +150,16 @@ window.QMS_APP_MODULES = [
     "pageId": "np-0201-12",
     "kind": "sdisp",
     "action": "确认处置"
+  },
+  {
+    "id": "app-cass",
+    "name": "卡塞信息表",
+    "icon": "📦",
+    "group": "质量管理",
+    "section": "检测样管理",
+    "homeGroup": "质量管理 · 检测样管理",
+    "pageId": "np-0201-17",
+    "kind": "cass"
   },
   {
     "id": "app-res-tab-pi",
@@ -222,6 +244,18 @@ window.QMS_APP_MODULES = [
     "tab": "tab-wr",
     "kind": "result",
     "pcLabel": "库内复检"
+  },
+  {
+    "id": "app-res-tab-gen",
+    "name": "通用检报检单",
+    "icon": "🔎",
+    "group": "质量管理",
+    "section": "检验结果查询",
+    "homeGroup": "质量管理 · 检验结果查询",
+    "pageId": "insp-order",
+    "tab": "tab-gen",
+    "kind": "result",
+    "pcLabel": "通用检"
   },
   {
     "id": "app-res-tab-oe",
@@ -857,6 +891,7 @@ window.QMS_APP_MODULES = [
       sdispSample: null,
       sdispMode: '报废',
       sdispReason: '检后销毁',
+      sdispGlass: '否',
       sdispNote: '',
       instBarcode: '',
       instNo: '',
@@ -895,6 +930,7 @@ window.QMS_APP_MODULES = [
       ioMatPick: null,
       splitParentIds: [],
       splitPickIds: [],
+      splitCode: '',
       splitCount: '1',
       splitRemark: '',
       splitLines: [],
@@ -973,7 +1009,7 @@ window.QMS_APP_MODULES = [
     }
     const QM_TABS = [
       ['tab-pi', '采购来料检'], ['tab-pp', '生产过程检'], ['tab-pm', '生产物料检'],
-      ['tab-sst', '生产SST检'], ['tab-rd', '研发检'], ['tab-ext', '外来小样检'], ['tab-wr', '库内复检'],
+      ['tab-sst', '生产SST检'], ['tab-rd', '研发检'], ['tab-ext', '外来小样检'], ['tab-wr', '库内复检'], ['tab-gen', '通用检'], ['tab-gen', '通用检'],
       ['tab-oe', '内部委托']
     ];
     function qmBlank(v) {
@@ -1565,6 +1601,11 @@ window.QMS_APP_MODULES = [
         创建人: '管理员',
         创建时间: nowStamp()
       };
+      const wxRes = String(row['维修结果'] || '').trim();
+      row['单据状态'] = (!wxRes || /维修中|返厂|处理中|进行中/.test(wxRes)) ? '待处理' : '已完成';
+      row['维修状态'] = row['单据状态']==='待处理' ? '待发起' : '已完成';
+      row['完成时间'] = row['维修状态']==='已完成' ? nowStamp() : '';
+      row['关闭时间'] = '';
       upsertRow('np-0307-01', '', row);
       qms.added.unshift({ pageId: 'np-0307-01', tab: '', row });
       if (f._expId) {
@@ -3275,6 +3316,8 @@ window.QMS_APP_MODULES = [
         }
       } else if (it.id === 'app-split') {
         list = splitListRows();
+      } else if (it.id === 'app-cass') {
+        list = cassListRows();
       } else if (it.id === 'app-sin' || it.id === 'app-sout' || it.id === 'app-sdisp') {
         list = qmSamplePages(it.id);
       } else if (it.kind === 'bx' || it.id === 'app-fix-1') {
@@ -3342,6 +3385,9 @@ window.QMS_APP_MODULES = [
     }
     function jobOf() { return (qms.item && JOBS[qms.item.id]) || null; }
     function statusOf(row) {
+      if (qms.item && qms.item.id === 'app-cass' && text(row, '卡塞类型')) {
+        return { k: '卡塞类型', v: text(row, '卡塞类型') };
+      }
       if (jobOf() && text(row, '计划状态')) return { k: '计划状态', v: text(row, '计划状态') };
       if (qms.item && (qms.item.kind === 'ty' || tyOf()) && text(row, '审核状态')) {
         return { k: '审核状态', v: text(row, '审核状态') };
@@ -3649,7 +3695,23 @@ window.QMS_APP_MODULES = [
       qms.mode = 'list';
       qms.row = null;
     }
+    function cassListRows() {
+      const list = (liveBag('np-0201-17') || []).map(patched);
+      return list.slice().sort((a, b) => String(b['创建时间'] || '').localeCompare(String(a['创建时间'] || '')));
+    }
+    function cassLines(row) {
+      const lines = (row && row._lines) || [];
+      return Array.isArray(lines) ? lines : [];
+    }
     function cardPairs(row) {
+      if (qms.item && qms.item.id === 'app-cass') {
+        return [
+          ['信息流水号', text(row, '信息流水号') || '—'],
+          ['关联玻璃板数', text(row, '关联玻璃板数') || '0'],
+          ['创建人', text(row, '创建人') || '—'],
+          ['创建时间', text(row, '创建时间') || '—']
+        ];
+      }
       if (solKind() === 'prep') {
         const pairs = [
           ['试液信息', text(row, '试液信息') || '—'],
@@ -3794,6 +3856,7 @@ window.QMS_APP_MODULES = [
           ['报检人', text(row, '报检人')],
           ['采样点', text(row, '采样点')],
           ['研发项目号', text(row, '研发项目号')],
+          ['光刻参数', text(row, '光刻参数')],
           ['备注', text(row, '报检备注') || text(row, '备注')],
           ['报检时间', text(row, '报检时间')]
         ];
@@ -3839,6 +3902,7 @@ window.QMS_APP_MODULES = [
         ['基本单位', show(text(row, '基本单位'))],
         ['检验班组', show(resultTeam(row))],
         ['研发项目号', show(text(row, '研发项目号'))],
+        ['光刻参数', show(text(row, '光刻参数'))],
         ['备注', show(text(row, '报检备注') || text(row, '备注'))],
         ['报检人', show(text(row, '报检人'))],
         ['报检时间', show(text(row, '报检时间'))]
@@ -3924,6 +3988,7 @@ window.QMS_APP_MODULES = [
         const k = labDocName();
         return k + '：' + (text(row, k) || titleOf(row));
       }
+      if (qms.item && qms.item.id === 'app-cass') return text(row, '卡塞编号') || titleOf(row);
       if (qms.item && qms.item.id === 'app-split') return text(row, '样品编号') || titleOf(row);
       if (jobOf()) return '计划单号：' + (text(row, '计划单号') || titleOf(row));
       if (qms.item && (qms.item.kind === 'wo' || qms.item.kind === 'ys' || qms.item.id === 'app-fix-3' || qms.item.id === 'app-fix-4')) {
@@ -3944,6 +4009,16 @@ window.QMS_APP_MODULES = [
       return titleOf(row);
     }
     function detailPairs(row) {
+      if (qms.item && qms.item.id === 'app-cass') {
+        return [
+          ['信息流水号', text(row, '信息流水号') || '—'],
+          ['卡塞编号', text(row, '卡塞编号') || '—'],
+          ['卡塞类型', text(row, '卡塞类型') || '—'],
+          ['关联玻璃板数', text(row, '关联玻璃板数') || String(cassLines(row).length) || '0'],
+          ['创建人', text(row, '创建人') || '—'],
+          ['创建时间', text(row, '创建时间') || '—']
+        ];
+      }
       return cols().map(k => [k, row[k] == null || row[k] === '' ? '—' : String(row[k])]);
     }
     function schemes() {
@@ -4009,6 +4084,7 @@ window.QMS_APP_MODULES = [
       qms.sdispSample = null;
       qms.sdispMode = '报废';
       qms.sdispReason = '检后销毁';
+      qms.sdispGlass = '否';
       qms.sdispNote = '';
       qms.instBarcode = '';
       qms.instNo = '';
@@ -4075,8 +4151,7 @@ window.QMS_APP_MODULES = [
       const p = labProfile();
       if (p && p.dir === 'out') return '自动计算，=库存数量-' + (p.verb || '出库') + '数量，必须≥0';
       if (p && p.dir === 'open') return '开封不改变库存数量';
-      if (p && p.count) return '自动计算，=库存数量+入库数量，必须≥0';
-      return '自动计算，=库存数量+入库数量-出库数量，必须≥0';
+      return '自动计算：库存数量+入库数量';
     }
     function labStockRows(p) {
       if (!p) return [];
@@ -4494,6 +4569,7 @@ window.QMS_APP_MODULES = [
         qms.sdispSample = null;
         qms.sdispMode = '报废';
         qms.sdispReason = '检后销毁';
+        qms.sdispGlass = '否';
         qms.sdispNote = '';
         qms.instBarcode = '';
         qms.instNo = '';
@@ -4570,6 +4646,7 @@ window.QMS_APP_MODULES = [
       if (qms.mode === 'rdetail') return '详情';
       if (qms.mode === 'samp') return '取样';
       if (qms.mode === 'idetail') return '详情';
+      if (qms.mode === 'detail' && qms.item && qms.item.id === 'app-cass') return '详情';
       if (qms.mode === 'exec') {
         const spec = execSpec(qms.item);
         if (spec && spec.kind === 'count') return '执行';
@@ -4692,7 +4769,6 @@ window.QMS_APP_MODULES = [
         _rid: 's' + Date.now() + Math.random().toString(16).slice(2, 6),
         样品编号: code,
         样品来源: '报检取样',
-        卡塞信息: '',
         检验班组: '',
         取样备注: qms.remark,
         检验方案: qms.scheme,
@@ -4818,15 +4894,16 @@ window.QMS_APP_MODULES = [
       const mat = [text(row, '物料编码'), text(row, '物料名称'), text(row, '物料规格')].filter(Boolean).join('/') || '—';
       const sup = [text(row, '供应商编码'), text(row, '供应商名称')].filter(Boolean).join('/') || '—';
       const cus = [text(row, '客户编码'), text(row, '客户名称')].filter(Boolean).join('/') || '—';
-      const full = { '物料信息': 1, '供应商信息': 1, '客户信息': 1, '来样单位': 1, '样品名称': 1, '报检备注': 1, '检测要求': 1 };
+      const full = { '物料信息': 1, '供应商信息': 1, '客户信息': 1, '来样单位': 1, '样品名称': 1, '光刻参数': 1, '报检备注': 1, '检测要求': 1 };
       const map = {
         'tab-pi': [['来源系统', v('来源系统')], ['来源单号', v('来源单号')], ['到货通知单号', v('到货通知单号')], ['物料信息', mat], ['供应商信息', sup], ['采样点', v('采样点')], ['厂内批号', v('厂内批号')], ['供应商批号', v('供应商批号')], ['报检件数', v('报检件数')], ['报检数量', v('报检数量')], ['基本单位', v('基本单位')], ['货物位置', v('货物位置')], ['预计送样时间', v('预计送样时间')], ['需求完成时间', v('需求完成时间')], ['研发项目号', v('研发项目号')], ['报检备注', v('报检备注')], ['报检人', v('报检人')], ['报检时间', v('报检时间')]],
         'tab-pp': [['物料信息', mat], ['客户信息', cus], ['产线名称', v('产线名称')], ['车间名称', v('车间名称')], ['采样点', v('采样点')], ['报检批号', v('报检批号')], ['来源系统', v('来源系统')], ['来源单号', v('来源单号')], ['检验类型', v('检验类型')], ['SAP生产订单号', v('SAP生产订单号')], ['货物位置', v('货物位置')], ['预计送样时间', v('预计送样时间')], ['需求完成时间', v('需求完成时间')], ['研发项目号', v('研发项目号')], ['报检备注', v('报检备注')], ['报检人', v('报检人')], ['报检时间', v('报检时间')]],
         'tab-pm': [['物料信息', mat], ['客户信息', cus], ['产线名称', v('产线名称')], ['车间名称', v('车间名称')], ['采样点', v('采样点')], ['报检批号', v('报检批号')], ['货物位置', v('货物位置')], ['报检件数', v('报检件数')], ['报检数量', v('报检数量')], ['基本单位', v('基本单位')], ['来源系统', v('来源系统')], ['来源单号', v('来源单号')], ['检验类型', v('检验类型')], ['SAP生产订单号', v('SAP生产订单号')], ['预计送样时间', v('预计送样时间')], ['需求完成时间', v('需求完成时间')], ['研发项目号', v('研发项目号')], ['报检备注', v('报检备注')], ['报检人', v('报检人')], ['报检时间', v('报检时间')]],
         'tab-sst': [['物料信息', mat], ['客户信息', cus], ['产线名称', v('产线名称')], ['车间名称', v('车间名称')], ['采样点', v('采样点')], ['报检批号', v('报检批号')], ['货物位置', v('货物位置')], ['来源系统', v('来源系统')], ['来源单号', v('来源单号')], ['检验类型', v('检验类型')], ['SAP生产订单号', v('SAP生产订单号')], ['预计送样时间', v('预计送样时间')], ['需求完成时间', v('需求完成时间')], ['研发项目号', v('研发项目号')], ['报检备注', v('报检备注')], ['报检人', v('报检人')], ['报检时间', v('报检时间')]],
-        'tab-rd': [['来源系统', v('来源系统')], ['来源单号', v('来源单号')], ['检验类型', v('检验类型')], ['物料编码', v('物料编码')], ['物料名称', v('物料名称')], ['物料规格', v('物料规格')], ['物料种类', v('物料种类')], ['采样点', v('采样点')], ['报检批号', v('报检批号')], ['货物位置', v('货物位置')], ['预计送样时间', v('预计送样时间')], ['需求完成时间', v('需求完成时间')], ['研发项目号', v('研发项目号')], ['报检备注', v('报检备注')], ['报检人', v('报检人')], ['报检时间', v('报检时间')]],
+        'tab-rd': [['来源系统', v('来源系统')], ['来源单号', v('来源单号')], ['检验类型', v('检验类型')], ['物料编码', v('物料编码')], ['物料名称', v('物料名称')], ['物料规格', v('物料规格')], ['物料种类', v('物料种类')], ['采样点', v('采样点')], ['报检批号', v('报检批号')], ['货物位置', v('货物位置')], ['预计送样时间', v('预计送样时间')], ['需求完成时间', v('需求完成时间')], ['研发项目号', v('研发项目号')], ['光刻参数', v('光刻参数')], ['报检备注', v('报检备注')], ['报检人', v('报检人')], ['报检时间', v('报检时间')]],
         'tab-ext': [['来样类型', v('来样类型')], ['来样单位', v('来样单位')], ['物料信息', mat], ['采样点', v('采样点')], ['报检批号', v('报检批号')], ['货物位置', v('货物位置')], ['样品编号', v('样品编号')], ['预计送样时间', v('预计送样时间')], ['需求完成时间', v('需求完成时间')], ['研发项目号', v('研发项目号')], ['报检备注', v('报检备注')], ['报检人', v('报检人')], ['报检时间', v('报检时间')]],
         'tab-wr': [['来源系统', v('来源系统')], ['来源单号', v('来源单号')], ['物料信息', mat], ['检验类型', v('检验类型')], ['采样点', v('采样点')], ['报检批号', v('报检批号')], ['货物位置', v('货物位置')], ['预计送样时间', v('预计送样时间')], ['需求完成时间', v('需求完成时间')], ['研发项目号', v('研发项目号')], ['报检备注', v('报检备注')], ['报检人', v('报检人')], ['报检时间', v('报检时间')]],
+        'tab-gen': [['来源系统', v('来源系统')], ['来源单号', v('来源单号')], ['物料信息', mat], ['检验类型', v('检验类型')], ['采样点', v('采样点')], ['报检批号', v('报检批号')], ['货物位置', v('货物位置')], ['预计送样时间', v('预计送样时间')], ['需求完成时间', v('需求完成时间')], ['研发项目号', v('研发项目号')], ['报检备注', v('报检备注')], ['报检人', v('报检人')], ['报检时间', v('报检时间')]],
         'tab-oe': [['委托单号', v('委托单号')], ['来源报检单号', v('来源报检单号')], ['报检单类型', v('报检单类型')], ['样品编号', v('样品编号')], ['物料信息', mat], ['报检批号', v('报检批号')], ['委托组织', v('委托组织')], ['委托项目', v('委托项目')], ['需求完成时间', v('需求完成时间')], ['预计送样时间', v('预计送样时间')], ['研发项目号', v('研发项目号')], ['报检备注', v('报检备注')], ['报检人', v('报检人')], ['报检时间', v('报检时间')]]
       };
       return (map[tab] || map['tab-pi']).map(([label, value]) => ({ label, value, full: !!full[label] }));
@@ -4912,13 +4989,6 @@ window.QMS_APP_MODULES = [
         已取样件数: String(got),
         待取样件数: String(Math.max(0, should - got))
       };
-      const cassetteVals = [];
-      String(row['卡塞信息'] || '').split(/[;；]/).concat(qms.samples.map(s => s['卡塞信息'] || '')).forEach(part => {
-        String(part).split(/[;；]/).map(s => s.trim()).filter(s => s && s !== '—').forEach(s => {
-          if (cassetteVals.indexOf(s) < 0) cassetteVals.push(s);
-        });
-      });
-      if (cassetteVals.length) patch['卡塞信息'] = cassetteVals.join('；');
       patchLive('insp-order', tab, row.id, patch);
       qms.patches[row.id] = patch;
       qms.samples.forEach(s => {
@@ -5008,7 +5078,6 @@ window.QMS_APP_MODULES = [
           样品编号: sampleNo,
           母样编号: src['母样编号'] || '—',
           样品来源: src['样品来源'] || '报检取样',
-          卡塞信息: src['卡塞信息'] || '—',
           报检类型: src['报检类型'] || '',
           报检单号: src['报检单号'] || '',
           物料编码: src['物料编码'] || '',
@@ -5020,6 +5089,7 @@ window.QMS_APP_MODULES = [
           留样仓库: '—',
           留样库位: '—',
           留样条码号: '—',
+          是否玻璃片: patch.disp === '留样' ? (patch.glass || '否') : '—',
           报废原因: patch.disp === '报废' ? (patch.reason || '—') : '—',
           处置备注: note,
           处置时间: stamp,
@@ -5030,7 +5100,6 @@ window.QMS_APP_MODULES = [
           变更类型: '样品处置',
           样品编号: sampleNo,
           母样编号: src['母样编号'] || '—',
-          卡塞信息: src['卡塞信息'] || '—',
           物料名称: src['物料名称'] || '',
           报检批号: src['报检批号'] || '',
           原位置: oldLoc,
@@ -5054,7 +5123,6 @@ window.QMS_APP_MODULES = [
             样品状态: sample['样品状态'] || '待检验',
             样品来源: sample['样品来源'] || '报检取样',
             母样编号: sample['母样编号'] || '—',
-            卡塞信息: sample['卡塞信息'] || '—',
             报检单号: sample['报检单号'] || '',
             报检类型: sample['报检类型'] || '',
             物料编码: sample['物料编码'] || '',
@@ -5080,7 +5148,6 @@ window.QMS_APP_MODULES = [
           变更类型: changeType,
           样品编号: sampleNo,
           母样编号: prev['母样编号'] || sample['母样编号'] || '—',
-          卡塞信息: prev['卡塞信息'] || sample['卡塞信息'] || '—',
           物料名称: prev['物料名称'] || sample['物料名称'] || '',
           报检批号: prev['报检批号'] || sample['报检批号'] || '',
           原位置: oldLoc,
@@ -5261,6 +5328,7 @@ window.QMS_APP_MODULES = [
     function onSdispMode() {
       if (qms.sdispMode !== '报废') qms.sdispReason = '';
       else if (!qms.sdispReason) qms.sdispReason = '检后销毁';
+      if (qms.sdispMode === '留样' && !qms.sdispGlass) qms.sdispGlass = '否';
     }
     function confirmSdisp() {
       if (!qms.sdispSample) { toast('请先扫描样品条码'); return; }
@@ -5272,6 +5340,7 @@ window.QMS_APP_MODULES = [
         type: '样品处置',
         disp: qms.sdispMode,
         reason: qms.sdispReason,
+        glass: qms.sdispMode === '留样' ? (qms.sdispGlass || '否') : '',
         note: qms.sdispNote,
         user: '管理员'
       });
@@ -5280,6 +5349,7 @@ window.QMS_APP_MODULES = [
       qms.sdispSample = null;
       qms.sdispMode = '报废';
       qms.sdispReason = '检后销毁';
+      qms.sdispGlass = '否';
       qms.sdispNote = '';
     }
     const INST_LEDGER_FIELDS = [
@@ -5461,7 +5531,7 @@ window.QMS_APP_MODULES = [
         );
       }
       else if (name === '外校单位' || name === '供应商信息' || (name === '来样单位' && qms.form['来样类型'] === '供应商送样')) list = pack(rowsOf('supplier'), r => r['供应商编码'] + ' ' + r['供应商名称'], r => r['供应商类型'] || '');
-      else if (name === '客户信息' || name === '来源组织' || (name === '来样单位' && qms.form['来样类型'] === '客户送样')) list = pack(rowsOf('customer'), r => r['客户编码'] + ' ' + r['客户名称'], r => r['客户类型'] || '');
+      else if (name === '客户信息' || (name === '来样单位' && qms.form['来样类型'] === '客户送样')) list = pack(rowsOf('customer'), r => r['客户编码'] + ' ' + r['客户名称'], r => r['客户类型'] || '');
       else if (name === '采样点') {
         const label = (qms.item && qms.item.pcLabel) || '';
         list = pack(rowsOf('samp-point').filter(r => !label || !r['适用报检单'] || String(r['适用报检单']).indexOf(label) >= 0), r => r['采样点名称'], r => r['适用报检单'] || '');
@@ -5505,7 +5575,7 @@ window.QMS_APP_MODULES = [
         qms.form['供应商信息'] = r['供应商名称'] || '';
         qms.form['供应商编码'] = r['供应商编码'] || '';
         qms.form['供应商名称'] = r['供应商名称'] || '';
-      } else if (name === '客户信息' || name === '来源组织') {
+      } else if (name === '客户信息') {
         qms.form[name] = r['客户名称'] || '';
         qms.form['客户编码'] = r['客户编码'] || '';
         qms.form['客户名称'] = r['客户名称'] || '';
@@ -5617,7 +5687,6 @@ window.QMS_APP_MODULES = [
         取样备注: lg['取样备注'] || '',
         取样时间: lg['取样时间'] || '',
         取样人: lg['取样人'] || '',
-        卡塞信息: lg['卡塞信息'] && lg['卡塞信息'] !== '—' ? lg['卡塞信息'] : '',
         已拆分数量: '0'
       };
     }
@@ -5631,7 +5700,7 @@ window.QMS_APP_MODULES = [
       void qms.rev;
       const tabs = [
         ['tab-pi', '采购来料检'], ['tab-pp', '生产过程检'], ['tab-pm', '生产物料检'], ['tab-sst', '生产SST检'],
-        ['tab-rd', '研发检'], ['tab-ext', '外来小样检'], ['tab-wr', '库内复检'],
+        ['tab-rd', '研发检'], ['tab-ext', '外来小样检'], ['tab-wr', '库内复检'], ['tab-gen', '通用检'],
         ['tab-oe', '内部委托']
       ];
       const out = [];
@@ -5674,10 +5743,23 @@ window.QMS_APP_MODULES = [
       if (row && splitBlockReason(row)) { toast('样品 ' + row['样品编号'] + ' 不可拆分：' + splitBlockReason(row)); return; }
       qms.splitParentIds = row ? [row.id] : [];
       qms.splitPickIds = row ? [row.id] : [];
+      qms.splitCode = row ? (row['样品编号'] || '') : '';
       qms.splitCount = '1';
       qms.splitRemark = '';
       qms.splitLines = [];
       qms.mode = 'split';
+    }
+    function scanSplitSample() {
+      const code = String(qms.splitCode || '').trim();
+      if (!code) { toast('请扫码或输入样品编号'); return; }
+      const hit = splitCandidates().find(p => p['样品编号'] === code);
+      if (!hit) { toast('未找到可拆分样品 ' + code); return; }
+      const reason = splitBlockReason(hit);
+      if (reason) { toast('样品 ' + hit['样品编号'] + ' 不可拆分：' + reason); return; }
+      qms.splitParentIds = [hit.id];
+      qms.splitPickIds = [hit.id];
+      qms.splitCode = hit['样品编号'];
+      qms.splitLines = [];
     }
     function openSplitPick() {
       qms.splitPickIds = (qms.splitParentIds || []).slice();
@@ -5704,6 +5786,7 @@ window.QMS_APP_MODULES = [
       if (bad.length) toast(bad[0]);
       qms.splitParentIds = ok.length ? ok : ids.filter(id => splitCandidates().some(p => p.id === id && !splitBlockReason(p)));
       if (!qms.splitParentIds.length) { toast('请至少选择一条数据'); return; }
+      qms.splitCode = splitParents().map(p => p['样品编号']).join(',');
       qms.splitLines = [];
       qms.mode = 'split';
     }
@@ -5718,7 +5801,7 @@ window.QMS_APP_MODULES = [
     }
     function genSplitLines() {
       const parents = splitParents();
-      if (!parents.length) { toast('请先选择样品编号'); return; }
+      if (!parents.length) { toast('请先扫码或输入样品编号'); return; }
       const n = parseInt(qms.splitCount, 10);
       if (!/^\d+$/.test(String(qms.splitCount).trim()) || n < 1) { toast('拆分份数需为≥1的正整数'); return; }
       for (let i = 0; i < parents.length; i++) {
@@ -5727,7 +5810,6 @@ window.QMS_APP_MODULES = [
       }
       const lines = [];
       parents.forEach(p => {
-        const cassette = p['卡塞信息'] && p['卡塞信息'] !== '—' ? p['卡塞信息'] : '';
         for (let i = 0; i < n; i++) {
           lines.push({
             样品编号: '',
@@ -5737,7 +5819,6 @@ window.QMS_APP_MODULES = [
             检验方案: p['检验方案'] || '',
             检验班组: p['检验班组'] || '',
             拆分备注: qms.splitRemark || '',
-            卡塞信息: cassette,
             _picked: false,
             _parentId: p.id
           });
@@ -5775,7 +5856,7 @@ window.QMS_APP_MODULES = [
     function confirmSplit() {
       const parents = splitParents();
       const lines = qms.splitLines || [];
-      if (!parents.length) { toast('请先选择样品编号'); return; }
+      if (!parents.length) { toast('请先扫码或输入样品编号'); return; }
       if (!lines.length) { toast('请先点「拆分」生成子样品'); return; }
       const list = splitBag();
       const stamp = nowStamp();
@@ -5797,7 +5878,6 @@ window.QMS_APP_MODULES = [
             拆分状态: '—',
             已拆分数量: '—',
             检验班组: p['检验班组'] || '',
-            卡塞信息: String(l.卡塞信息 || '').trim() || '—',
             拆分备注: l.拆分备注 || '—',
             拆分时间: stamp,
             拆分人: '管理员'
@@ -5877,6 +5957,7 @@ window.QMS_APP_MODULES = [
     }
     function ops() {
       const it = qms.item;
+      if (it && it.id === 'app-cass') return [];
       if (it && it.id === 'app-split') {
         const r = qms.row;
         if (!r) return [];
@@ -5894,7 +5975,7 @@ window.QMS_APP_MODULES = [
     }
     return {
       state: qms,
-      open, back, openRow, openSample, listRows, cols, cardPairs, cardFull, cardNo, stats, detailPairs, titleOf, statusOf,
+      open, back, openRow, openSample, listRows, cols, cardPairs, cardFull, cardNo, stats, detailPairs, cassLines, titleOf, statusOf,
       resultSamples, resultPairs, resultSamplePairs, resultQuants, resultQuals, judgeBad, devOn, showVal,
       schemes, teams, genSamples, refreshCodes, togglePick, printLabel, submitSamp,
       doAction, login, ops, text, join, navTitle, openAdd, saveAdd, formSections, fieldOptions,
@@ -5903,7 +5984,7 @@ window.QMS_APP_MODULES = [
       scanSdispSample, onSdispMode, confirmSdisp,
       instLedgerFields, scanInstBarcode, scanInstNo, instFieldVal,
       inspPairs, inspPh, stepForm, stepSamp, refreshBj, toggleSamp, removeSamples,
-      openSplit, openSplitPick, toggleSplitPick, confirmSplitPick, splitHead, genSplitLines, removeSplitLine, removeSplitLines, printSplitLabels, confirmSplit, splitCandidates, splitParent, splitParents, splitRecords,
+      openSplit, scanSplitSample, openSplitPick, toggleSplitPick, confirmSplitPick, splitHead, genSplitLines, removeSplitLine, removeSplitLines, printSplitLabels, confirmSplit, splitCandidates, splitParent, splitParents, splitRecords,
       openExec, saveExec, onWjLineChange, nextWjNo, openWjAdd, refreshWjNo, saveWjAdd, openWjSupplierPick,
       countIsScan, countOnQty, countScanEnter, countOpenNote, countConfirmNote, countCancelNote, countRemoveLine, countDoneCnt, countPendingCnt, countPlanSum,
       scanWjInst, removeWjLine, openWjTodo, wjTodoAll, wjTodoRows, fillWjUnscanned,

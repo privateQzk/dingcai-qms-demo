@@ -79,8 +79,8 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"He
 .app-aside .el-menu-item,.app-aside .el-sub-menu__title{height:40px;line-height:40px;margin:2px 8px;border-radius:8px}
 .app-aside .el-menu-item.is-active{color:var(--color-primary);background:#F0F4F8;font-weight:500}
 .app-main{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column}
-.app-header{height:52px;padding:0 20px;background:#fff;border-bottom:1px solid var(--color-border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.app-header__actions{display:flex;align-items:center;gap:10px;padding-right:88px;flex-shrink:0}
+.app-header{position:relative;height:52px;padding:0 20px;background:#fff;border-bottom:1px solid var(--color-border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:12px;min-width:0}
+.app-header__actions{display:flex;align-items:center;gap:10px;flex-shrink:0;position:relative;z-index:2}
 .mode-switch{display:inline-flex;border:1px solid var(--color-border);border-radius:4px;overflow:hidden}
 .mode-switch a{padding:6px 14px;font-size:13px;text-decoration:none;color:var(--color-text-normal);background:#fff}
 .mode-switch a:hover{color:var(--color-primary)}
@@ -95,7 +95,7 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"He
 .back-overview:hover{border-color:var(--color-primary);color:var(--color-primary)}
 .demo-scope-tip{
   font-size:12px;line-height:1.45;font-weight:600;
-  color:#8B0000;text-align:right;
+  color:#8B0000;text-align:right;flex-shrink:1;min-width:0;margin-right:4px;
 }
 .app-body{flex:1;min-height:0;display:flex;align-items:flex-start;justify-content:center;padding:24px;overflow:auto;background:#E8ECF0}
 .phone-frame{width:390px;height:780px;max-height:calc(100vh - 100px);background:#111;border-radius:28px;padding:12px;box-shadow:0 12px 40px rgba(0,0,0,.25);flex-shrink:0}
@@ -464,16 +464,15 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"He
 /* 页面 PRD 备注：右侧面板无遮罩、挤压主区 */
 :root{--remarks-panel-w:520px;--color-btn-primary:#1A4099;--color-btn-link:#1A4099}
 .remarks-toggle{
-  position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:10050;
-  height:32px;min-width:72px;padding:0 14px;
+  position:static;transform:none;z-index:auto;
+  height:30px;min-width:64px;padding:0 12px;
   border:1px solid var(--color-border);border-radius:4px;
-  background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.1);
+  background:#fff;box-shadow:none;
   color:var(--color-text-normal);font-size:13px;cursor:pointer;
-  display:inline-flex;align-items:center;justify-content:center;
+  display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;
 }
 .remarks-toggle:hover{border-color:var(--color-primary);color:var(--color-primary)}
 .remarks-toggle.on{color:#fff!important;background:var(--color-primary)!important;border-color:var(--color-primary)!important}
-body.remarks-open .remarks-toggle{left:calc((100% - var(--remarks-panel-w)) / 2);min-width:88px}
 .remarks-drawer{
   position:fixed;top:0;right:0;bottom:0;width:var(--remarks-panel-w);z-index:10040;
   background:#fff;border-left:1px solid var(--color-border);
@@ -542,7 +541,6 @@ body.remarks-open .remarks-toggle{left:calc((100% - var(--remarks-panel-w)) / 2)
 .remarks-empty{padding:24px 8px;text-align:center;color:var(--color-text-secondary);font-size:13px;line-height:1.6}
 body.remarks-open #app{width:calc(100% - var(--remarks-panel-w));max-width:calc(100% - var(--remarks-panel-w))}
 .demo-scope-tip span{display:block;white-space:nowrap}
-body.remarks-open .demo-scope-tip{display:none}
 @media (max-width:900px){
   :root{--remarks-panel-w:min(100vw,420px)}
 }
@@ -625,9 +623,6 @@ body.remarks-open .demo-scope-tip{display:none}
     </template>
   </el-dialog>
 
-  <button type="button" class="remarks-toggle" :class="{ on: remarksOpen }" @click="toggleRemarks" title="查看本页页面说明">
-    {{ remarksOpen ? '收起备注' : '备注' }}
-  </button>
   <aside class="remarks-drawer" :class="{ 'is-open': remarksOpen }" aria-label="页面说明">
     <div class="remarks-drawer__hd">
       <span class="remarks-drawer__title">{{ remarksTitle }}</span>
@@ -679,6 +674,9 @@ body.remarks-open .demo-scope-tip{display:none}
         <div style="font-size:13px;color:#8C8C8C">{{ headerHint }}</div>
         <div class="app-header__actions">
           <div class="demo-scope-tip"><span>该原型方案仅用于核对模块字段和按钮交互的基础功能，</span><span>不支持功能交互和业务逻辑实现</span></div>
+          <button type="button" class="remarks-toggle" :class="{ on: remarksOpen }" @click="toggleRemarks" title="查看本页页面说明">
+            {{ remarksOpen ? '收起备注' : '备注' }}
+          </button>
           <a class="back-overview" href="./index.html">返回总览</a>
           <div class="mode-switch">
             <a href="./pc.html">PC</a>
@@ -784,11 +782,11 @@ body.remarks-open .demo-scope-tip{display:none}
                 <button v-if="qms.jobOf() && qms.state.mode==='list'" class="m-nav__right" @click="qms.openJobAdd">新增</button>
                 <button v-if="qms.labProfile() && qms.state.mode==='list'" class="m-nav__right" @click="qms.openIoAdd">新增</button>
                 <button v-if="qms.solKind() && qms.state.mode==='list' && qms.state.solTab==='plan'" class="m-nav__right" @click="qms.openSolAdd()">新增</button>
-                <button v-if="qms.state.mode==='rdetail'" class="m-nav__right" @click="qms.back">关闭</button>
+                <button v-if="qms.state.mode==='rdetail' || (qms.state.item && qms.state.item.id==='app-cass' && qms.state.mode==='detail')" class="m-nav__right" @click="qms.back">关闭</button>
               </div>
               <div class="m-scroll" v-if="qms.state.mode==='list'">
                 <div class="m-search-bar">
-                  <input v-model="qms.state.kw" :placeholder="qms.state.item && (qms.state.item.kind==='insp' || qms.state.item.kind==='result') ? '请输入关键字' : (qms.labProfile() ? '模糊全局查询(输入)' : '模糊全局查询(输入/扫码带入)')" />
+                  <input v-model="qms.state.kw" :placeholder="qms.state.item && qms.state.item.id==='app-cass' ? '请输入关键字 / 扫码卡塞编号' : (qms.state.item && (qms.state.item.kind==='insp' || qms.state.item.kind==='result') ? '请输入关键字' : (qms.labProfile() ? '模糊全局查询(输入)' : '模糊全局查询(输入/扫码带入)'))" />
                   <button class="btn-sm" @click="qms.state.kw=qms.state.kw">查询</button>
                 </div>
                 <div v-if="qms.jobOf() && !qms.jobOf().noInst" class="status-tabs">
@@ -1365,8 +1363,37 @@ body.remarks-open .demo-scope-tip{display:none}
                       <option value="其他">其他</option>
                     </select>
                   </div>
+                  <div class="qms-row" v-if="qms.state.sdispMode==='留样'"><label>是否玻璃板</label>
+                    <div class="radio-row">
+                      <label><input type="radio" value="是" v-model="qms.state.sdispGlass" /> 是</label>
+                      <label><input type="radio" value="否" v-model="qms.state.sdispGlass" /> 否</label>
+                    </div>
+                  </div>
                   <div class="qms-row"><label>处置备注</label>
                     <textarea v-model="qms.state.sdispNote" rows="2" placeholder="输入"></textarea>
+                  </div>
+                </div>
+              </div>
+              <div class="m-scroll insp-form" v-else-if="qms.state.mode==='detail' && qms.state.row && qms.state.item && qms.state.item.id==='app-cass'">
+                <div class="sec">
+                  <div class="sec__title">卡塞信息</div>
+                  <div class="qms-row" v-for="(p,pi) in qms.detailPairs(qms.state.row)" :key="pi"><label>{{ p[0] }}</label><input :value="p[1]" readonly /></div>
+                </div>
+                <div class="sec">
+                  <div class="sec__title">关联玻璃板</div>
+                  <div v-if="!qms.cassLines(qms.state.row).length" class="empty">暂无关联玻璃板</div>
+                  <div v-for="(ln,li) in qms.cassLines(qms.state.row)" :key="li" class="doc-card">
+                    <div class="doc-card__hd" style="background:#fff;color:#262626;border-bottom:1px solid #f0f0f0">
+                      <span class="doc-card__no">玻璃板序号 · {{ ln['玻璃板序号'] || (li + 1) }}</span>
+                    </div>
+                    <div class="doc-card__bd">
+                      <div class="doc-grid">
+                        <div><span class="doc-label">批次号</span>{{ ln['批次号'] || '—' }}</div>
+                        <div><span class="doc-label">样品编号</span>{{ ln['样品编号'] || '—' }}</div>
+                        <div><span class="doc-label">物料编码</span>{{ ln['物料编码'] || '—' }}</div>
+                        <div><span class="doc-label">物料名称</span>{{ ln['物料名称'] || '—' }}</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -2075,9 +2102,9 @@ body.remarks-open .demo-scope-tip{display:none}
                 <div class="sec">
                   <div class="sec__title">基本信息</div>
                   <div class="qms-row"><label><span class="req">*</span>样品编号</label>
-                    <div class="insp-pick" @click="qms.openSplitPick">
-                      <input :value="qms.splitHead()['样品编号']" readonly placeholder="请选择" />
-                      <span class="insp-pick__arrow">›</span>
+                    <div class="insp-no">
+                      <input v-model="qms.state.splitCode" placeholder="扫码或输入样品编号" @keyup.enter="qms.scanSplitSample" />
+                      <button type="button" title="扫码" @click="qms.scanSplitSample">⌁</button>
                     </div>
                   </div>
                   <div class="qms-row"><label>报检单号</label><input :value="qms.splitHead()['报检单号']" readonly placeholder="根据样品带入" /></div>
@@ -2101,7 +2128,7 @@ body.remarks-open .demo-scope-tip{display:none}
                     <button class="btn-ghost" @click="qms.printSplitLabels">打印标签</button>
                     <button class="btn-danger" @click="qms.removeSplitLines">批量删除</button>
                   </div>
-                  <div v-if="!qms.state.splitLines.length" class="empty">选择样品并设置拆分份数后点「拆分」生成子样品</div>
+                  <div v-if="!qms.state.splitLines.length" class="empty">扫码或输入样品编号并设置拆分份数后点「拆分」生成子样品</div>
                   <div v-for="(ln,li) in qms.state.splitLines" :key="ln.样品编号 + '-' + li" class="doc-card">
                     <div class="doc-card__hd" style="background:#fff;color:#262626;border-bottom:1px solid #f0f0f0">
                       <label style="display:flex;align-items:center;gap:8px;font-weight:600">
@@ -2115,7 +2142,6 @@ body.remarks-open .demo-scope-tip{display:none}
                         <div><span class="doc-label">物料名称</span>{{ ln.物料名称 || '—' }}</div>
                         <div><span class="doc-label">报检批号</span>{{ ln.报检批号 || '—' }}</div>
                         <div><span class="doc-label">检验方案</span>{{ ln.检验方案 || '—' }}</div>
-                        <div class="full"><span class="doc-label">卡塞信息</span><input v-model="ln.卡塞信息" placeholder="请输入" style="width:100%;border:1px solid #d9d9d9;border-radius:4px;height:32px;padding:0 8px" /></div>
                         <div class="full"><span class="doc-label">拆分备注</span><input v-model="ln.拆分备注" placeholder="输入" style="width:100%;border:1px solid #d9d9d9;border-radius:4px;height:32px;padding:0 8px" /></div>
                       </div>
                     </div>
@@ -2245,15 +2271,14 @@ body.remarks-open .demo-scope-tip{display:none}
                     <span class="grow">样品数：{{ qms.state.samples.length }}</span>
                   </div>
                   <div style="overflow-x:auto;background:#fff;border:1px solid #f0f0f0">
-                    <div class="qms-grid qms-hd" style="grid-template-columns:28px 1.2fr 1fr 1fr 1fr 1fr 1fr 1fr"><div></div><div>*样品编号</div><div>样品来源</div><div>卡塞信息</div><div>取样备注</div><div>检验方案</div><div>方案项目</div><div>临时项目</div></div>
+                    <div class="qms-grid qms-hd" style="grid-template-columns:28px 1.2fr 1fr 1fr 1fr 1fr 1fr"><div></div><div>*样品编号</div><div>样品来源</div><div>取样备注</div><div>检验方案</div><div>方案项目</div><div>临时项目</div></div>
                     <div v-if="!qms.state.samples.length" class="empty">暂无数据</div>
                     <div v-for="(s,si) in qms.state.samples" :key="s._rid" class="qms-swipe">
                       <button class="qms-swipe__del" @click="qms.removeSample(si)">删除</button>
-                      <div class="qms-grid" style="grid-template-columns:28px 1.2fr 1fr 1fr 1fr 1fr 1fr 1fr" :style="qms.swipeStyle('s'+si)" @touchstart="qms.swipeStart($event,'s'+si)" @touchmove="qms.swipeMove($event,'s'+si)" @touchend="qms.swipeEnd" @mousedown="qms.swipeStart($event,'s'+si)">
+                      <div class="qms-grid" style="grid-template-columns:28px 1.2fr 1fr 1fr 1fr 1fr 1fr" :style="qms.swipeStyle('s'+si)" @touchstart="qms.swipeStart($event,'s'+si)" @touchmove="qms.swipeMove($event,'s'+si)" @touchend="qms.swipeEnd" @mousedown="qms.swipeStart($event,'s'+si)">
                         <div><input type="checkbox" :checked="qms.state.sampPicked.indexOf(s._rid)>=0" @change="qms.toggleSamp(s._rid)" /></div>
                         <div>{{ s.样品编号 }}</div>
                         <input v-model="s.样品来源" placeholder="请输入" />
-                        <input v-model="s.卡塞信息" placeholder="请输入" />
                         <div>{{ s.取样备注 }}</div>
                         <div>{{ s.检验方案 }}</div>
                         <div>{{ s.方案项目 || '—' }}</div>
@@ -5688,15 +5713,15 @@ body.remarks-open .demo-scope-tip{display:none}
 <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
 <script src="https://unpkg.com/element-plus"></script>
 <script src="https://unpkg.com/element-plus/dist/locale/zh-cn.min.js"></script>
-<script src="./js/demo-announcements.js?v=1.0.13"></script>
+<script src="./js/demo-announcements.js?v=1.0.22"></script>
 <script src="./js/dict-catalog.js?v=1.0.16"></script>
-<script src="./js/mock-rows.js?v=1.0.241"></script>
-<script src="./js/demo-store.js?v=1.0.105"></script>
-<script src="./js/page-configs.js?v=1.4.442"></script>
+<script src="./js/mock-rows.js?v=1.0.259"></script>
+<script src="./js/demo-store.js?v=1.0.119"></script>
+<script src="./js/page-configs.js?v=1.4.528"></script>
 <script src="./js/app-configs.js?v=1.0.2"></script>
-<script src="./js/qms-app.js?v=1.0.94"></script>
-<script src="./js/page-prd-notes.js?v=2.0.450"></script>
-<script src="./js/app-prd-notes.js?v=2.0.59"></script>
+<script src="./js/qms-app.js?v=1.0.109"></script>
+<script src="./js/page-prd-notes.js?v=2.0.485"></script>
+<script src="./js/app-prd-notes.js?v=2.0.89"></script>
 <script src="./js/remarks-markdown.js?v=1.1.0"></script>
 <script type="module" src="./js/remarks-mermaid-init.js"></script>
 <script src="./js/remarks-mermaid.js"></script>

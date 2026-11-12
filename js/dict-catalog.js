@@ -321,6 +321,7 @@ window.WMS_DICT = (function () {
     'np-0212-02|问题小类': 'CC_SMALL',
     'np-0212-03|退货类型': 'CR_TYPE',
     'np-0212-03|责任部门': 'RESP_DEPT',
+    'capa-internal|责任部门': 'RESP_DEPT',
     'np-0312-01|调拨类型': 'sbdbdblx',
     'np-0309-01|停用类型': 'sbtytylx',
     'np-0310-01|启用类型': 'sbqyqylx',
