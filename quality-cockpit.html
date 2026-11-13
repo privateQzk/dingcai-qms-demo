@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>质量数字驾驶舱</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#eef2f7;color:#1e293b;font-family:'Microsoft YaHei','PingFang SC',sans-serif;overflow:hidden;width:100vw;height:100vh}
+.dashboard{position:relative;z-index:1;width:100%;height:100%;display:flex;flex-direction:column;padding:8px 12px 6px;gap:8px}
+.header{height:44px;display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0}
+.header::after{content:'';position:absolute;bottom:0;left:5%;right:5%;height:1px;background:linear-gradient(90deg,transparent,rgba(37,99,235,.45),rgba(124,58,237,.35),rgba(37,99,235,.45),transparent)}
+.header h1{font-size:22px;font-weight:900;letter-spacing:6px;background:linear-gradient(90deg,#2563eb,#0891b2,#7c3aed,#0891b2,#2563eb);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header .time{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:12px;color:#2563eb;letter-spacing:1px}
+.top-kpi-wrap{display:flex;flex-direction:column;gap:6px;flex-shrink:0}
+.kpi-filter{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.kpi-filter-label{font-size:11px;color:#64748b;letter-spacing:1px}
+.kpi-range-tabs{display:flex;gap:4px}
+.kpi-range-tabs span{padding:3px 12px;font-size:11px;color:#64748b;border:1px solid #cbd5e1;border-radius:4px;cursor:pointer;background:#fff}
+.kpi-range-tabs span.active{color:#2563eb;border-color:#93c5fd;background:#eff6ff;font-weight:700}
+.kpi-date-range{display:flex;align-items:center;gap:6px}
+.kpi-date-range input[type="date"]{height:26px;padding:0 8px;font-size:11px;font-family:inherit;color:#334155;background:#fff;border:1px solid #cbd5e1;border-radius:4px;outline:none;color-scheme:light}
+.kpi-date-sep{font-size:11px;color:#94a3b8}
+.kpi-date-btn{height:26px;padding:0 12px;font-size:11px;font-family:inherit;color:#2563eb;background:#eff6ff;border:1px solid #93c5fd;border-radius:4px;cursor:pointer}
+.top-kpi{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.kpi-glow{position:relative;background:#fff;border:1px solid #e2e8f0;border-top:2px solid #cbd5e1;border-radius:8px;padding:8px 6px;text-align:center;cursor:pointer;box-shadow:0 1px 3px rgba(15,23,42,.05)}
+.kpi-glow:hover{border-color:#93c5fd;box-shadow:0 4px 14px rgba(37,99,235,.12)}
+.kpi-label{font-size:11px;color:#64748b;letter-spacing:1px}
+.kpi-hint{font-size:9px;color:#94a3b8;margin-top:2px}
+.kpi-num{font-size:22px;font-weight:700;margin-top:2px}
+.kpi-unit{font-size:10px;opacity:.6;margin-left:1px}
+.kpi-glow.cyan .kpi-num{color:#2563eb}
+.kpi-glow.cyan{border-top-color:#2563eb}
+.kpi-glow.purple .kpi-num{color:#0891b2}
+.kpi-glow.purple{border-top-color:#0891b2}
+.kpi-glow.violet .kpi-num{color:#7c3aed}
+.kpi-glow.violet{border-top-color:#7c3aed}
+.kpi-glow.yellow .kpi-num{color:#d97706}
+.kpi-glow.yellow{border-top-color:#d97706}
+.kpi-glow.red .kpi-num{color:#dc2626}
+.kpi-glow.red{border-top-color:#dc2626}
+.main{flex:1;display:flex;gap:10px;min-height:0}
+.col{display:flex;flex-direction:column;gap:8px;min-height:0}
+.col-l,.col-r{flex:1}
+.col-c{flex:1.35}
+.panel{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:10px;position:relative;display:flex;flex-direction:column;overflow:hidden;min-height:0;box-shadow:0 1px 3px rgba(15,23,42,.05)}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent 5%,rgba(59,130,246,.5) 50%,transparent 95%)}
+.panel-title{font-size:12px;font-weight:700;color:#2563eb;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;gap:6px;letter-spacing:1px;flex-shrink:0}
+.panel-title .t-left{display:flex;align-items:center;gap:6px}
+.panel-title .t-left::before{content:'';display:inline-block;width:3px;height:12px;background:linear-gradient(180deg,#2563eb,#7c3aed);border-radius:2px}
+.help-q{position:relative;display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;border:1px solid #93c5fd;color:#64748b;font-size:10px;cursor:pointer}
+.help-tip{display:none;position:absolute;left:0;top:calc(100% + 8px);width:280px;padding:8px 10px;background:#fff;border:1px solid #cbd5e1;border-radius:6px;color:#475569;font-size:11px;font-weight:400;letter-spacing:0;line-height:1.5;white-space:normal;z-index:20;box-shadow:0 4px 12px rgba(15,23,42,.1)}
+.help-q.active .help-tip{display:block}
+.panel-body{flex:1;min-height:0;position:relative}
+.tag{display:inline-block;padding:1px 6px;border-radius:3px;font-size:10px;line-height:16px;white-space:nowrap}
+.tag-wait{color:#b45309;background:#fef3c7;border:1px solid #fcd34d}
+.tag-run{color:#0369a1;background:#e0f2fe;border:1px solid #7dd3fc}
+.tag-done{color:#15803d;background:#dcfce7;border:1px solid #86efac}
+.tag-review{color:#a16207;background:#fef9c3;border:1px solid #fde047}
+.tag-pass{color:#15803d;border:1px solid #4ade80}
+.tag-fail{color:#b91c1c;border:1px solid #f87171}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.active{display:flex}
+.modal{background:#fff;border:1px solid #e2e8f0;border-radius:12px;width:94%;height:84%;max-width:1400px;padding:16px 18px;display:flex;flex-direction:column;box-shadow:0 12px 40px rgba(15,23,42,.18)}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.modal-title{font-size:16px;color:#2563eb}
+.modal-close{background:none;border:1px solid #cbd5e1;color:#64748b;width:28px;height:28px;border-radius:50%;cursor:pointer}
+.modal-body{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;color:#475569}
+.iq-hint{font-size:11px;color:#64748b;margin-bottom:8px}
+.iq-tabs{display:flex;gap:4px;margin-bottom:10px}
+.iq-tabs .iq-tab{flex:1;text-align:center;padding:7px 6px;font-size:12px;color:#64748b;border:1px solid #e2e8f0;border-radius:5px;cursor:pointer;background:#fff}
+.iq-tabs .iq-tab.active{color:#2563eb;border-color:#93c5fd;background:#eff6ff;font-weight:700}
+.iq-table-wrap{flex:1;min-height:0;overflow:auto;border:1px solid #e2e8f0;border-radius:6px}
+.iq-table{border-collapse:collapse;font-size:11px;min-width:1280px;width:100%}
+.iq-table th,.iq-table td{border:1px solid #e2e8f0;padding:7px 8px;text-align:left;white-space:nowrap}
+.iq-table th{background:#f1f5f9;color:#475569;position:sticky;top:0}
+.iq-table td{color:#1e293b}
+.list-header,.list-row{display:grid;align-items:center;gap:4px;padding:4px 2px;font-size:10px}
+.list-header div,.list-row div{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.list-header{color:#94a3b8;border-bottom:1px solid #e2e8f0;font-size:9px}
+.list-row{border-bottom:1px solid #f1f5f9;color:#334155}
+.iqc-grid{grid-template-columns:1.05fr 0.55fr 0.95fr 0.7fr 0.62fr 0.48fr 0.72fr 0.38fr}
+.sloc-grid{grid-template-columns:0.62fr 0.9fr 0.8fr 0.75fr 0.7fr 0.55fr 0.95fr}
+.qc-grid{grid-template-columns:1.15fr 0.85fr 0.42fr 0.6fr 0.45fr 0.55fr}
+.qc-grid div:nth-child(n+3){text-align:right}
+.mini-sel{font-size:10px;color:#334155;border:1px solid #e2e8f0;border-radius:5px;background:#fff;padding:2px 4px;max-width:110px}
+.qc-filter{display:inline-flex;align-items:center;gap:3px}
+.qc-filter input[type="date"].mini-sel{width:86px;font-size:9px}
+.spc-filters{display:flex;gap:4px;margin-bottom:4px;flex-shrink:0}
+.spc-filters .mini-sel{flex:1;min-width:0}
+.spc-filters input[type="date"].mini-sel{flex:0 0 92px;font-size:9px}
+.spc-tilde{color:#94a3b8;font-size:10px;align-self:center}
+.spc-box{flex:1;min-height:0;display:flex;flex-direction:column}
+.spc-box+.spc-box{border-top:1px dashed #e2e8f0}
+.spc-cap{font-size:9px;color:#64748b;padding:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0}
+.spc-cap b{font-weight:700;margin-right:6px}
+.spc-cap .u{color:#dc2626}.spc-cap .uc{color:#f59e0b}.spc-cap .cc{color:#2563eb}.spc-cap .lc{color:#f59e0b}.spc-cap .l{color:#dc2626}
+.col-no{font-size:10px;color:#94a3b8}
+.ot-ok{color:#16a34a}
+.ot-late{color:#dc2626;font-weight:700}
+.scroll-box{flex:1;min-height:0;overflow:hidden}
+.scroll-track{animation:scrollY 22s linear infinite}
+.scroll-track:hover,.scroll-track.still{animation:none}
+@keyframes scrollY{0%{transform:translateY(0)}100%{transform:translateY(-50%)}}
+.tab-mini{display:flex;gap:3px}
+.tab-mini span{padding:2px 7px;font-size:9px;color:#64748b;border:1px solid #e2e8f0;border-radius:3px;cursor:pointer;background:#fff}
+.tab-mini span.active{color:#2563eb;border-color:#93c5fd;background:#eff6ff}
+.insp-tabs{display:flex;gap:3px;margin-bottom:6px}
+.insp-tabs .insp-tab{flex:1;text-align:center;padding:5px 2px;font-size:10px;color:#64748b;border:1px solid #e2e8f0;border-radius:5px;cursor:pointer;background:#fff}
+.insp-tabs .insp-tab.active{color:#2563eb;border-color:#93c5fd;background:#eff6ff;font-weight:700}
+.insp-pane{display:none;flex:1;min-height:0;flex-direction:column}
+.insp-pane.active{display:flex}
+.crm-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.crm-card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:8px 6px;border-radius:8px;background:#f8fafc;border:1px solid #e2e8f0}
+.crm-label{font-size:11px;color:#64748b}
+.crm-num{font-size:24px;font-weight:700;line-height:1}
+.crm-unit{font-size:10px;opacity:.55;margin-left:2px}
+.crm-sub{font-size:9px;color:#94a3b8}
+.crm-card.ret .crm-num{color:#dc2626}
+.crm-card.cmp .crm-num{color:#ea580c}
+.crm-card.grv .crm-num{color:#d97706}
+.crm-chart-wrap{flex:1;min-height:0;margin-top:8px}
+.chart{width:100%;height:100%}
+.empty-tip{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:12px}
+.alert-bar{height:32px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;display:flex;align-items:center;padding:0 12px;gap:10px;overflow:hidden}
+.alert-label{font-size:11px;color:#dc2626;font-weight:700;white-space:nowrap}
+.alert-scroll{flex:1;overflow:hidden}
+.alert-content{display:flex;gap:28px;animation:scrollA 28s linear infinite;white-space:nowrap}
+@keyframes scrollA{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.alert-item{font-size:11px;display:flex;align-items:center;gap:5px}
+.alert-dot{width:5px;height:5px;border-radius:50%}
+</style>
+</head>
+<body>
+<div class="dashboard">
+  <div class="header">
+    <h1>质量数字驾驶舱</h1>
+    <div class="time" id="clock"></div>
+  </div>
+  <div class="top-kpi-wrap">
+    <div class="kpi-filter">
+      <span class="kpi-filter-label">统计周期</span>
+      <div class="kpi-range-tabs" id="kpi-range">
+        <span data-range="month">当月</span>
+        <span data-range="quarter">近三个月</span>
+        <span data-range="half" class="active">半年</span>
+      </div>
+      <div class="kpi-date-range">
+        <input type="date" id="kpi-date-start">
+        <span class="kpi-date-sep">至</span>
+        <input type="date" id="kpi-date-end">
+        <button type="button" class="kpi-date-btn" id="kpi-date-query">查询</button>
+      </div>
+    </div>
+    <div class="top-kpi">
+      <div class="kpi-glow cyan" data-kpi="all"><div class="kpi-label">报检单数量</div><div class="kpi-num" id="kpi-total">0<span class="kpi-unit">单</span></div><div class="kpi-hint">点击查看明细</div></div>
+      <div class="kpi-glow red" data-kpi="overdue"><div class="kpi-label">逾期数量</div><div class="kpi-num" id="kpi-overdue">0<span class="kpi-unit">单</span></div><div class="kpi-hint">点击查看明细</div></div>
+      <div class="kpi-glow yellow" data-kpi="wait"><div class="kpi-label">待执行</div><div class="kpi-num" id="kpi-wait">0<span class="kpi-unit">单</span></div><div class="kpi-hint">点击查看明细</div></div>
+      <div class="kpi-glow purple" data-kpi="run"><div class="kpi-label">执行中</div><div class="kpi-num" id="kpi-run">0<span class="kpi-unit">单</span></div><div class="kpi-hint">点击查看明细</div></div>
+      <div class="kpi-glow violet" data-kpi="review"><div class="kpi-label">待复核</div><div class="kpi-num" id="kpi-review">0<span class="kpi-unit">单</span></div><div class="kpi-hint">点击查看明细</div></div>
+    </div>
+  </div>
+  <div class="main">
+    <div class="col col-l">
+      <div class="panel" style="flex:1.25">
+        <div class="panel-title"><span class="t-left">客户投诉 / 抱怨 / 退货</span></div>
+        <div class="panel-body" style="display:flex;flex-direction:column">
+          <div class="crm-cards">
+            <div class="crm-card ret"><div class="crm-label">客户退货</div><div><span class="crm-num" id="crm-ret">0</span><span class="crm-unit">单</span></div><div class="crm-sub">待处理</div></div>
+            <div class="crm-card cmp"><div class="crm-label">客户投诉</div><div><span class="crm-num" id="crm-cmp">0</span><span class="crm-unit">单</span></div><div class="crm-sub">待处理</div></div>
+            <div class="crm-card grv"><div class="crm-label">客户抱怨</div><div><span class="crm-num" id="crm-grv">0</span><span class="crm-unit">单</span></div><div class="crm-sub">待处理</div></div>
+          </div>
+          <div class="crm-chart-wrap"><div id="chart-crm-nc" class="chart"></div></div>
+        </div>
+      </div>
+      <div class="panel" style="flex:1">
+        <div class="panel-title"><span class="t-left">检验信息</span>
+          <span class="qc-filter">
+            <input class="mini-sel" id="qc-d1" type="date"><span class="spc-tilde">~</span><input class="mini-sel" id="qc-d2" type="date">
+            <select class="mini-sel" id="qc-mat-sel"><option value="">全部物料</option></select>
+          </span>
+        </div>
+        <div class="panel-body" style="display:flex;flex-direction:column">
+          <div class="list-header qc-grid"><div>物料信息</div><div>检验类型</div><div>总数</div><div>已完成数</div><div>合格数</div><div>合格率</div></div>
+          <div class="scroll-box"><div class="scroll-track" id="qc-track"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="col col-c">
+      <div class="panel" style="flex:1">
+        <div class="panel-title">
+          <span class="t-left">合格率趋势
+            <span class="help-q" id="rate-help">?<span class="help-tip">按检验完成时间统计已完成样品。合格率 = 合格 ÷（合格 + 不合格）。没有检验完成时间时用报检时间。同比取上年同月。</span></span>
+          </span>
+        </div>
+        <div class="panel-body" style="display:flex;flex-direction:column">
+          <div class="insp-tabs" id="rate-tabs">
+            <div class="insp-tab active" data-rate="pi">采购来料检</div>
+            <div class="insp-tab" data-rate="pp">生产过程检</div>
+            <div class="insp-tab" data-rate="pm">生产物料检</div>
+            <div class="insp-tab" data-rate="rd">研发检</div>
+            <div class="insp-tab" data-rate="sst">生产SST检</div>
+          </div>
+          <div id="chart-pass-rate" class="chart" style="flex:1;min-height:0"></div>
+        </div>
+      </div>
+      <div class="panel" style="flex:1.15">
+        <div class="panel-title"><span class="t-left">SPC分析图</span></div>
+        <div class="panel-body" style="display:flex;flex-direction:column">
+          <div class="spc-filters">
+            <select class="mini-sel" id="spc-mat"></select>
+            <select class="mini-sel" id="spc-plan"></select>
+            <select class="mini-sel" id="spc-item"></select>
+            <select class="mini-sel" id="spc-point"></select>
+            <input class="mini-sel" id="spc-d1" type="date"><span class="spc-tilde">~</span><input class="mini-sel" id="spc-d2" type="date">
+          </div>
+          <div class="spc-box"><div class="spc-cap" id="spc-cap1"></div><div id="chart-spc-i" class="chart"></div></div>
+          <div class="spc-box"><div class="spc-cap" id="spc-cap2"></div><div id="chart-spc-mr" class="chart"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="col col-r">
+      <div class="panel" style="flex:1"><div class="panel-title"><span class="t-left">原料不合格</span></div><div class="panel-body"><div id="chart-nc-rm" class="chart"></div></div></div>
+      <div class="panel" style="flex:1"><div class="panel-title"><span class="t-left">成品不合格</span></div><div class="panel-body"><div id="chart-nc-fg" class="chart"></div></div></div>
+      <div class="panel" style="flex:1"><div class="panel-title"><span class="t-left">过程不合格</span></div><div class="panel-body"><div id="chart-nc-pp" class="chart"></div></div></div>
+    </div>
+  </div>
+  <div class="alert-bar">
+    <div class="alert-label">◆ 实时告警</div>
+    <div class="alert-scroll"><div class="alert-content" id="alert-content"></div></div>
+  </div>
+</div>
+<div class="modal-overlay" id="iq-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="iq-modal-title">报检单明细</div>
+      <button class="modal-close" id="iq-close" type="button">✕</button>
+    </div>
+    <div class="modal-body" id="iq-modal-body"></div>
+  </div>
+</div>
+<script src="./js/mock-rows.js?v=1.4.321"></script>
+<script src="./js/demo-store.js?v=1.0.153"></script>
+<script src="./js/ledger-insp.js?v=2"></script>
+<script>
+const MOCK = window.WMS_MOCK_ROWS || {};
+try{ if(window.WMS_DEMO_STORE && window.WMS_DEMO_STORE.hydrateMock) window.WMS_DEMO_STORE.hydrateMock(MOCK); }catch(e){}
+const ORDER_TABS = [
+  ['tab-pi','采购来料检','pi'],
+  ['tab-pp','生产过程检','pp'],
+  ['tab-pm','生产物料检','pm'],
+  ['tab-rd','研发检','rd'],
+  ['tab-sst','生产SST检','sst']
+];
+const CATE_LABEL = {pi:'采购来料检', pp:'生产过程检', pm:'生产物料检', rd:'研发检', sst:'生产SST检'};
+const CATE_ORDER = ['pi','pp','pm','rd','sst'];
+const CLOSED = {已完成:1, 已关闭:1, 已通过:1, 已驳回:1};
+const TYPE_TITLE = {all:'报检单明细', overdue:'逾期报检单明细', wait:'待执行报检单明细', run:'执行中报检单明细', review:'待复核报检单明细'};
+let iqFilterType = 'all';
+let iqCate = 'pi';
+let rateKey = 'pi';
+let orders = [];
+
+function pad2(n){ return String(n).padStart(2,'0'); }
+function toDateStr(d){ return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate()); }
+function dayOf(v){
+  const s = String(v||'').trim();
+  const m = s.match(/^(\d{4}-\d{2}-\d{2})/);
+  return m ? m[1] : '';
+}
+function inRange(v, start, end){
+  const d = dayOf(v);
+  return !!(d && start && end && d>=start && d<=end);
+}
+function hasEta(v){
+  return !!(v && v!=='—' && v!=='-' && dayOf(v));
+}
+function isOverdue(eta){
+  if(!hasEta(eta)) return false;
+  const t = Date.parse(String(eta).replace(/-/g,'/'));
+  return !isNaN(t) && Date.now() > t;
+}
+function overdueText(eta){ return isOverdue(eta) ? '逾期' : '正常'; }
+function esc(v){
+  return String(v==null || v==='' ? '—' : v).replace(/[&<>"]/g, function(s){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[s];
+  });
+}
+function fmt(n){ return Number(n||0).toLocaleString('zh-CN'); }
+function rowsOf(pageId, tabs){
+  const bag = MOCK[pageId] || {};
+  const out = [];
+  (tabs || Object.keys(bag)).forEach(function(tab){
+    const arr = bag[tab];
+    if(!Array.isArray(arr)) return;
+    arr.forEach(function(r){ if(r && typeof r==='object') out.push(Object.assign({_tab:tab}, r)); });
+  });
+  return out;
+}
+function sampleDay(r){ return dayOf(r['检验完成时间']) || dayOf(r['报检时间']); }
+function isDoneSample(r){
+  return r['样品状态']==='已完成' && (r['检验结论']==='合格' || r['检验结论']==='不合格');
+}
+function isBadSample(r){ return r['检验结论']==='不合格'; }
+function ledgerByCate(cate){
+  const tabs = ORDER_TABS.filter(function(t){ return t[2]===cate; }).map(function(t){ return t[0]; });
+  return rowsOf('ledger', tabs);
+}
+function tagOf(status){
+  if(status==='待检验' || status==='待执行') return 'tag-wait';
+  if(status==='检验中' || status==='执行中') return 'tag-run';
+  if(status==='已完成' || status==='已通过' || status==='已关闭') return 'tag-done';
+  if(status==='待复核' || status==='待审批') return 'tag-review';
+  if(status==='不合格' || status==='已驳回') return 'tag-fail';
+  return 'tag-wait';
+}
+function resultTag(v){
+  if(!v || v==='—') return '—';
+  const cls = v==='合格' ? 'tag-pass' : (v==='不合格' ? 'tag-fail' : '');
+  return '<span class="tag '+cls+'">'+esc(v)+'</span>';
+}
+function period(){
+  return {
+    start: document.getElementById('kpi-date-start').value,
+    end: document.getElementById('kpi-date-end').value
+  };
+}
+function loadOrders(){
+  const map = {};
+  ORDER_TABS.forEach(function(t){ map[t[0]] = {label:t[1], cate:t[2]}; });
+  return rowsOf('insp-order', ORDER_TABS.map(function(t){ return t[0]; })).map(function(r){
+    const meta = map[r._tab] || {label:r._tab, cate:'rd'};
+    return Object.assign({}, r, {_type: meta.label, _cate: meta.cate});
+  });
+}
+function filterOrders(type, list){
+  const p = period();
+  let rows = (list || orders).filter(function(r){ return inRange(r['报检时间'], p.start, p.end); });
+  if(type==='overdue') rows = rows.filter(function(r){ return !CLOSED[r['单据状态']] && isOverdue(r['预计完成时间']); });
+  else if(type==='wait') rows = rows.filter(function(r){ return r['单据状态']==='待执行'; });
+  else if(type==='run') rows = rows.filter(function(r){ return r['单据状态']==='执行中'; });
+  else if(type==='review') rows = rows.filter(function(r){ return r['单据状态']==='待复核'; });
+  return rows;
+}
+function setKpi(id, n){
+  document.getElementById(id).innerHTML = fmt(n) + '<span class="kpi-unit">单</span>';
+}
+function failBuckets(rows){
+  const count = {};
+  rows.forEach(function(r){
+    if(!isBadSample(r)) return;
+    const all = window.WMS_LEDGER_INSP ? WMS_LEDGER_INSP.ledgerInspItems(r) : (Array.isArray(r._insp) ? r._insp : []);
+    const insp = all.filter(function(it){ return it['检验结论']==='不合格'; });
+    const names = insp.length ? insp.map(function(it){ const c = it['所属检验类']; return (c && c!=='—') ? c : (it['检验项名称'] || '其他'); }) : [r['物料种类'] || '其他'];
+    names.forEach(function(name){
+      const key = String(name||'其他').trim() || '其他';
+      count[key] = (count[key]||0) + 1;
+    });
+  });
+  return Object.keys(count).map(function(k){ return [k, count[k]]; }).sort(function(a,b){ return b[1]-a[1]; }).slice(0,7);
+}
+function monthKeys(start, end){
+  const out = [];
+  if(!start || !end) return out;
+  let y = +start.slice(0,4), m = +start.slice(5,7);
+  const ey = +end.slice(0,4), em = +end.slice(5,7);
+  while(y<ey || (y===ey && m<=em)){
+    out.push(y+'-'+pad2(m));
+    m += 1;
+    if(m>12){ m = 1; y += 1; }
+  }
+  return out;
+}
+function rateOf(rows){
+  const done = rows.filter(isDoneSample);
+  if(!done.length) return null;
+  const pass = done.filter(function(r){ return r['检验结论']==='合格'; }).length;
+  return Math.round(pass / done.length * 1000) / 10;
+}
+function samplesInMonth(rows, ym){
+  return rows.filter(function(r){ return sampleDay(r).slice(0,7)===ym; });
+}
+const tip = {backgroundColor:'rgba(255,255,255,.96)', borderColor:'#cbd5e1', textStyle:{color:'#334155', fontSize:11}, padding:[6,10]};
+const ax = {axisLine:{lineStyle:{color:'#e2e8f0'}}, axisLabel:{color:'#64748b', fontSize:9}, splitLine:{show:false}};
+const ay = {axisLine:{show:false}, axisLabel:{color:'#64748b', fontSize:9}, splitLine:{lineStyle:{color:'rgba(148,163,184,.2)'}}};
+const charts = {};
+function chart(id){
+  if(!window.echarts) return null;
+  if(!charts[id]) charts[id] = echarts.init(document.getElementById(id));
+  return charts[id];
+}
+function emptyChart(c, text){
+  if(!c) return;
+  c.clear();
+  c.setOption({title:{text:text||'当前周期暂无数据', left:'center', top:'middle', textStyle:{color:'#94a3b8', fontSize:12, fontWeight:400}}});
+}
+function setNc(id, pairs, color){
+  const c = chart(id);
+  if(!c) return;
+  if(!pairs.length){ emptyChart(c, '当前周期暂无不合格'); return; }
+  const total = pairs.reduce(function(s,p){ return s+p[1]; }, 0) || 1;
+  const pct = pairs.map(function(p){ return Math.round(p[1]/total*1000)/10; });
+  c.setOption({
+    title:{show:false},
+    tooltip:Object.assign({trigger:'axis'}, tip),
+    legend:{data:['数量','占比'], textStyle:{color:'#64748b', fontSize:9}, top:0, itemWidth:10, itemHeight:6},
+    grid:{left:4, right:28, top:22, bottom:2, containLabel:true},
+    xAxis:Object.assign({type:'category', data:pairs.map(function(p){ return p[0]; }), axisTick:{show:false}}, ax),
+    yAxis:[
+      Object.assign({type:'value', name:'数量', nameTextStyle:{color:'#64748b', fontSize:9}, minInterval:1}, ay),
+      Object.assign({type:'value', min:0, max:100, axisLabel:Object.assign({formatter:'{value}%'}, ay.axisLabel), splitLine:{show:false}}, ay)
+    ],
+    series:[
+      {name:'数量', type:'bar', barWidth:14, data:pairs.map(function(p){ return p[1]; }), itemStyle:{color:color, borderRadius:[3,3,0,0]}},
+      {name:'占比', type:'line', yAxisIndex:1, smooth:true, symbol:'circle', symbolSize:7, data:pct, z:3, lineStyle:{width:3, color:'#ea580c'}, itemStyle:{color:'#ea580c', borderColor:'#fff', borderWidth:1.5}, label:{show:true, formatter:'{c}%', color:'#ea580c', fontSize:10, fontWeight:700, backgroundColor:'rgba(255,255,255,.85)', padding:[1,4], borderRadius:3}}
+    ]
+  }, true);
+}
+/* ---------- 检验信息：物料×检验类型 汇总（周期内样品） ---------- */
+let qcMat = '';
+function renderQcInfo(){
+  const p = period();
+  const d1 = document.getElementById('qc-d1').value || p.start;
+  const d2 = document.getElementById('qc-d2').value || p.end;
+  const stat = {};
+  CATE_ORDER.forEach(function(k){
+    ledgerByCate(k).forEach(function(r){
+      if(!inRange(sampleDay(r), d1, d2)) return;
+      const mat = r['物料名称'] || '—';
+      if(qcMat && mat!==qcMat) return;
+      const key = mat+'|'+k;
+      const s = stat[key] || (stat[key] = {mat:mat, type:CATE_LABEL[k], total:0, done:0, pass:0});
+      s.total++;
+      if(r['样品状态']==='已完成'){ s.done++; if(r['检验结论']==='合格') s.pass++; }
+    });
+  });
+  const list = Object.values(stat).sort(function(a,b){ return b.total-a.total; });
+  const track = document.getElementById('qc-track');
+  if(!list.length){
+    track.className = 'scroll-track still';
+    track.innerHTML = '<div class="list-row" style="display:block;color:#94a3b8;padding:16px 4px">当前周期暂无检验数据</div>';
+    return;
+  }
+  const html = list.map(function(s){
+    const rate = s.done ? (Math.round(s.pass/s.done*1000)/10)+'%' : '—';
+    return '<div class="list-row qc-grid"><div title="'+esc(s.mat)+'">'+esc(s.mat)+'</div><div>'+esc(s.type)+'</div><div>'+s.total+'</div><div>'+s.done+'</div><div>'+s.pass+'</div><div>'+rate+'</div></div>';
+  }).join('');
+  track.className = list.length > 5 ? 'scroll-track' : 'scroll-track still';
+  track.innerHTML = list.length > 5 ? html+html : html;
+}
+
+/* ---------- SPC分析图：定量检验项 单值图 + MR图 ---------- */
+const spcSel = {mat:'', item:'', plan:'', point:''};
+let spcCache = null;
+function spcEntries(){
+  if(spcCache) return spcCache;
+  const out = [];
+  CATE_ORDER.forEach(function(k){
+    ledgerByCate(k).forEach(function(r){
+      const items = window.WMS_LEDGER_INSP ? WMS_LEDGER_INSP.ledgerInspItems(r) : (Array.isArray(r._insp) ? r._insp : []);
+      items.forEach(function(it){
+        const v = parseFloat(it['检验结果值'] || it['检验报出值']);
+        if(isNaN(v)) return;
+        out.push({r:r, it:it, v:v, day:sampleDay(r)});
+      });
+    });
+  });
+  spcCache = out;
+  return out;
+}
+function fillSel(id, values, label){
+  const el = document.getElementById(id);
+  const cur = el.value;
+  el.innerHTML = '<option value="">'+label+'</option>' + values.map(function(v){ return '<option>'+esc(v)+'</option>'; }).join('');
+  el.value = values.indexOf(cur)>=0 ? cur : '';
+  return el.value;
+}
+function spcCascade(){
+  const es = spcEntries();
+  spcSel.mat = fillSel('spc-mat', [...new Set(es.map(function(e){ return e.r['物料名称']; }).filter(Boolean))].sort(), '全部物料');
+  const m1 = es.filter(function(e){ return !spcSel.mat || e.r['物料名称']===spcSel.mat; });
+  spcSel.plan = fillSel('spc-plan', [...new Set(m1.map(function(e){ return e.r['检验方案']; }).filter(function(v){ return v && v!=='—'; }))].sort(), '全部方案');
+  const m2 = m1.filter(function(e){ return !spcSel.plan || e.r['检验方案']===spcSel.plan; });
+  spcSel.item = fillSel('spc-item', [...new Set(m2.map(function(e){ return e.it['检验项名称']; }).filter(Boolean))].sort(), '全部检验项');
+  const m3 = m2.filter(function(e){ return !spcSel.item || e.it['检验项名称']===spcSel.item; });
+  spcSel.point = fillSel('spc-point', [...new Set(m3.map(function(e){ return e.r['采样点']; }).filter(function(v){ return v && v!=='—'; }))].sort(), '全部采样点');
+}
+function limOf(es, key){
+  const f = es.find(function(e){ const x = parseFloat(e.it[key]); return !isNaN(x); });
+  return f ? parseFloat(f.it[key]) : null;
+}
+function renderSpc(){
+  const p = period();
+  const d1 = document.getElementById('spc-d1').value || p.start;
+  const d2 = document.getElementById('spc-d2').value || p.end;
+  const es = spcEntries().filter(function(e){
+    if(spcSel.mat && e.r['物料名称']!==spcSel.mat) return false;
+    if(spcSel.item && e.it['检验项名称']!==spcSel.item) return false;
+    if(spcSel.plan && e.r['检验方案']!==spcSel.plan) return false;
+    if(spcSel.point && e.r['采样点']!==spcSel.point) return false;
+    return inRange(e.day, d1, d2);
+  }).sort(function(a,b){ return a.day<b.day ? -1 : 1; });
+  const c1 = chart('chart-spc-i'), c2 = chart('chart-spc-mr');
+  const title = (spcSel.plan||'全部方案')+' - '+(spcSel.item||'全部检验项');
+  if(!es.length){
+    document.getElementById('spc-cap1').innerHTML = '';
+    document.getElementById('spc-cap2').innerHTML = '';
+    emptyChart(c1, '当前周期暂无定量数据'); emptyChart(c2, '当前周期暂无定量数据');
+    return;
+  }
+  const labels = es.map(function(e){ return e.day.slice(5); });
+  const vals = es.map(function(e){ return e.v; });
+  const mean = vals.reduce(function(s,v){ return s+v; },0)/vals.length;
+  const sd = Math.sqrt(vals.reduce(function(s,v){ return s+(v-mean)*(v-mean); },0)/vals.length);
+  const lim = {USL:limOf(es,'USL'), UCL:limOf(es,'UCL'), LCL:limOf(es,'LCL'), LSL:limOf(es,'LSL')};
+  if(lim.UCL==null) lim.UCL = Math.round((mean+3*sd)*100)/100;
+  if(lim.LCL==null) lim.LCL = Math.round((mean-3*sd)*100)/100;
+  const limTxt = [['USL','u'],['UCL','uc'],['CL','cc'],['LCL','lc'],['LSL','l']].map(function(kv){
+    const v = kv[0]==='CL' ? Math.round(mean*100)/100 : lim[kv[0]];
+    return v==null ? '' : '<span class="'+kv[1]+'">'+kv[0]+' '+v+'</span>';
+  }).filter(Boolean).join(' ');
+  document.getElementById('spc-cap1').innerHTML = '<b>'+esc(title)+' · 单值图</b>'+limTxt;
+  const markLines = [['UCL','#f59e0b'],['CL','#2563eb'],['LCL','#f59e0b'],['USL','#dc2626'],['LSL','#dc2626']].map(function(kv){
+    const v = kv[0]==='CL' ? mean : lim[kv[0]];
+    return v==null ? null : {yAxis:v, lineStyle:{color:kv[1], width:1.5, type:kv[0]==='CL'?'solid':'dashed'}, label:{formatter:kv[0], fontSize:8, color:kv[1], position:'insideEndTop'}};
+  }).filter(Boolean);
+  if(c1) c1.setOption({
+    title:{show:false}, tooltip:Object.assign({trigger:'axis'}, tip),
+    grid:{left:4, right:36, top:8, bottom:2, containLabel:true},
+    xAxis:Object.assign({type:'category', data:labels, boundaryGap:false, axisTick:{show:false}}, ax),
+    yAxis:Object.assign({type:'value', scale:true}, ay),
+    series:[{type:'line', smooth:true, symbol:'circle', symbolSize:5, data:vals,
+      lineStyle:{width:2, color:'#22d3ee'}, itemStyle:{color:'#22d3ee'},
+      markLine:{silent:true, symbol:'none', data:markLines}}]
+  }, true);
+  /* MR图：相邻点移动极差，CL=MR̄，UCL=3.267·MR̄，LCL=0 */
+  const mr = vals.slice(1).map(function(v,i){ return Math.round(Math.abs(v-vals[i])*1000)/1000; });
+  const mrMean = mr.length ? mr.reduce(function(s,v){ return s+v; },0)/mr.length : 0;
+  const mrUCL = Math.round(mrMean*3.267*100)/100;
+  document.getElementById('spc-cap2').innerHTML = '<b>'+esc(title)+' · MR图</b><span class="u">UCL '+mrUCL+'</span> <span class="cc">CL '+(Math.round(mrMean*100)/100)+'</span> <span class="l">LCL 0</span>';
+  if(c2) c2.setOption({
+    title:{show:false}, tooltip:Object.assign({trigger:'axis'}, tip),
+    grid:{left:4, right:36, top:8, bottom:2, containLabel:true},
+    xAxis:Object.assign({type:'category', data:labels.slice(1), boundaryGap:false, axisTick:{show:false}}, ax),
+    yAxis:Object.assign({type:'value', min:0}, ay),
+    series:[{type:'line', smooth:true, symbol:'circle', symbolSize:5, data:mr,
+      lineStyle:{width:2, color:'#38bdf8'}, itemStyle:{color:'#38bdf8'},
+      markLine:{silent:true, symbol:'none', data:[
+        {yAxis:mrUCL, lineStyle:{color:'#f59e0b', width:1.5, type:'dashed'}, label:{formatter:'UCL', fontSize:8, color:'#f59e0b', position:'insideEndTop'}},
+        {yAxis:mrMean, lineStyle:{color:'#2563eb', width:1.5}, label:{formatter:'CL', fontSize:8, color:'#2563eb', position:'insideEndTop'}},
+        {yAxis:0, lineStyle:{color:'#dc2626', width:1.5, type:'dashed'}, label:{formatter:'LCL', fontSize:8, color:'#dc2626', position:'insideEndTop'}}
+      ]}}]
+  }, true);
+}
+function setPass(key){
+  const c = chart('chart-pass-rate');
+  if(!c) return;
+  const p = period();
+  const rows = ledgerByCate(key);
+  const months = monthKeys(p.start, p.end);
+  const cur = months.map(function(ym){ return rateOf(samplesInMonth(rows, ym).filter(function(r){ return inRange(sampleDay(r), p.start, p.end); })); });
+  const yoy = months.map(function(ym){
+    const prev = (+ym.slice(0,4)-1) + ym.slice(4);
+    return rateOf(samplesInMonth(rows, prev));
+  });
+  if(!cur.some(function(v){ return v!=null; })){ emptyChart(c, '当前周期暂无已完成样品'); return; }
+  const vals = cur.concat(yoy).filter(function(v){ return v!=null; });
+  const min = Math.max(0, Math.floor(Math.min.apply(null, vals) - 5));
+  c.setOption({
+    title:{show:false},
+    tooltip:Object.assign({trigger:'axis'}, tip),
+    legend:{data:['本期','同比'], textStyle:{color:'#64748b', fontSize:9}, top:0, itemWidth:10, itemHeight:6},
+    grid:{left:4, right:8, top:22, bottom:2, containLabel:true},
+    xAxis:Object.assign({type:'category', data:months.map(function(ym){ return ym.slice(2).replace('-','/'); }), boundaryGap:false, axisTick:{show:false}}, ax),
+    yAxis:Object.assign({type:'value', min:min, max:100, axisLabel:Object.assign({formatter:'{value}%'}, ay.axisLabel)}, ay),
+    series:[
+      {name:'本期', type:'line', smooth:true, connectNulls:false, symbol:'circle', symbolSize:4, data:cur, lineStyle:{width:2.5, color:'#2563eb'}, itemStyle:{color:'#2563eb'}, areaStyle:{color:'rgba(37,99,235,.10)'}},
+      {name:'同比', type:'line', smooth:true, connectNulls:false, symbol:'none', data:yoy, lineStyle:{width:1.5, color:'#94a3b8', type:'dashed'}}
+    ]
+  }, true);
+}
+function slocBucket(r, disposed){
+  if(disposed) return r['处置方式']==='留样' ? '留样' : '已报废';
+  const pos = String(r['当前位置']||'').trim();
+  if(!pos || pos==='—') return '未入库';
+  if(pos.indexOf('货架')>=0) return '样品货架';
+  if(pos.indexOf('筐')>=0) return '样品筐';
+  return '领用中';
+}
+function slocTag(name){
+  if(name==='未入库') return 'tag-wait';
+  if(name==='领用中') return 'tag-run';
+  if(name==='留样') return 'tag-done';
+  if(name==='已报废') return 'tag-fail';
+  return 'tag-review';
+}
+function setSampleLoc(){
+  const p = period();
+  const typeNames = CATE_ORDER.map(function(k){ return CATE_LABEL[k]; });
+  function hit(r, dateKey){
+    if(typeNames.indexOf(r['报检类型'])<0) return false;
+    return inRange(r[dateKey], p.start, p.end);
+  }
+  const bag = MOCK['np-0201-12'] || {};
+  const buckets = {未入库:0, 样品货架:0, 样品筐:0, 领用中:0, 留样:0, 已报废:0};
+  (bag['tab-1']||[]).forEach(function(r){
+    if(!hit(r, '取样时间')) return;
+    buckets[slocBucket(r, false)]++;
+  });
+  (bag['tab-2']||[]).forEach(function(r){
+    if(!hit(r, '处置时间') && !hit(r, '取样时间')) return;
+    buckets[slocBucket(r, true)]++;
+  });
+  return buckets;
+}
+function crmRows(pageId, dateKey){
+  const p = period();
+  return rowsOf(pageId, ['tab-1','tab-2']).filter(function(r){ return inRange(r[dateKey], p.start, p.end); });
+}
+function renderAlerts(locStat){
+  const p = period();
+  const items = [];
+  filterOrders('overdue').slice(0,2).forEach(function(r){
+    items.push({color:'#dc2626', text:'[紧急] '+r._type+' '+ (r['报检单号']||'') +' '+ (r['物料名称']||'') +' 已超过预计完成时间'});
+  });
+  const bad = [];
+  CATE_ORDER.forEach(function(k){ bad.push.apply(bad, ledgerByCate(k)); });
+  bad.filter(function(r){ return isBadSample(r) && inRange(sampleDay(r), p.start, p.end); }).slice(0,2).forEach(function(r){
+    items.push({color:'#dc2626', text:'[紧急] '+(r['报检单号']||r['样品编号']||'')+' '+(r['物料名称']||'')+' 检验结论'+r['检验结论']});
+  });
+  if(locStat && locStat['未入库']) items.push({color:'#d97706', text:'[预警] 样品未入库 · 当前周期未入库 '+locStat['未入库']+' 个'});
+  const waitN = filterOrders('wait').length;
+  if(waitN) items.push({color:'#d97706', text:'[预警] 待执行积压 · 当前待执行 '+waitN+' 单'});
+  if(!items.length) items.push({color:'#16a34a', text:'当前周期暂无告警'});
+  const html = items.map(function(it){
+    return '<div class="alert-item"><span class="alert-dot" style="background:'+it.color+'"></span>'+esc(it.text)+'</div>';
+  }).join('');
+  document.getElementById('alert-content').innerHTML = html + html;
+}
+function refresh(){
+  orders = loadOrders();
+  setKpi('kpi-total', filterOrders('all').length);
+  setKpi('kpi-overdue', filterOrders('overdue').length);
+  setKpi('kpi-wait', filterOrders('wait').length);
+  setKpi('kpi-run', filterOrders('run').length);
+  setKpi('kpi-review', filterOrders('review').length);
+  const ret = crmRows('np-0212-03','退货日期');
+  const cmp = crmRows('np-0212-02','投诉日期');
+  const grv = crmRows('np-0212-01','抱怨日期');
+  document.getElementById('crm-ret').textContent = fmt(ret.filter(function(r){ return r['处理状态']==='待处理'; }).length);
+  document.getElementById('crm-cmp').textContent = fmt(cmp.filter(function(r){ return r['处理状态']==='待处理'; }).length);
+  document.getElementById('crm-grv').textContent = fmt(grv.filter(function(r){ return r['处理状态']==='待处理'; }).length);
+  const cats = {};
+  function addCat(list, key){
+    list.forEach(function(r){
+      const name = String(r[key]||'').trim();
+      if(!name || name==='—') return;
+      cats[name] = (cats[name]||0) + 1;
+    });
+  }
+  addCat(cmp, '问题大类');
+  addCat(ret, '退货类型');
+  addCat(grv, '抱怨类型');
+  const pairs = Object.keys(cats).map(function(k){ return [k, cats[k]]; }).sort(function(a,b){ return b[1]-a[1]; });
+  setNc('chart-crm-nc', pairs, '#f87171');
+  const p = period();
+  function ranged(cate){
+    return ledgerByCate(cate).filter(function(r){ return inRange(sampleDay(r), p.start, p.end); });
+  }
+  setNc('chart-nc-rm', failBuckets(ranged('pi')), '#60a5fa');
+  setNc('chart-nc-fg', failBuckets(rowsOf('ledger', ['tab-pm']).filter(function(r){ return inRange(sampleDay(r), p.start, p.end); })), '#a78bfa');
+  setNc('chart-nc-pp', failBuckets(rowsOf('ledger', ['tab-pp']).filter(function(r){ return inRange(sampleDay(r), p.start, p.end); })), '#34d399');
+  setPass(rateKey);
+  const locStat = setSampleLoc() || {};
+  renderQcInfo();
+  renderSpc();
+  renderAlerts(locStat);
+  Object.keys(charts).forEach(function(id){ charts[id].resize(); });
+}
+function buildTable(rows){
+  const heads = ['单据状态','复核结论','报检单号','报检类型','物料名称','物料规格','物料种类','供应商名称','客户名称','报检批号','报检时间','报检人','预计完成时间','逾期状态'];
+  let html = '<div class="iq-table-wrap"><table class="iq-table"><thead><tr>'+heads.map(function(h){ return '<th>'+h+'</th>'; }).join('')+'</tr></thead><tbody>';
+  rows.forEach(function(r){
+    const late = !CLOSED[r['单据状态']] && isOverdue(r['预计完成时间']);
+    html += '<tr><td><span class="tag '+tagOf(r['单据状态'])+'">'+esc(r['单据状态'])+'</span></td><td>'+resultTag(r['复核结论'])+'</td><td>'+esc(r['报检单号'])+'</td><td>'+esc(r._type)+'</td><td>'+esc(r['物料名称'])+'</td><td>'+esc(r['物料规格'])+'</td><td>'+esc(r['物料种类'])+'</td><td>'+esc(r['供应商名称'])+'</td><td>'+esc(r['客户名称'])+'</td><td>'+esc(r['报检批号'])+'</td><td>'+esc(r['报检时间'])+'</td><td>'+esc(r['报检人'])+'</td><td>'+esc(hasEta(r['预计完成时间'])?r['预计完成时间']:'—')+'</td><td class="'+(late?'ot-late':'ot-ok')+'">'+overdueText(r['预计完成时间'])+'</td></tr>';
+  });
+  if(!rows.length) html += '<tr><td colspan="'+heads.length+'" style="text-align:center;color:#94a3b8;padding:24px">当前周期暂无数据</td></tr>';
+  return html + '</tbody></table></div>';
+}
+function renderModal(){
+  const typed = filterOrders(iqFilterType);
+  const rows = typed.filter(function(r){ return r._cate===iqCate; });
+  const p = period();
+  document.getElementById('iq-modal-title').textContent = TYPE_TITLE[iqFilterType] || '报检单明细';
+  let html = '<div class="iq-hint">统计周期 '+(p.start||'—')+' ~ '+(p.end||'—')+' · '+CATE_LABEL[iqCate]+' '+rows.length+' 条</div><div class="iq-tabs" id="iq-cate-tabs">';
+  CATE_ORDER.forEach(function(c){
+    const n = typed.filter(function(r){ return r._cate===c; }).length;
+    html += '<div class="iq-tab'+(c===iqCate?' active':'')+'" data-cate="'+c+'">'+CATE_LABEL[c]+' '+n+'</div>';
+  });
+  html += '</div>' + buildTable(rows);
+  document.getElementById('iq-modal-body').innerHTML = html;
+  document.getElementById('iq-cate-tabs').addEventListener('click', function(e){
+    const t = e.target.closest('.iq-tab');
+    if(!t) return;
+    iqCate = t.dataset.cate;
+    renderModal();
+  });
+}
+function showDetail(type){
+  iqFilterType = type || 'all';
+  const typed = filterOrders(iqFilterType);
+  iqCate = CATE_ORDER.filter(function(c){ return typed.some(function(r){ return r._cate===c; }); })[0] || 'pi';
+  renderModal();
+  document.getElementById('iq-modal').classList.add('active');
+}
+function closeModal(){ document.getElementById('iq-modal').classList.remove('active'); }
+function presetDates(range){
+  const end = new Date();
+  const start = new Date(end);
+  if(range==='month') start.setDate(1);
+  else if(range==='quarter') start.setMonth(start.getMonth()-3);
+  else start.setMonth(start.getMonth()-6);
+  return {start:toDateStr(start), end:toDateStr(end)};
+}
+function applyPreset(range){
+  const d = presetDates(range);
+  document.getElementById('kpi-date-start').value = d.start;
+  document.getElementById('kpi-date-end').value = d.end;
+  document.querySelectorAll('#kpi-range span').forEach(function(el){ el.classList.toggle('active', el.dataset.range===range); });
+  refresh();
+}
+function updateClock(){
+  const n = new Date();
+  document.getElementById('clock').textContent = toDateStr(n)+' '+pad2(n.getHours())+':'+pad2(n.getMinutes())+':'+pad2(n.getSeconds());
+}
+setInterval(updateClock, 1000);
+updateClock();
+document.getElementById('kpi-range').addEventListener('click', function(e){
+  const t = e.target.closest('span[data-range]');
+  if(t) applyPreset(t.dataset.range);
+});
+document.getElementById('kpi-date-query').addEventListener('click', function(){
+  const start = document.getElementById('kpi-date-start').value;
+  const end = document.getElementById('kpi-date-end').value;
+  if(!start || !end || start>end) return;
+  document.querySelectorAll('#kpi-range span').forEach(function(el){ el.classList.remove('active'); });
+  refresh();
+});
+['kpi-date-start','kpi-date-end'].forEach(function(id){
+  document.getElementById(id).addEventListener('change', function(){
+    document.querySelectorAll('#kpi-range span').forEach(function(el){ el.classList.remove('active'); });
+  });
+});
+document.querySelector('.top-kpi').addEventListener('click', function(e){
+  const card = e.target.closest('[data-kpi]');
+  if(card) showDetail(card.dataset.kpi);
+});
+document.getElementById('iq-close').addEventListener('click', closeModal);
+document.getElementById('iq-modal').addEventListener('click', function(e){ if(e.target===e.currentTarget) closeModal(); });
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeModal(); });
+document.getElementById('rate-help').addEventListener('click', function(e){
+  e.stopPropagation();
+  e.currentTarget.classList.toggle('active');
+});
+document.addEventListener('click', function(){
+  const q = document.getElementById('rate-help');
+  if(q) q.classList.remove('active');
+});
+document.getElementById('rate-tabs').addEventListener('click', function(e){
+  const tab = e.target.closest('.insp-tab');
+  if(!tab) return;
+  document.querySelectorAll('#rate-tabs .insp-tab').forEach(function(t){ t.classList.remove('active'); });
+  tab.classList.add('active');
+  rateKey = tab.dataset.rate;
+  setPass(rateKey);
+});
+['qc-mat-sel','qc-d1','qc-d2'].forEach(function(id){
+  document.getElementById(id).addEventListener('change', function(e){
+    if(id==='qc-mat-sel') qcMat = e.target.value;
+    renderQcInfo();
+  });
+});
+['spc-mat','spc-item','spc-plan','spc-point','spc-d1','spc-d2'].forEach(function(id){
+  document.getElementById(id).addEventListener('change', function(){ spcCascade(); renderSpc(); });
+});
+window.addEventListener('resize', function(){ Object.keys(charts).forEach(function(id){ charts[id].resize(); }); });
+/* 初始化：物料下拉 + SPC 级联选项 */
+(function init(){
+  const mats = [...new Set(CATE_ORDER.flatMap(function(k){ return ledgerByCate(k).map(function(r){ return r['物料名称']; }); }).filter(Boolean))].sort();
+  document.getElementById('qc-mat-sel').innerHTML = '<option value="">全部物料</option>' + mats.map(function(v){ return '<option>'+esc(v)+'</option>'; }).join('');
+  spcCascade();
+})();
+applyPreset('half');
+</script>
+</body>
+</html>

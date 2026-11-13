@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>检验数字驾驶舱</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#eef2f7;color:#1e293b;font-family:'Microsoft YaHei','PingFang SC',sans-serif;overflow:hidden;width:100vw;height:100vh}
+.dashboard{position:relative;z-index:1;width:100%;height:100%;display:flex;flex-direction:column;padding:8px 12px 6px;gap:8px}
+.header{height:44px;display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0}
+.header::after{content:'';position:absolute;bottom:0;left:5%;right:5%;height:1px;background:linear-gradient(90deg,transparent,rgba(37,99,235,.45),rgba(124,58,237,.35),rgba(37,99,235,.45),transparent)}
+.header h1{font-size:22px;font-weight:900;letter-spacing:6px;background:linear-gradient(90deg,#2563eb,#0891b2,#7c3aed,#0891b2,#2563eb);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header .sub{position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:11px;color:#64748b;letter-spacing:2px}
+.header .time{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:12px;color:#2563eb;letter-spacing:1px}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;flex-shrink:0}
+.kpi{position:relative;background:#fff;border:1px solid #e2e8f0;border-top:3px solid #cbd5e1;border-radius:8px;padding:8px 10px;cursor:pointer;box-shadow:0 1px 3px rgba(15,23,42,.05)}
+.kpi:hover{border-color:#93c5fd;box-shadow:0 4px 14px rgba(37,99,235,.12)}
+.kpi-label{font-size:11px;color:#64748b;letter-spacing:1px}
+.kpi-num{font-size:26px;font-weight:800;line-height:1.15}
+.kpi-num .kpi-unit{font-size:11px;opacity:.55;font-weight:400;margin-left:2px}
+.kpi-sub{display:flex;flex-wrap:wrap;gap:2px 10px;margin-top:4px;min-height:30px}
+.kpi-sub span{font-size:10px;color:#64748b}
+.kpi-sub b{font-weight:700;color:#334155}
+.kpi.c-blue{border-top-color:#2563eb}.kpi.c-blue .kpi-num{color:#2563eb}
+.kpi.c-cyan{border-top-color:#0891b2}.kpi.c-cyan .kpi-num{color:#0891b2}
+.kpi.c-green{border-top-color:#16a34a}.kpi.c-green .kpi-num{color:#16a34a}
+.kpi.c-red{border-top-color:#dc2626}.kpi.c-red .kpi-num{color:#dc2626}
+.kpi.c-orange{border-top-color:#d97706}.kpi.c-orange .kpi-num{color:#d97706}
+.kpi.c-violet{border-top-color:#7c3aed}.kpi.c-violet .kpi-num{color:#7c3aed}
+.main{flex:1;display:flex;gap:10px;min-height:0}
+.col{display:flex;flex-direction:column;gap:8px;min-height:0}
+.col-l{flex:0.92}.col-c{flex:1.5}.col-r{flex:0.92}
+.panel{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:10px;position:relative;display:flex;flex-direction:column;overflow:hidden;min-height:0;box-shadow:0 1px 3px rgba(15,23,42,.05)}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent 5%,rgba(59,130,246,.5) 50%,transparent 95%)}
+.panel-title{font-size:12px;font-weight:700;color:#2563eb;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:6px;letter-spacing:1px;flex-shrink:0}
+.panel-title .t-left{display:flex;align-items:center;gap:6px}
+.panel-title .t-left::before{content:'';display:inline-block;width:3px;height:12px;background:linear-gradient(180deg,#2563eb,#7c3aed);border-radius:2px}
+.panel-title .t-link{font-size:10px;color:#2563eb;cursor:pointer;font-weight:400}
+.panel-body{flex:1;min-height:0;position:relative;display:flex;flex-direction:column}
+.item-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;flex-shrink:0}
+.item-kpi{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:8px 10px;box-shadow:0 1px 3px rgba(15,23,42,.05)}
+.item-kpi .ik-label{font-size:11px;color:#64748b}
+.item-kpi .ik-num{font-size:22px;font-weight:800;line-height:1.2}
+.item-kpi .ik-sub{font-size:9px;color:#94a3b8;margin-top:2px}
+.ik-blue .ik-num{color:#2563eb}.ik-cyan .ik-num{color:#0891b2}.ik-red .ik-num{color:#dc2626}
+.prog-list{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:10px;padding:2px 2px 0}
+.prog-row .prog-head{display:flex;justify-content:space-between;font-size:11px;color:#334155;margin-bottom:4px}
+.prog-row .prog-head b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
+.prog-row .prog-head span{color:#64748b;font-size:10px;white-space:nowrap;margin-left:8px}
+.prog-track{height:10px;background:#f1f5f9;border-radius:5px;overflow:hidden}
+.prog-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#60a5fa,#2563eb)}
+.prog-pct{color:#2563eb;font-weight:700}
+.prog-meta{font-size:9px;color:#94a3b8;margin-top:3px}
+.prog-row{cursor:pointer;padding:2px 4px;border-radius:5px}
+.prog-row:hover{background:#eff6ff}
+.kb-scroll{flex:1;min-height:0;overflow:hidden}
+.kb-track{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;align-content:start}
+.kb-track.scrolling{animation:scrollY var(--kb-dur,40s) linear infinite}
+.kb-track.scrolling:hover{animation-play-state:paused}
+@keyframes scrollY{0%{transform:translateY(0)}100%{transform:translateY(-50%)}}
+.kb-chips{display:flex;gap:6px;margin-bottom:8px;flex-shrink:0;flex-wrap:wrap}
+.kb-chip{padding:3px 12px;font-size:11px;color:#64748b;border:1px solid #e2e8f0;border-radius:14px;cursor:pointer;background:#fff}
+.kb-chip.active{color:#2563eb;border-color:#93c5fd;background:#eff6ff;font-weight:700}
+.kb-chip b{font-weight:700}
+.kb-card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:8px 10px;cursor:pointer}
+.kb-card:hover{border-color:#93c5fd;background:#eff6ff}
+.kb-card .kc-no{font-size:11px;font-weight:700;color:#1e293b;display:flex;justify-content:space-between;align-items:center;gap:6px}
+.kb-card .kc-mat{font-size:10px;color:#64748b;margin:3px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kb-card .kc-line{display:flex;justify-content:space-between;font-size:9px;color:#64748b;margin-top:4px}
+.kb-card .kc-line b{color:#334155;font-weight:600}
+.kb-card .kc-prog{display:flex;align-items:center;gap:6px;margin-top:4px}
+.kb-card .kc-bar{flex:1;height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden}
+.kb-card .kc-bar i{display:block;height:100%;background:linear-gradient(90deg,#60a5fa,#2563eb)}
+.kb-card .kc-txt{font-size:9px;color:#2563eb;font-weight:700;white-space:nowrap}
+.kc-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.kc-chip-i{padding:1px 6px;font-size:9px;border-radius:3px;border:1px solid;white-space:nowrap}
+.ci-done{color:#15803d;background:#dcfce7;border-color:#86efac}
+.ci-bad{color:#b91c1c;background:#fee2e2;border-color:#fca5a5}
+.ci-run{color:#0369a1;background:#e0f2fe;border-color:#7dd3fc}
+.ci-wait{color:#64748b;background:#f1f5f9;border-color:#e2e8f0}
+.tag{display:inline-block;padding:1px 6px;border-radius:3px;font-size:10px;line-height:16px;white-space:nowrap}
+.tag-wait{color:#b45309;background:#fef3c7;border:1px solid #fcd34d}
+.tag-run{color:#0369a1;background:#e0f2fe;border:1px solid #7dd3fc}
+.tag-done{color:#15803d;background:#dcfce7;border:1px solid #86efac}
+.tag-fail{color:#b91c1c;border:1px solid #f87171}
+.tag-pass{color:#15803d;border:1px solid #4ade80}
+.tag-gray{color:#64748b;background:#f1f5f9;border:1px solid #e2e8f0}
+.chart{width:100%;height:100%}
+.empty-tip{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:12px}
+.loc-row{flex-shrink:0;height:190px;display:flex}
+.loc-row .panel{flex:1}
+.list-header,.list-row{display:grid;align-items:center;gap:4px;padding:4px 2px;font-size:10px}
+.list-header div,.list-row div{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.list-header{color:#94a3b8;border-bottom:1px solid #e2e8f0;font-size:9px}
+.list-row{border-bottom:1px solid #f1f5f9;color:#334155}
+.sloc-grid{grid-template-columns:0.95fr 0.95fr 0.85fr 0.75fr 0.7fr 0.55fr 1fr}
+.loc-body{display:flex;flex-direction:row;gap:10px;flex:1;min-height:0}
+.loc-side{flex:0 0 30%;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,1fr);grid-auto-flow:column;gap:3px;border-right:1px solid #e2e8f0;padding-right:8px;overflow:hidden}
+.loc-item{display:flex;align-items:center;justify-content:space-between;gap:4px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:0 8px;font-size:10px;color:#334155}
+.loc-item b{font-size:14px;color:#0f172a}
+.loc-main{flex:1;min-width:0;display:flex;flex-direction:column}
+.col-no{font-size:10px;color:#94a3b8}
+.scroll-box{flex:1;min-height:0;overflow:hidden}
+.scroll-track{animation:scrollY 26s linear infinite}
+.scroll-track:hover,.scroll-track.still{animation:none}
+.panel-title .t-right{font-size:10px;color:#94a3b8;font-weight:400}
+.alert-bar{height:32px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;display:flex;align-items:center;padding:0 12px;gap:10px;overflow:hidden;flex-shrink:0}
+.alert-label{font-size:11px;color:#dc2626;font-weight:700;white-space:nowrap}
+.alert-scroll{flex:1;overflow:hidden}
+.alert-content{display:flex;gap:28px;animation:scrollA 30s linear infinite;white-space:nowrap}
+@keyframes scrollA{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.alert-item{font-size:11px;display:flex;align-items:center;gap:5px}
+.alert-dot{width:5px;height:5px;border-radius:50%}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.active{display:flex}
+.modal{background:#fff;border:1px solid #e2e8f0;border-radius:12px;width:92%;height:84%;max-width:1100px;padding:16px 18px;display:flex;flex-direction:column;box-shadow:0 12px 40px rgba(15,23,42,.18)}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.modal-title{font-size:16px;color:#2563eb;font-weight:700}
+.modal-close{background:none;border:1px solid #cbd5e1;color:#64748b;width:28px;height:28px;border-radius:50%;cursor:pointer}
+.modal-body{flex:1;min-height:0;overflow:auto;color:#475569}
+.dlg-table{width:100%;border-collapse:collapse;font-size:11px}
+.dlg-table th,.dlg-table td{border:1px solid #e2e8f0;padding:6px 8px;text-align:left;white-space:nowrap}
+.dlg-table th{background:#f1f5f9;color:#475569;position:sticky;top:0}
+.dlg-table td{color:#1e293b}
+.dlg-group{font-size:12px;font-weight:700;color:#2563eb;margin:10px 0 4px}
+.sd-sub{font-size:11px;color:#64748b;margin-bottom:10px}
+.sd-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.sd-card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 8px;text-align:center}
+.sd-card .sd-label{font-size:11px;color:#64748b;margin-bottom:4px}
+.sd-card .sd-val{font-size:16px;font-weight:700;color:#1e293b}
+.sd-card.c-cyan .sd-val{color:#0891b2}
+.sd-card.c-green .sd-val{color:#16a34a}
+.sd-card.c-red .sd-val{color:#dc2626}
+.sd-card.c-orange .sd-val{color:#d97706}
+</style>
+</head>
+<body>
+<div class="dashboard">
+  <div class="header">
+    <div class="sub">报检取样 · 检验项完成监控</div>
+    <h1>检验数字驾驶舱</h1>
+    <div class="time" id="clock"></div>
+  </div>
+  <div class="kpi-row" id="kpi-row"></div>
+  <div class="main">
+    <div class="col col-l">
+      <div class="item-kpis" id="item-kpis"></div>
+      <div class="panel" style="flex:1.35">
+        <div class="panel-title"><span class="t-left">检验项完成进度</span><span class="t-link" id="prog-all">全部 ›</span></div>
+        <div class="panel-body"><div class="prog-list" id="prog-list"></div></div>
+      </div>
+    </div>
+    <div class="col col-c">
+      <div class="panel" style="flex:1">
+        <div class="panel-title"><span class="t-left">样品检验项完成看板</span><span style="font-size:10px;color:#94a3b8;font-weight:400">每个样品多检验项 · 点击查看明细</span></div>
+        <div class="panel-body">
+          <div class="kb-chips" id="kb-chips"></div>
+          <div class="kb-scroll"><div class="kb-track" id="kb-track"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="col col-r">
+      <div class="panel" style="flex:1"><div class="panel-title"><span class="t-left">近7日检验完成趋势</span></div><div class="panel-body"><div id="chart-done" class="chart"></div></div></div>
+      <div class="panel" style="flex:1"><div class="panel-title"><span class="t-left">近七日收样量趋势</span></div><div class="panel-body"><div id="chart-recv" class="chart"></div></div></div>
+    </div>
+  </div>
+  <div class="loc-row">
+    <div class="panel">
+      <div class="panel-title"><span class="t-left">样品位置</span></div>
+      <div class="panel-body loc-body">
+        <div class="loc-side" id="loc-side"></div>
+        <div class="loc-main">
+          <div class="list-header sloc-grid"><div>样品编号</div><div>报检单号</div><div>物料</div><div>当前位置</div><div>报检类型</div><div>最近变更人</div><div>最近变更时间</div></div>
+          <div class="scroll-box"><div class="scroll-track" id="sloc-track"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="alert-bar">
+    <div class="alert-label">◆ 实时告警</div>
+    <div class="alert-scroll"><div class="alert-content" id="alert-content"></div></div>
+  </div>
+</div>
+<div class="modal-overlay" id="dlg">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title" id="dlg-title">明细</div><button class="modal-close" id="dlg-close" type="button">✕</button></div>
+    <div class="modal-body" id="dlg-body"></div>
+  </div>
+</div>
+<script src="./js/mock-rows.js?v=1.4.330"></script>
+<script src="./js/demo-store.js?v=1.0.157"></script>
+<script src="./js/ledger-insp.js?v=2"></script>
+<script>
+const MOCK = window.WMS_MOCK_ROWS || {};
+try{ if(window.WMS_DEMO_STORE && window.WMS_DEMO_STORE.hydrateMock) window.WMS_DEMO_STORE.hydrateMock(MOCK); }catch(e){}
+
+/* ---------- 基础工具 ---------- */
+const $ = id => document.getElementById(id);
+const esc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const p2 = n => String(n).padStart(2,'0');
+function dayOf(v){ const s = String(v||'').trim(); const m = s.match(/^(\d{4}-\d{2}-\d{2})/); return m ? m[1] : ''; }
+function ts(v){ const t = Date.parse(String(v||'').replace(/-/g,'/')); return isNaN(t) ? 0 : t; }
+function addDays(d, n){ const x = new Date(d); x.setDate(x.getDate()+n); return x.getFullYear()+'-'+p2(x.getMonth()+1)+'-'+p2(x.getDate()); }
+function fmtDur(ms){
+  const mins = Math.floor(ms/60000), d = Math.floor(mins/1440), h = Math.floor((mins%1440)/60), m = mins%60;
+  return (d?d+'天':'') + (h?(d?' ':'')+h+'小时':'') + ((!d&&!h)||m ? ((d||h)?' ':'')+m+'分钟' : '');
+}
+const NOW = Date.now();
+const TODAY = new Date(); const TODAY_S = TODAY.getFullYear()+'-'+p2(TODAY.getMonth()+1)+'-'+p2(TODAY.getDate());
+
+/* ---------- 样品数据：五个页签 ---------- */
+const TABS = [['tab-pi','采购来料检'],['tab-pp','生产过程检'],['tab-pm','生产物料检'],['tab-sst','生产SST检'],['tab-rd','研发检']];
+const ledger = MOCK.ledger || {};
+/* 单项状态：按该项检验结论——不合格/合格已定；检验中样品下无结论项=进行中；待检验=未检 */
+function itemState(s, it){
+  if(it['检验结论']==='不合格') return 'bad';
+  if(it['检验结论']==='合格') return 'done';
+  if(s['样品状态']==='检验中') return 'run';
+  if(s['样品状态']==='已完成') return 'done';
+  return 'wait';
+}
+const samples = TABS.flatMap(([name,label]) => ((ledger[name])||[]).map(r => {
+  // 与台账「检验详情」同一套推导：全部样品都有检验项（ledgerInspItems）；待检验项未检、检验中部分有结果、已完成全有结果
+  const items = window.WMS_LEDGER_INSP ? WMS_LEDGER_INSP.ledgerInspItems(r) : (Array.isArray(r._insp)?r._insp:[]);
+  const total = items.length;
+  const done = items.filter(it => itemState(r,it)==='done' || itemState(r,it)==='bad').length;
+  const bad  = items.filter(it => itemState(r,it)==='bad').length;
+  const run  = items.filter(it => itemState(r,it)==='run').length;
+  const eta = ts(r['预计完成时间']);
+  const active = r['样品状态']==='待检验' || r['样品状态']==='检验中';
+  const overdue = active && eta && NOW > eta;
+  return Object.assign({}, r, { 报检类型:label, _items:items, _total:total, _done:done, _bad:bad, _run:run, _eta:eta, _active:active, _overdue:overdue });
+}));
+
+/* ---------- 样品状态 KPI ---------- */
+const KPIS = [
+  { key:'wait',  label:'待检样品',   cls:'c-blue',   hit:s=> s['样品状态']==='待检验', chip:'待检' },
+  { key:'run',   label:'检验中样品', cls:'c-cyan',   hit:s=> s['样品状态']==='检验中', chip:'检验中' },
+  { key:'today', label:'今日完成样品',cls:'c-green', hit:s=> s['样品状态']==='已完成' && dayOf(s['检验完成时间'])===TODAY_S, chip:'已完成' },
+  { key:'late',  label:'逾期样品',   cls:'c-red',    hit:s=> s._overdue, chip:'逾期' }
+];
+function renderKpis(){
+  $('kpi-row').innerHTML = KPIS.map(k=>{
+    const rows = samples.filter(k.hit);
+    const subs = TABS.map(([,label])=>{
+      const n = rows.filter(s=> s['报检类型']===label).length;
+      return n ? `<span>${label}<b>${n}</b></span>` : '';
+    }).join('');
+    return `<div class="kpi ${k.cls}" data-chip="${k.chip}"><div class="kpi-label">${k.label}</div><div class="kpi-num">${rows.length}<span class="kpi-unit">个</span></div><div class="kpi-sub">${subs}</div></div>`;
+  }).join('');
+  document.querySelectorAll('#kpi-row .kpi').forEach(el=> el.onclick = ()=> setChip(el.dataset.chip));
+}
+
+/* ---------- 检验项 KPI + 进度 ---------- */
+const itemTotal = samples.reduce((s,r)=> s+r._total, 0);
+const itemDone  = samples.reduce((s,r)=> s+r._done, 0);
+const itemRun   = samples.reduce((s,r)=> s+r._run, 0);
+const itemBad   = samples.reduce((s,r)=> s+r._bad, 0);
+function renderItemKpis(){
+  const rate = itemTotal ? (itemDone/itemTotal*100).toFixed(1)+'%' : '—';
+  $('item-kpis').innerHTML =
+    `<div class="item-kpi ik-blue"><div class="ik-label">检验项任务</div><div class="ik-num">${itemTotal}<span style="font-size:11px;opacity:.55"> 项</span></div><div class="ik-sub">口径：在制样品项次合计</div></div>`+
+    `<div class="item-kpi ik-cyan"><div class="ik-label">检验项完成率</div><div class="ik-num">${rate}</div><div class="ik-sub">完成 ${itemDone} · 进行 ${itemRun} / 任务 ${itemTotal}</div></div>`+
+    `<div class="item-kpi ik-red"><div class="ik-label">不合格项</div><div class="ik-num">${itemBad}<span style="font-size:11px;opacity:.55"> 项</span></div><div class="ik-sub">触发：判定不合格</div></div>`;
+}
+/* 检验项完成进度：按检验项名称聚合（非报检类型） */
+const itemStats = {};
+samples.forEach(s=> (s._items||[]).forEach(it=>{
+  const n = it['检验项名称'] || '未命名检验项';
+  const st = itemStats[n] || (itemStats[n] = { name:n, cls:it['所属检验类']||'', total:0, done:0, run:0, bad:0 });
+  st.total++;
+  const k = itemState(s, it);
+  if(k==='done') st.done++;
+  else if(k==='bad'){ st.done++; st.bad++; }
+  else if(k==='run') st.run++;
+}));
+const itemStatList = Object.values(itemStats).sort((a,b)=> b.total-a.total || b.done-a.done);
+/* 面板只展示「未完成样品（待检验+检验中）」里出现的检验项并集；进度数字仍按全部样品统计 */
+const pendingItemNames = new Set();
+samples.filter(s=> s['样品状态']!=='已完成').forEach(s=> (s._items||[]).forEach(it=> pendingItemNames.add(it['检验项名称']||'未命名检验项')));
+const progList = itemStatList.filter(st=> pendingItemNames.has(st.name));
+function renderProg(){
+  $('prog-list').innerHTML = progList.map(st=>{
+    const pct = st.total ? Math.round(st.done/st.total*100) : 0;
+    const parts = [`任务 ${st.total}`, `完成 ${st.done}`];
+    if(st.run) parts.push(`进行 ${st.run}`);
+    if(st.bad) parts.push(`不合格 ${st.bad}`);
+    return `<div class="prog-row" data-item="${esc(st.name)}"><div class="prog-head"><b title="${esc(st.name)}">${esc(st.name)}</b><span class="prog-pct">${pct}%</span></div><div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div><div class="prog-meta">${parts.join(' · ')}</div></div>`;
+  }).join('') || '<div class="empty-tip">暂无数据</div>';
+  $('prog-list').querySelectorAll('.prog-row').forEach(el=> el.onclick = ()=> openItemSamples(el.dataset.item));
+}
+
+/* ---------- 样品看板 ---------- */
+const KB_CHIPS = ['全部','待检','检验中','已完成','逾期'];
+let kbChip = '全部';
+function chipHit(s, chip){
+  if(chip==='待检') return s['样品状态']==='待检验';
+  if(chip==='检验中') return s['样品状态']==='检验中';
+  if(chip==='已完成') return s['样品状态']==='已完成';
+  if(chip==='逾期') return s._overdue;
+  return true;
+}
+function statusTag(s){ return s['样品状态']==='已完成' ? 'tag-done' : (s['样品状态']==='检验中' ? 'tag-run' : 'tag-wait'); }
+function renderKb(){
+  $('kb-chips').innerHTML = KB_CHIPS.map(c=>{
+    const n = samples.filter(s=> chipHit(s,c)).length;
+    return `<span class="kb-chip${c===kbChip?' active':''}" data-c="${c}">${c}<b>${n}</b></span>`;
+  }).join('');
+  document.querySelectorAll('.kb-chip').forEach(el=> el.onclick = ()=> setChip(el.dataset.c));
+  const rows = samples.filter(s=> chipHit(s,kbChip));
+  const track = $('kb-track');
+  if(!rows.length){
+    track.className = 'kb-track';
+    track.innerHTML = '<div class="empty-tip" style="position:static;grid-column:1/-1;padding:30px">暂无样品</div>';
+    return;
+  }
+  const cards = rows.map(s=>{
+    const pct = s._total ? Math.round(s._done/s._total*100) : 0;
+    const odTag = s._active ? (s._overdue ? '<span class="tag tag-fail">逾期</span>' : '<span class="tag tag-done">正常</span>') : '';
+    const tag = `<span class="tag ${statusTag(s)}">${esc(s['样品状态'])}</span>${odTag}`;
+    const chips = (s._items||[]).map(it=> `<span class="kc-chip-i ci-${itemState(s,it)}">${esc(it['检验项名称']||'—')}</span>`).join('');
+    return `<div class="kb-card" data-id="${esc(s.id)}"><div class="kc-no"><span>${esc(s['样品编号'])}</span>${tag}</div>`+
+      `<div class="kc-mat">${esc(s['物料名称']||'—')} · ${esc(s['报检类型'])}</div>`+
+      `<div class="kc-line"><span>检验项进度 <b>${s._done}/${s._total}</b></span><span>需求完成 ${esc(s['需求完成时间']||'—')}</span></div>`+
+      `<div class="kc-prog"><div class="kc-bar"><i style="width:${pct}%"></i></div><span class="kc-txt">${pct}%</span></div>`+
+      (chips ? `<div class="kc-chips">${chips}</div>` : '') +
+      `</div>`;
+  }).join('');
+  /* 样品多时自动滚动：复制一份内容做 -50% 无缝循环，悬停暂停 */
+  if(rows.length > 16){
+    track.className = 'kb-track scrolling';
+    track.style.setProperty('--kb-dur', Math.max(20, rows.length * 2.2) + 's');
+    track.innerHTML = cards + cards;
+  }else{
+    track.className = 'kb-track';
+    track.innerHTML = cards;
+  }
+}
+$('kb-track').addEventListener('click', e=>{
+  const card = e.target.closest('.kb-card');
+  if(card) openSample(card.dataset.id);
+});
+function setChip(c){ kbChip = KB_CHIPS.includes(c) ? c : '全部'; renderKb(); }
+
+/* ---------- 近7日趋势（以数据最新日期为基准） ---------- */
+const charts = {};
+function mkChart(id, opt){
+  if(!window.echarts) return;
+  if(!charts[id]) charts[id] = echarts.init($(id));
+  charts[id].setOption(Object.assign({grid:{left:40,right:16,top:28,bottom:26},textStyle:{color:'#475569'}}, opt));
+}
+function weekRows(dateKey){
+  const days = [...new Set(samples.map(s=> dayOf(s[dateKey])).filter(Boolean))].sort();
+  const base = days.length ? days[days.length-1] : TODAY_S;
+  const arr = [];
+  for(let i=6;i>=0;i--){
+    const d = addDays(base,-i);
+    arr.push({ day:d.slice(5), n: samples.filter(s=> dayOf(s[dateKey])===d && (dateKey!=='检验完成时间' || s['样品状态']==='已完成')).length });
+  }
+  return arr;
+}
+function renderCharts(){
+  const done = weekRows('检验完成时间');
+  mkChart('chart-done',{ tooltip:{trigger:'axis',backgroundColor:'#fff',borderColor:'#e2e8f0',textStyle:{color:'#334155',fontSize:11}},
+    xAxis:{type:'category',data:done.map(r=>r.day),axisLine:{lineStyle:{color:'#cbd5e1'}},axisLabel:{fontSize:10,color:'#64748b'}},
+    yAxis:{type:'value',minInterval:1,splitLine:{lineStyle:{color:'#f1f5f9'}},axisLabel:{fontSize:10,color:'#94a3b8'}},
+    series:[{type:'line',data:done.map(r=>r.n),smooth:true,symbolSize:5,lineStyle:{color:'#2563eb',width:2.5},itemStyle:{color:'#2563eb'},areaStyle:{color:'rgba(37,99,235,.08)'},label:{show:true,fontSize:9,color:'#2563eb'}}]
+  });
+  const recv = weekRows('取样时间');
+  mkChart('chart-recv',{ tooltip:{trigger:'axis',backgroundColor:'#fff',borderColor:'#e2e8f0',textStyle:{color:'#334155',fontSize:11}},
+    xAxis:{type:'category',data:recv.map(r=>r.day),axisLine:{lineStyle:{color:'#cbd5e1'}},axisLabel:{fontSize:10,color:'#64748b'}},
+    yAxis:{type:'value',minInterval:1,splitLine:{lineStyle:{color:'#f1f5f9'}},axisLabel:{fontSize:10,color:'#94a3b8'}},
+    series:[{type:'bar',data:recv.map(r=>r.n),barWidth:'46%',itemStyle:{color:'#60a5fa',borderRadius:[3,3,0,0]},label:{show:true,position:'top',fontSize:9,color:'#2563eb'}}]
+  });
+}
+
+/* ---------- 样品位置（与质量数字驾驶舱同源：np-0201-12 样品位置页） ---------- */
+function slocBucket(r, disposed){
+  if(disposed) return r['处置方式']==='留样' ? '留样' : '已报废';
+  const pos = String(r['当前位置']||'').trim();
+  if(!pos || pos==='—') return '未入库';
+  if(pos.indexOf('货架')>=0) return '样品货架';
+  if(pos.indexOf('筐')>=0) return '样品筐';
+  return '领用中';
+}
+function renderLoc(){
+  const bag = MOCK['np-0201-12'] || {};
+  const groups = {未入库:[], 样品货架:[], 样品筐:[], 领用中:[], 留样:[], 已报废:[]};
+  (bag['tab-1']||[]).forEach(r=>{
+    const key = slocBucket(r, false);
+    groups[key].push({cat:key, no:r['样品编号'], io:r['报检单号'], mat:r['物料名称'], pos:(!r['当前位置']||r['当前位置']==='—')?'未入库':r['当前位置'], type:r['报检类型'], person:r['最近变更人'], time:r['最近变更时间']});
+  });
+  (bag['tab-2']||[]).forEach(r=>{
+    const key = slocBucket(r, true);
+    groups[key].push({cat:key, no:r['样品编号'], io:r['报检单号'], mat:r['物料名称'], pos:key==='留样'?'留样':'已报废', type:r['报检类型'], person:r['最近变更人']||r['处置人'], time:r['最近变更时间']||r['处置时间']});
+  });
+  const shown = [];
+  const LOC_ORDER = ['未入库','样品货架','样品筐','领用中','留样','已报废'];
+  /* 明细列表只取「在用」Tab（tab-1）：未入库/样品货架/样品筐/领用中，每桶最多3条 */
+  LOC_ORDER.slice(0, 4).forEach(k=> groups[k].slice(0, 3).forEach(row=> shown.push(row)));
+  $('loc-side').innerHTML = LOC_ORDER.map(k=>
+    `<div class="loc-item"><span>${k}</span><b>${groups[k].length}</b></div>`
+  ).join('');
+  const track = $('sloc-track');
+  if(!shown.length){
+    track.className = 'scroll-track still';
+    track.innerHTML = '<div class="list-row" style="display:block;color:#94a3b8;padding:16px 4px">暂无样品位置数据</div>';
+    return;
+  }
+  const html = shown.map(r=>
+    `<div class="list-row sloc-grid"><div class="col-no">${esc(r.no)}</div><div>${esc(r.io)}</div><div>${esc(r.mat)}</div><div>${esc(r.pos)}</div><div>${esc(r.type)}</div><div>${esc(r.person)}</div><div>${esc(r.time)}</div></div>`
+  ).join('');
+  track.className = shown.length > 5 ? 'scroll-track' : 'scroll-track still';
+  track.innerHTML = shown.length > 5 ? html+html : html;
+}
+
+/* ---------- 实时告警 ---------- */
+function renderAlert(){
+  const items = [];
+  samples.filter(s=> s._overdue).slice(0,10).forEach(s=> items.push({t:`样品 ${s['样品编号']} 已逾期 ${fmtDur(NOW-s._eta)}`, c:'#dc2626'}));
+  samples.filter(s=> s['检验结论']==='不合格').slice(0,10).forEach(s=> items.push({t:`样品 ${s['样品编号']} 检验结论不合格`, c:'#b91c1c'}));
+  const html = items.length ? items.map(i=> `<span class="alert-item"><i class="alert-dot" style="background:${i.c}"></i>${esc(i.t)}</span>`).join('') : '<span class="alert-item">当前周期暂无告警</span>';
+  $('alert-content').innerHTML = html + html;
+}
+
+/* ---------- 明细弹窗 ---------- */
+function openDlg(title, html){ $('dlg-title').textContent = title; $('dlg-body').innerHTML = html; $('dlg').classList.add('active'); }
+$('dlg-close').onclick = ()=> $('dlg').classList.remove('active');
+$('dlg').addEventListener('click', e=>{ if(e.target===e.currentTarget) e.currentTarget.classList.remove('active'); });
+function conclTag(c){ return c==='合格' ? 'tag-pass' : (c==='不合格' ? 'tag-fail' : 'tag-gray'); }
+const IT_ST = { wait:['待检','tag-wait'], run:['检验中','tag-run'], done:['已完成','tag-done'], bad:['已完成','tag-done'] };
+function openSample(id){
+  const s = samples.find(r=> String(r.id)===String(id)); if(!s) return;
+  const items = s._items || [];
+  const opUser = s['检验人'] && s['检验人']!=='—' ? s['检验人'] : '管理员';
+  const pct = s._total ? (s._done/s._total*100).toFixed(1)+'%' : '—';
+  const odVal = !s._active ? '—' : (s._overdue ? '逾期' : '正常');
+  const cards = [
+    ['报检单号', esc(s['报检单号']||'—'), 'c-cyan'],
+    ['报检类型', esc(s['报检类型']||'—'), ''],
+    ['样品编号', esc(s['样品编号']||'—'), 'c-cyan'],
+    ['检验项数', s._total + ' 项', 'c-cyan'],
+    ['已完成 / 完成率', `${s._done} · ${pct}`, 'c-green'],
+    ['样品状态', esc(s['样品状态']), ''],
+    ['逾期状态', odVal, s._overdue?'c-red':'']
+  ].map(([l,v,c])=> `<div class="sd-card ${c}"><div class="sd-label">${l}</div><div class="sd-val">${v}</div></div>`).join('');
+  const body = items.map((it,ix)=>{
+    const st = itemState(s, it);
+    const [stTxt, stCls] = IT_ST[st];
+    const res = it['检验项类型']==='定性' ? (it['检验结果']||'—') : (it['检验报出值']||it['检验结果值']||'—');
+    const c = it['检验结论'];
+    return `<tr><td>${ix+1}</td><td>${esc(it['检验项名称']||'—')}</td><td>${esc(it['检验项类型']||'—')}</td><td><span class="tag ${stCls}">${stTxt}</span></td><td>${esc(st==='done'||st==='bad' ? opUser : '—')}</td><td>${esc(res)}</td><td><span class="tag ${conclTag(c)}">${esc(c||'—')}</span></td><td>${esc(it['偏差结论']||'—')}</td></tr>`;
+  }).join('') || '<tr><td colspan="8" style="text-align:center;color:#94a3b8">无检验项明细</td></tr>';
+  openDlg(`${esc(s['样品编号'])} · 样品检验项明细`,
+    `<div class="sd-sub">${esc(s['报检单号']||'—')} · ${esc(s['物料名称']||'—')} · ${esc(s['报检类型'])} · 进度 ${s._done}/${s._total} · 需求完成 ${esc(s['需求完成时间']||'—')}</div>`+
+    `<div class="sd-cards">${cards}</div>`+
+    `<table class="dlg-table"><thead><tr><th>序号</th><th>检验项</th><th>类型</th><th>状态</th><th>检验员</th><th>结果</th><th>检验结论</th><th>偏差结论</th></tr></thead><tbody>${body}</tbody></table>`);
+}
+$('prog-all').onclick = ()=>{
+  const body = progList.map(st=>{
+    const pct = st.total ? (st.done/st.total*100).toFixed(1)+'%' : '—';
+    return `<tr><td>${esc(st.name)}</td><td>${esc(st.cls||'—')}</td><td>${st.total}</td><td>${st.done}</td><td>${st.run}</td><td>${pct}</td><td>${st.bad?`<span class="tag tag-fail">${st.bad}</span>`:st.bad}</td></tr>`;
+  }).join('') || '<tr><td colspan="7" style="text-align:center;color:#94a3b8">暂无检验项</td></tr>';
+  openDlg('检验项完成进度 · 全部（未完成样品涉及项）',
+    `<table class="dlg-table"><thead><tr><th>检验项名称</th><th>所属检验类</th><th>任务项次</th><th>完成项次</th><th>进行中</th><th>完成率</th><th>不合格项次</th></tr></thead><tbody>${body}</tbody></table>`);
+};
+
+/* 检验项 → 包含该检验项的样品清单 */
+const IST_TXT = { done:'合格', bad:'不合格', run:'进行中', wait:'未检' };
+const IST_CLS = { done:'tag-pass', bad:'tag-fail', run:'tag-run', wait:'tag-gray' };
+function openItemSamples(name){
+  const rows = samples.filter(s=> (s._items||[]).some(it=> (it['检验项名称']||'未命名检验项')===name));
+  rows.sort((a,b)=> (a['样品状态']==='已完成'?1:0)-(b['样品状态']==='已完成'?1:0));
+  const body = rows.map(s=>{
+    const it = s._items.find(x=> (x['检验项名称']||'未命名检验项')===name);
+    const st = itemState(s, it);
+    const odTxt = !s._active ? '—' : (s._overdue ? '<span class="tag tag-fail">逾期</span>' : '<span class="tag tag-done">正常</span>');
+    return `<tr><td>${esc(s['样品编号'])}</td><td>${esc(s['物料名称']||'—')}</td><td>${esc(s['报检类型'])}</td><td><span class="tag ${statusTag(s)}">${esc(s['样品状态'])}</span></td><td>${odTxt}</td><td><span class="tag ${IST_CLS[st]}">${IST_TXT[st]}</span></td><td>${s._done}/${s._total}</td><td>${esc(s['需求完成时间']||'—')}</td></tr>`;
+  }).join('') || '<tr><td colspan="8" style="text-align:center;color:#94a3b8">暂无样品</td></tr>';
+  openDlg(`检验项「${name}」· 涉及样品 ${rows.length} 个`,
+    `<table class="dlg-table"><thead><tr><th>样品编号</th><th>物料名称</th><th>报检类型</th><th>样品状态</th><th>逾期状态</th><th>该项状态</th><th>样品进度</th><th>需求完成时间</th></tr></thead><tbody>${body}</tbody></table>`);
+}
+
+/* ---------- 时钟 & 初始化 ---------- */
+function tickClock(){ const d = new Date(); $('clock').textContent = `${d.getFullYear()}-${p2(d.getMonth()+1)}-${p2(d.getDate())} ${p2(d.getHours())}:${p2(d.getMinutes())}:${p2(d.getSeconds())}`; }
+tickClock(); setInterval(tickClock, 1000);
+renderKpis(); renderItemKpis(); renderProg(); renderKb(); renderCharts(); renderLoc(); renderAlert();
+window.addEventListener('resize', ()=> Object.values(charts).forEach(c=> c && c.resize()));
+</script>
+</body>
+</html>

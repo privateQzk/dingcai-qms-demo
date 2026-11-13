@@ -1291,7 +1291,8 @@ body.remarks-open #app{width:calc(100% - var(--remarks-panel-w));max-width:calc(
                     <div class="qms-row"><label>报检批号</label><input :value="qms.state.soutSample['报检批号'] || '—'" readonly /></div>
                     <div class="qms-row"><label>当前位置</label><input :value="qms.state.soutSample['当前位置'] || '—'" readonly /></div>
                     <div class="qms-row"><label>位置编码</label><input :value="qms.state.soutSample['位置编码'] || '—'" readonly /></div>
-                    <div class="qms-row"><label>领用人</label><input :value="qms.state.soutSample['领用人'] || '—'" readonly /></div>
+                    <div class="qms-row"><label>最近变更人</label><input :value="qms.state.soutSample['最近变更人'] || '—'" readonly /></div>
+                    <div class="qms-row"><label>最近变更时间</label><input :value="qms.state.soutSample['最近变更时间'] || '—'" readonly /></div>
                   </template>
                   <div class="qms-row"><label><span class="req">*</span>领用去向</label>
                     <select v-model="qms.state.soutDestCode" @change="qms.onSoutDestChange">
@@ -1346,7 +1347,8 @@ body.remarks-open #app{width:calc(100% - var(--remarks-panel-w));max-width:calc(
                     <div class="qms-row"><label>报检批号</label><input :value="qms.state.sdispSample['报检批号'] || '—'" readonly /></div>
                     <div class="qms-row"><label>当前位置</label><input :value="qms.state.sdispSample['当前位置'] || '—'" readonly /></div>
                     <div class="qms-row"><label>位置编码</label><input :value="qms.state.sdispSample['位置编码'] || '—'" readonly /></div>
-                    <div class="qms-row"><label>领用人</label><input :value="qms.state.sdispSample['领用人'] || '—'" readonly /></div>
+                    <div class="qms-row"><label>最近变更人</label><input :value="qms.state.sdispSample['最近变更人'] || '—'" readonly /></div>
+                    <div class="qms-row"><label>最近变更时间</label><input :value="qms.state.sdispSample['最近变更时间'] || '—'" readonly /></div>
                   </template>
                   <div class="qms-row"><label><span class="req">*</span>处置方式</label>
                     <div class="radio-row">
@@ -5715,13 +5717,13 @@ body.remarks-open #app{width:calc(100% - var(--remarks-panel-w));max-width:calc(
 <script src="https://unpkg.com/element-plus/dist/locale/zh-cn.min.js"></script>
 <script src="./js/demo-announcements.js?v=1.0.22"></script>
 <script src="./js/dict-catalog.js?v=1.0.16"></script>
-<script src="./js/mock-rows.js?v=1.0.259"></script>
-<script src="./js/demo-store.js?v=1.0.119"></script>
-<script src="./js/page-configs.js?v=1.4.528"></script>
+<script src="./js/mock-rows.js?v=1.0.269"></script>
+<script src="./js/demo-store.js?v=1.0.124"></script>
+<script src="./js/page-configs.js?v=1.4.544"></script>
 <script src="./js/app-configs.js?v=1.0.2"></script>
-<script src="./js/qms-app.js?v=1.0.109"></script>
-<script src="./js/page-prd-notes.js?v=2.0.485"></script>
-<script src="./js/app-prd-notes.js?v=2.0.89"></script>
+<script src="./js/qms-app.js?v=1.0.111"></script>
+<script src="./js/page-prd-notes.js?v=2.0.504"></script>
+<script src="./js/app-prd-notes.js?v=2.0.108"></script>
 <script src="./js/remarks-markdown.js?v=1.1.0"></script>
 <script type="module" src="./js/remarks-mermaid-init.js"></script>
 <script src="./js/remarks-mermaid.js"></script>

@@ -319,6 +319,15 @@ body.remarks-open .el-overlay-dialog{
 }
 .app-body{flex:1;min-height:0;padding:12px 12px 16px;overflow:hidden;background:var(--color-bg-page);display:flex;flex-direction:column}
 .page-panel{background:#fff;flex:1;min-height:0;display:flex;flex-direction:column}
+.cmp-query{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.cmp-query .el-form{flex:1}
+.cmp-query__actions{display:flex;align-items:center;gap:8px;flex:none}
+.cmp-bar{display:flex;justify-content:space-between;align-items:center;margin:4px 0 8px;color:#606266;font-size:13px}
+.cmp-page{display:flex;justify-content:flex-end;margin-top:12px}
+.qcock-launch{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;background:#f5f7fb}
+.qcock-launch__card{width:440px;max-width:calc(100% - 48px);padding:36px 32px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;text-align:center}
+.qcock-launch__card h2{margin:0 0 8px;font-size:20px;color:#1f2937;font-weight:600}
+.qcock-launch__card p{margin:0 0 20px;color:#64748b;font-size:14px;line-height:1.6}
 .msa-frame-wrap{display:flex;flex-direction:column;flex:1;min-height:0;height:calc(100vh - 76px);background:#fff;overflow:hidden}
 .msa-frame{flex:1;width:100%;border:0;background:#fff}
 
@@ -494,6 +503,17 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
 .tag-gr{color:#8C8C8C;background:#FAFAFA;border-color:#D9D9D9}
 .tag-y{color:#D4B106;background:#FFFBE6;border-color:#FFE58F}
 .tag-c{color:#08979C;background:#E6FFFB;border-color:#87E8DE}
+.ledger-abn{color:#FF4D4F;cursor:pointer;font-weight:500}
+.ledger-abn-card{padding:6px 0 10px}
+.ledger-abn-card + .ledger-abn-card{border-top:1px solid #f0f0f0}
+.ledger-abn-card__hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.ledger-abn-card__hd b{color:#FF4D4F;font-size:14px}
+.ledger-abn-card__hd span{color:#8c8c8c;font-size:12px}
+.ledger-abn-card__no{margin-bottom:6px;font-size:12px;color:#595959}
+.ledger-abn-card table{width:100%;border-collapse:collapse;font-size:12px}
+.ledger-abn-card th{background:#fafafa;color:#8c8c8c;font-weight:500}
+.ledger-abn-card th,.ledger-abn-card td{border-bottom:1px solid #f0f0f0;padding:4px 6px;text-align:left}
+.ledger-abn-card .is-bad{color:#FF4D4F;font-weight:600}
 .bx-sec{font-weight:600;font-size:14px;margin-bottom:10px;padding-left:8px;border-left:3px solid var(--el-color-primary);line-height:1.2}
 .ledger-insp-body{display:flex;flex-direction:column;gap:12px;min-height:0}
 .ledger-insp-head{overflow-x:auto;margin-bottom:4px;width:100%;padding-bottom:2px}
@@ -563,6 +583,7 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
   max-width:min(96vw, 1100px)!important;
   margin-left:auto!important;margin-right:auto!important;
 }
+.el-dialog.demo-dialog--biz.cmp-dialog{max-width:min(96vw,1600px)!important;width:96vw!important}
 /* 全屏弹窗（检验方案 / 取样录入等）：解除 1100px 上限，铺满视口 */
 .scheme-readonly .insp-method-param-block__tools{display:none}
 .scheme-readonly .el-input,
@@ -1110,6 +1131,20 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
 .insp-report .query-form{margin-bottom:10px}
 .insp-report .demo-picker-input .el-input__wrapper{overflow:hidden}
 .insp-report .demo-picker-input input{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.quality-report .qr-tabs{margin-bottom:4px}
+.quality-report .qr-tabs .el-tabs__header{margin-bottom:10px}
+.qr-kpis{display:flex;gap:12px;flex-wrap:wrap}
+.qr-kpi{flex:1;min-width:150px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:14px 16px;border-top:3px solid #2563eb}
+.qr-kpi__v{font-size:24px;font-weight:700;color:#2563eb;line-height:1.2}
+.qr-kpi__l{margin-top:4px;font-size:12px;color:#64748b}
+.qr-kpi--green{border-top-color:#16a34a}.qr-kpi--green .qr-kpi__v{color:#16a34a}
+.qr-kpi--red{border-top-color:#dc2626}.qr-kpi--red .qr-kpi__v{color:#dc2626}
+.qr-kpi--orange{border-top-color:#d97706}.qr-kpi--orange .qr-kpi__v{color:#d97706}
+.qr-kpi--cyan{border-top-color:#0891b2}.qr-kpi--cyan .qr-kpi__v{color:#0891b2}
+.qr-kpi--violet{border-top-color:#7c3aed}.qr-kpi--violet .qr-kpi__v{color:#7c3aed}
+.qr-groups{display:flex;gap:12px;flex-wrap:wrap}
+.qr-groups__item{flex:1;min-width:320px;border:1px solid #e5e7eb;border-radius:8px;padding:10px 12px;background:#fff}
+.qr-groups__title{font-size:13px;font-weight:600;color:#334155;margin-bottom:8px}
 .cost-stat__field{display:flex;align-items:center;gap:8px}
 .cost-stat__field label{color:#334155;font-size:13px;white-space:nowrap}
 .cost-stat__dims{display:flex;gap:18px;flex-wrap:wrap}
@@ -1127,7 +1162,6 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
 .cost-stat__hintline{margin:6px 0 0;color:#94a3b8;font-size:12px}
 .cost-stat__row{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:flex-start}
 .cost-stat__foot{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
-.cost-stat__export{display:flex;justify-content:flex-end;margin-top:12px}
 .cost-stat__measures{display:flex;flex-wrap:wrap;gap:4px 12px}
 .cost-stat__bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .cost-stat__sum{color:#64748b;font-size:13px}
@@ -1978,7 +2012,10 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
                 <el-button @click="costPivotReset">重置</el-button>
               </div>
             </div>
-            <div class="cost-stat__sum" v-if="costPivot.queried">命中流水 {{ costPivot.hit }} 条 · 标准系数合计 {{ costPivot.hours }} · 未配置 {{ costPivot.miss }} 条</div>
+            <div class="cost-stat__bar" v-if="costPivot.queried">
+              <div class="cost-stat__sum">命中流水 {{ costPivot.hit }} 条 · 标准系数合计 {{ costPivot.hours }} · 未配置 {{ costPivot.miss }} 条</div>
+              <el-button @click="costPivotExport">导出 Excel</el-button>
+            </div>
             <el-table v-if="costPivot.queried" class="demo-data-table" :data="costPivot.table" border :row-class-name="costPivotRowClass" empty-text="暂无数据" max-height="520">
               <el-table-column v-for="c in costPivot.columns" :key="c.prop" :prop="c.prop" :label="c.label" :min-width="c.width" :fixed="c.fixed" show-overflow-tooltip>
                 <template #default="{ row }">
@@ -1990,7 +2027,6 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
                 <template #default="{ row }"><el-button v-if="!row._total" link type="primary" @click="costOpenFlow(row)">查看流水</el-button></template>
               </el-table-column>
             </el-table>
-            <div class="cost-stat__export" v-if="costPivot.queried"><el-button @click="costPivotExport">导出 Excel</el-button></div>
             <el-drawer v-model="costFlowDlg.visible" :title="'命中流水 · '+costFlowDlg.title" direction="rtl" size="70%" append-to-body>
               <el-table :data="costFlowDlg.rows" border height="100%" empty-text="暂无流水">
                 <el-table-column type="index" label="序号" width="60"></el-table-column>
@@ -2009,21 +2045,16 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
           </section>
 
           <section v-else-if="page.layout==='insp-report'" class="cost-stat insp-report">
-            <div class="page-tabs" style="margin:0 0 8px;padding:0">
-              <el-tabs v-model="inspRpt.tab" @tab-change="inspRptSwitch">
-                <el-tab-pane label="采购来料检" name="tab-pi"></el-tab-pane>
-                <el-tab-pane label="生产过程检" name="tab-pp"></el-tab-pane>
-                <el-tab-pane label="生产物料检" name="tab-pm"></el-tab-pane>
-              </el-tabs>
-            </div>
             <div class="cost-stat__box">
               <el-form :inline="true" class="query-form">
+                <el-form-item label="报检类型"><el-select v-model="inspRpt.types" multiple collapse-tags collapse-tags-tooltip filterable clearable placeholder="全部" style="width:100%"><el-option v-for="o in inspTypeOptions()" :key="o" :label="o" :value="o"></el-option></el-select></el-form-item>
                 <el-form-item label="物料信息"><el-input :model-value="inspRpt.matLabel" :title="inspRpt.matLabel" readonly clearable class="demo-picker-input" placeholder="请点击选择，可多选" @click="openInspPick('物料信息')" @clear="inspClearPick('物料信息')"></el-input></el-form-item>
+                <el-form-item label="物料种类"><el-select v-model="inspRpt.kinds" multiple collapse-tags collapse-tags-tooltip filterable clearable placeholder="全部" style="width:100%"><el-option v-for="o in inspKindOptions()" :key="o" :label="o" :value="o"></el-option></el-select></el-form-item>
                 <el-form-item label="检验项"><el-select v-model="inspRpt.items" multiple collapse-tags collapse-tags-tooltip filterable clearable placeholder="全部" style="width:100%"><el-option v-for="o in inspItemOptions()" :key="o" :label="o" :value="o"></el-option></el-select></el-form-item>
                 <el-form-item label="检验结论"><el-select v-model="inspRpt.results" multiple collapse-tags collapse-tags-tooltip clearable placeholder="全部" style="width:100%"><el-option v-for="o in ['合格','不合格']" :key="o" :label="o" :value="o"></el-option></el-select></el-form-item>
                 <el-form-item label="采样点"><el-input :model-value="inspRpt.pointLabel" :title="inspRpt.pointLabel" readonly clearable class="demo-picker-input" placeholder="请点击选择，可多选" @click="openInspPick('采样点')" @clear="inspClearPick('采样点')"></el-input></el-form-item>
-                <el-form-item v-if="inspRpt.tab==='tab-pi'" label="供应商信息"><el-input :model-value="inspRpt.supplierLabel" :title="inspRpt.supplierLabel" readonly clearable class="demo-picker-input" placeholder="请点击选择，可多选" @click="openInspPick('供应商信息')" @clear="inspClearPick('供应商信息')"></el-input></el-form-item>
-                <el-form-item v-else label="客户信息"><el-input :model-value="inspRpt.customerLabel" :title="inspRpt.customerLabel" readonly clearable class="demo-picker-input" placeholder="请点击选择，可多选" @click="openInspPick('客户信息')" @clear="inspClearPick('客户信息')"></el-input></el-form-item>
+                <el-form-item label="供应商信息"><el-input :model-value="inspRpt.supplierLabel" :title="inspRpt.supplierLabel" readonly clearable class="demo-picker-input" placeholder="请点击选择，可多选" @click="openInspPick('供应商信息')" @clear="inspClearPick('供应商信息')"></el-input></el-form-item>
+                <el-form-item label="客户信息"><el-input :model-value="inspRpt.customerLabel" :title="inspRpt.customerLabel" readonly clearable class="demo-picker-input" placeholder="请点击选择，可多选" @click="openInspPick('客户信息')" @clear="inspClearPick('客户信息')"></el-input></el-form-item>
                 <el-form-item label="时间范围"><el-date-picker v-model="inspRpt.date" type="daterange" value-format="YYYY-MM-DD" start-placeholder="开始日期" end-placeholder="结束日期" clearable></el-date-picker></el-form-item>
               </el-form>
               <div class="cost-stat__row">
@@ -2055,7 +2086,10 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
                 <el-button @click="inspRptReset">重置</el-button>
               </div>
             </div>
-            <div class="cost-stat__sum" v-if="inspRpt.queried">命中项次 {{ inspRpt.hit }} · 合格率 {{ inspRpt.rate }} · 样品数 {{ inspRpt.samples }} · 报检单数 {{ inspRpt.orders }}</div>
+            <div class="cost-stat__bar" v-if="inspRpt.queried">
+              <div class="cost-stat__sum">命中项次 {{ inspRpt.hit }} · 合格率 {{ inspRpt.rate }} · 样品数 {{ inspRpt.samples }} · 报检单数 {{ inspRpt.orders }}</div>
+              <el-button @click="inspRptExport">导出 Excel</el-button>
+            </div>
             <el-table v-if="inspRpt.queried" class="demo-data-table" :data="inspRpt.table" border :row-class-name="inspRptRowClass" empty-text="暂无数据" max-height="520">
               <el-table-column v-for="c in inspRpt.columns" :key="c.prop" :prop="c.prop" :label="c.label" :min-width="c.width" :fixed="c.fixed" show-overflow-tooltip>
                 <template #default="{ row }">
@@ -2067,22 +2101,85 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
                 <template #default="{ row }"><el-button v-if="!row._total" link type="primary" @click="inspOpenDetail(row)">查看明细</el-button></template>
               </el-table-column>
             </el-table>
-            <div class="cost-stat__export" v-if="inspRpt.queried"><el-button @click="inspRptExport">导出 Excel</el-button></div>
             <el-drawer v-model="inspDetailDlg.visible" :title="'检验明细 · '+inspDetailDlg.title" direction="rtl" size="70%" append-to-body>
               <el-table :data="inspDetailDlg.rows" border height="100%" empty-text="暂无明细">
                 <el-table-column type="index" label="序号" width="60"></el-table-column>
+                <el-table-column prop="报检类型" label="报检类型" width="120"></el-table-column>
                 <el-table-column prop="报检单号" label="报检单号" width="140"></el-table-column>
                 <el-table-column prop="样品编号" label="样品编号" width="120"></el-table-column>
                 <el-table-column prop="物料名称" label="物料名称" min-width="140" show-overflow-tooltip></el-table-column>
-                <el-table-column v-if="inspRpt.tab==='tab-pi'" prop="供应商名称" label="供应商名称" min-width="160" show-overflow-tooltip></el-table-column>
-                <el-table-column v-else prop="客户名称" label="客户名称" min-width="160" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="供应商名称" label="供应商名称" min-width="160" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="客户名称" label="客户名称" min-width="160" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="采样点" label="采样点" min-width="140" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="检验项名称" label="检验项名称" width="120"></el-table-column>
                 <el-table-column prop="检验项类型" label="检验项类型" width="100"></el-table-column>
                 <el-table-column label="检验结果" width="100"><template #default="{ row }">{{ inspResultText(row) || '—' }}</template></el-table-column>
                 <el-table-column prop="检验结论" label="检验结论" width="90"></el-table-column>
+                <el-table-column prop="检验人" label="检验人" width="90"></el-table-column>
                 <el-table-column prop="检验完成时间" label="检验完成时间" width="160"></el-table-column>
               </el-table>
             </el-drawer>
+          </section>
+
+          <section v-else-if="page.layout==='quality-report'" class="cost-stat insp-report quality-report">
+            <el-tabs v-model="qr.tab" class="qr-tabs" @tab-change="qrOnTab">
+              <el-tab-pane v-for="t in QR_TABS" :key="t.key" :label="t.title" :name="t.key"></el-tab-pane>
+            </el-tabs>
+            <div class="cost-stat__box">
+              <el-form :inline="true" class="query-form">
+                <el-form-item v-for="f in qrDef().filters" :key="f.key" :label="f.label">
+                  <el-input v-if="f.type==='input'" v-model="qr.q[f.key]" clearable :placeholder="'请输入'+f.label" style="width:180px"></el-input>
+                  <el-select v-else-if="f.type==='select'" v-model="qr.q[f.key]" multiple collapse-tags collapse-tags-tooltip filterable clearable placeholder="全部" style="width:200px">
+                    <el-option v-for="o in qrOptions(f)" :key="o" :label="o" :value="o"></el-option>
+                  </el-select>
+                  <el-input v-else-if="f.type==='picker'" :model-value="qr.q[f.key+'Label']" :title="qr.q[f.key+'Label']" readonly clearable class="demo-picker-input" placeholder="请点击选择，可多选" @click="qrOpenPick(f)" @clear="qrClearPick(f)"></el-input>
+                  <el-date-picker v-else-if="f.type==='date'" v-model="qr.q[f.key]" type="daterange" value-format="YYYY-MM-DD" start-placeholder="开始日期" end-placeholder="结束日期" clearable></el-date-picker>
+                </el-form-item>
+              </el-form>
+              <div class="cost-stat__foot">
+                <el-button type="primary" @click="qrQuery">查询</el-button>
+                <el-button @click="qrReset">重置</el-button>
+              </div>
+            </div>
+            <template v-if="qr.queried">
+              <div class="qr-kpis">
+                <div v-for="c in qrCards()" :key="c.label" class="qr-kpi" :class="'qr-kpi--'+(c.tone||'blue')">
+                  <div class="qr-kpi__v">{{ c.value }}</div>
+                  <div class="qr-kpi__l">{{ c.label }}</div>
+                </div>
+              </div>
+              <div class="qr-groups" v-if="qrGroups().length">
+                <div v-for="g in qrGroups()" :key="g.title" class="qr-groups__item">
+                  <div class="qr-groups__title">{{ g.title }}</div>
+                  <el-table :data="g.rows" border size="small" empty-text="暂无数据">
+                    <el-table-column prop="name" :label="g.dim" min-width="140" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="count" label="单据数" width="90" align="right"></el-table-column>
+                    <el-table-column prop="pct" label="占比" width="90" align="right"></el-table-column>
+                  </el-table>
+                </div>
+              </div>
+              <div class="cost-stat__bar">
+                <div class="cost-stat__sum">明细 {{ qr.rows.length }} 条</div>
+                <el-button @click="qrExport">导出 Excel</el-button>
+              </div>
+              <el-table class="demo-data-table" :data="qr.rows" border empty-text="暂无数据" max-height="460">
+                <el-table-column type="index" label="序号" width="60"></el-table-column>
+                <el-table-column v-for="c in qrDef().cols" :key="c.prop" :prop="c.prop" :label="c.label" :min-width="c.w" show-overflow-tooltip>
+                  <template #default="{ row }">
+                    <span v-if="QR_TAG_FIELDS.includes(c.prop) && row[c.prop] && row[c.prop]!=='—'" class="tag" :class="tagClass(row[c.prop])">{{ row[c.prop] }}</span>
+                    <span v-else>{{ (row[c.prop]==null || row[c.prop]==='') ? '—' : row[c.prop] }}</span>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </template>
+          </section>
+
+          <section v-else-if="page.layout==='quality-cockpit'" class="qcock-launch">
+            <div class="qcock-launch__card">
+              <h2>{{ page.title }}</h2>
+              <p>驾驶舱在独立窗口中打开，不嵌在当前页面里。若浏览器拦截了弹出窗口，点下面的按钮再打开一次。</p>
+              <el-button type="primary" @click="openQualityCockpit">打开{{ page.title }}</el-button>
+            </div>
           </section>
 
           <template v-else>
@@ -2166,6 +2263,32 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
                 <template #tag="{ row, column }">
                   <span v-if="isPresentTagValue(displayTagValue(row, column.field))" class="tag" :class="tagClass(displayTagValue(row, column.field))">{{ displayTagValue(row, column.field) }}</span>
                   <span v-else-if="String(displayTagValue(row, column.field)||'').trim()==='/'">/</span>
+                  <span v-else class="demo-readonly">—</span>
+                </template>
+                <template #ledger_dev="{ row }">
+                  <span v-if="ledgerDevTag(row)" class="tag" :class="tagClass(ledgerDevTag(row))">{{ ledgerDevTag(row) }}</span>
+                  <span v-else class="demo-readonly">—</span>
+                </template>
+                <template #ledger_abn="{ row }">
+                  <el-popover v-if="ledgerAbnText(row)" placement="right-start" :width="460" trigger="hover" :show-after="200">
+                    <template #reference><span class="ledger-abn">{{ ledgerAbnText(row) }}</span></template>
+                    <div class="ledger-abn-pop">
+                      <div v-for="g in ledgerAbnGroups(row)" :key="g.key" class="ledger-abn-card">
+                        <div class="ledger-abn-card__hd"><b>{{ g.code }}</b><span>{{ g.count }}个样品</span></div>
+                        <div class="ledger-abn-card__no">样品编号：<el-button link type="primary" @click="openLedgerInspDetail(row)">{{ g.sample }}</el-button></div>
+                        <table>
+                          <thead><tr><th>检验项目</th><th>结果值</th><th>{{ g.code }}指标</th></tr></thead>
+                          <tbody>
+                            <tr v-for="(it, i) in g.rows" :key="g.key+'-'+i">
+                              <td>{{ it.name }}</td>
+                              <td :class="{ 'is-bad': it.bad }">{{ it.value }}</td>
+                              <td>{{ it.spec }}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </el-popover>
                   <span v-else class="demo-readonly">—</span>
                 </template>
                 <template #rt_head="{ column }">
@@ -5754,7 +5877,6 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
       <el-table-column label="变更类型" width="150"><template #default="{ row }"><span class="tag" :class="tagClass(row['变更类型'])" style="white-space:nowrap">{{ row['变更类型'] }}</span></template></el-table-column>
       <el-table-column prop="原位置" label="原位置" min-width="140" show-overflow-tooltip></el-table-column>
       <el-table-column prop="新位置" label="新位置" min-width="140" show-overflow-tooltip></el-table-column>
-      <el-table-column prop="领用人" label="领用人" width="90"></el-table-column>
       <el-table-column prop="变更备注" label="变更备注" min-width="160" show-overflow-tooltip></el-table-column>
       <el-table-column prop="操作人" label="操作人" width="90"></el-table-column>
       <el-table-column prop="操作时间" label="操作时间" width="170"></el-table-column>
@@ -6217,6 +6339,12 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
           <template #tip><div class="el-upload__tip">支持 PDF / 图片，单文件最大 20MB；同一份附件将关联到上方全部任务</div></template>
         </el-upload>
       </el-form-item>
+      <el-form-item label="检查结果" required>
+        <el-radio-group v-model="oqcUploadResult">
+          <el-radio value="合格">合格</el-radio>
+          <el-radio value="不合格">不合格</el-radio>
+        </el-radio-group>
+      </el-form-item>
       <el-form-item label="备注">
         <el-input v-model="oqcUploadRemark" type="textarea" :rows="3" placeholder="请输入"></el-input>
       </el-form-item>
@@ -6226,6 +6354,23 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
         <el-button @click="oqcUploadVisible=false">取消</el-button>
         <el-button type="primary" @click="confirmOqcUpload">确定</el-button>
       </div>
+    </template>
+  </el-dialog>
+
+  <!-- 报检单 · 采购来料检：上传供应商COA -->
+  <el-dialog v-model="coaUploadVisible" class="demo-dialog--biz" title="上传报告" width="min(640px, 96vw)" align-center destroy-on-close append-to-body :close-on-click-modal="false">
+    <el-form label-width="90px" class="demo-form">
+      <el-form-item label="报检单号"><el-input :model-value="(coaUploadRow||{})['报检单号']||''" disabled></el-input></el-form-item>
+      <el-form-item label="供应商COA" required>
+        <el-upload v-model:file-list="coaUploadFiles" drag multiple action="#" :auto-upload="false" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx" style="width:100%">
+          <div class="el-upload__text">将供应商COA文件拖到此处，或<em>点击上传</em></div>
+          <template #tip><div class="el-upload__tip">支持 PDF / 图片 / Word / Excel，可上传多个，单文件最大 20MB</div></template>
+        </el-upload>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <el-button @click="coaUploadVisible=false">取消</el-button>
+      <el-button type="primary" @click="confirmCoaUpload">提交</el-button>
     </template>
   </el-dialog>
 
@@ -6595,13 +6740,35 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
           <tbody>
             <tr>
               <td v-for="f in ledgerInspHeadFields" :key="'c-'+f">
-                <template v-if="isStatusTagField(f)">
-                  <span v-if="isPresentTagValue(ledgerInspRow[f])" class="tag" :class="tagClass(ledgerInspRow[f])">{{ ledgerInspRow[f] }}</span>
-                  <span v-else class="demo-readonly">{{ ledgerInspRow[f] || '—' }}</span>
+                <template v-if="f==='偏差结论'">
+                  <span v-if="ledgerDevTag(ledgerInspRow)" class="tag" :class="tagClass(ledgerDevTag(ledgerInspRow))">{{ ledgerDevTag(ledgerInspRow) }}</span>
+                  <span v-else class="demo-readonly">—</span>
                 </template>
                 <template v-else-if="f==='异常描述'">
-                  <el-button v-if="ledgerInspAbnText(ledgerInspRow)" link type="primary" @click="ElMessage.info('Demo：打开异常报送')">{{ ledgerInspAbnText(ledgerInspRow) }}</el-button>
+                  <el-popover v-if="ledgerAbnText(ledgerInspRow)" placement="bottom-start" :width="460" trigger="hover" :show-after="200">
+                    <template #reference><el-button link type="danger" @click="ElMessage.info('Demo：打开异常报送')">{{ ledgerAbnText(ledgerInspRow) }}</el-button></template>
+                    <div class="ledger-abn-pop">
+                      <div v-for="g in ledgerAbnGroups(ledgerInspRow)" :key="'h-'+g.key" class="ledger-abn-card">
+                        <div class="ledger-abn-card__hd"><b>{{ g.code }}</b><span>{{ g.count }}个样品</span></div>
+                        <div class="ledger-abn-card__no">样品编号：{{ g.sample }}</div>
+                        <table>
+                          <thead><tr><th>检验项目</th><th>结果值</th><th>{{ g.code }}指标</th></tr></thead>
+                          <tbody>
+                            <tr v-for="(it, i) in g.rows" :key="'h'+g.key+i">
+                              <td>{{ it.name }}</td>
+                              <td :class="{ 'is-bad': it.bad }">{{ it.value }}</td>
+                              <td>{{ it.spec }}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </el-popover>
                   <span v-else class="demo-readonly">—</span>
+                </template>
+                <template v-else-if="isStatusTagField(f)">
+                  <span v-if="isPresentTagValue(ledgerInspRow[f])" class="tag" :class="tagClass(ledgerInspRow[f])">{{ ledgerInspRow[f] }}</span>
+                  <span v-else class="demo-readonly">{{ ledgerInspRow[f] || '—' }}</span>
                 </template>
                 <template v-else-if="f==='物料编码' || f==='供应商编码' || f==='客户编码' || f==='报检单号' || f==='到货通知单号' || f==='委托单号' || f==='来源报检单号'">
                   <el-button v-if="ledgerInspRow[f] && ledgerInspRow[f]!=='—'" link type="primary" @click="onBizLink(f, ledgerInspRow[f])">{{ ledgerInspRow[f] }}</el-button>
@@ -6653,7 +6820,9 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
               <el-table-column label="检验结论" width="110">
                 <template #default="{ row }"><span v-if="isPresentTagValue(row['检验结论'])" class="tag" :class="tagClass(row['检验结论'])">{{ row['检验结论'] }}</span><span v-else>{{ row['检验结论'] || '—' }}</span></template>
               </el-table-column>
-              <el-table-column prop="偏差结论" label="偏差结论" width="100"></el-table-column>
+              <el-table-column label="偏差结论" width="100">
+                <template #default="{ row }"><span v-if="isPresentTagValue(row['偏差结论'])" class="tag" :class="tagClass(row['偏差结论'])">{{ row['偏差结论'] }}</span><span v-else class="demo-readonly">—</span></template>
+              </el-table-column>
               <el-table-column label="异常报送" min-width="120">
                 <template #default="{ row }">
                   <el-button v-if="row['异常报送'] && row['异常报送']!=='—'" link type="primary" @click="ElMessage.info('Demo：打开异常报送')">{{ row['异常报送'] }}</el-button>
@@ -9732,6 +9901,53 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
     </template>
   </el-dialog>
 
+  <!-- 样品检验台账 · 数据比对 -->
+  <el-dialog v-model="cmp.visible" class="demo-dialog--biz cmp-dialog" title="数据比对" width="96%" top="4vh" destroy-on-close append-to-body>
+    <div class="cmp-query">
+      <el-form inline>
+        <el-form-item label="样品状态">
+          <el-select v-model="cmp.query.样品状态" clearable placeholder="请选择" style="width:160px">
+            <el-option v-for="o in ['待检验','检验中','已完成']" :key="o" :label="o" :value="o"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="检验结论">
+          <el-select v-model="cmp.query.检验结论" clearable placeholder="请选择" style="width:160px">
+            <el-option v-for="o in ['合格','不合格']" :key="o" :label="o" :value="o"></el-option>
+          </el-select>
+        </el-form-item>
+        <template v-if="cmp.more">
+          <el-form-item label="样品编号"><el-input v-model="cmp.query.样品编号" clearable placeholder="请输入" style="width:160px"></el-input></el-form-item>
+          <el-form-item label="报检批号"><el-input v-model="cmp.query.报检批号" clearable placeholder="请输入" style="width:160px"></el-input></el-form-item>
+        </template>
+      </el-form>
+      <div class="cmp-query__actions">
+        <el-button type="primary" @click="cmp.page=1">查询</el-button>
+        <el-button @click="cmpReset">重置</el-button>
+        <el-button link type="primary" @click="cmp.more=!cmp.more">{{ cmp.more ? '收起' : '展开' }}</el-button>
+      </div>
+    </div>
+    <div class="cmp-bar">
+      <span>已选: {{ cmp.selected.length }} (当页已选: {{ cmpPageSelected }})</span>
+      <el-button @click="cmpExport">导出</el-button>
+    </div>
+    <el-table :data="cmpPageRows" row-key="id" border size="small" max-height="520" empty-text="暂无数据" @selection-change="onCmpSelect">
+      <el-table-column type="selection" width="42" reserve-selection></el-table-column>
+      <el-table-column type="index" label="序号" width="64" align="center" :index="cmpIndex"></el-table-column>
+      <el-table-column v-for="c in cmp.fixed" :key="c" :prop="c" :label="c" :min-width="c==='检验方案'||c==='检验完成时间'?160:110" show-overflow-tooltip>
+        <template #default="{ row }">
+          <span v-if="c==='偏差结论' && row[c]" class="tag" :class="tagClass(row[c])">{{ row[c] }}</span>
+          <span v-else :style="(c==='检验结论' && String(row[c]||'')==='不合格') ? 'color:#FF4D4F' : ''">{{ row[c] || '' }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column v-for="c in cmp.itemCols" :key="'item-'+c" :prop="c" :label="c" min-width="120" show-overflow-tooltip>
+        <template #default="{ row }"><span :style="row['_bad_'+c] ? 'color:#FF4D4F;font-weight:600' : ''">{{ row[c] || '' }}</span></template>
+      </el-table-column>
+    </el-table>
+    <div class="cmp-page">
+      <el-pagination v-model:current-page="cmp.page" v-model:page-size="cmp.pageSize" :total="cmpFiltered.length" :page-sizes="[20,50,100]" layout="total, sizes, prev, pager, next, jumper" background></el-pagination>
+    </div>
+  </el-dialog>
+
   <!-- 打印标签 -->
   <el-dialog v-model="printVisible" class="demo-dialog--biz" title="打印标签" width="640px" align-center destroy-on-close append-to-body>
     <el-form label-width="100px">
@@ -10557,14 +10773,15 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
 <script src="https://cdn.jsdelivr.net/npm/vxe-pc-ui@4/lib/index.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vxe-table@4/lib/index.umd.min.js"></script>
 <script src="./js/demo-announcements.js?v=1.4.24"></script>
-<script src="./js/page-configs.js?v=1.4.538"></script>
-<script src="./js/mock-rows.js?v=1.4.319"></script>
-<script src="./js/dict-catalog.js?v=1.1.15"></script>
-<script src="./js/page-prd-notes.js?v=2.4.517"></script>
+<script src="./js/page-configs.js?v=1.4.556"></script>
+<script src="./js/mock-rows.js?v=1.4.330"></script>
+<script src="./js/dict-catalog.js?v=1.1.16"></script>
+<script src="./js/page-prd-notes.js?v=2.4.536"></script>
 <script src="./js/remarks-markdown.js?v=1.1.0"></script>
 <script type="module" src="./js/remarks-mermaid-init.js"></script>
 <script src="./js/remarks-mermaid.js"></script>
-<script src="./js/demo-store.js?v=1.0.151"></script>
+<script src="./js/demo-store.js?v=1.0.157"></script>
+<script src="./js/ledger-insp.js?v=2"></script>
 <script>
 const { createApp, ref, computed, reactive, watch, onMounted, onBeforeUnmount, nextTick } = Vue;
 const { ElMessage } = ElementPlus;
@@ -12479,6 +12696,10 @@ const app = createApp({
           cols: cs ? [[codeField,160],['客户名称',180],['物料信息',240],['批号',120],['制单时间',160]]
             : [[codeField,160],['物料编码',140],['物料名称',170],['报检批号',120],['问题大类',90],['问题小类',100],['处置时间',160]] };
       }
+      if(ioPickKind.value==='oqcTask'){
+        return { title:'选择关联单据 · 发货OQC台账', codeField:'单据号', nameField:'DN单号',
+          cols:[['单据号',160],['单据状态',90],['DN单号',120],['客户名称',190],['物料名称',160],['批号',110],['计划发货日期',110]] };
+      }
       return IO_PICK_META[ioPickKind.value] || IO_PICK_META.mat;
     });
     const ioPickRows = computed(()=>{
@@ -12496,6 +12717,8 @@ const app = createApp({
         ? qrIssueLedgerSamples()
         : ioPickKind.value==='order'
         ? (((mock['insp-order']||{})[ioOrderTab()])||[]).filter(r=> ['待执行','执行中'].includes(r['单据状态']))
+        : ioPickKind.value==='oqcTask'
+        ? ['tab-1','tab-2'].reduce((l,t)=> l.concat((((mock[OQC_PAGE]||{})[t])||[])), [])
         : (((mock[meta.src]||{})[meta.tab||'main'])||[]).filter(r=> (r['启用状态']||'启用')==='启用');
       if(ioPickKind.value==='inspScheme'){
         const bag = mock['insp-scheme'] || {};
@@ -12761,6 +12984,11 @@ const app = createApp({
         if(ioPickBind.value==='taskInsts'){ applyTaskInstPick(rows); return; }
         if(ioPickBind.value==='inspRpt'){
           inspApplyMulti(ioPickField.value, rows);
+          ioPickVisible.value = false;
+          return;
+        }
+        if(ioPickBind.value==='qrReport'){
+          qrApplyPick(rows);
           ioPickVisible.value = false;
           return;
         }
@@ -13205,6 +13433,19 @@ const app = createApp({
         ioPickVisible.value = false;
         return;
       }
+      if(ioPickBind.value==='ctOqc'){
+        formModel['关联单据'] = r['单据号'] || '';
+        if(r['客户名称'] && r['客户名称']!=='—'){
+          formModel['客户编码'] = r['客户编码'] || '';
+          formModel['客户名称'] = r['客户名称'];
+          formModel['客户信息'] = [r['客户编码'], r['客户名称']].filter(Boolean).join(' / ');
+        }
+        ['物料编码','物料名称','物料规格','物料种类'].forEach(key=>{ if(r[key] && r[key]!=='—') formModel[key] = r[key]; });
+        formModel['物料信息'] = [formModel['物料编码'], formModel['物料名称'], formModel['物料规格']].filter(Boolean).join(' / ');
+        if(r['批号'] && r['批号']!=='—') formModel['批号'] = r['批号'];
+        ioPickVisible.value = false;
+        return;
+      }
       if(ioPickBind.value==='query'){
         query[ioPickField.value] = ioPickText(k, r);
         ioPickVisible.value = false;
@@ -13607,9 +13848,9 @@ const app = createApp({
       void storeTick.value;
       return slposTab('tab-2').filter(r=> r['启用状态']!=='禁用').map(r=> ({ code: r['去向编码'], name: r['去向名称'] }));
     });
-    /** 样品所在位置按当前位置判断：有领用人或位置为去向 → 领用中；有当前位置 → 在库（货架 / 样品筐）；否则未入库 */
+    /** 样品所在位置按当前位置判断：位置为去向 → 领用中；有当前位置 → 在库（货架 / 样品筐）；否则未入库 */
     function slocWhere(r){
-      if(flowHas(r['领用人']) || slposTab('tab-2').some(d=> d['去向编码']===r['位置编码'])) return '领用中';
+      if(slposTab('tab-2').some(d=> d['去向编码']===r['位置编码'] || d['去向名称']===r['当前位置'])) return '领用中';
       return flowHas(r['当前位置']) ? '在库' : '未入库';
     }
     function slocStoreLocs(withDisabled){
@@ -13716,15 +13957,15 @@ const app = createApp({
     function slocMove(rows, type, loc, status, extra){
       const log = slocTab('tab-3');
       const stamp = nowStamp();
-      const user = (extra && extra.领用人) || '管理员';
+      const user = '管理员';
       rows.forEach(r=>{
         log.unshift({
           id: 'sf-'+Date.now()+'-'+r['样品编号'], 变更类型: type, 样品编号: r['样品编号'], 母样编号: r['母样编号'],
           物料名称: r['物料名称'], 报检批号: r['报检批号'], 原位置: r['当前位置'] || '—', 新位置: loc.name,
-          领用人: type==='领用检验' ? user : '—', 变更备注: (extra && extra.备注) || '—', 操作人: user, 操作时间: stamp
+          变更备注: (extra && extra.备注) || '—', 操作人: user, 操作时间: stamp
         });
         if(!status) return;
-        Object.assign(r, { 当前位置: loc.name, 位置编码: loc.code, 领用人: type==='领用检验' ? user : '—', 最近变更时间: stamp, 最近变更人: user });
+        Object.assign(r, { 当前位置: loc.name, 位置编码: loc.code, 最近变更时间: stamp, 最近变更人: user });
       });
       bumpStore();
     }
@@ -13791,7 +14032,7 @@ const app = createApp({
       const hit = (inbound ? slocLocOpts.value : SLOC_DESTS.value).find(x=> x.code===slocDispForm.库位编码);
       if(!hit){ ElMessage.warning(inbound ? '请选择库位' : '请选择领用去向'); return; }
       const rows = slocDispRows.value.slice();
-      slocMove(rows, inbound ? '样品入库' : '领用检验', hit, true, inbound ? {} : { 领用人:'管理员' });
+      slocMove(rows, inbound ? '样品入库' : '领用检验', hit, true, {});
       slocDispVisible.value = false;
       selectedIds.value = [];
       ElMessage.success(inbound ? (rows.length+' 个样品已入库到 '+hit.name) : (rows.length+' 个样品已领用到 '+hit.name));
@@ -13862,7 +14103,7 @@ const app = createApp({
             留样仓库: retainWh, 留样库位: retainLoc, 留样条码号: retainCodes,
             是否玻璃片: f.处置方式==='留样' ? (f.是否玻璃片 || '否') : '—',
             报废原因: f.处置方式==='报废' ? f.报废原因 : '—',
-            处置备注: note, 处置时间: stamp, 处置人: '管理员'
+            处置备注: note, 处置时间: stamp, 处置人: '管理员', 最近变更时间: stamp, 最近变更人: '管理员'
           });
         });
         slocDispVisible.value = false;
@@ -14189,7 +14430,7 @@ const app = createApp({
         const got = flowInt(o['已取样件数']);
         o['待取样件数'] = String(o._sampEnd ? 0 : Math.max(0, flowInt(o['应取样件数']) - got));
         o['检验完成件数'] = String(ss.filter(s=> s['样品来源']!=='样品拆分' && s['样品状态']==='已完成').length);
-        if(o['单据状态']==='已关闭') return;
+        if(['已关闭','待复核','待审批','已通过','已驳回'].indexOf(o['单据状态'])>=0) return;
         const allDone = ss.every(s=> s['样品状态']==='已完成');
         o['单据状态'] = flowInt(o['待取样件数'])===0 && allDone ? '已完成' : (got > 0 ? '执行中' : '待执行');
       }));
@@ -16386,16 +16627,43 @@ const app = createApp({
       }).catch(()=>{});
     }
     const OQC_PAGE = 'np-0201-15';
+    const UQ_SUM_PAGE = 'unqual-sum';
+    const UQ_SUM_SRC = [
+      { page:'unqual-pi', type:'采购来料不合格' },
+      { page:'unqual-pp', type:'生产过程不合格' },
+      { page:'unqual-pm', type:'生产物料不合格' },
+      { page:'unqual-rd', type:'研发不合格处置' }
+    ];
     function oqcTab(name){ const bag = (MOCK[OQC_PAGE] = MOCK[OQC_PAGE] || {}); return (bag[name] = bag[name] || []); }
     const oqcUploadVisible = ref(false);
     const oqcUploadRows = ref([]);
     const oqcUploadFiles = ref([]);
     const oqcUploadRemark = ref('');
+    const oqcUploadResult = ref('合格');
+    const coaUploadVisible = ref(false);
+    const coaUploadRow = ref(null);
+    const coaUploadFiles = ref([]);
+    function openCoaUpload(row){
+      coaUploadRow.value = row || null;
+      coaUploadFiles.value = [];
+      coaUploadVisible.value = true;
+    }
+    function confirmCoaUpload(){
+      const files = (coaUploadFiles.value||[]).map(f=> f.name).filter(Boolean);
+      if(!files.length){ ElMessage.warning('请上传附件'); return; }
+      const row = coaUploadRow.value;
+      if(row) row['供应商COA'] = files.join('、');
+      coaUploadVisible.value = false;
+      bumpStore();
+      ElMessage.success('已上传供应商COA');
+    }
     function openOqcUpload(rows){
       if(!(rows||[]).length){ ElMessage.warning('请先勾选OQC任务'); return; }
+      if(rows.some(r=> r['单据状态']==='已关闭')){ ElMessage.warning('已关闭的任务不能上传附件'); return; }
       oqcUploadRows.value = rows.slice();
       oqcUploadFiles.value = [];
       oqcUploadRemark.value = '';
+      oqcUploadResult.value = '合格';
       oqcUploadVisible.value = true;
     }
     function confirmOqcUpload(){
@@ -16406,7 +16674,7 @@ const app = createApp({
       const pending = oqcTab('tab-1'), done = oqcTab('tab-2');
       const moved = pending.filter(r=> ids.has(r.id));
       MOCK[OQC_PAGE]['tab-1'] = pending.filter(r=> !ids.has(r.id));
-      moved.forEach(r=> done.unshift(Object.assign({}, r, { 单据状态:'已完成', 附件: files.join('、'), 备注: remark, 上传人: '管理员', 完成时间: stamp, 关闭人:'—', 关闭时间:'—' })));
+      moved.forEach(r=> done.unshift(Object.assign({}, r, { 单据状态:'已完成', 检查结果: oqcUploadResult.value, 附件: files.join('、'), 备注: remark, 上传人: '管理员', 完成时间: stamp, 关闭人:'—', 关闭时间:'—' })));
       oqcUploadVisible.value = false;
       selectedIds.value = [];
       bumpStore();
@@ -16452,7 +16720,7 @@ const app = createApp({
         销售单位: String(formModel['销售单位']||'').trim(),
         计划发货日期: String(formModel['计划发货日期']||'').trim()
       };
-      if(isAdd) list.unshift(Object.assign({ id: 'oqc-'+Date.now().toString(36), 创建时间: nowStamp() }, vals));
+      if(isAdd) list.unshift(Object.assign({ id: 'oqc-'+Date.now().toString(36), 单据状态: '待执行', 创建时间: nowStamp() }, vals));
       else Object.assign(cur, vals);
       formVisible.value = false;
       bumpStore();
@@ -16461,17 +16729,19 @@ const app = createApp({
     function oqcRemove(close){
       const rows = (tableData.value||[]).filter(r=> selectedIds.value.includes(r.id));
       if(!rows.length){ ElMessage.warning('请先勾选OQC任务'); return; }
+      if(close && rows.some(r=> r['单据状态']==='已关闭')){ ElMessage.warning('已关闭的任务不能重复关闭'); return; }
       const tip = close
-        ? '确认关闭所选的 '+rows.length+' 条 OQC 任务？关闭后移入「已完成」，单据状态为已关闭，不再执行。'
+        ? '确认关闭所选的 '+rows.length+' 条 OQC 任务？关闭后单据状态为已关闭，不再执行，仍保留在待执行列表。'
         : '确认删除所选的 '+rows.length+' 条 OQC 任务？删除后不可恢复。';
       ElementPlus.ElMessageBox.confirm(tip, close ? '关闭确认' : '删除确认', { type:'warning', confirmButtonText:'确认', cancelButtonText:'取消' }).then(()=>{
         const ids = new Set(rows.map(r=> r.id));
         const pending = oqcTab('tab-1');
         const hit = pending.filter(r=> ids.has(r.id));
-        MOCK[OQC_PAGE]['tab-1'] = pending.filter(r=> !ids.has(r.id));
         if(close){
           const stamp = nowStamp();
-          hit.forEach(r=> oqcTab('tab-2').unshift(Object.assign({}, r, { 单据状态:'已关闭', 附件:'—', 备注:'—', 上传人:'—', 完成时间:'—', 关闭人:'管理员', 关闭时间: stamp })));
+          hit.forEach(r=> Object.assign(r, { 单据状态:'已关闭', 关闭人:'管理员', 关闭时间: stamp }));
+        }else{
+          MOCK[OQC_PAGE]['tab-1'] = pending.filter(r=> !ids.has(r.id));
         }
         selectedIds.value = [];
         bumpStore();
@@ -22687,7 +22957,7 @@ const app = createApp({
     const INSP_DEFAULT_ROWS = ['物料名称','检验项名称'];
     const INSP_DEFAULT_MEASURES = ['检验项次','合格项次','不合格项次','合格率'];
     const inspRpt = reactive({
-      tab:'tab-pi', date:null,
+      date:null, types:[], kinds:[],
       mats:[], matLabel:'', items:[], results:[], points:[], pointLabel:'', suppliers:[], supplierLabel:'', customers:[], customerLabel:'',
       rows:INSP_DEFAULT_ROWS.slice(), col:'', dimAdd:'', dragFrom:-1, dragOver:-1,
       measures:INSP_DEFAULT_MEASURES.slice(),
@@ -22695,8 +22965,7 @@ const app = createApp({
     });
     const inspDetailDlg = reactive({ visible:false, title:'', rows:[] });
     function inspDims(){
-      const extra = inspRpt.tab==='tab-pi' ? ['供应商名称','原料类型'] : ['客户名称','车间名称','产线名称'];
-      return ['统计月份','物料名称','物料种类','采样点','检验项名称','检验项类型','检验结论','检验班组','检验人'].concat(extra);
+      return ['报检类型','统计月份','物料名称','物料种类','采样点','检验项名称','检验项类型','检验结论','检验班组','检验人','供应商名称','原料类型','客户名称','车间名称','产线名称'];
     }
     function inspDimChoices(){ return inspDims().filter(d=> !inspRpt.rows.includes(d)); }
     function inspColChoices(){ return inspDims().filter(d=> d!=='检验结论' && !inspRpt.rows.includes(d)); }
@@ -22733,6 +23002,23 @@ const app = createApp({
       const list = (((MOCK['insp-project']||{})['tab-item'])||[]).filter(r=> r['启用状态']!=='停用' && r['检验项名称']);
       return [...new Set(list.map(r=> r['检验项名称']))].sort();
     }
+    const INSP_TYPE_SKIP = ['外来小样检','库内复检','通用检','内部委托'];
+    function inspTypeOptions(){
+      return FLOW_TABS.map(t=> t.label).filter(t=> t && !INSP_TYPE_SKIP.includes(t));
+    }
+    function inspKindOptions(){
+      const dict = (window.WMS_DICT && window.WMS_DICT.enabledNames('MAT_KIND', MOCK.dict)) || [];
+      const seen = new Set(dict);
+      const extra = [];
+      Object.values(MOCK.ledger||{}).forEach(list=>{
+        (list||[]).forEach(r=>{
+          const k = String(r['物料种类']||'').trim();
+          if(k && k!=='—' && !seen.has(k)){ seen.add(k); extra.push(k); }
+        });
+      });
+      extra.sort();
+      return dict.concat(extra);
+    }
     function inspResultText(r){
       if(r['检验项类型']==='定性') return String(r['检验结果']||'').trim();
       const out = String(r['检验报出值']||'').trim();
@@ -22743,13 +23029,17 @@ const app = createApp({
       if(!s) return '';
       return s.split('/')[0].trim();
     }
-    function inspRptSource(tab){
-      return ((MOCK.ledger||{})[tab]||[]).filter(s=> s['样品状态']==='已完成').flatMap(s=>{
+    function inspRptSource(){
+      const allow = new Set(inspTypeOptions());
+      const tabs = (FLOW_TABS.length ? FLOW_TABS : [{ name:'tab-pi', label:'采购来料检' }]).filter(t=> allow.has(t.label));
+      return tabs.flatMap(t=> ((MOCK.ledger||{})[t.name]||[]).filter(s=> s['样品状态']==='已完成').flatMap(s=>{
         const demo = buildLedgerInspDemo(s);
         const matName = (!s['物料编码'] || s['物料编码']==='—') ? (s['样品名称'] || s['物料名称'] || '—') : (s['物料名称'] || '—');
+        const type = (s['报检类型'] && s['报检类型']!=='—') ? s['报检类型'] : t.label;
         const qual = (demo.qual||[]).map(it=> Object.assign({ 检验项类型:'定性' }, it));
         const quant = (demo.quant||[]).map(it=> Object.assign({ 检验项类型:'定量' }, it));
         return qual.concat(quant).map(it=> Object.assign({}, s, {
+          报检类型: type,
           物料名称: matName,
           检验项编码: it['检验项编码'] || '',
           检验项名称: it['检验项名称'] || '—',
@@ -22759,7 +23049,7 @@ const app = createApp({
           检验结果值: it['检验结果值'] || '',
           检验结论: (it['检验结论'] && it['检验结论']!=='—') ? it['检验结论'] : '—'
         }));
-      });
+      }));
     }
     function inspDimVal(r, dim){
       if(dim==='统计月份') return String(r['检验完成时间']||'').slice(0,7) || '—';
@@ -22767,7 +23057,7 @@ const app = createApp({
       return (v==null || String(v).trim()==='' || v==='—') ? '—' : String(v);
     }
     function inspFiltered(){
-      let ds = inspRptSource(inspRpt.tab);
+      let ds = inspRptSource();
       const rg = inspRpt.date;
       if(Array.isArray(rg) && (rg[0] || rg[1])){
         const a = rg[0] ? String(rg[0]).slice(0,10) : '';
@@ -22780,26 +23070,26 @@ const app = createApp({
           return true;
         });
       }
+      if(inspRpt.types.length) ds = ds.filter(r=> inspRpt.types.includes(r['报检类型']));
+      if(inspRpt.kinds.length) ds = ds.filter(r=> inspRpt.kinds.includes(r['物料种类']));
       if(inspRpt.mats.length) ds = ds.filter(r=> inspRpt.mats.includes(r['物料编码']));
       if(inspRpt.items.length) ds = ds.filter(r=> inspRpt.items.includes(r['检验项名称']));
       if(inspRpt.results.length) ds = ds.filter(r=> inspRpt.results.includes(r['检验结论']));
       if(inspRpt.points.length) ds = ds.filter(r=> inspRpt.points.includes(r['采样点']));
-      if(inspRpt.tab==='tab-pi'){
-        if(inspRpt.suppliers.length) ds = ds.filter(r=> inspRpt.suppliers.includes(r['供应商编码']));
-      } else if(inspRpt.customers.length) ds = ds.filter(r=> inspRpt.customers.includes(r['客户编码']));
+      if(inspRpt.suppliers.length) ds = ds.filter(r=> inspRpt.suppliers.includes(r['供应商编码']));
+      if(inspRpt.customers.length) ds = ds.filter(r=> inspRpt.customers.includes(r['客户编码']));
       return ds;
     }
     function inspAgg(rows){
       const orders = new Set(), samples = new Set();
-      let pass = 0, fail = 0, abn = 0;
+      let pass = 0, fail = 0;
       rows.forEach(r=>{
         if(r['报检单号'] && r['报检单号']!=='—') orders.add(r['报检单号']);
         if(r['样品编号'] && r['样品编号']!=='—') samples.add(r['样品编号']);
         if(r['检验结论']==='合格') pass++;
         else if(r['检验结论']==='不合格') fail++;
-        else if(r['检验结论']==='异常') abn++;
       });
-      return { orders:orders.size, samples:samples.size, times:rows.length, pass, fail, abn };
+      return { orders:orders.size, samples:samples.size, times:rows.length, pass, fail };
     }
     function inspFmtMeasure(key, g){
       if(key==='报检单数') return String(g.orders);
@@ -22808,7 +23098,7 @@ const app = createApp({
       if(key==='合格项次') return String(g.pass);
       if(key==='不合格项次') return String(g.fail);
       if(key==='合格率'){
-        const d = g.pass + g.fail + g.abn;
+        const d = g.pass + g.fail;
         return d ? (g.pass / d * 100).toFixed(1) + '%' : '—';
       }
       return '';
@@ -22847,18 +23137,11 @@ const app = createApp({
     }
     function inspRptReset(){
       inspRpt.date = null;
+      inspRpt.types = []; inspRpt.kinds = [];
       inspRpt.mats = []; inspRpt.matLabel = ''; inspRpt.items = []; inspRpt.results = [];
       inspRpt.points = []; inspRpt.pointLabel = '';
       inspRpt.suppliers = []; inspRpt.supplierLabel = ''; inspRpt.customers = []; inspRpt.customerLabel = '';
       inspRestoreAnalysis();
-      inspRptQuery();
-    }
-    function inspRptSwitch(){
-      if(inspRpt.tab==='tab-pi'){ inspRpt.customers = []; inspRpt.customerLabel = ''; }
-      else { inspRpt.suppliers = []; inspRpt.supplierLabel = ''; }
-      inspRpt.rows = inspRpt.rows.filter(d=> inspDims().includes(d));
-      if(!inspRpt.rows.length) inspRpt.rows = ['物料名称'];
-      if(inspRpt.col && !inspDims().includes(inspRpt.col)) inspRpt.col = '';
       inspRptQuery();
     }
     function inspRptRowClass({ row }){ return row && row._total ? 'cost-stat__total' : ''; }
@@ -22947,9 +23230,8 @@ const app = createApp({
       const rg = inspRpt.date || [];
       const a1 = rg[0] ? String(rg[0]).slice(0,10) : '全部';
       const b1 = rg[1] ? String(rg[1]).slice(0,10) : '全部';
-      const tabName = inspRpt.tab==='tab-pp' ? '生产过程检' : inspRpt.tab==='tab-pm' ? '生产物料检' : '采购来料检';
       a.href = URL.createObjectURL(blob);
-      a.download = '检验结果多维报表_'+tabName+'_'+a1+'_'+b1+'.xls';
+      a.download = '检验结果多维报表_'+a1+'_'+b1+'.xls';
       document.body.appendChild(a); a.click(); a.remove();
       ElMessage.success('已导出当前统计结果');
     }
@@ -25435,6 +25717,7 @@ const app = createApp({
 
       if(pageId.value===CI_PAGE && f){ const o = ciFormOptions(f); if(o) return o; }
       if(isAuditPage() && f){ const o = eaFormOptions(f); if(o) return o; }
+      if(pageId.value===QT_PAGE && f.name==='负责人') return CI_USERS.map(u=> ({ value:u.姓名, label:u.工号+' / '+u.姓名 }));
       if(pageId.value==='np-0211-04' && f){ const o = iarFormOptions(f); if(o) return o; }
       if(pageId.value===CHG_PAGE && f){ const o = chgFormOptions(f); if(o) return o; }
       if(pageId.value==='np-0502-01' && f && f.name==='过程监测名称'){
@@ -26738,6 +27021,12 @@ const app = createApp({
       if(isLabCountPage()){
         return ops.filter(op=>{
           if(op.name==='编辑') return row?.['状态']==='待执行';
+          return true;
+        });
+      }
+      if(pageId.value===OQC_PAGE){
+        return ops.filter(op=>{
+          if(op.name==='编辑' || op.name==='上传附件') return row?.['单据状态']!=='已关闭';
           return true;
         });
       }
@@ -33094,13 +33383,22 @@ const app = createApp({
       const ST = o.statusKey || '处理状态';
       const ST_PENDING = o.pendingStatus || '待处理';
       const ST_DONE = o.doneStatus || '已处理';
+      const NEW_WHO = o.newWhoKey || '制单人';
+      const NEW_WHEN = o.newWhenKey || '制单时间';
+      const DONE_WHO = o.doneWhoKey || '处理人';
+      const DONE_WHEN = o.doneWhenKey || '处理时间';
+      const MULTI = o.multiFields || [];
       const allRows = ()=> [...tab(LIST), ...(LIST==='tab-1' ? tab('tab-2') : [])];
       function nextNo(){
         const max = allRows().reduce((m, r)=> Math.max(m, parseInt(String(r[o.noKey]||'').replace(/\D/g,''), 10) || 0), 0);
         return String(max + 1).padStart(6, '0');
       }
       function fillFrom(row){
-        o.fields.forEach(k=>{ formModel[k] = row[k]==='—' ? '' : (row[k]||''); });
+        o.fields.forEach(k=>{
+          let v = row[k]==='—' ? '' : (row[k]||'');
+          if(MULTI.includes(k)) v = String(v).split(/[、,，]/).map(s=> s.trim()).filter(Boolean);
+          formModel[k] = v;
+        });
       }
       function openEdit(mode, row){
         openForm(mode==='copy' ? 'add' : mode);
@@ -33122,14 +33420,17 @@ const app = createApp({
         const no = String(formModel[o.noKey]).trim();
         if(allRows().some(r=> r[o.noKey]===no && r.id!==formModel._editId)){ ElMessage.warning(o.noKey+'已存在，请刷新后重新生成'); return; }
         const payload = {};
-        o.fields.forEach(k=>{ payload[k] = String(formModel[k]||'').trim(); });
+        o.fields.forEach(k=>{
+          const v = formModel[k];
+          payload[k] = Array.isArray(v) ? v.join('、') : String(v||'').trim();
+        });
         if(o.fields.includes('客户信息') && !payload['客户名称']){
           const [code, name] = payload['客户信息'].split(' / ');
           Object.assign(payload, { 客户编码: name ? code : '', 客户名称: name || code });
         }
         if(o.normalize) o.normalize(payload);
         if(formMode.value==='add'){
-          const row = { id:o.idPrefix+Date.now(), ...(o.procOp || o.statusKey ? { [ST]: ST_PENDING } : {}), ...payload, 制单时间: nowStamp(), 制单人: CI_OPERATOR };
+          const row = { id:o.idPrefix+Date.now(), ...(o.procOp || o.statusKey ? { [ST]: ST_PENDING } : {}), ...payload, [NEW_WHEN]: nowStamp(), [NEW_WHO]: CI_OPERATOR };
           if(o.page===SR_PAGE) Object.assign(row, { 主题:'供应商在线整改', 密码: srRandPwd(), 分享人: CI_OPERATOR, 在线填写链接: srLinkOf(row) });
           tab(LIST).unshift(row);
           ElMessage.success(o.addOkTip || (o.title+'已新增'));
@@ -33140,6 +33441,7 @@ const app = createApp({
           Object.assign(cur, payload);
           ElMessage.success('保存成功');
         }
+        if(o.onSaved) o.onSaved(payload);
         formVisible.value = false;
         bumpStore();
       }
@@ -33152,6 +33454,7 @@ const app = createApp({
           const ids = new Set(rows.map(r=> r.id));
           MOCK[o.page][LIST] = tab(LIST).filter(r=> !ids.has(r.id));
           selectedIds.value = [];
+          if(o.onDeleted) o.onDeleted(rows.map(r=> r[o.noKey]));
           bumpStore();
           ElMessage.success('已删除 '+rows.length+' 条数据');
         }).catch(()=>{});
@@ -33161,7 +33464,7 @@ const app = createApp({
         const cur = pending.find(r=> r.id===row.id);
         if(!cur){ ElMessage.warning('该'+o.docName+'已处理，请刷新后重试'); return; }
         MOCK[o.page]['tab-1'] = pending.filter(r=> r!==cur);
-        const rec = Object.assign({}, cur, { [ST]: ST_DONE, 处理人: CI_OPERATOR, 处理时间: nowStamp() });
+        const rec = Object.assign({}, cur, { [ST]: ST_DONE, [DONE_WHO]: CI_OPERATOR, [DONE_WHEN]: nowStamp() });
         o.procFields.forEach(f=>{ rec[f.key || f.name] = f.type==='upload' ? files : (vals[f.name] || ''); });
         if(o.onProcess) o.onProcess(rec, vals);
         tab('tab-2').unshift(rec);
@@ -33190,16 +33493,39 @@ const app = createApp({
       }
       function rows(list, done){
         if(o.decorate) list = list.map(r=> Object.assign({}, r, o.decorate(r)));
-        list = applyContainsExactQuery(list, query, [...o.containsKeys, ...(done ? ['处理人'] : [])], o.exactKeys);
-        [...o.dateKeys, ...(done ? ['处理时间'] : [])].forEach(k=>{ list = applyDateRangeQuery(list, query, k); });
-        const sortKey = done ? '处理时间' : '制单时间';
+        list = applyContainsExactQuery(list, query, [...o.containsKeys, ...(done ? [DONE_WHO] : [])], o.exactKeys);
+        [...o.dateKeys, ...(done ? [DONE_WHEN] : [])].forEach(k=>{ list = applyDateRangeQuery(list, query, k); });
+        const sortKey = done ? DONE_WHEN : NEW_WHEN;
         return list.slice().sort((a,b)=> String(b[sortKey]||'').localeCompare(String(a[sortKey]||'')));
       }
       return { page:o.page, nextNo, save, onToolbar, onRowOp, onRefresh, rows };
     }
+    /** 品质专项任务·逾期状态：当前时间≤计划完成时间为正常，否则逾期（按日期比较，当天不算逾期） */
+    function qtOverdueState(r){
+      const done = r['任务状态']==='已完成';
+      const plan = String(r['计划完成时间']||'').slice(0,10);
+      if(!plan) return r['逾期状态'] || '—';
+      if(done) return r['逾期状态'] || (String(r['完成时间']||'').slice(0,10) > plan ? '逾期' : '正常');
+      return nowStamp().slice(0,10) > plan ? '逾期' : '正常';
+    }
+    /** 客诉单保存/删除后，把客诉单号反写到发货OQC台账的「客诉单号」；同一OQC多单关联以「，」拼接 */
+    function ctSyncOqcLink(ctNo, oqcNo){
+      const bag = MOCK[OQC_PAGE] || {};
+      const norm = v=> String(v||'').split(/[，,、]/).map(s=> s.trim()).filter(s=> s && s!=='—');
+      const link = String(oqcNo||'').trim();
+      ['tab-1','tab-2'].forEach(t=>{
+        (bag[t]||[]).forEach(r=>{
+          const list = norm(r['客诉单号']);
+          const kept = list.filter(x=> x!==ctNo);
+          if(link && r['单据号']===link && !kept.includes(ctNo)) kept.push(ctNo);
+          if(kept.length!==list.length || kept.some((x,i)=> x!==list[i])) r['客诉单号'] = kept.join('，');
+        });
+      });
+    }
     const CC_PAGE = 'np-0212-01';
     const CT_PAGE = 'np-0212-02';
     const CR_PAGE = 'np-0212-03';
+    const QT_PAGE = 'np-0218-01';
     const SE_PAGE = 'np-0213-01';
     const SE_SRC_KIND = { 采购来料不合格:'seSrcUq', 采购来料偏差:'seSrcDv' };
     const SR_PAGE = 'np-0213-02';
@@ -33221,7 +33547,7 @@ const app = createApp({
       }),
       [CT_PAGE]: makeCsPage({
         page:CT_PAGE, title:'客户投诉', docName:'客诉单', idPrefix:'ct-', noKey:'客诉单号', dateKey:'投诉日期', procOp:'客诉处理',
-        fields:['客诉单号','客户信息','客户编码','客户名称','投诉日期','投诉类型','物料信息','物料编码','物料名称','物料规格','物料种类','批号','问题大类','问题小类','问题描述','计划处理完成日期','附件','备注'],
+        fields:['客诉单号','关联单据','客户信息','客户编码','客户名称','投诉日期','投诉类型','物料信息','物料编码','物料名称','物料规格','物料种类','批号','问题大类','问题小类','问题描述','计划处理完成日期','附件','备注'],
         required:['客诉单号','客户名称','投诉日期','投诉类型','物料信息','问题大类','问题小类','问题描述'],
         selects:['客户名称','投诉日期','投诉类型','物料信息','问题大类','问题小类'],
         addOkTip:'单据提交成功，单据状态为「待处理」',
@@ -33238,6 +33564,29 @@ const app = createApp({
         },
         procOkTip: ()=> '单据提交成功，单据状态已更改为「已处理」',
         containsKeys:['客诉单号','客户名称','物料信息','批号','制单人'], exactKeys:['投诉类型','问题大类','问题小类'], dateKeys:['投诉日期','计划处理完成日期','制单时间'],
+        onSaved: p=> ctSyncOqcLink(p['客诉单号'], p['关联单据']),
+        onDeleted: nos=> nos.forEach(n=> ctSyncOqcLink(n, '')),
+      }),
+      [QT_PAGE]: makeCsPage({
+        page:QT_PAGE, title:'品质专项任务', docName:'任务', idPrefix:'qt-', noKey:'任务单号', procOp:'任务处理',
+        statusKey:'任务状态', pendingStatus:'待处理', doneStatus:'已完成',
+        newWhoKey:'创建人', newWhenKey:'创建时间', doneWhoKey:'完成人', doneWhenKey:'完成时间',
+        multiFields:['负责人'],
+        fields:['任务单号','任务类型','任务描述','计划完成时间','任务附件','负责人'],
+        required:['任务单号','任务类型','任务描述','计划完成时间','负责人'],
+        selects:['任务类型','计划完成时间','负责人'],
+        addDefaults:{ 负责人:[] },
+        addOkTip:'单据提交成功，任务状态为「待处理」',
+        infoKeys:['任务单号','任务类型','计划完成时间','负责人','创建人','创建时间','任务描述','任务附件'],
+        infoFull:['任务描述','任务附件'],
+        procFields:[
+          { name:'任务完成描述', type:'textarea', rows:2, required:true },
+          { name:'完成文件', type:'upload' },
+        ],
+        procOkTip: ()=> '单据提交成功，任务状态已更改为「已完成」',
+        containsKeys:['任务单号','任务描述','负责人','创建人'], exactKeys:['任务类型'], dateKeys:['计划完成时间','创建时间'],
+        decorate: r=> ({ 逾期状态: qtOverdueState(r) }),
+        onProcess: rec=> { rec['逾期状态'] = nowStamp().slice(0,10) > String(rec['计划完成时间']||'').slice(0,10) ? '逾期' : '正常'; },
       }),
       [CR_PAGE]: makeCsPage({
         page:CR_PAGE, title:'客户退货', docName:'退货单', idPrefix:'cr-', noKey:'退货单号', dateKey:'退货日期', procOp:'退货处理',
@@ -33290,6 +33639,282 @@ const app = createApp({
       }),
     };
     const csPage = ()=> CS_PAGES[pageId.value] || null;
+    /** 品质综合报表 np-0417-02 · 实时聚合各前置单据 */
+    const QR_PAGE = 'np-0417-02';
+    const QR_TAG_FIELDS = ['逾期状态','检查结果','单据状态','样品状态','计划状态','检验结论','处置类型','MRB状态','任务状态'];
+    function qrPct(a, b){ return b > 0 ? (a / b * 100).toFixed(1) + '%' : '—'; }
+    function qrHit(val, kw){ kw = String(kw || '').trim(); return !kw || String(val || '').includes(kw); }
+    function qrSel(val, arr){ return !Array.isArray(arr) || !arr.length || arr.includes(val); }
+    function qrInRange(v, range){
+      if(!Array.isArray(range) || (!range[0] && !range[1])) return true;
+      const d = String(v || '').slice(0, 10);
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(d)) return false;
+      if(range[0] && d < String(range[0]).slice(0,10)) return false;
+      if(range[1] && d > String(range[1]).slice(0,10)) return false;
+      return true;
+    }
+    function qrCtNos(s){
+      return String(s || '').split(/[，,]/).map(x=> x.trim()).filter(x=> x && x !== '—').length;
+    }
+    function qrUniq(list, field){
+      return [...new Set(list.map(r=> String(r[field] || '').trim()).filter(v=> v && v !== '—'))].sort();
+    }
+    function uqSumRows(){
+      return UQ_SUM_SRC.flatMap(s=> (((MOCK[s.page] || {})['tab-done']) || []).map(r=>
+        Object.assign({}, r, { 处置类型: s.type, SAP生产订单号: r['SAP生产订单号'] || r['生产订单号'] || '', _srcPage: s.page })));
+    }
+    const QR_TABS = [
+      {
+        key:'oqc-submit', title:'交验合格率',
+        filters:[
+          { key:'mat', label:'物料信息', type:'picker', kind:'mat' },
+          { key:'cust', label:'客户信息', type:'picker', kind:'customer' },
+          { key:'批号', label:'批号', type:'input' },
+          { key:'完成时间', label:'完成时间', type:'date' }
+        ],
+        load:()=> oqcTab('tab-2').map(r=> Object.assign({}, r)),
+        filter:(list,q)=> list.filter(r=> qrSel(r['物料编码'], q.mat) && qrSel(r['客户编码'], q.cust) && qrHit(r['批号'], q['批号']) && qrInRange(r['完成时间'], q['完成时间'])),
+        cards:(list)=>{
+          const ok = list.filter(r=> r['检查结果']==='合格').length;
+          const ctRows = list.filter(r=> qrCtNos(r['客诉单号']) > 0);
+          const ctN = ctRows.reduce((s,r)=> s + qrCtNos(r['客诉单号']), 0);
+          return [
+            { label:'已完成单据数', value:list.length, tone:'blue' },
+            { label:'合格单据数', value:ok, tone:'green' },
+            { label:'交验合格率', value:qrPct(ok, list.length), tone:'cyan' },
+            { label:'客诉单据数', value:ctRows.length, tone:'orange' },
+            { label:'客诉总次数', value:ctN, tone:'red' }
+          ];
+        },
+        cols:[
+          {prop:'单据号',label:'单据号',w:140},{prop:'DN单号',label:'DN单号',w:120},{prop:'客户名称',label:'客户名称',w:150},
+          {prop:'物料名称',label:'物料名称',w:150},{prop:'批号',label:'批号',w:110},{prop:'计划发货日期',label:'计划发货日期',w:110},
+          {prop:'检查结果',label:'检查结果',w:90},{prop:'客诉单号',label:'客诉单号',w:130},{prop:'完成时间',label:'完成时间',w:150}
+        ]
+      },
+      {
+        key:'qt-rate', title:'品质专项完成率',
+        filters:[
+          { key:'任务类型', label:'任务类型', type:'select', options:()=> qrUniq(qrQtPending(), '任务类型') },
+          { key:'计划完成时间', label:'计划完成时间', type:'date' }
+        ],
+        load:()=> qrQtPending(),
+        filter:(list,q)=> list.filter(r=> qrSel(r['任务类型'], q['任务类型']) && qrInRange(r['计划完成时间'], q['计划完成时间'])),
+        cards:(list)=>{
+          const od = list.filter(r=> r['逾期状态']==='逾期').length;
+          return [
+            { label:'待处理任务数', value:list.length, tone:'blue' },
+            { label:'正常任务数', value:list.length - od, tone:'green' },
+            { label:'逾期任务数', value:od, tone:'red' },
+            { label:'逾期占比', value:qrPct(od, list.length), tone:'orange' }
+          ];
+        },
+        cols:[
+          {prop:'任务单号',label:'任务单号',w:120},{prop:'任务类型',label:'任务类型',w:130},{prop:'任务描述',label:'任务描述',w:200},
+          {prop:'计划完成时间',label:'计划完成时间',w:110},{prop:'逾期状态',label:'逾期状态',w:90},{prop:'负责人',label:'负责人',w:140},
+          {prop:'创建时间',label:'创建时间',w:150},{prop:'创建人',label:'创建人',w:100}
+        ]
+      },
+      {
+        key:'rework', title:'器件异常导致产品返工',
+        filters:[
+          { key:'处置类型', label:'处置类型', type:'select', options:()=> UQ_SUM_SRC.map(s=> s.type) },
+          { key:'处置时间', label:'处置时间', type:'date' }
+        ],
+        load:()=> uqSumRows(),
+        filter:(list,q)=> list.filter(r=> qrSel(r['处置类型'], q['处置类型']) && qrInRange(r['处置时间'], q['处置时间'])),
+        cards:(list)=> [ { label:'处置单据数', value:list.length, tone:'blue' } ],
+        groups:[ { dim:'问题大类', title:'按问题大类统计' }, { dim:'处置方式', title:'按处置方式统计' } ],
+        cols:[
+          {prop:'处置类型',label:'处置类型',w:130},{prop:'处置单号',label:'处置单号',w:130},{prop:'物料名称',label:'物料名称',w:150},
+          {prop:'问题大类',label:'问题大类',w:110},{prop:'问题小类',label:'问题小类',w:110},{prop:'处置方式',label:'处置方式',w:100},
+          {prop:'处置人',label:'处置人',w:90},{prop:'处置时间',label:'处置时间',w:150}
+        ]
+      },
+      {
+        key:'timely', title:'检验及时率',
+        filters:[
+          { key:'报检类型', label:'报检类型', type:'select', options:()=> FLOW_TABS.map(t=> t.label) },
+          { key:'样品状态', label:'样品状态', type:'select', options:()=> qrUniq(qrLedgerAll(), '样品状态') },
+          { key:'检验结论', label:'检验结论', type:'select', options:()=> qrUniq(qrLedgerAll(), '检验结论') },
+          { key:'报检时间', label:'报检时间', type:'date' }
+        ],
+        load:()=> qrLedgerAll(),
+        filter:(list,q)=> list.filter(r=> qrSel(r['报检类型'], q['报检类型']) && qrSel(r['样品状态'], q['样品状态']) && qrSel(r['检验结论'], q['检验结论']) && qrInRange(r['报检时间'], q['报检时间'])),
+        cards:(list)=>{
+          const od = list.filter(r=> r['逾期状态']==='逾期').length;
+          const ok = list.length - od;
+          return [
+            { label:'单据数', value:list.length, tone:'blue' },
+            { label:'正常单据数', value:ok, tone:'green' },
+            { label:'逾期单据数', value:od, tone:'red' },
+            { label:'检验及时率', value:qrPct(ok, list.length), tone:'cyan' }
+          ];
+        },
+        cols:[
+          {prop:'报检类型',label:'报检类型',w:110},{prop:'样品编号',label:'样品编号',w:120},{prop:'样品状态',label:'样品状态',w:90},
+          {prop:'物料名称',label:'物料名称',w:150},{prop:'检验结论',label:'检验结论',w:90},{prop:'预计完成时间',label:'预计完成时间',w:150},
+          {prop:'检验完成时间',label:'检验完成时间',w:150},{prop:'逾期状态',label:'逾期状态',w:90},{prop:'报检单号',label:'报检单号',w:130}
+        ]
+      },
+      {
+        key:'xj-close', title:'巡检问题结案率',
+        filters:[
+          { key:'计划单号', label:'计划单号', type:'input' },
+          { key:'巡检方案名称', label:'巡检方案名称', type:'input' },
+          { key:'计划状态', label:'计划状态', type:'select', options:()=> qrUniq(qrXjPlans(), '计划状态') },
+          { key:'计划开始时间', label:'计划开始时间', type:'date' }
+        ],
+        load:()=> qrXjPlans(),
+        filter:(list,q)=> list.filter(r=> qrHit(r['计划单号'], q['计划单号']) && qrHit(r['巡检方案名称'], q['巡检方案名称']) && qrSel(r['计划状态'], q['计划状态']) && qrInRange(r['计划开始时间'], q['计划开始时间'])),
+        cards:(list)=>{
+          const od = list.filter(r=> r['逾期状态']==='逾期').length;
+          const ok = list.length - od;
+          return [
+            { label:'计划总数', value:list.length, tone:'blue' },
+            { label:'正常计划数', value:ok, tone:'green' },
+            { label:'逾期计划数', value:od, tone:'red' },
+            { label:'正常占比', value:qrPct(ok, list.length), tone:'cyan' }
+          ];
+        },
+        cols:[
+          {prop:'计划单号',label:'计划单号',w:130},{prop:'计划状态',label:'计划状态',w:90},{prop:'巡检方案名称',label:'巡检方案名称',w:160},
+          {prop:'内容描述',label:'内容描述',w:180},{prop:'计划开始时间',label:'计划开始时间',w:150},{prop:'计划结束时间',label:'计划结束时间',w:150},
+          {prop:'逾期状态',label:'逾期状态',w:90},{prop:'创建方式',label:'创建方式',w:110},{prop:'创建人',label:'创建人',w:100}
+        ]
+      },
+      {
+        key:'capa', title:'纠正预防有效性',
+        filters:[
+          { key:'整改单号', label:'整改单号', type:'input' },
+          { key:'事件类型', label:'事件类型', type:'select', options:()=> qrUniq(qrCapaAll(), '事件类型') },
+          { key:'责任部门', label:'责任部门', type:'input' },
+          { key:'创建时间', label:'创建时间', type:'date' }
+        ],
+        load:()=> qrCapaAll(),
+        filter:(list,q)=> list.filter(r=> qrHit(r['整改单号'], q['整改单号']) && qrSel(r['事件类型'], q['事件类型']) && qrHit(r['责任部门'], q['责任部门']) && qrInRange(r['创建时间'], q['创建时间'])),
+        cards:(list)=>{
+          const done = list.filter(r=> r['单据状态']==='已处理').length;
+          return [
+            { label:'整改单总数', value:list.length, tone:'blue' },
+            { label:'待处理数', value:list.length - done, tone:'orange' },
+            { label:'已处理数', value:done, tone:'green' },
+            { label:'已处理占比', value:qrPct(done, list.length), tone:'cyan' }
+          ];
+        },
+        cols:[
+          {prop:'整改单号',label:'整改单号',w:130},{prop:'单据状态',label:'单据状态',w:90},{prop:'事件类型',label:'事件类型',w:110},
+          {prop:'来源单号',label:'来源单号',w:130},{prop:'问题大类',label:'问题大类',w:110},{prop:'问题小类',label:'问题小类',w:110},
+          {prop:'责任部门',label:'责任部门',w:110},{prop:'计划整改完成日期',label:'计划整改完成日期',w:130},{prop:'整改人',label:'整改人',w:90},
+          {prop:'整改完成时间',label:'整改完成时间',w:150}
+        ]
+      },
+      {
+        key:'oqc-ship', title:'出货OQC合格率',
+        filters:[
+          { key:'cust', label:'客户信息', type:'picker', kind:'customer' },
+          { key:'批号', label:'批号', type:'input' },
+          { key:'检查结果', label:'检查结果', type:'select', options:()=> ['合格','不合格'] },
+          { key:'完成时间', label:'完成时间', type:'date' }
+        ],
+        load:()=> oqcTab('tab-2').map(r=> Object.assign({}, r)),
+        filter:(list,q)=> list.filter(r=> qrSel(r['客户编码'], q.cust) && qrHit(r['批号'], q['批号']) && qrSel(r['检查结果'], q['检查结果']) && qrInRange(r['完成时间'], q['完成时间'])),
+        cards:(list)=>{
+          const ok = list.filter(r=> r['检查结果']==='合格').length;
+          return [
+            { label:'已完成单据数', value:list.length, tone:'blue' },
+            { label:'合格单据数', value:ok, tone:'green' },
+            { label:'不合格单据数', value:list.length - ok, tone:'red' },
+            { label:'出货OQC合格率', value:qrPct(ok, list.length), tone:'cyan' }
+          ];
+        },
+        cols:[
+          {prop:'单据号',label:'单据号',w:140},{prop:'DN单号',label:'DN单号',w:120},{prop:'客户名称',label:'客户名称',w:150},
+          {prop:'物料名称',label:'物料名称',w:150},{prop:'批号',label:'批号',w:110},{prop:'计划发货日期',label:'计划发货日期',w:110},
+          {prop:'检查结果',label:'检查结果',w:90},{prop:'完成时间',label:'完成时间',w:150}
+        ]
+      }
+    ];
+    function qrQtPending(){ return (((MOCK['np-0218-01'] || {})['tab-1']) || []).map(r=> Object.assign({}, r, { 逾期状态: qtOverdueState(r) })); }
+    function qrLedgerAll(){
+      return FLOW_TABS.flatMap(t=> (((MOCK.ledger || {})[t.name]) || []).map(r=>
+        Object.assign({}, r, { 报检类型: (r['报检类型'] && r['报检类型'] !== '—') ? r['报检类型'] : t.label, 逾期状态: flowCalcOverdue(r['预计完成时间']) })));
+    }
+    function qrXjPlans(){ return labInspEnrichPlanRows(labInspPlanBag('tab-1')); }
+    function qrCapaAll(){
+      const bag = MOCK['capa-handle'] || {};
+      return ((bag['tab-wait'] || []).map(r=> Object.assign({}, r, { 单据状态:'待处理' })))
+        .concat((bag['tab-done'] || []).map(r=> Object.assign({}, r, { 单据状态:'已处理' })));
+    }
+    const qr = reactive({ tab:'oqc-submit', q:{}, queried:false, rows:[] });
+    function qrDef(){ return QR_TABS.find(t=> t.key === qr.tab) || QR_TABS[0]; }
+    function qrFreshQuery(def){
+      const q = {};
+      (def.filters || []).forEach(f=>{
+        if(f.type === 'select' || f.type === 'picker'){ q[f.key] = []; if(f.type === 'picker') q[f.key + 'Label'] = ''; }
+        else if(f.type === 'date'){ q[f.key] = null; }
+        else { q[f.key] = ''; }
+      });
+      return q;
+    }
+    function qrOptions(f){ return typeof f.options === 'function' ? f.options() : (f.options || []); }
+    function qrOpenPick(f){ openIoPick(f.kind, 'qrReport', f.key, true); }
+    function qrClearPick(f){ qr.q[f.key] = []; qr.q[f.key + 'Label'] = ''; }
+    function qrApplyPick(rows){
+      const f = (qrDef().filters || []).find(x=> x.key === ioPickField.value);
+      if(!f) return;
+      const codeKey = f.kind === 'mat' ? '物料编码' : '客户编码';
+      const list = rows || [];
+      qr.q[f.key] = list.map(r=> r[codeKey]).filter(Boolean);
+      qr.q[f.key + 'Label'] = list.map(r=> ioPickText(f.kind, r)).filter(Boolean).join('、');
+    }
+    function qrQuery(){ qr.rows = qrDef().filter(qrDef().load(), qr.q); qr.queried = true; }
+    function qrReset(){ qr.q = qrFreshQuery(qrDef()); qrQuery(); }
+    function qrOnTab(){ qr.q = qrFreshQuery(qrDef()); qr.queried = false; qr.rows = []; qrQuery(); }
+    function qrCards(){ return qr.queried ? qrDef().cards(qr.rows) : []; }
+    function qrGroups(){
+      const def = qrDef();
+      if(!qr.queried || !def.groups) return [];
+      return def.groups.map(g=>{
+        const m = new Map();
+        qr.rows.forEach(r=>{
+          const k = String(r[g.dim] || '').trim() || '—';
+          m.set(k, (m.get(k) || 0) + 1);
+        });
+        const rows = [...m.entries()].map(([name, count])=> ({ name, count, pct: qrPct(count, qr.rows.length) }))
+          .sort((a,b)=> b.count - a.count || String(a.name).localeCompare(String(b.name)));
+        return { title:g.title, dim:g.dim, rows };
+      });
+    }
+    function qrExport(){
+      if(!qr.queried){ ElMessage.warning('请先查询'); return; }
+      const def = qrDef();
+      const esc = v=> String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+      let tables = '';
+      const groups = qrGroups();
+      if(groups.length){
+        tables = groups.map(g=>{
+          const head = '<tr><th>' + esc(g.dim) + '</th><th>单据数</th><th>占比</th></tr>';
+          const body = g.rows.map(r=> '<tr><td>' + esc(r.name) + '</td><td>' + r.count + '</td><td>' + r.pct + '</td></tr>').join('');
+          return '<tr><th colspan="3">' + esc(g.title) + '</th></tr>' + head + body;
+        }).join('<tr><td colspan="3"></td></tr>');
+        tables = '<table border="1">' + tables + '</table>';
+      } else {
+        if(!qr.rows.length){ ElMessage.warning('没有可导出的数据'); return; }
+        const head = '<tr>' + def.cols.map(c=> '<th>' + esc(c.label) + '</th>').join('') + '</tr>';
+        const body = qr.rows.map(r=> '<tr>' + def.cols.map(c=> '<td>' + esc(r[c.prop]) + '</td>').join('') + '</tr>').join('');
+        tables = '<table border="1">' + head + body + '</table>';
+      }
+      if(groups.length && !qr.rows.length){ ElMessage.warning('没有可导出的数据'); return; }
+      const html = '<html><head><meta charset="utf-8"></head><body>' + tables + '</body></html>';
+      const blob = new Blob([html], { type:'application/vnd.ms-excel' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = '品质综合报表_' + def.title + '.xls';
+      document.body.appendChild(a); a.click(); a.remove();
+      ElMessage.success('已导出当前统计结果');
+    }
+    watch(()=> pageId.value, v=>{ if(v === QR_PAGE){ qrOnTab(); } }, { immediate:true });
     const SR_OPEN = ['待处理','待审核','审核驳回'];
     function srRandPwd(){
       const n = String(Math.floor(Math.random()*1e9)).padStart(9,'0');
@@ -34703,6 +35328,13 @@ const app = createApp({
       storeTick.value;
       const rows = (MOCK[pageId.value]||{})[tabView.value.name] || [];
       let list = pageId.value==='lg-waybill-carrier' ? (((MOCK['lg-waybill']||{}).main)||[]).slice() : rows;
+      if(pageId.value===UQ_SUM_PAGE){
+        // 不合格处置汇总：实时合并四个来源页「已处理」Tab 的数据，字段取并集
+        list = uqSumRows();
+        list = applyDateRangeQuery(list, query, '处置时间');
+        list = applyContainsExactQuery(list, query, ['处置单号','物料名称','物料编码','处置人','报检单号'], ['处置类型','MRB状态','处置方式']);
+        return list.slice().sort(function(a,b){ return String(b['处置时间']||'').localeCompare(String(a['处置时间']||'')); });
+      }
       if(pageId.value===COST_FLOW) list = costFlowRows().slice();
       if(isChromLedgerPage()){
         // 未选分类展示当前页签全部；选中分类按物料（及型号）过滤；批号模糊 + 是否存在新杂 / 杂质偏差结论精确
@@ -35725,6 +36357,10 @@ const app = createApp({
         } else if(c.slot==='arrow_detail' || c.field==='分配明细' || c.field==='反馈明细'){
           const fitW = Math.max(c.width||0, fitColWidth(c.field, c.title, sampleRows));
           pushCol({ field:c.field, title:c.title, width:fitW, minWidth:fitW, maxWidth:Math.max(fitW, colMaxWidth(c.title||c.field)), noTooltip:true, slots:{ default:'arrow_detail' } });
+        } else if(pageId.value==='ledger' && (c.field==='偏差结论' || c.field==='异常描述')){
+          const abn = c.field==='异常描述';
+          const w = abn ? 180 : 100;
+          pushCol({ field:c.field, title:c.title, width:w, minWidth:w, noTooltip:true, slots:{ default: abn ? 'ledger_abn' : 'ledger_dev' } });
         } else if(c.slot==='tag' || isStatusTagField(c.field || c.title || c.name)){
           const fitW = Math.max(c.width||0, fitColWidth(c.field, c.title, sampleRows)) + (c.tip ? 28 : 0);
           pushCol({ field:c.field, title:c.title, width:fitW, minWidth:fitW, maxWidth:Math.max(fitW, colMaxWidth(c.title||c.field)), fixed:c.fixed||null, tip:c.tip||'', slots:{ default:'tag' } });
@@ -35816,7 +36452,23 @@ const app = createApp({
       });
     }
 
+    let cockpitMenuLive = false;
+    function openQualityCockpit(){
+      const url = pageId.value==='np-0702-02' ? './insp-cockpit.html?v=21' : './quality-cockpit.html?v=19';
+      const win = window.open(url, 'qms-quality-cockpit');
+      if(!win){
+        ElMessage.warning('浏览器拦截了新窗口，请允许弹出后再打开');
+        return false;
+      }
+      try{ win.focus(); }catch(e){}
+      return true;
+    }
     function onSelectMenu(index){
+      if(index==='np-0702-01'){
+        if(cockpitMenuLive) openQualityCockpit();
+        if(pageId.value!==index) loadPage(index);
+        return;
+      }
       if(CFG.pages[index]){
         if([HM_LIB_PAGE, HM_IMP_PAGE, HM_EXP_PAGE, HM_VOID_PAGE, HM_BIN_PAGE, HM_CHG_PAGE].includes(index)) hmSyncLibFromImp();
         loadPage(index);
@@ -36513,73 +37165,6 @@ const app = createApp({
     function ledgerInspAbnText(row){
       const v = (row && (row['异常报送'] || row['异常描述'])) || '';
       return (v && v !== '—') ? String(v) : '';
-    }
-    function ledgerInspMaster(){
-      return (((MOCK['insp-project']||{})['tab-item'])||[]).filter(r=> r && r['启用状态']!=='停用' && r['检验项名称']);
-    }
-    function ledgerInspNames(row){
-      const split = t=> String(t||'').split(/[;；]/).map(s=> s.trim()).filter(s=> s && s!=='—');
-      return split(row && row['方案项目']).map(n=> ({ name:n, src:'方案项目' }))
-        .concat(split(row && row['临时项目']).map(n=> ({ name:n, src:'临时项目' })));
-    }
-    function ledgerInspItems(row){
-      if(row && Array.isArray(row._insp) && row._insp.length) return row._insp;
-      const byName = {};
-      ledgerInspMaster().forEach(m=> { byName[m['检验项名称']] = m; });
-      const sampleConclusion = row && row['检验结论'] && row['检验结论']!=='—' ? row['检验结论'] : '合格';
-      return ledgerInspNames(row).map((it, idx)=>{
-        const m = byName[it.name] || {};
-        const typ = m['检验项类型'] || '定量';
-        const conclusion = (sampleConclusion==='不合格' && idx===0) ? '不合格' : (sampleConclusion==='异常' && idx===0 ? '异常' : '合格');
-        const shown = typ==='定性'
-          ? (conclusion==='合格' ? '符合' : conclusion==='不合格' ? '不符合' : '')
-          : (conclusion==='合格' ? '99.60' : conclusion==='不合格' ? '97.20' : '');
-        return {
-          项目来源: it.src,
-          检验项编码: m['检验项编码'] || '—',
-          检验项名称: it.name,
-          检验项类型: typ,
-          检验项单位: m['检验项单位'] || '—',
-          所属检验类: m['所属检验类'] || '—',
-          检验结果: typ==='定性' ? shown : '',
-          检验结果值: typ==='定量' ? shown : '',
-          检验报出值: typ==='定量' ? shown : '',
-          检验结论: conclusion,
-          偏差结论: '—',
-          指标: '—',
-          异常报送: '—',
-          USL:'—', LSL:'—', UCL:'—', LCL:'—', UWL:'—', LWL:'—', 检出限: m['检出限D.L'] || '—'
-        };
-      });
-    }
-    function buildLedgerInspDemo(row){
-      const done = ['已完成','检验中'].includes(row?.['样品状态']);
-      const opUser = row?.['检验人'] && row['检验人'] !== '—' ? row['检验人'] : '管理员';
-      const opTime = row?.['检验完成时间'] && row['检验完成时间'] !== '—' ? row['检验完成时间'] : (row?.['取样时间'] || '');
-      const items = done ? ledgerInspItems(row) : [];
-      const qual = items.filter(it=> it['检验项类型']==='定性');
-      const quant = items.filter(it=> it['检验项类型']!=='定性');
-      const groups = [];
-      items.forEach(it=>{
-        const cat = it['所属检验类'] || '—';
-        let g = groups.find(x=> x.检验类===cat);
-        if(!g){
-          g = { 检验类: cat, items: [], mats: [], 内容说明: '', 附件: [] };
-          groups.push(g);
-        }
-        g.items.push({
-          检验项类型: it['检验项类型'],
-          检验项名称: it['检验项名称'],
-          检验结果: it['检验项类型']==='定性' ? (it['检验结果']||'—') : (it['检验报出值']||it['检验结果值']||'—'),
-          检验结论: it['检验结论'] || '—',
-          指标: it['指标'] || '—',
-          偏差结论: it['偏差结论'] || '—',
-          操作人: opUser,
-          操作时间: opTime || '—',
-          备注: ''
-        });
-      });
-      return { qual, quant, raw: groups };
     }
     function openLedgerInspDetail(row){
       const r = STORE ? STORE.overlayPcRow('ledger', { ...row }) : { ...row };
@@ -38883,6 +39468,7 @@ const app = createApp({
         if(op.name==='流水记录'){ openPlateLog(row); return; }
       }
       if(pageId.value===OQC_PAGE && op.name==='上传附件'){ openOqcUpload([row]); return; }
+      if(pageId.value==='insp-order' && op.name==='上传报告'){ openCoaUpload(row); return; }
       if(op.name==='标签配置' && pageId.value==='tag-config'){
         openForm('标签模板设计');
         formModel['标签模板名称'] = row['标签模板名称'] || '';
@@ -42461,7 +43047,80 @@ const app = createApp({
       const ent = ((s||{})._entry||{}).items || {};
       return flowSampleItems(s || lg).map(n=> ({ 检验项: n, 实测值: (ent[n]||{}).实测值 || '—', 检验结论: (ent[n]||{}).结论 || '—' }));
     }
+    const cmp = reactive({
+      visible:false, more:false, page:1, pageSize:20, selected:[], rows:[], itemCols:[],
+      fixed:['样品状态','检验结论','偏差结论','样品编号','样品来源','物料编码','物料名称','物料规格','物料种类','报检批号','检验方案','检验完成时间','检验人'],
+      query:{ 样品状态:'', 检验结论:'', 样品编号:'', 报检批号:'' }
+    });
+    const cmpFiltered = computed(()=> cmp.rows.filter(r=>{
+      const q = cmp.query;
+      if(q.样品状态 && r['样品状态']!==q.样品状态) return false;
+      if(q.检验结论 && r['检验结论']!==q.检验结论) return false;
+      if(String(q.样品编号||'').trim() && !String(r['样品编号']||'').includes(String(q.样品编号).trim())) return false;
+      if(String(q.报检批号||'').trim() && !String(r['报检批号']||'').includes(String(q.报检批号).trim())) return false;
+      return true;
+    }));
+    const cmpPageRows = computed(()=>{
+      const i = (cmp.page - 1) * cmp.pageSize;
+      return cmpFiltered.value.slice(i, i + cmp.pageSize);
+    });
+    const cmpPageSelected = computed(()=>{
+      const ids = new Set(cmpPageRows.value.map(r=> r.id));
+      return cmp.selected.filter(r=> ids.has(r.id)).length;
+    });
+    function cmpIndex(i){ return (cmp.page - 1) * cmp.pageSize + i + 1; }
+    function onCmpSelect(rows){ cmp.selected = rows || []; }
+    function cmpReset(){
+      Object.assign(cmp.query, { 样品状态:'', 检验结论:'', 样品编号:'', 报检批号:'' });
+      cmp.page = 1;
+    }
+    function cmpItemText(row, it){
+      if(!it || row['样品状态']!=='已完成') return '';
+      const v = it['检验项类型']==='定性' ? it['检验结果'] : (it['检验报出值'] || it['检验结果值']);
+      return v && v!=='—' ? v : '';
+    }
+    function openLedgerCompare(){
+      const tab = activeTab.value || 'tab-pi';
+      const src = ((MOCK.ledger||{})[tab]) || [];
+      const names = [];
+      cmp.rows = src.map(r=>{
+        const demo = buildLedgerInspDemo(r);
+        const items = (demo.qual||[]).concat(demo.quant||[]);
+        const o = { id: r.id || r['样品编号'] };
+        cmp.fixed.forEach(k=>{
+          if(k==='偏差结论'){ o[k] = ledgerDevTag(r); return; }
+          const v = r[k];
+          o[k] = (v==null || v==='—') ? '' : v;
+        });
+        items.forEach(it=>{
+          const n = String(it['检验项名称']||'').trim();
+          if(!n || n==='—') return;
+          if(!names.includes(n)) names.push(n);
+          o[n] = cmpItemText(r, it);
+          if(r['样品状态']==='已完成' && (it['偏差结论']==='OOS' || it['检验结论']==='不合格')) o['_bad_'+n] = true;
+        });
+        return o;
+      });
+      cmp.itemCols = names;
+      cmp.selected = [];
+      cmp.page = 1;
+      cmp.more = false;
+      cmpReset();
+      cmp.visible = true;
+    }
+    function cmpExport(){
+      const cols = cmp.fixed.concat(cmp.itemCols);
+      const lines = [cols.join(',')].concat(cmpFiltered.value.map(r=> cols.map(c=> '"'+String(r[c]==null?'':r[c]).replace(/"/g,'""')+'"').join(',')));
+      const blob = new Blob(['\ufeff'+lines.join('\n')], { type:'text/csv;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = '数据比对.csv';
+      a.click();
+      URL.revokeObjectURL(a.href);
+      ElMessage.success('已导出 ' + cmpFiltered.value.length + ' 条');
+    }
     function qcCompare(){
+      if(pageId.value==='ledger'){ openLedgerCompare(); return; }
       const picked = (tableData.value||[]).filter(r=> selectedIds.value.includes(r.id));
       const isRecheck = pageId.value==='recheck';
       if(!picked.length){ ElMessage.warning(isRecheck ? '请先勾选报检单' : '请先勾选样品'); return; }
@@ -46791,6 +47450,10 @@ const app = createApp({
         openIoPick('customer', 'form', '客户名称');
         return;
       }
+      if(pageId.value===CT_PAGE && title==='关联单据' && !lineRow){
+        openIoPick('oqcTask', 'ctOqc', '关联单据');
+        return;
+      }
       if(pageId.value===SE_PAGE && title==='来源单号' && !lineRow){
         const kind = SE_SRC_KIND[formModel['事件类型']];
         if(!kind){ ElMessage.warning('请先选择事件类型'); return; }
@@ -48903,7 +49566,7 @@ const app = createApp({
         '待处理':'tag-gr','处理中':'tag-b','已处理':'tag-g',
         '轻微':'tag-b','一般':'tag-y','严重':'tag-p','重大':'tag-r',
         '承运商':'tag-r','我方/发货方':'tag-p','收货方':'tag-b',
-        'OOS':'tag-r','OOT':'tag-o','无偏差':'tag-g','有偏差':'tag-p',
+        'OOS':'tag-r','OOC':'tag-o','OOW':'tag-o','OOT':'tag-o','无偏差':'tag-g','有偏差':'tag-p',
         '开立':'tag-b','已提交':'tag-p','已生效':'tag-g','已作废':'tag-gr',
         '待取样':'tag-o','已取样':'tag-b','待录入':'tag-o','已录入':'tag-b',
         '通过':'tag-g','不通过':'tag-r','免检':'tag-c',
@@ -48928,6 +49591,7 @@ const app = createApp({
     onMounted(()=> {
       syncAllPoReceivedQty();
       onSelectMenu(startId);
+      cockpitMenuLive = true;
       const startTabs = (page.value?.tabs?.length ? page.value.tabs : page.value?.tabViews) || [];
       if(hashState.tab && hashState.tab !== activeTab.value && startTabs.some(t=> t.name === hashState.tab)){
         activeTab.value = hashState.tab;
@@ -49021,19 +49685,20 @@ const app = createApp({
       devCancelVisible, devCancelRow, devCancelReason, confirmDevCancel, devLaunchVisible, devLaunchNeed, confirmLaunchDevReqs, devLogVisible, devLogNo, devLogRows,
       plateReqVisible, plateReqTitle, plateReqRows, plateReqForm, removePlateReqRow, confirmPlateReq, openPlatePick, clearPlateSamples,
       plateCancelVisible, plateCancelRow, plateCancelReason, confirmPlateCancel, plateLaunchVisible, plateLaunchNeed, confirmLaunchPlateReqs, plateLogVisible, plateLogNo, plateLogRows,
-      oqcUploadVisible, oqcUploadRows, oqcUploadFiles, oqcUploadRemark, confirmOqcUpload,
+      oqcUploadVisible, oqcUploadRows, oqcUploadFiles, oqcUploadRemark, oqcUploadResult, confirmOqcUpload,
+      coaUploadVisible, coaUploadRow, coaUploadFiles, openCoaUpload, confirmCoaUpload,
       matrixWeightVisible, matrixWeightForm, saveMatrixWeight, qualityLevelText, qualityIconStyle,
       ioPickVisible, ioPickMeta, ioPickQ, ioPickTick, ioPickRows, ioPickCurrent, ioPickMulti, ioPickSelected, ioPickTableRef, ioPickRowKey, onIoPickSelection, resetIoPickQ, confirmIoPick, SPLIT_TEAMS, sampSplitVisible, sampSplitForm, sampSplitRows, sampSplitSelected, sampSplitParents, canDeleteSampSplit, canDeleteEnvMon, FLOW_TABS, sampSplitPickVisible, sampSplitPickTableRef, sampSplitPickTab, sampSplitPickShowTabs, reqPickFor, sampSplitPickQ, sampSplitPickSelected, sampSplitPickRows, sampSplitPickCols, openSampSplitLedgerPick, confirmSampSplitLedgerPick, SLOC_DESTS, openIoPick, confirmPrintLabel, saveSlposForm, slocDispVisible, slocDispMode, slocDispTitle, slocDispRows, slocDispSelected, slocDispCols, slocDispForm, onSlocDispSelect, slocLocOpts, confirmSlocLoc, SLOC_SCRAP_REASONS, onSlocDispWay, onSlocDispLoc, openSlocDispSupplier, confirmSlocDisp, slocLogVisible, slocLogNo, slocLogRows, genSampSplitRows, removeSampSplitRow, confirmSampleSplit, sampSplitRecordVisible, sampSplitRecordParent, sampSplitRecordRows,
       calibExecVisible, calibExecReadonly, calibExecRow, calibTests, calibTestSel, calibFinal, calibTpl, calibMethod, calibHeadCols, calibMultiStd, calibDoneTests, addCalibTest, removeCalibTests, calcCalibFinal, saveLabCalibExec, submitLabCalibExec, downloadLabCalibPdf,
       calibEntryVisible, calibEntryReadonly, calibEntryIdx, calibEntryTest, openCalibEntry, submitCalibEntry,
       labPrepExecVisible, labPrepExecReadonly, labPrepExecRow, labPrepExec, labPrepLineSel, labPrepReagentPick, labPrepEnvFields, labPrepDevFields, labPrepMethod, labPrepHeadCols, labPrepReagentOptions, labPrepEnumOpts, addLabPrepLine, removeLabPrepLines, saveLabPrepExec, submitLabPrepExec, downloadLabPrepPdf,
       tplTabs, tplCalc, tplRefParamOptions, onTplPubTimesChange, tplKind, isTplForm, tplFormTab, tplRows, tplSel, onTplFlagChange, addTplRow, removeTplRows, onTplAttrChange,
-      formVisible, formMode, formDialogTitle, formDialogWidth, formSwitch, formModel, formFieldTipOpen, setFormFieldTip, toggleFormFieldTip, isInspMethodForm, isInspSchemeForm, isQrConfigForm, isDriftRuleForm, isInspProjectCategoryForm, isSampSchemeForm, isFullscreenBizForm, isFullscreenDetail, detailHeaderTableFields, detailHeaderTableRows, isAutoSampForm, isSpcSchemeForm, isWideBizForm, isTreeTypeForm, isSchemeCylinder, sigmaConfigModel, onSigmaConfigConfirm, activeFormSections, isQmsFlowForm, entryCat, entryCats, entryCatRows, entryMethods, entryPickCat, entryStamp, entryResultText, entryFocusItem, entryCatSubmitted, entryMethodTab, entryDescOpen, entryMethodDetail, entryMethodVerOptions, entryOnVersion, entryMats, entryMatSelected, entryMatScan, entryMatScanRef, onEntryMatScan, removeEntryMats, entryExtraFiles, onEntryExtraFile, removeEntryExtraFile, entryInstruments, entryInstrumentOptions, entrySpectra, removeEntrySpectrum, openEntryInherit, entryInheritVisible, entryInheritPickVisible, entryInheritSampleNo, entryInheritPickNo, entryInheritSampleLabel, entryInheritCats, entryInheritMode, entryInheritQ, entryInheritQueryTick, entryInheritPickRows, openEntryInheritPick, confirmEntryInheritPick, clearEntryInheritSample, entryInheritApplySample, entryInheritSrcRow, entryInheritCatOpts, entryInheritPreviewRows, entryInheritAllChecked, entryInheritSomeChecked, entryInheritToggleCat, entryInheritToggleAll, confirmEntryInherit, openEntrySpecPick, entrySpecVisible, entrySpecQuery, entrySpecFiles, entrySpecChecked, entrySpecBatches, entrySpecCols, entrySpecDraft, entrySpecFillCol, entrySpecFillAll, entrySpecAutoFill, confirmEntrySpecPick, openEntryChromPick, entryChromVisible, entryChromFilters, entryChromKey, entryChromList, entryChromColumnOptions, entryChromFilterHint, entryChromRtCols, entryChromRtStructMap, entryChromPickCell, entryChromCellText, ENTRY_CHROM_STAT_FIELDS, entryChromParamNames, entryChromCols, entryChromDraft, entryChromChecked, entryChromAllChecked, entryChromIndeterminate, toggleEntryChromAll, setEntryChromChecked, entryChromAutoFill, entryChromFillByTime, entryChromClearGrid, confirmEntryChromPick, cancelEntryChromPick, entryPubParams, entryPubCols, entryPubCell, entrySetPubCell, entrySampParams, entrySampCols, entryCell, entrySetCell, entryLimitText, entryQuickExpandAll, entryQuickFilledCount, entryCategoryId, entryCategoryKw, filteredEntryCategories, spcProcessId, spcProcessKw, filteredSpcProcesses, activeChartTab, spcChartCards, envStat, costPivot, costFlowDlg, COST_DIMS, COST_MEASURES, inspRpt, inspDetailDlg, INSP_MEASURES, inspDimChoices, inspColChoices, openInspPick, inspClearPick, inspItemOptions, inspResultText, inspDragStart, inspDragOver, inspDragDrop, inspDragEnd, inspRemoveDim, inspAddDim, inspRptSwitch, inspRptQuery, inspRptReset, inspRptExport, inspOpenDetail, inspRptRowClass, costFlowOpts, costDragStart, costDragOver, costDragDrop, costDragEnd, costRemoveDim, costAddDim, costPivotReset, costPivotQuery, costPivotRowClass, costOpenFlow, costPivotExport, batchTrace, batchRelAddLine, batchRelCopyLine, batchRelDelLine, envStatNames, envStatItemOptions, envStatOnName, envStatQuery, envStatReset, envStatOpenSet, envStatSaveSet, envStatOpenSamples, envStatExport, treeListId, treeListKw, filteredTreeListNodes, onTreeListOp, waitSampInnerTab, waitSampSampleRows, waitSampSampleSelected, waitSampItemRows, waitSampItemSelected, waitSampSchemeItemCount, waitSampTempItemCount, waitSampItemSourceLabel, addWaitSampSample, refreshWaitSampCodes, removeWaitSampSamples, addWaitSampItem, removeWaitSampItems, recheckSampleRows, disposeDetailRows, disposeDetailSelected, initDisposeDetailRows, batchDisposeReceive, mrbWritebackVisible, saveMrbWriteback, mrbWriteback, disposeDetailVisible, disposeDetailViewRows, DRIFT_PAGE, DRIFT_TR_OPTS, DRIFT_INSP_OPTS, driftFormTab, driftImpurityRows, driftRrtRows, driftRrtSelected, driftNewUCL, driftNewLCL, driftFilterMin, driftFilterMax, driftMatRows, driftColRows, addDriftImpurity, removeDriftImpurity, addDriftRrtRule, removeDriftRrtRule, removeDriftRrtRules, addDriftMat, removeDriftMat, addDriftCol, removeDriftCol, driftMatOptions, onDriftMatPick, driftColTypeOptions, onDriftMainPeak, driftPointRows, schemeInnerTab, qrConfigInnerTab, qrFieldRows, qrFieldSelected, qrTemplateFileOptions, removeQrConfigFields, schemeQualRows, schemeQuantRows, schemeQualSelected, schemeQuantSelected, schemePointRows, schemeMatRows, schemeCustRows, schemeSuppRows, schemeMediaRows, schemeItemDrawerVisible, schemeItemDrawerKind, schemeItemDrawerQ, schemeItemDrawerTick, schemeItemDrawerRows, schemeItemDrawerSelected, openSchemeItemDrawer, confirmSchemeItemDrawer, removeSchemeRows, schemeRelDrawerVisible, schemeRelDrawerKind, schemeRelDrawerTitle, schemeRelDrawerRows, schemeRelDrawerColumns, schemeRelDrawerSelected, schemeRelDrawerTableRef, schemeRelDrawerRowKey, onSchemeRelDrawerSelect, clearSchemeRelDrawerSelect, openSchemeRelDrawer, confirmSchemeRelDrawer, resetSchemeRelDrawerQ, schemeRelDrawerQ, schemeRelDrawerTick, addSchemeMedium, schemeLimitOps, openSchemeUnitDrawer, openItemUomUnitDrawer, onSchemeFnChange, schemePointSelected, schemeMatSelected, schemeCustSelected, schemeSuppSelected, removeSchemeRelRows, schemeQualEnumDrawerVisible, schemeQualEnumDraft, schemeQualEnumSelected, schemeQualEnumEnableOther, openSchemeQualEnumDrawer, addSchemeQualEnumItem, removeSchemeQualEnumItems, confirmSchemeQualEnumDrawer, renumberSchemeQualEnum, sampInnerTab, sampInspectTypes, sampRuleRows, sampRuleSelected, sampMatRows, sampMatSelected, sampFormulaVisible, sampFormulaValue, onSampTypeChange, isSampRuleFirst, isSampRuleLast, normalizeSampRuleFixed, removeSampRuleRow, removeSampMatRows, openSampFormula, insertSampFormulaFn, confirmSampFormula, validateSampRules, addSampRuleRow, removeSampRuleRows, autoSampDetailRows, autoSampDetailSelected, autoSampPickVisible, autoSampPickKind, autoSampPickTitle, autoSampPickQ, autoSampPickTick, autoSampPickRows, autoSampPickColumns, autoSampPickMulti, autoSampPickCurrent, autoSampPickSelected, openAutoSampPick, resetAutoSampPickQ, confirmAutoSampPick, copyAutoSampDetail, validateAutoSampDetails, addAutoSampDetail, removeAutoSampDetails, inspMethodPublicParams, inspMethodSampleParams, inspMethodPublicSelected, inspMethodSampleSelected, inspMethodInnerTab, inspMethodMatRows, inspMethodMatSelected, inspMethodMatCatRows, inspMethodMatCatSelected, METHOD_MAT_SRCS, methodMatSrc, onMethodMatSrcTab, openMethodMatSupp, openMethodMatUnit, removeInspMethodMats, addInspMethodMatCat, copyInspMethodMatCat, removeInspMethodMatCats, openMethodMatCatMat, clearMethodMatCatMat, openMethodMatCatCat, clearMethodMatCatCat, methodVerVisible, methodVerTitle, methodVerRows, methodVerCount, openMethodVerDetail, onInspMethodFile, inspParamDrawerVisible, inspParamDrawerQ, inspParamDrawerTick, inspParamDrawerRows, inspParamDrawerSelected, openInspParamDrawer, resetInspParamDrawerQ, confirmInspParamDrawer, removeInspMethodParams, onInspMethodPublicToggle, onInspMethodPublicTimesChange, inspCatInstrumentTypeOptions, INSP_CAT_ATTRS, inspItemUnitDrawerVisible, inspItemUnitDrawerTitle, inspItemUnitDrawerQ, inspItemUnitDrawerTick, inspItemUnitDrawerRows, inspItemUnitDrawerCurrent, inspItemUnitDrawerSelectedKey, inspItemUnitTableRef, inspItemUnitRowKey, selectInspItemUnitRow, onInspItemUnitRowClick, onInspItemUnitCurrentChange, clearInspItemUnitDrawer, openInspItemUnitDrawer, confirmInspItemUnitDrawer, poMatPool, formLineSelected, dispatchAuditVisible, dispatchAuditRow, dispatchAuditForm, splitVisible, splitRow, splitForm, splitLines, splitLineSelected, splitNeedsOrder, splitShowPreDoc, splitShowSoShipPreDocs, splitShowSoPreoutPrepDoc, splitPreDocRequired, splitShowPo, onSplitOrderTypeChange, openSplitPicker, settleVisible, settleRows, settleForm, totalSettleQty, totalSettleFee, openSettleModal, onSettleOk, secondaryAssignVisible, secondaryAssignRow, secondaryAssignForm, resetSecondaryAssignForm, onSecondaryAssignOk, assignVisible, assignRow, assignForm, assignCarriers, assignVehicles, assignTrailers, activeFormFields, activeFormLineFields, formLineEmptyText, formLineRows, formCatRows, formCatSelected, onDispatchCatAction, formInstRows, formInstSelected, onDispatchInstAction, onGsDragStart, onGsDrop, onFormLineSelectChange,
+      formVisible, formMode, formDialogTitle, formDialogWidth, formSwitch, formModel, formFieldTipOpen, setFormFieldTip, toggleFormFieldTip, isInspMethodForm, isInspSchemeForm, isQrConfigForm, isDriftRuleForm, isInspProjectCategoryForm, isSampSchemeForm, isFullscreenBizForm, isFullscreenDetail, detailHeaderTableFields, detailHeaderTableRows, isAutoSampForm, isSpcSchemeForm, isWideBizForm, isTreeTypeForm, isSchemeCylinder, sigmaConfigModel, onSigmaConfigConfirm, activeFormSections, isQmsFlowForm, entryCat, entryCats, entryCatRows, entryMethods, entryPickCat, entryStamp, entryResultText, entryFocusItem, entryCatSubmitted, entryMethodTab, entryDescOpen, entryMethodDetail, entryMethodVerOptions, entryOnVersion, entryMats, entryMatSelected, entryMatScan, entryMatScanRef, onEntryMatScan, removeEntryMats, entryExtraFiles, onEntryExtraFile, removeEntryExtraFile, entryInstruments, entryInstrumentOptions, entrySpectra, removeEntrySpectrum, openEntryInherit, entryInheritVisible, entryInheritPickVisible, entryInheritSampleNo, entryInheritPickNo, entryInheritSampleLabel, entryInheritCats, entryInheritMode, entryInheritQ, entryInheritQueryTick, entryInheritPickRows, openEntryInheritPick, confirmEntryInheritPick, clearEntryInheritSample, entryInheritApplySample, entryInheritSrcRow, entryInheritCatOpts, entryInheritPreviewRows, entryInheritAllChecked, entryInheritSomeChecked, entryInheritToggleCat, entryInheritToggleAll, confirmEntryInherit, openEntrySpecPick, entrySpecVisible, entrySpecQuery, entrySpecFiles, entrySpecChecked, entrySpecBatches, entrySpecCols, entrySpecDraft, entrySpecFillCol, entrySpecFillAll, entrySpecAutoFill, confirmEntrySpecPick, openEntryChromPick, entryChromVisible, entryChromFilters, entryChromKey, entryChromList, entryChromColumnOptions, entryChromFilterHint, entryChromRtCols, entryChromRtStructMap, entryChromPickCell, entryChromCellText, ENTRY_CHROM_STAT_FIELDS, entryChromParamNames, entryChromCols, entryChromDraft, entryChromChecked, entryChromAllChecked, entryChromIndeterminate, toggleEntryChromAll, setEntryChromChecked, entryChromAutoFill, entryChromFillByTime, entryChromClearGrid, confirmEntryChromPick, cancelEntryChromPick, entryPubParams, entryPubCols, entryPubCell, entrySetPubCell, entrySampParams, entrySampCols, entryCell, entrySetCell, entryLimitText, entryQuickExpandAll, entryQuickFilledCount, entryCategoryId, entryCategoryKw, filteredEntryCategories, spcProcessId, spcProcessKw, filteredSpcProcesses, activeChartTab, spcChartCards, envStat, costPivot, costFlowDlg, COST_DIMS, COST_MEASURES, inspRpt, inspDetailDlg, INSP_MEASURES, qr, QR_TABS, QR_TAG_FIELDS, qrDef, qrOptions, qrOpenPick, qrClearPick, qrApplyPick, qrQuery, qrReset, qrOnTab, qrCards, qrGroups, qrExport, inspDimChoices, inspColChoices, openInspPick, inspClearPick, inspTypeOptions, inspKindOptions, inspItemOptions, inspResultText, inspDragStart, inspDragOver, inspDragDrop, inspDragEnd, inspRemoveDim, inspAddDim, inspRptQuery, inspRptReset, inspRptExport, inspOpenDetail, inspRptRowClass, costFlowOpts, costDragStart, costDragOver, costDragDrop, costDragEnd, costRemoveDim, costAddDim, costPivotReset, costPivotQuery, costPivotRowClass, costOpenFlow, costPivotExport, batchTrace, batchRelAddLine, batchRelCopyLine, batchRelDelLine, envStatNames, envStatItemOptions, envStatOnName, envStatQuery, envStatReset, envStatOpenSet, envStatSaveSet, envStatOpenSamples, envStatExport, treeListId, treeListKw, filteredTreeListNodes, onTreeListOp, waitSampInnerTab, waitSampSampleRows, waitSampSampleSelected, waitSampItemRows, waitSampItemSelected, waitSampSchemeItemCount, waitSampTempItemCount, waitSampItemSourceLabel, addWaitSampSample, refreshWaitSampCodes, removeWaitSampSamples, addWaitSampItem, removeWaitSampItems, recheckSampleRows, disposeDetailRows, disposeDetailSelected, initDisposeDetailRows, batchDisposeReceive, mrbWritebackVisible, saveMrbWriteback, mrbWriteback, disposeDetailVisible, disposeDetailViewRows, DRIFT_PAGE, DRIFT_TR_OPTS, DRIFT_INSP_OPTS, driftFormTab, driftImpurityRows, driftRrtRows, driftRrtSelected, driftNewUCL, driftNewLCL, driftFilterMin, driftFilterMax, driftMatRows, driftColRows, addDriftImpurity, removeDriftImpurity, addDriftRrtRule, removeDriftRrtRule, removeDriftRrtRules, addDriftMat, removeDriftMat, addDriftCol, removeDriftCol, driftMatOptions, onDriftMatPick, driftColTypeOptions, onDriftMainPeak, driftPointRows, schemeInnerTab, qrConfigInnerTab, qrFieldRows, qrFieldSelected, qrTemplateFileOptions, removeQrConfigFields, schemeQualRows, schemeQuantRows, schemeQualSelected, schemeQuantSelected, schemePointRows, schemeMatRows, schemeCustRows, schemeSuppRows, schemeMediaRows, schemeItemDrawerVisible, schemeItemDrawerKind, schemeItemDrawerQ, schemeItemDrawerTick, schemeItemDrawerRows, schemeItemDrawerSelected, openSchemeItemDrawer, confirmSchemeItemDrawer, removeSchemeRows, schemeRelDrawerVisible, schemeRelDrawerKind, schemeRelDrawerTitle, schemeRelDrawerRows, schemeRelDrawerColumns, schemeRelDrawerSelected, schemeRelDrawerTableRef, schemeRelDrawerRowKey, onSchemeRelDrawerSelect, clearSchemeRelDrawerSelect, openSchemeRelDrawer, confirmSchemeRelDrawer, resetSchemeRelDrawerQ, schemeRelDrawerQ, schemeRelDrawerTick, addSchemeMedium, schemeLimitOps, openSchemeUnitDrawer, openItemUomUnitDrawer, onSchemeFnChange, schemePointSelected, schemeMatSelected, schemeCustSelected, schemeSuppSelected, removeSchemeRelRows, schemeQualEnumDrawerVisible, schemeQualEnumDraft, schemeQualEnumSelected, schemeQualEnumEnableOther, openSchemeQualEnumDrawer, addSchemeQualEnumItem, removeSchemeQualEnumItems, confirmSchemeQualEnumDrawer, renumberSchemeQualEnum, sampInnerTab, sampInspectTypes, sampRuleRows, sampRuleSelected, sampMatRows, sampMatSelected, sampFormulaVisible, sampFormulaValue, onSampTypeChange, isSampRuleFirst, isSampRuleLast, normalizeSampRuleFixed, removeSampRuleRow, removeSampMatRows, openSampFormula, insertSampFormulaFn, confirmSampFormula, validateSampRules, addSampRuleRow, removeSampRuleRows, autoSampDetailRows, autoSampDetailSelected, autoSampPickVisible, autoSampPickKind, autoSampPickTitle, autoSampPickQ, autoSampPickTick, autoSampPickRows, autoSampPickColumns, autoSampPickMulti, autoSampPickCurrent, autoSampPickSelected, openAutoSampPick, resetAutoSampPickQ, confirmAutoSampPick, copyAutoSampDetail, validateAutoSampDetails, addAutoSampDetail, removeAutoSampDetails, inspMethodPublicParams, inspMethodSampleParams, inspMethodPublicSelected, inspMethodSampleSelected, inspMethodInnerTab, inspMethodMatRows, inspMethodMatSelected, inspMethodMatCatRows, inspMethodMatCatSelected, METHOD_MAT_SRCS, methodMatSrc, onMethodMatSrcTab, openMethodMatSupp, openMethodMatUnit, removeInspMethodMats, addInspMethodMatCat, copyInspMethodMatCat, removeInspMethodMatCats, openMethodMatCatMat, clearMethodMatCatMat, openMethodMatCatCat, clearMethodMatCatCat, methodVerVisible, methodVerTitle, methodVerRows, methodVerCount, openMethodVerDetail, onInspMethodFile, inspParamDrawerVisible, inspParamDrawerQ, inspParamDrawerTick, inspParamDrawerRows, inspParamDrawerSelected, openInspParamDrawer, resetInspParamDrawerQ, confirmInspParamDrawer, removeInspMethodParams, onInspMethodPublicToggle, onInspMethodPublicTimesChange, inspCatInstrumentTypeOptions, INSP_CAT_ATTRS, inspItemUnitDrawerVisible, inspItemUnitDrawerTitle, inspItemUnitDrawerQ, inspItemUnitDrawerTick, inspItemUnitDrawerRows, inspItemUnitDrawerCurrent, inspItemUnitDrawerSelectedKey, inspItemUnitTableRef, inspItemUnitRowKey, selectInspItemUnitRow, onInspItemUnitRowClick, onInspItemUnitCurrentChange, clearInspItemUnitDrawer, openInspItemUnitDrawer, confirmInspItemUnitDrawer, poMatPool, formLineSelected, dispatchAuditVisible, dispatchAuditRow, dispatchAuditForm, splitVisible, splitRow, splitForm, splitLines, splitLineSelected, splitNeedsOrder, splitShowPreDoc, splitShowSoShipPreDocs, splitShowSoPreoutPrepDoc, splitPreDocRequired, splitShowPo, onSplitOrderTypeChange, openSplitPicker, settleVisible, settleRows, settleForm, totalSettleQty, totalSettleFee, openSettleModal, onSettleOk, secondaryAssignVisible, secondaryAssignRow, secondaryAssignForm, resetSecondaryAssignForm, onSecondaryAssignOk, assignVisible, assignRow, assignForm, assignCarriers, assignVehicles, assignTrailers, activeFormFields, activeFormLineFields, formLineEmptyText, formLineRows, formCatRows, formCatSelected, onDispatchCatAction, formInstRows, formInstSelected, onDispatchInstAction, onGsDragStart, onGsDrop, onFormLineSelectChange,
       kpiCfgVisible, kpiGrades, kpiGradeSel, kpiProjects, kpiProjSel, kpiScoreVisible, kpiScoreReadonly, kpiScoreVendor, kpiScoreProjects, kpiScoreExplain, kpiScoreRemark, kpiScoreTotal, kpiScoreGrade, kpiVendorRows, kpiVendorCols, kpiVendorSel,
       kpiFlowVisible, kpiFlowRow, kpiFlowNodes, kpiFlowStamp, kpiFlowStampClass,
       qcInspectVisible, qcInspectRow, qcInspectForm,
       detailVisible, detailDialogTitle, detailRow, detailRowFiltered, activeDetailFields, detailLineFields, detailLineRows, detailLineSelected, detailEnrouteRows, detailPhotos, detailSignature,
-      ledgerInspHeadFields, ledgerInspVisible, ledgerInspTab, ledgerInspRow, ledgerInspQual, ledgerInspQuant, ledgerInspRaw, ledgerInspQualSel, ledgerInspQuantSel, ledgerInspAbnText, openLedgerInspDetail, ledgerChangeVisible, ledgerChangeRows, ledgerChangePaged, ledgerChangePage, ledgerChangePageSize, openLedgerChangeDetail,
+      ledgerInspHeadFields, ledgerInspVisible, ledgerInspTab, ledgerInspRow, ledgerInspQual, ledgerInspQuant, ledgerInspRaw, ledgerInspQualSel, ledgerInspQuantSel, ledgerInspAbnText, ledgerDevTag, ledgerAbnText, ledgerAbnGroups, openLedgerInspDetail, ledgerChangeVisible, ledgerChangeRows, ledgerChangePaged, ledgerChangePage, ledgerChangePageSize, openLedgerChangeDetail,
       batchVisible, batchTitle, batchForm, batchLines, batchSelected, batchFieldSource, batchCtx, isBatchFieldLocked, batchLockedDisplay, batchSelectOptions, resetBatchCtx, onDetailLineRowAction,
       craftVisible, craftProcVisible, craftProcForm, craftTitle, craftKw, craftZoom, craftLocked, craftNodes, filteredCraftProcs, craftEdgeLines,
       openCraftProc, onCraftProcOk,
@@ -49047,7 +49712,7 @@ const app = createApp({
       prodPickLotVisible, prodPickLotTitle, prodPickLotHead, prodPickLotRows, hasProdPickLotDetails, formatProdPickLotsText, openProdPickLotDetail,
       dictTypeKw, dictTypeId, dictTypeTitle, filteredDictTypeTree, dictTypeCollapsed, dictTypeFormVisible, dictTypeFormMode, dictTypeForm,
       visibleTypeFormFields, dictTypeOptions,
-      onSelectMenu, onTabChange, onQuery, onResetQuery, onToolbar, onTreeToolbar, demoMenuTreeData, onTagMenuTreeChange, onRowOp, onFormLineAction, formLineActionList, onFormBarcodeAction, onFormOk, onFormDraft, onFormFooter, onQcInspectSave, onSplitOk, onDispatchAuditOk, onAssignOk, onAssignVehicleChange, tagClass, displayTagValue, isStatusTagField, isPresentTagValue, arrowDetailPairs, formatMatUomRatioDisplay, isDateTimeField, colMinWidth, formLineColMinWidth, fitColWidth, colMaxWidth, isFormFieldVisible, isFormFieldRequired, ratioFieldKey, isBatchFieldRequired, dispatchNeedsOrderNo, isFormFieldLocked, isFormLineFieldLocked, isFormPickerDisabled, formPickerPlaceholder, onFormPickerClear, isDetailLineRowActionVisible, visibleRowOps, rowOpDisabledReason, canEditTankArch, onTankArchDetailEdit, onBizLink, isBizLinkField, isDetailTagField, detailFieldLabel, detailDisplayValue, maskIdCard, removeFormLine, clonePoInFormLineForNewLot, refreshPoInFormLineNos, removeMatMediumPick, matInfoText, formFieldOptions, formSelectOptions, formSelectAllState, toggleFormSelectAll, formLineSelectOptions, prodRetBatchOptions, countWhLotOptions, isProdFormLotField, isCountManageRow, resolveWhBizType, isWaybillPage, usesErpLineNoCol, isPoNoticePage, isProdIssuePage, isDirectXferPage, isProdWhPage, prodAppMeta, isLoadPage, loadPageMeta, loadWhBizMeta, isWhLineClosePage, isOsPoPage, isWhNoticePage, isCsRecvPage, isBcSerialPage, isBcLineFormPage, onBcFormLineBarcodeEnter, syncSerialSplitRemain, syncSerialMergeRemain, isCsRetPage, isCsWhPage, demoCarrierName, demoCarrierDispatcher,
+      onSelectMenu, openQualityCockpit, cmp, cmpFiltered, cmpPageRows, cmpPageSelected, cmpIndex, onCmpSelect, cmpReset, cmpExport, onTabChange, onQuery, onResetQuery, onToolbar, onTreeToolbar, demoMenuTreeData, onTagMenuTreeChange, onRowOp, onFormLineAction, formLineActionList, onFormBarcodeAction, onFormOk, onFormDraft, onFormFooter, onQcInspectSave, onSplitOk, onDispatchAuditOk, onAssignOk, onAssignVehicleChange, tagClass, displayTagValue, isStatusTagField, isPresentTagValue, arrowDetailPairs, formatMatUomRatioDisplay, isDateTimeField, colMinWidth, formLineColMinWidth, fitColWidth, colMaxWidth, isFormFieldVisible, isFormFieldRequired, ratioFieldKey, isBatchFieldRequired, dispatchNeedsOrderNo, isFormFieldLocked, isFormLineFieldLocked, isFormPickerDisabled, formPickerPlaceholder, onFormPickerClear, isDetailLineRowActionVisible, visibleRowOps, rowOpDisabledReason, canEditTankArch, onTankArchDetailEdit, onBizLink, isBizLinkField, isDetailTagField, detailFieldLabel, detailDisplayValue, maskIdCard, removeFormLine, clonePoInFormLineForNewLot, refreshPoInFormLineNos, removeMatMediumPick, matInfoText, formFieldOptions, formSelectOptions, formSelectAllState, toggleFormSelectAll, formLineSelectOptions, prodRetBatchOptions, countWhLotOptions, isProdFormLotField, isCountManageRow, resolveWhBizType, isWaybillPage, usesErpLineNoCol, isPoNoticePage, isProdIssuePage, isDirectXferPage, isProdWhPage, prodAppMeta, isLoadPage, loadPageMeta, loadWhBizMeta, isWhLineClosePage, isOsPoPage, isWhNoticePage, isCsRecvPage, isBcSerialPage, isBcLineFormPage, onBcFormLineBarcodeEnter, syncSerialSplitRemain, syncSerialMergeRemain, isCsRetPage, isCsWhPage, demoCarrierName, demoCarrierDispatcher,
       selectDictType, toggleDictTypeNode, openDictTypeForm, onDictTypeFormOk, removeDictType, addrPopoverField,
       resetDemoStore, storeTick, isDemoImageUpload, demoSpectrumImgSrc, qrIssueSpectrumFormFields,
       openPicker, onPickerOk, onGenerateBatch, onBatchDeleteLines, onBatchOk, refreshSerialExpire,

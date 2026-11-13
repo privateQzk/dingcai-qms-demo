@@ -488,6 +488,11 @@ window.WMS_PAGE_CONFIGS = {
               "index": "mrb-review",
               "pageId": "mrb-review",
               "titleRed": true
+            },
+            {
+              "title": "不合格处置汇总表",
+              "index": "unqual-sum",
+              "pageId": "unqual-sum"
             }
           ]
         },
@@ -695,6 +700,11 @@ window.WMS_PAGE_CONFIGS = {
           "pageId": "np-0211-02"
         },
         {
+          "title": "品质专项任务",
+          "index": "np-0218-01",
+          "pageId": "np-0218-01"
+        },
+        {
           "title": "客户质量管理",
           "index": "g-质量管理/客户质量管理",
           "children": [
@@ -815,13 +825,18 @@ window.WMS_PAGE_CONFIGS = {
           ]
         },
         {
-          "title": "检验报表",
-          "index": "g-质量管理/检验报表",
+          "title": "质量统计",
+          "index": "g-质量管理/质量统计",
           "children": [
             {
-              "title": "多维报表",
+              "title": "检验合格率多维表",
               "index": "np-0417-01",
               "pageId": "np-0417-01"
+            },
+            {
+              "title": "品质综合报表",
+              "index": "np-0417-02",
+              "pageId": "np-0417-02"
             }
           ]
         }
@@ -1277,6 +1292,16 @@ window.WMS_PAGE_CONFIGS = {
           "title": "看板设置",
           "index": "np-0701-01",
           "pageId": "np-0701-01"
+        },
+        {
+          "title": "质量数字驾驶舱",
+          "index": "np-0702-01",
+          "pageId": "np-0702-01"
+        },
+        {
+          "title": "检验数字驾驶舱",
+          "index": "np-0702-02",
+          "pageId": "np-0702-02"
         }
       ]
     }
@@ -7876,6 +7901,13 @@ window.WMS_PAGE_CONFIGS = {
                "width": 120
              },
              {
+               "title": "供应商COA",
+               "field": "供应商COA",
+               "name": "供应商COA",
+               "width": 160,
+               "slot": "files"
+             },
+             {
                "title": "报检件数",
                "field": "报检件数",
                "name": "报检件数",
@@ -8054,7 +8086,7 @@ window.WMS_PAGE_CONFIGS = {
                "title": "操作",
                "field": "操作",
                "name": "操作",
-               "width": 160,
+               "width": 220,
                "fixed": "right"
              }
            ],
@@ -8119,6 +8151,9 @@ window.WMS_PAGE_CONFIGS = {
              },
              {
                "name": "编辑"
+             },
+             {
+               "name": "上传报告"
              }
            ],
            "formLayout": "insp-order",
@@ -8241,6 +8276,12 @@ window.WMS_PAGE_CONFIGS = {
                    "required": false,
                    "ctrl": "输入",
                    "labelRed": true
+                 },
+                 {
+                   "name": "供应商COA",
+                   "type": "readonly",
+                   "required": false,
+                   "ctrl": "由行操作「上传报告」上传后反写附件名"
                  },
                  {
                    "name": "报检件数",
@@ -8412,6 +8453,12 @@ window.WMS_PAGE_CONFIGS = {
                "required": false,
                "ctrl": "输入",
                "labelRed": true
+             },
+             {
+               "name": "供应商COA",
+               "type": "readonly",
+               "required": false,
+               "ctrl": "由行操作「上传报告」上传后反写附件名"
              },
              {
                "name": "报检件数",
@@ -48251,12 +48298,6 @@ window.WMS_PAGE_CONFIGS = {
               "width": 100
             },
             {
-              "title": "领用人",
-              "field": "领用人",
-              "name": "领用人",
-              "width": 80
-            },
-            {
               "title": "报检类型",
               "field": "报检类型",
               "name": "报检类型",
@@ -48607,12 +48648,6 @@ window.WMS_PAGE_CONFIGS = {
               "width": 130
             },
             {
-              "title": "领用人",
-              "field": "领用人",
-              "name": "领用人",
-              "width": 90
-            },
-            {
               "title": "变更备注",
               "field": "变更备注",
               "name": "变更备注",
@@ -48825,6 +48860,12 @@ window.WMS_PAGE_CONFIGS = {
               "width": 110
             },
             {
+              "title": "需求完成时间",
+              "field": "需求完成时间",
+              "name": "需求完成时间",
+              "width": 160
+            },
+            {
               "field": "预计完成时间",
               "title": "预计完成时间",
               "name": "预计完成时间",
@@ -48947,8 +48988,7 @@ window.WMS_PAGE_CONFIGS = {
               "options": [
                 "—",
                 "合格",
-                "不合格",
-                "异常"
+                "不合格"
               ]
             },
             {
@@ -49183,6 +49223,12 @@ window.WMS_PAGE_CONFIGS = {
               "width": 110
             },
             {
+              "title": "需求完成时间",
+              "field": "需求完成时间",
+              "name": "需求完成时间",
+              "width": 160
+            },
+            {
               "field": "预计完成时间",
               "title": "预计完成时间",
               "name": "预计完成时间",
@@ -49299,8 +49345,7 @@ window.WMS_PAGE_CONFIGS = {
               "options": [
                 "—",
                 "合格",
-                "不合格",
-                "异常"
+                "不合格"
               ]
             },
             {
@@ -49535,6 +49580,12 @@ window.WMS_PAGE_CONFIGS = {
               "width": 110
             },
             {
+              "title": "需求完成时间",
+              "field": "需求完成时间",
+              "name": "需求完成时间",
+              "width": 160
+            },
+            {
               "field": "预计完成时间",
               "title": "预计完成时间",
               "name": "预计完成时间",
@@ -49651,8 +49702,7 @@ window.WMS_PAGE_CONFIGS = {
               "options": [
                 "—",
                 "合格",
-                "不合格",
-                "异常"
+                "不合格"
               ]
             },
             {
@@ -49857,6 +49907,12 @@ window.WMS_PAGE_CONFIGS = {
               "width": 110
             },
             {
+              "title": "需求完成时间",
+              "field": "需求完成时间",
+              "name": "需求完成时间",
+              "width": 160
+            },
+            {
               "field": "预计完成时间",
               "title": "预计完成时间",
               "name": "预计完成时间",
@@ -49967,8 +50023,7 @@ window.WMS_PAGE_CONFIGS = {
               "options": [
                 "—",
                 "合格",
-                "不合格",
-                "异常"
+                "不合格"
               ]
             },
             {
@@ -50149,6 +50204,12 @@ window.WMS_PAGE_CONFIGS = {
               "width": 110
             },
             {
+              "title": "需求完成时间",
+              "field": "需求完成时间",
+              "name": "需求完成时间",
+              "width": 160
+            },
+            {
               "field": "预计完成时间",
               "title": "预计完成时间",
               "name": "预计完成时间",
@@ -50265,8 +50326,7 @@ window.WMS_PAGE_CONFIGS = {
               "options": [
                 "—",
                 "合格",
-                "不合格",
-                "异常"
+                "不合格"
               ]
             },
             {
@@ -50453,6 +50513,12 @@ window.WMS_PAGE_CONFIGS = {
               "width": 110
             },
             {
+              "title": "需求完成时间",
+              "field": "需求完成时间",
+              "name": "需求完成时间",
+              "width": 160
+            },
+            {
               "field": "预计完成时间",
               "title": "预计完成时间",
               "name": "预计完成时间",
@@ -50563,8 +50629,7 @@ window.WMS_PAGE_CONFIGS = {
               "options": [
                 "—",
                 "合格",
-                "不合格",
-                "异常"
+                "不合格"
               ]
             },
             {
@@ -50775,6 +50840,12 @@ window.WMS_PAGE_CONFIGS = {
               "width": 110
             },
             {
+              "title": "需求完成时间",
+              "field": "需求完成时间",
+              "name": "需求完成时间",
+              "width": 160
+            },
+            {
               "field": "预计完成时间",
               "title": "预计完成时间",
               "name": "预计完成时间",
@@ -50885,8 +50956,7 @@ window.WMS_PAGE_CONFIGS = {
               "options": [
                 "—",
                 "合格",
-                "不合格",
-                "异常"
+                "不合格"
               ]
             },
             {
@@ -51097,6 +51167,12 @@ window.WMS_PAGE_CONFIGS = {
               "width": 110
             },
             {
+              "title": "需求完成时间",
+              "field": "需求完成时间",
+              "name": "需求完成时间",
+              "width": 160
+            },
+            {
               "field": "预计完成时间",
               "title": "预计完成时间",
               "name": "预计完成时间",
@@ -51207,8 +51283,7 @@ window.WMS_PAGE_CONFIGS = {
               "options": [
                 "—",
                 "合格",
-                "不合格",
-                "异常"
+                "不合格"
               ]
             },
             {
@@ -51437,6 +51512,12 @@ window.WMS_PAGE_CONFIGS = {
               "width": 100
             },
             {
+              "title": "需求完成时间",
+              "field": "需求完成时间",
+              "name": "需求完成时间",
+              "width": 160
+            },
+            {
               "title": "预计完成时间",
               "field": "预计完成时间",
               "name": "预计完成时间",
@@ -51565,8 +51646,7 @@ window.WMS_PAGE_CONFIGS = {
               "options": [
                 "—",
                 "合格",
-                "不合格",
-                "异常"
+                "不合格"
               ]
             },
             {
@@ -52165,6 +52245,11 @@ window.WMS_PAGE_CONFIGS = {
               "fixed": "left"
             },
             {
+              "field": "单据状态",
+              "title": "单据状态",
+              "width": 90
+            },
+            {
               "field": "DN单号",
               "title": "DN单号",
               "width": 130
@@ -52451,6 +52536,11 @@ window.WMS_PAGE_CONFIGS = {
               "width": 110
             },
             {
+              "field": "检查结果",
+              "title": "检查结果",
+              "width": 90
+            },
+            {
               "field": "附件",
               "title": "附件",
               "width": 220,
@@ -52485,6 +52575,11 @@ window.WMS_PAGE_CONFIGS = {
               "field": "关闭时间",
               "title": "关闭时间",
               "width": 160
+            },
+            {
+              "field": "客诉单号",
+              "title": "客诉单号",
+              "width": 140
             }
           ],
           "rowOps": []
@@ -56721,12 +56816,9 @@ window.WMS_PAGE_CONFIGS = {
               "name": "投诉类型",
               "type": "select",
               "options": [
-                "交期",
-                "质量",
-                "包装",
-                "物流",
-                "服务",
-                "其他"
+                "客户抱怨",
+                "客户投诉",
+                "客户退货"
               ]
             },
             {
@@ -56818,6 +56910,12 @@ window.WMS_PAGE_CONFIGS = {
               "field": "客诉单号",
               "name": "客诉单号",
               "width": 100
+            },
+            {
+              "title": "关联单据",
+              "field": "关联单据",
+              "name": "关联单据",
+              "width": 140
             },
             {
               "title": "客户名称",
@@ -56931,12 +57029,9 @@ window.WMS_PAGE_CONFIGS = {
               "name": "投诉类型",
               "type": "select",
               "options": [
-                "交期",
-                "质量",
-                "包装",
-                "物流",
-                "服务",
-                "其他"
+                "客户抱怨",
+                "客户投诉",
+                "客户退货"
               ]
             },
             {
@@ -57030,6 +57125,12 @@ window.WMS_PAGE_CONFIGS = {
               "field": "客诉单号",
               "name": "客诉单号",
               "width": 100
+            },
+            {
+              "title": "关联单据",
+              "field": "关联单据",
+              "name": "关联单据",
+              "width": 140
             },
             {
               "title": "客户名称",
@@ -57161,6 +57262,13 @@ window.WMS_PAGE_CONFIGS = {
           "placeholder": "000001（自动生成）"
         },
         {
+          "name": "关联单据",
+          "type": "picker",
+          "required": false,
+          "ctrl": "点击右侧抽屉弹出「发货OQC台账」列表，单选；回填单据号，并带出客户名称、物料信息、批号；保存后把客诉单号反写到该OQC任务「客诉单号」",
+          "placeholder": "点击选择发货OQC任务，单选"
+        },
+        {
           "name": "客户名称",
           "type": "picker",
           "required": true,
@@ -57178,12 +57286,9 @@ window.WMS_PAGE_CONFIGS = {
           "required": true,
           "filterable": true,
           "options": [
-            "交期",
-            "质量",
-            "包装",
-            "物流",
-            "服务",
-            "其他"
+            "客户抱怨",
+            "客户投诉",
+            "客户退货"
           ],
           "placeholder": "模糊下拉，字典表"
         },
@@ -82152,15 +82257,15 @@ window.WMS_PAGE_CONFIGS = {
     },
     "np-0417-01": {
       "id": "np-0417-01",
-      "title": "多维报表",
+      "title": "检验合格率多维表",
       "groups": [
         "质量管理",
-        "检验报表"
+        "质量统计"
       ],
       "breadcrumb": [
         "质量管理",
-        "检验报表",
-        "多维报表"
+        "质量统计",
+        "检验合格率多维表"
       ],
       "tabs": [],
       "tabViews": [
@@ -82184,6 +82289,420 @@ window.WMS_PAGE_CONFIGS = {
       "formLineFields": [],
       "formLineActions": [],
       "layout": "insp-report"
+    },
+    "np-0417-02": {
+      "id": "np-0417-02",
+      "title": "品质综合报表",
+      "groups": [
+        "质量管理",
+        "质量统计"
+      ],
+      "breadcrumb": [
+        "质量管理",
+        "质量统计",
+        "品质综合报表"
+      ],
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [],
+          "queryDefault": [],
+          "queryMore": [],
+          "toolbar": [],
+          "columns": [],
+          "rowOps": []
+        }
+      ],
+      "formFields": [],
+      "detailFields": [],
+      "hasEdit": false,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true,
+      "formLineFields": [],
+      "formLineActions": [],
+      "layout": "quality-report"
+    },
+    "np-0218-01": {
+      "id": "np-0218-01",
+      "title": "品质专项任务",
+      "groups": [
+        "质量管理"
+      ],
+      "breadcrumb": [
+        "质量管理",
+        "品质专项任务"
+      ],
+      "tabs": [
+        {
+          "name": "tab-1",
+          "label": "待处理"
+        },
+        {
+          "name": "tab-2",
+          "label": "已完成"
+        }
+      ],
+      "tabViews": [
+        {
+          "name": "tab-1",
+          "label": "待处理",
+          "queryFields": [
+            {
+              "name": "任务单号",
+              "type": "input"
+            },
+            {
+              "name": "任务类型",
+              "type": "select",
+              "filterable": true,
+              "options": [
+                "客户专项整改",
+                "体系审核准备",
+                "质量提升专项",
+                "客诉专项分析",
+                "其他"
+              ]
+            },
+            {
+              "name": "负责人",
+              "type": "input"
+            },
+            {
+              "name": "计划完成时间",
+              "type": "daterange"
+            },
+            {
+              "name": "任务描述",
+              "type": "input"
+            },
+            {
+              "name": "创建人",
+              "type": "input"
+            },
+            {
+              "name": "创建时间",
+              "type": "daterange"
+            }
+          ],
+          "queryDefault": [
+            "任务单号",
+            "任务类型",
+            "负责人",
+            "计划完成时间"
+          ],
+          "queryMore": [
+            "任务描述",
+            "创建人",
+            "创建时间"
+          ],
+          "toolbar": [
+            {
+              "name": "新增",
+              "type": "primary"
+            },
+            {
+              "name": "批量删除",
+              "type": "danger"
+            },
+            {
+              "name": "导出数据",
+              "type": "default"
+            }
+          ],
+          "columns": [
+            {
+              "title": "任务单号",
+              "field": "任务单号",
+              "name": "任务单号",
+              "width": 100
+            },
+            {
+              "title": "任务类型",
+              "field": "任务类型",
+              "name": "任务类型",
+              "width": 120
+            },
+            {
+              "title": "任务描述",
+              "field": "任务描述",
+              "name": "任务描述",
+              "width": 240
+            },
+            {
+              "title": "计划完成时间",
+              "field": "计划完成时间",
+              "name": "计划完成时间",
+              "width": 120
+            },
+            {
+              "title": "逾期状态",
+              "field": "逾期状态",
+              "name": "逾期状态",
+              "width": 90
+            },
+            {
+              "title": "任务附件",
+              "field": "任务附件",
+              "name": "任务附件",
+              "width": 180,
+              "slot": "files"
+            },
+            {
+              "title": "负责人",
+              "field": "负责人",
+              "name": "负责人",
+              "width": 140
+            },
+            {
+              "title": "创建时间",
+              "field": "创建时间",
+              "name": "创建时间",
+              "width": 160
+            },
+            {
+              "title": "创建人",
+              "field": "创建人",
+              "name": "创建人",
+              "width": 90
+            },
+            {
+              "title": "操作",
+              "field": "_actions",
+              "name": "操作",
+              "width": 150,
+              "fixed": "right",
+              "slot": "row_actions"
+            }
+          ],
+          "rowOps": [
+            {
+              "name": "任务处理",
+              "desc": "打开任务处理弹窗；提交后移入已完成"
+            },
+            {
+              "name": "编辑",
+              "desc": "编辑当前待处理任务；任务单号不可改"
+            }
+          ]
+        },
+        {
+          "name": "tab-2",
+          "label": "已完成",
+          "queryFields": [
+            {
+              "name": "任务单号",
+              "type": "input"
+            },
+            {
+              "name": "任务类型",
+              "type": "select",
+              "filterable": true,
+              "options": [
+                "客户专项整改",
+                "体系审核准备",
+                "质量提升专项",
+                "客诉专项分析",
+                "其他"
+              ]
+            },
+            {
+              "name": "负责人",
+              "type": "input"
+            },
+            {
+              "name": "计划完成时间",
+              "type": "daterange"
+            },
+            {
+              "name": "任务描述",
+              "type": "input"
+            },
+            {
+              "name": "创建人",
+              "type": "input"
+            },
+            {
+              "name": "创建时间",
+              "type": "daterange"
+            },
+            {
+              "name": "完成人",
+              "type": "input"
+            },
+            {
+              "name": "完成时间",
+              "type": "daterange"
+            }
+          ],
+          "queryDefault": [
+            "任务单号",
+            "任务类型",
+            "负责人",
+            "计划完成时间"
+          ],
+          "queryMore": [
+            "任务描述",
+            "创建人",
+            "创建时间",
+            "完成人",
+            "完成时间"
+          ],
+          "toolbar": [
+            {
+              "name": "导出数据",
+              "type": "default"
+            }
+          ],
+          "columns": [
+            {
+              "title": "任务单号",
+              "field": "任务单号",
+              "name": "任务单号",
+              "width": 100
+            },
+            {
+              "title": "任务类型",
+              "field": "任务类型",
+              "name": "任务类型",
+              "width": 120
+            },
+            {
+              "title": "任务描述",
+              "field": "任务描述",
+              "name": "任务描述",
+              "width": 240
+            },
+            {
+              "title": "计划完成时间",
+              "field": "计划完成时间",
+              "name": "计划完成时间",
+              "width": 120
+            },
+            {
+              "title": "逾期状态",
+              "field": "逾期状态",
+              "name": "逾期状态",
+              "width": 90
+            },
+            {
+              "title": "任务附件",
+              "field": "任务附件",
+              "name": "任务附件",
+              "width": 180,
+              "slot": "files"
+            },
+            {
+              "title": "负责人",
+              "field": "负责人",
+              "name": "负责人",
+              "width": 140
+            },
+            {
+              "title": "创建时间",
+              "field": "创建时间",
+              "name": "创建时间",
+              "width": 160
+            },
+            {
+              "title": "创建人",
+              "field": "创建人",
+              "name": "创建人",
+              "width": 90
+            },
+            {
+              "title": "任务完成描述",
+              "field": "任务完成描述",
+              "name": "任务完成描述",
+              "width": 240
+            },
+            {
+              "title": "完成文件",
+              "field": "完成文件",
+              "name": "完成文件",
+              "width": 180,
+              "slot": "files"
+            },
+            {
+              "title": "完成人",
+              "field": "完成人",
+              "name": "完成人",
+              "width": 90
+            },
+            {
+              "title": "完成时间",
+              "field": "完成时间",
+              "name": "完成时间",
+              "width": 160
+            }
+          ],
+          "rowOps": []
+        }
+      ],
+      "formFields": [
+        {
+          "name": "任务单号",
+          "type": "readonly",
+          "required": true,
+          "refreshable": true,
+          "ctrl": "系统自动生成",
+          "placeholder": "000001（自动生成）"
+        },
+        {
+          "name": "任务类型",
+          "type": "select",
+          "required": true,
+          "filterable": true,
+          "options": [
+            "客户专项整改",
+            "体系审核准备",
+            "质量提升专项",
+            "客诉专项分析",
+            "其他"
+          ],
+          "placeholder": "模糊下拉，字典表"
+        },
+        {
+          "name": "任务描述",
+          "type": "textarea",
+          "required": true,
+          "fullRow": true,
+          "placeholder": "输入"
+        },
+        {
+          "name": "计划完成时间",
+          "type": "date",
+          "required": true,
+          "placeholder": "下拉，年月日"
+        },
+        {
+          "name": "负责人",
+          "type": "select",
+          "required": true,
+          "multiple": true,
+          "filterable": true,
+          "placeholder": "模糊下拉，多选，用户列表"
+        },
+        {
+          "name": "任务附件",
+          "type": "upload",
+          "required": false,
+          "placeholder": "+点击上传"
+        }
+      ],
+      "detailFields": [],
+      "hasEdit": true,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true,
+      "formGridCols": 3,
+      "formDialogWidth": "min(1080px, 96vw)",
+      "hideFormSectionTitle": true,
+      "formOkText": "保存",
+      "formLineFields": [],
+      "formLineActions": []
     },
     "np-0501-01": {
       "id": "np-0501-01",
@@ -83030,6 +83549,68 @@ window.WMS_PAGE_CONFIGS = {
       "hasEdit": false,
       "hasDetail": false,
       "stub": true,
+      "formFlat": true,
+      "formLineFields": [],
+      "formLineActions": []
+    },
+    "np-0702-01": {
+      "id": "np-0702-01",
+      "title": "质量数字驾驶舱",
+      "groups": [
+        "BI驾驶舱"
+      ],
+      "breadcrumb": [
+        "BI驾驶舱",
+        "质量数字驾驶舱"
+      ],
+      "layout": "quality-cockpit",
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [],
+          "toolbar": [],
+          "columns": [],
+          "rowOps": []
+        }
+      ],
+      "formFields": [],
+      "detailFields": [],
+      "hasEdit": false,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true,
+      "formLineFields": [],
+      "formLineActions": []
+    },
+"np-0702-02": {
+      "id": "np-0702-02",
+      "title": "检验数字驾驶舱",
+      "groups": [
+        "BI驾驶舱"
+      ],
+      "breadcrumb": [
+        "BI驾驶舱",
+        "检验数字驾驶舱"
+      ],
+      "layout": "quality-cockpit",
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [],
+          "toolbar": [],
+          "columns": [],
+          "rowOps": []
+        }
+      ],
+      "formFields": [],
+      "detailFields": [],
+      "hasEdit": false,
+      "hasDetail": false,
+      "stub": false,
       "formFlat": true,
       "formLineFields": [],
       "formLineActions": []
@@ -84874,7 +85455,332 @@ window.WMS_PAGE_CONFIGS = {
       "formFlat": true,
       "formLineFields": [],
       "formLineActions": []
-    }
+    },
+    "unqual-sum": {
+      "id": "unqual-sum",
+      "title": "不合格处置汇总表",
+      "groups": [
+            "质量管理",
+            "不合格处置"
+      ],
+      "breadcrumb": [
+            "质量管理",
+            "不合格处置",
+            "不合格处置汇总表"
+      ],
+      "tabs": [
+            {
+                  "name": "tab-1",
+                  "label": "已处理汇总"
+            }
+      ],
+      "tabViews": [
+            {
+                  "name": "tab-1",
+                  "label": "已处理汇总",
+                  "queryFields": [
+                        {
+                              "name": "处置单号",
+                              "type": "input"
+                        },
+                        {
+                              "name": "处置类型",
+                              "type": "select",
+                              "options": [
+                                    "采购来料不合格",
+                                    "生产过程不合格",
+                                    "生产物料不合格",
+                                    "研发不合格处置"
+                              ]
+                        },
+                        {
+                              "name": "物料名称",
+                              "type": "input"
+                        },
+                        {
+                              "name": "MRB状态",
+                              "type": "select",
+                              "options": [
+                                    "未评审",
+                                    "评审中",
+                                    "已评审"
+                              ]
+                        },
+                        {
+                              "name": "处置人",
+                              "type": "input"
+                        },
+                        {
+                              "name": "处置时间",
+                              "type": "daterange"
+                        }
+                  ],
+                  "queryDefault": [
+                        "处置单号",
+                        "处置类型",
+                        "物料名称",
+                        "MRB状态"
+                  ],
+                  "queryMore": [
+                        "处置人",
+                        "处置时间"
+                  ],
+                  "toolbar": [
+                        {
+                              "name": "导出",
+                              "type": "default",
+                              "desc": "见通用功能规范 · 导出数据弹窗"
+                        }
+                  ],
+                  "columns": [
+                        {
+                              "title": "处置类型",
+                              "field": "处置类型",
+                              "name": "处置类型",
+                              "width": 120,
+                              "fixed": "left"
+                        },
+                        {
+                              "title": "处置单号",
+                              "field": "处置单号",
+                              "name": "处置单号",
+                              "width": 150
+                        },
+                        {
+                              "title": "MRB状态",
+                              "field": "MRB状态",
+                              "name": "MRB状态",
+                              "width": 100
+                        },
+                        {
+                              "title": "处置方式",
+                              "field": "处置方式",
+                              "name": "处置方式",
+                              "width": 110
+                        },
+                        {
+                              "title": "处置详情",
+                              "field": "处置详情",
+                              "name": "处置详情",
+                              "width": 150
+                        },
+                        {
+                              "title": "异常描述",
+                              "field": "异常描述",
+                              "name": "异常描述",
+                              "width": 180
+                        },
+                        {
+                              "title": "物料编码",
+                              "field": "物料编码",
+                              "name": "物料编码",
+                              "width": 130
+                        },
+                        {
+                              "title": "物料名称",
+                              "field": "物料名称",
+                              "name": "物料名称",
+                              "width": 170
+                        },
+                        {
+                              "title": "物料规格",
+                              "field": "物料规格",
+                              "name": "物料规格",
+                              "width": 100
+                        },
+                        {
+                              "title": "物料种类",
+                              "field": "物料种类",
+                              "name": "物料种类",
+                              "width": 110
+                        },
+                        {
+                              "title": "供应商编码",
+                              "field": "供应商编码",
+                              "name": "供应商编码",
+                              "width": 110
+                        },
+                        {
+                              "title": "供应商名称",
+                              "field": "供应商名称",
+                              "name": "供应商名称",
+                              "width": 170
+                        },
+                        {
+                              "title": "客户编码",
+                              "field": "客户编码",
+                              "name": "客户编码",
+                              "width": 110
+                        },
+                        {
+                              "title": "客户名称",
+                              "field": "客户名称",
+                              "name": "客户名称",
+                              "width": 170
+                        },
+                        {
+                              "title": "产线名称",
+                              "field": "产线名称",
+                              "name": "产线名称",
+                              "width": 120
+                        },
+                        {
+                              "title": "车间名称",
+                              "field": "车间名称",
+                              "name": "车间名称",
+                              "width": 120
+                        },
+                        {
+                              "title": "优先级",
+                              "field": "优先级",
+                              "name": "优先级",
+                              "width": 80
+                        },
+                        {
+                              "title": "研发项目号",
+                              "field": "研发项目号",
+                              "name": "研发项目号",
+                              "width": 140
+                        },
+                        {
+                              "title": "采样点",
+                              "field": "采样点",
+                              "name": "采样点",
+                              "width": 130
+                        },
+                        {
+                              "title": "报检批号",
+                              "field": "报检批号",
+                              "name": "报检批号",
+                              "width": 120
+                        },
+                        {
+                              "title": "报检件数",
+                              "field": "报检件数",
+                              "name": "报检件数",
+                              "width": 90
+                        },
+                        {
+                              "title": "取样件数",
+                              "field": "取样件数",
+                              "name": "取样件数",
+                              "width": 90
+                        },
+                        {
+                              "title": "应取样件数",
+                              "field": "应取样件数",
+                              "name": "应取样件数",
+                              "width": 100
+                        },
+                        {
+                              "title": "已取样件数",
+                              "field": "已取样件数",
+                              "name": "已取样件数",
+                              "width": 100
+                        },
+                        {
+                              "title": "合格样品件数",
+                              "field": "合格样品件数",
+                              "name": "合格样品件数",
+                              "width": 110
+                        },
+                        {
+                              "title": "不合格样品件数",
+                              "field": "不合格样品件数",
+                              "name": "不合格样品件数",
+                              "width": 120
+                        },
+                        {
+                              "title": "到货通知单号",
+                              "field": "到货通知单号",
+                              "name": "到货通知单号",
+                              "width": 140
+                        },
+                        {
+                              "title": "SAP生产订单号",
+                              "field": "SAP生产订单号",
+                              "name": "SAP生产订单号",
+                              "width": 140
+                        },
+                        {
+                              "title": "报检单号",
+                              "field": "报检单号",
+                              "name": "报检单号",
+                              "width": 140
+                        },
+                        {
+                              "title": "复核说明",
+                              "field": "复核说明",
+                              "name": "复核说明",
+                              "width": 160
+                        },
+                        {
+                              "title": "复核时间",
+                              "field": "复核时间",
+                              "name": "复核时间",
+                              "width": 160
+                        },
+                        {
+                              "title": "复核人",
+                              "field": "复核人",
+                              "name": "复核人",
+                              "width": 90
+                        },
+                        {
+                              "title": "问题大类",
+                              "field": "问题大类",
+                              "name": "问题大类",
+                              "width": 110
+                        },
+                        {
+                              "title": "问题小类",
+                              "field": "问题小类",
+                              "name": "问题小类",
+                              "width": 110
+                        },
+                        {
+                              "title": "问题描述",
+                              "field": "问题描述",
+                              "name": "问题描述",
+                              "width": 180
+                        },
+                        {
+                              "title": "处置说明",
+                              "field": "处置说明",
+                              "name": "处置说明",
+                              "width": 180
+                        },
+                        {
+                              "title": "处置报告",
+                              "field": "处置报告",
+                              "name": "处置报告",
+                              "width": 160
+                        },
+                        {
+                              "title": "处置时间",
+                              "field": "处置时间",
+                              "name": "处置时间",
+                              "width": 160
+                        },
+                        {
+                              "title": "处置人",
+                              "field": "处置人",
+                              "name": "处置人",
+                              "width": 90
+                        }
+                  ],
+                  "rowOps": []
+            }
+      ],
+      "formFields": [],
+      "detailFields": [],
+      "hasEdit": false,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true,
+      "formLineFields": [],
+      "formLineActions": []
+}
   },
   "pageList": [
     {
@@ -91451,6 +92357,13 @@ window.WMS_PAGE_CONFIGS = {
               "width": 120
             },
             {
+              "title": "供应商COA",
+              "field": "供应商COA",
+              "name": "供应商COA",
+              "width": 160,
+              "slot": "files"
+            },
+            {
               "title": "报检件数",
               "field": "报检件数",
               "name": "报检件数",
@@ -91629,7 +92542,7 @@ window.WMS_PAGE_CONFIGS = {
               "title": "操作",
               "field": "操作",
               "name": "操作",
-              "width": 160,
+              "width": 220,
               "fixed": "right"
             }
           ],
@@ -91694,6 +92607,9 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
               "name": "编辑"
+            },
+            {
+              "name": "上传报告"
             }
           ],
           "formLayout": "insp-order",
@@ -91816,6 +92732,12 @@ window.WMS_PAGE_CONFIGS = {
                   "required": false,
                   "ctrl": "输入",
                   "labelRed": true
+                },
+                {
+                  "name": "供应商COA",
+                  "type": "readonly",
+                  "required": false,
+                  "ctrl": "由行操作「上传报告」上传后反写附件名"
                 },
                 {
                   "name": "报检件数",
@@ -91987,6 +92909,12 @@ window.WMS_PAGE_CONFIGS = {
               "required": false,
               "ctrl": "输入",
               "labelRed": true
+            },
+            {
+              "name": "供应商COA",
+              "type": "readonly",
+              "required": false,
+              "ctrl": "由行操作「上传报告」上传后反写附件名"
             },
             {
               "name": "报检件数",
@@ -98910,12 +99838,6 @@ window.WMS_PAGE_CONFIGS = {
               "width": 100
             },
             {
-              "title": "领用人",
-              "field": "领用人",
-              "name": "领用人",
-              "width": 80
-            },
-            {
               "title": "报检类型",
               "field": "报检类型",
               "name": "报检类型",
@@ -99266,12 +100188,6 @@ window.WMS_PAGE_CONFIGS = {
               "width": 130
             },
             {
-              "title": "领用人",
-              "field": "领用人",
-              "name": "领用人",
-              "width": 90
-            },
-            {
               "title": "变更备注",
               "field": "变更备注",
               "name": "变更备注",
@@ -99484,6 +100400,12 @@ window.WMS_PAGE_CONFIGS = {
                   "width": 110
                 },
                 {
+                  "title": "需求完成时间",
+                  "field": "需求完成时间",
+                  "name": "需求完成时间",
+                  "width": 160
+                },
+                {
                   "field": "预计完成时间",
                   "title": "预计完成时间",
                   "name": "预计完成时间",
@@ -99606,8 +100528,7 @@ window.WMS_PAGE_CONFIGS = {
                   "options": [
                     "—",
                     "合格",
-                    "不合格",
-                    "异常"
+                    "不合格"
                   ]
                 },
                 {
@@ -99842,6 +100763,12 @@ window.WMS_PAGE_CONFIGS = {
                   "width": 110
                 },
                 {
+                  "title": "需求完成时间",
+                  "field": "需求完成时间",
+                  "name": "需求完成时间",
+                  "width": 160
+                },
+                {
                   "field": "预计完成时间",
                   "title": "预计完成时间",
                   "name": "预计完成时间",
@@ -99958,8 +100885,7 @@ window.WMS_PAGE_CONFIGS = {
                   "options": [
                     "—",
                     "合格",
-                    "不合格",
-                    "异常"
+                    "不合格"
                   ]
                 },
                 {
@@ -100194,6 +101120,12 @@ window.WMS_PAGE_CONFIGS = {
                   "width": 110
                 },
                 {
+                  "title": "需求完成时间",
+                  "field": "需求完成时间",
+                  "name": "需求完成时间",
+                  "width": 160
+                },
+                {
                   "field": "预计完成时间",
                   "title": "预计完成时间",
                   "name": "预计完成时间",
@@ -100310,8 +101242,7 @@ window.WMS_PAGE_CONFIGS = {
                   "options": [
                     "—",
                     "合格",
-                    "不合格",
-                    "异常"
+                    "不合格"
                   ]
                 },
                 {
@@ -100516,6 +101447,12 @@ window.WMS_PAGE_CONFIGS = {
                   "width": 110
                 },
                 {
+                  "title": "需求完成时间",
+                  "field": "需求完成时间",
+                  "name": "需求完成时间",
+                  "width": 160
+                },
+                {
                   "field": "预计完成时间",
                   "title": "预计完成时间",
                   "name": "预计完成时间",
@@ -100626,8 +101563,7 @@ window.WMS_PAGE_CONFIGS = {
                   "options": [
                     "—",
                     "合格",
-                    "不合格",
-                    "异常"
+                    "不合格"
                   ]
                 },
                 {
@@ -100808,6 +101744,12 @@ window.WMS_PAGE_CONFIGS = {
                   "width": 110
                 },
                 {
+                  "title": "需求完成时间",
+                  "field": "需求完成时间",
+                  "name": "需求完成时间",
+                  "width": 160
+                },
+                {
                   "field": "预计完成时间",
                   "title": "预计完成时间",
                   "name": "预计完成时间",
@@ -100924,8 +101866,7 @@ window.WMS_PAGE_CONFIGS = {
                   "options": [
                     "—",
                     "合格",
-                    "不合格",
-                    "异常"
+                    "不合格"
                   ]
                 },
                 {
@@ -101112,6 +102053,12 @@ window.WMS_PAGE_CONFIGS = {
                   "width": 110
                 },
                 {
+                  "title": "需求完成时间",
+                  "field": "需求完成时间",
+                  "name": "需求完成时间",
+                  "width": 160
+                },
+                {
                   "field": "预计完成时间",
                   "title": "预计完成时间",
                   "name": "预计完成时间",
@@ -101222,8 +102169,7 @@ window.WMS_PAGE_CONFIGS = {
                   "options": [
                     "—",
                     "合格",
-                    "不合格",
-                    "异常"
+                    "不合格"
                   ]
                 },
                 {
@@ -101434,6 +102380,12 @@ window.WMS_PAGE_CONFIGS = {
                   "width": 110
                 },
                 {
+                  "title": "需求完成时间",
+                  "field": "需求完成时间",
+                  "name": "需求完成时间",
+                  "width": 160
+                },
+                {
                   "field": "预计完成时间",
                   "title": "预计完成时间",
                   "name": "预计完成时间",
@@ -101544,8 +102496,7 @@ window.WMS_PAGE_CONFIGS = {
                   "options": [
                     "—",
                     "合格",
-                    "不合格",
-                    "异常"
+                    "不合格"
                   ]
                 },
                 {
@@ -101756,6 +102707,12 @@ window.WMS_PAGE_CONFIGS = {
                   "width": 110
                 },
                 {
+                  "title": "需求完成时间",
+                  "field": "需求完成时间",
+                  "name": "需求完成时间",
+                  "width": 160
+                },
+                {
                   "field": "预计完成时间",
                   "title": "预计完成时间",
                   "name": "预计完成时间",
@@ -101866,8 +102823,7 @@ window.WMS_PAGE_CONFIGS = {
                   "options": [
                     "—",
                     "合格",
-                    "不合格",
-                    "异常"
+                    "不合格"
                   ]
                 },
                 {
@@ -102096,6 +103052,12 @@ window.WMS_PAGE_CONFIGS = {
                   "width": 100
                 },
                 {
+                  "title": "需求完成时间",
+                  "field": "需求完成时间",
+                  "name": "需求完成时间",
+                  "width": 160
+                },
+                {
                   "title": "预计完成时间",
                   "field": "预计完成时间",
                   "name": "预计完成时间",
@@ -102224,8 +103186,7 @@ window.WMS_PAGE_CONFIGS = {
                   "options": [
                     "—",
                     "合格",
-                    "不合格",
-                    "异常"
+                    "不合格"
                   ]
                 },
                 {
@@ -102588,6 +103549,12 @@ window.WMS_PAGE_CONFIGS = {
                   "width": 110
                 },
                 {
+                  "title": "需求完成时间",
+                  "field": "需求完成时间",
+                  "name": "需求完成时间",
+                  "width": 160
+                },
+                {
                   "title": "预计完成时间",
                   "field": "预计完成时间",
                   "name": "预计完成时间",
@@ -102844,6 +103811,12 @@ window.WMS_PAGE_CONFIGS = {
                   "field": "取样人",
                   "name": "取样人",
                   "width": 110
+                },
+                {
+                  "title": "需求完成时间",
+                  "field": "需求完成时间",
+                  "name": "需求完成时间",
+                  "width": 160
                 },
                 {
                   "title": "预计完成时间",
@@ -103128,6 +104101,12 @@ window.WMS_PAGE_CONFIGS = {
                   "width": 110
                 },
                 {
+                  "title": "需求完成时间",
+                  "field": "需求完成时间",
+                  "name": "需求完成时间",
+                  "width": 160
+                },
+                {
                   "title": "预计完成时间",
                   "field": "预计完成时间",
                   "name": "预计完成时间",
@@ -103324,6 +104303,12 @@ window.WMS_PAGE_CONFIGS = {
                   "field": "取样人",
                   "name": "取样人",
                   "width": 110
+                },
+                {
+                  "title": "需求完成时间",
+                  "field": "需求完成时间",
+                  "name": "需求完成时间",
+                  "width": 160
                 },
                 {
                   "title": "预计完成时间",
@@ -103524,6 +104509,12 @@ window.WMS_PAGE_CONFIGS = {
                   "width": 110
                 },
                 {
+                  "title": "需求完成时间",
+                  "field": "需求完成时间",
+                  "name": "需求完成时间",
+                  "width": 160
+                },
+                {
                   "title": "预计完成时间",
                   "field": "预计完成时间",
                   "name": "预计完成时间",
@@ -103708,6 +104699,12 @@ window.WMS_PAGE_CONFIGS = {
                   "field": "取样人",
                   "name": "取样人",
                   "width": 110
+                },
+                {
+                  "title": "需求完成时间",
+                  "field": "需求完成时间",
+                  "name": "需求完成时间",
+                  "width": 160
                 },
                 {
                   "title": "预计完成时间",
@@ -103914,6 +104911,12 @@ window.WMS_PAGE_CONFIGS = {
                   "width": 110
                 },
                 {
+                  "title": "需求完成时间",
+                  "field": "需求完成时间",
+                  "name": "需求完成时间",
+                  "width": 160
+                },
+                {
                   "title": "预计完成时间",
                   "field": "预计完成时间",
                   "name": "预计完成时间",
@@ -104116,6 +105119,12 @@ window.WMS_PAGE_CONFIGS = {
                   "field": "取样人",
                   "name": "取样人",
                   "width": 110
+                },
+                {
+                  "title": "需求完成时间",
+                  "field": "需求完成时间",
+                  "name": "需求完成时间",
+                  "width": 160
                 },
                 {
                   "title": "预计完成时间",
@@ -104350,6 +105359,12 @@ window.WMS_PAGE_CONFIGS = {
                   "field": "取样人",
                   "name": "取样人",
                   "width": 100
+                },
+                {
+                  "title": "需求完成时间",
+                  "field": "需求完成时间",
+                  "name": "需求完成时间",
+                  "width": 160
                 },
                 {
                   "title": "预计完成时间",
@@ -136541,6 +137556,11 @@ window.WMS_PAGE_CONFIGS = {
               "fixed": "left"
             },
             {
+              "field": "单据状态",
+              "title": "单据状态",
+              "width": 90
+            },
+            {
               "field": "DN单号",
               "title": "DN单号",
               "width": 130
@@ -136827,6 +137847,11 @@ window.WMS_PAGE_CONFIGS = {
               "width": 110
             },
             {
+              "field": "检查结果",
+              "title": "检查结果",
+              "width": 90
+            },
+            {
               "field": "附件",
               "title": "附件",
               "width": 220,
@@ -136861,6 +137886,11 @@ window.WMS_PAGE_CONFIGS = {
               "field": "关闭时间",
               "title": "关闭时间",
               "width": 160
+            },
+            {
+              "field": "客诉单号",
+              "title": "客诉单号",
+              "width": 140
             }
           ],
           "rowOps": []
@@ -141097,12 +142127,9 @@ window.WMS_PAGE_CONFIGS = {
               "name": "投诉类型",
               "type": "select",
               "options": [
-                "交期",
-                "质量",
-                "包装",
-                "物流",
-                "服务",
-                "其他"
+                "客户抱怨",
+                "客户投诉",
+                "客户退货"
               ]
             },
             {
@@ -141194,6 +142221,12 @@ window.WMS_PAGE_CONFIGS = {
               "field": "客诉单号",
               "name": "客诉单号",
               "width": 100
+            },
+            {
+              "title": "关联单据",
+              "field": "关联单据",
+              "name": "关联单据",
+              "width": 140
             },
             {
               "title": "客户名称",
@@ -141307,12 +142340,9 @@ window.WMS_PAGE_CONFIGS = {
               "name": "投诉类型",
               "type": "select",
               "options": [
-                "交期",
-                "质量",
-                "包装",
-                "物流",
-                "服务",
-                "其他"
+                "客户抱怨",
+                "客户投诉",
+                "客户退货"
               ]
             },
             {
@@ -141406,6 +142436,12 @@ window.WMS_PAGE_CONFIGS = {
               "field": "客诉单号",
               "name": "客诉单号",
               "width": 100
+            },
+            {
+              "title": "关联单据",
+              "field": "关联单据",
+              "name": "关联单据",
+              "width": 140
             },
             {
               "title": "客户名称",
@@ -141537,6 +142573,13 @@ window.WMS_PAGE_CONFIGS = {
           "placeholder": "000001（自动生成）"
         },
         {
+          "name": "关联单据",
+          "type": "picker",
+          "required": false,
+          "ctrl": "点击右侧抽屉弹出「发货OQC台账」列表，单选；回填单据号，并带出客户名称、物料信息、批号；保存后把客诉单号反写到该OQC任务「客诉单号」",
+          "placeholder": "点击选择发货OQC任务，单选"
+        },
+        {
           "name": "客户名称",
           "type": "picker",
           "required": true,
@@ -141554,12 +142597,9 @@ window.WMS_PAGE_CONFIGS = {
           "required": true,
           "filterable": true,
           "options": [
-            "交期",
-            "质量",
-            "包装",
-            "物流",
-            "服务",
-            "其他"
+            "客户抱怨",
+            "客户投诉",
+            "客户退货"
           ],
           "placeholder": "模糊下拉，字典表"
         },
@@ -166983,15 +168023,15 @@ window.WMS_PAGE_CONFIGS = {
     },
     {
       "id": "np-0417-01",
-      "title": "多维报表",
+      "title": "检验合格率多维表",
       "groups": [
         "质量管理",
-        "检验报表"
+        "质量统计"
       ],
       "breadcrumb": [
         "质量管理",
-        "检验报表",
-        "多维报表"
+        "质量统计",
+        "检验合格率多维表"
       ],
       "tabs": [],
       "tabViews": [
@@ -167015,6 +168055,421 @@ window.WMS_PAGE_CONFIGS = {
       "formLineFields": [],
       "formLineActions": [],
       "layout": "insp-report"
+    },
+    {
+      "id": "np-0417-02",
+      "title": "品质综合报表",
+      "groups": [
+        "质量管理",
+        "质量统计"
+      ],
+      "breadcrumb": [
+        "质量管理",
+        "质量统计",
+        "品质综合报表"
+      ],
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [],
+          "queryDefault": [],
+          "queryMore": [],
+          "toolbar": [],
+          "columns": [],
+          "rowOps": []
+        }
+      ],
+      "formFields": [],
+      "detailFields": [],
+      "hasEdit": false,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true,
+      "formLineFields": [],
+      "formLineActions": [],
+      "layout": "quality-report"
+    },
+
+    {
+      "id": "np-0218-01",
+      "title": "品质专项任务",
+      "groups": [
+        "质量管理"
+      ],
+      "breadcrumb": [
+        "质量管理",
+        "品质专项任务"
+      ],
+      "tabs": [
+        {
+          "name": "tab-1",
+          "label": "待处理"
+        },
+        {
+          "name": "tab-2",
+          "label": "已完成"
+        }
+      ],
+      "tabViews": [
+        {
+          "name": "tab-1",
+          "label": "待处理",
+          "queryFields": [
+            {
+              "name": "任务单号",
+              "type": "input"
+            },
+            {
+              "name": "任务类型",
+              "type": "select",
+              "filterable": true,
+              "options": [
+                "客户专项整改",
+                "体系审核准备",
+                "质量提升专项",
+                "客诉专项分析",
+                "其他"
+              ]
+            },
+            {
+              "name": "负责人",
+              "type": "input"
+            },
+            {
+              "name": "计划完成时间",
+              "type": "daterange"
+            },
+            {
+              "name": "任务描述",
+              "type": "input"
+            },
+            {
+              "name": "创建人",
+              "type": "input"
+            },
+            {
+              "name": "创建时间",
+              "type": "daterange"
+            }
+          ],
+          "queryDefault": [
+            "任务单号",
+            "任务类型",
+            "负责人",
+            "计划完成时间"
+          ],
+          "queryMore": [
+            "任务描述",
+            "创建人",
+            "创建时间"
+          ],
+          "toolbar": [
+            {
+              "name": "新增",
+              "type": "primary"
+            },
+            {
+              "name": "批量删除",
+              "type": "danger"
+            },
+            {
+              "name": "导出数据",
+              "type": "default"
+            }
+          ],
+          "columns": [
+            {
+              "title": "任务单号",
+              "field": "任务单号",
+              "name": "任务单号",
+              "width": 100
+            },
+            {
+              "title": "任务类型",
+              "field": "任务类型",
+              "name": "任务类型",
+              "width": 120
+            },
+            {
+              "title": "任务描述",
+              "field": "任务描述",
+              "name": "任务描述",
+              "width": 240
+            },
+            {
+              "title": "计划完成时间",
+              "field": "计划完成时间",
+              "name": "计划完成时间",
+              "width": 120
+            },
+            {
+              "title": "逾期状态",
+              "field": "逾期状态",
+              "name": "逾期状态",
+              "width": 90
+            },
+            {
+              "title": "任务附件",
+              "field": "任务附件",
+              "name": "任务附件",
+              "width": 180,
+              "slot": "files"
+            },
+            {
+              "title": "负责人",
+              "field": "负责人",
+              "name": "负责人",
+              "width": 140
+            },
+            {
+              "title": "创建时间",
+              "field": "创建时间",
+              "name": "创建时间",
+              "width": 160
+            },
+            {
+              "title": "创建人",
+              "field": "创建人",
+              "name": "创建人",
+              "width": 90
+            },
+            {
+              "title": "操作",
+              "field": "_actions",
+              "name": "操作",
+              "width": 150,
+              "fixed": "right",
+              "slot": "row_actions"
+            }
+          ],
+          "rowOps": [
+            {
+              "name": "任务处理",
+              "desc": "打开任务处理弹窗；提交后移入已完成"
+            },
+            {
+              "name": "编辑",
+              "desc": "编辑当前待处理任务；任务单号不可改"
+            }
+          ]
+        },
+        {
+          "name": "tab-2",
+          "label": "已完成",
+          "queryFields": [
+            {
+              "name": "任务单号",
+              "type": "input"
+            },
+            {
+              "name": "任务类型",
+              "type": "select",
+              "filterable": true,
+              "options": [
+                "客户专项整改",
+                "体系审核准备",
+                "质量提升专项",
+                "客诉专项分析",
+                "其他"
+              ]
+            },
+            {
+              "name": "负责人",
+              "type": "input"
+            },
+            {
+              "name": "计划完成时间",
+              "type": "daterange"
+            },
+            {
+              "name": "任务描述",
+              "type": "input"
+            },
+            {
+              "name": "创建人",
+              "type": "input"
+            },
+            {
+              "name": "创建时间",
+              "type": "daterange"
+            },
+            {
+              "name": "完成人",
+              "type": "input"
+            },
+            {
+              "name": "完成时间",
+              "type": "daterange"
+            }
+          ],
+          "queryDefault": [
+            "任务单号",
+            "任务类型",
+            "负责人",
+            "计划完成时间"
+          ],
+          "queryMore": [
+            "任务描述",
+            "创建人",
+            "创建时间",
+            "完成人",
+            "完成时间"
+          ],
+          "toolbar": [
+            {
+              "name": "导出数据",
+              "type": "default"
+            }
+          ],
+          "columns": [
+            {
+              "title": "任务单号",
+              "field": "任务单号",
+              "name": "任务单号",
+              "width": 100
+            },
+            {
+              "title": "任务类型",
+              "field": "任务类型",
+              "name": "任务类型",
+              "width": 120
+            },
+            {
+              "title": "任务描述",
+              "field": "任务描述",
+              "name": "任务描述",
+              "width": 240
+            },
+            {
+              "title": "计划完成时间",
+              "field": "计划完成时间",
+              "name": "计划完成时间",
+              "width": 120
+            },
+            {
+              "title": "逾期状态",
+              "field": "逾期状态",
+              "name": "逾期状态",
+              "width": 90
+            },
+            {
+              "title": "任务附件",
+              "field": "任务附件",
+              "name": "任务附件",
+              "width": 180,
+              "slot": "files"
+            },
+            {
+              "title": "负责人",
+              "field": "负责人",
+              "name": "负责人",
+              "width": 140
+            },
+            {
+              "title": "创建时间",
+              "field": "创建时间",
+              "name": "创建时间",
+              "width": 160
+            },
+            {
+              "title": "创建人",
+              "field": "创建人",
+              "name": "创建人",
+              "width": 90
+            },
+            {
+              "title": "任务完成描述",
+              "field": "任务完成描述",
+              "name": "任务完成描述",
+              "width": 240
+            },
+            {
+              "title": "完成文件",
+              "field": "完成文件",
+              "name": "完成文件",
+              "width": 180,
+              "slot": "files"
+            },
+            {
+              "title": "完成人",
+              "field": "完成人",
+              "name": "完成人",
+              "width": 90
+            },
+            {
+              "title": "完成时间",
+              "field": "完成时间",
+              "name": "完成时间",
+              "width": 160
+            }
+          ],
+          "rowOps": []
+        }
+      ],
+      "formFields": [
+        {
+          "name": "任务单号",
+          "type": "readonly",
+          "required": true,
+          "refreshable": true,
+          "ctrl": "系统自动生成",
+          "placeholder": "000001（自动生成）"
+        },
+        {
+          "name": "任务类型",
+          "type": "select",
+          "required": true,
+          "filterable": true,
+          "options": [
+            "客户专项整改",
+            "体系审核准备",
+            "质量提升专项",
+            "客诉专项分析",
+            "其他"
+          ],
+          "placeholder": "模糊下拉，字典表"
+        },
+        {
+          "name": "任务描述",
+          "type": "textarea",
+          "required": true,
+          "fullRow": true,
+          "placeholder": "输入"
+        },
+        {
+          "name": "计划完成时间",
+          "type": "date",
+          "required": true,
+          "placeholder": "下拉，年月日"
+        },
+        {
+          "name": "负责人",
+          "type": "select",
+          "required": true,
+          "multiple": true,
+          "filterable": true,
+          "placeholder": "模糊下拉，多选，用户列表"
+        },
+        {
+          "name": "任务附件",
+          "type": "upload",
+          "required": false,
+          "placeholder": "+点击上传"
+        }
+      ],
+      "detailFields": [],
+      "hasEdit": true,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true,
+      "formGridCols": 3,
+      "formDialogWidth": "min(1080px, 96vw)",
+      "hideFormSectionTitle": true,
+      "formOkText": "保存",
+      "formLineFields": [],
+      "formLineActions": []
     },
     {
       "id": "np-0501-01",
@@ -167861,6 +169316,68 @@ window.WMS_PAGE_CONFIGS = {
       "hasEdit": false,
       "hasDetail": false,
       "stub": true,
+      "formFlat": true,
+      "formLineFields": [],
+      "formLineActions": []
+    },
+    {
+      "id": "np-0702-01",
+      "title": "质量数字驾驶舱",
+      "groups": [
+        "BI驾驶舱"
+      ],
+      "breadcrumb": [
+        "BI驾驶舱",
+        "质量数字驾驶舱"
+      ],
+      "layout": "quality-cockpit",
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [],
+          "toolbar": [],
+          "columns": [],
+          "rowOps": []
+        }
+      ],
+      "formFields": [],
+      "detailFields": [],
+      "hasEdit": false,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true,
+      "formLineFields": [],
+      "formLineActions": []
+    },
+    {
+      "id": "np-0702-02",
+      "title": "检验数字驾驶舱",
+      "groups": [
+        "BI驾驶舱"
+      ],
+      "breadcrumb": [
+        "BI驾驶舱",
+        "检验数字驾驶舱"
+      ],
+      "layout": "quality-cockpit",
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [],
+          "toolbar": [],
+          "columns": [],
+          "rowOps": []
+        }
+      ],
+      "formFields": [],
+      "detailFields": [],
+      "hasEdit": false,
+      "hasDetail": false,
+      "stub": false,
       "formFlat": true,
       "formLineFields": [],
       "formLineActions": []
@@ -168887,6 +170404,331 @@ window.WMS_PAGE_CONFIGS = {
       "formFlat": true,
       "formLineFields": [],
       "formLineActions": []
-    }
+    },
+    {
+      "id": "unqual-sum",
+      "title": "不合格处置汇总表",
+      "groups": [
+            "质量管理",
+            "不合格处置"
+      ],
+      "breadcrumb": [
+            "质量管理",
+            "不合格处置",
+            "不合格处置汇总表"
+      ],
+      "tabs": [
+            {
+                  "name": "tab-1",
+                  "label": "已处理汇总"
+            }
+      ],
+      "tabViews": [
+            {
+                  "name": "tab-1",
+                  "label": "已处理汇总",
+                  "queryFields": [
+                        {
+                              "name": "处置单号",
+                              "type": "input"
+                        },
+                        {
+                              "name": "处置类型",
+                              "type": "select",
+                              "options": [
+                                    "采购来料不合格",
+                                    "生产过程不合格",
+                                    "生产物料不合格",
+                                    "研发不合格处置"
+                              ]
+                        },
+                        {
+                              "name": "物料名称",
+                              "type": "input"
+                        },
+                        {
+                              "name": "MRB状态",
+                              "type": "select",
+                              "options": [
+                                    "未评审",
+                                    "评审中",
+                                    "已评审"
+                              ]
+                        },
+                        {
+                              "name": "处置人",
+                              "type": "input"
+                        },
+                        {
+                              "name": "处置时间",
+                              "type": "daterange"
+                        }
+                  ],
+                  "queryDefault": [
+                        "处置单号",
+                        "处置类型",
+                        "物料名称",
+                        "MRB状态"
+                  ],
+                  "queryMore": [
+                        "处置人",
+                        "处置时间"
+                  ],
+                  "toolbar": [
+                        {
+                              "name": "导出",
+                              "type": "default",
+                              "desc": "见通用功能规范 · 导出数据弹窗"
+                        }
+                  ],
+                  "columns": [
+                        {
+                              "title": "处置类型",
+                              "field": "处置类型",
+                              "name": "处置类型",
+                              "width": 120,
+                              "fixed": "left"
+                        },
+                        {
+                              "title": "处置单号",
+                              "field": "处置单号",
+                              "name": "处置单号",
+                              "width": 150
+                        },
+                        {
+                              "title": "MRB状态",
+                              "field": "MRB状态",
+                              "name": "MRB状态",
+                              "width": 100
+                        },
+                        {
+                              "title": "处置方式",
+                              "field": "处置方式",
+                              "name": "处置方式",
+                              "width": 110
+                        },
+                        {
+                              "title": "处置详情",
+                              "field": "处置详情",
+                              "name": "处置详情",
+                              "width": 150
+                        },
+                        {
+                              "title": "异常描述",
+                              "field": "异常描述",
+                              "name": "异常描述",
+                              "width": 180
+                        },
+                        {
+                              "title": "物料编码",
+                              "field": "物料编码",
+                              "name": "物料编码",
+                              "width": 130
+                        },
+                        {
+                              "title": "物料名称",
+                              "field": "物料名称",
+                              "name": "物料名称",
+                              "width": 170
+                        },
+                        {
+                              "title": "物料规格",
+                              "field": "物料规格",
+                              "name": "物料规格",
+                              "width": 100
+                        },
+                        {
+                              "title": "物料种类",
+                              "field": "物料种类",
+                              "name": "物料种类",
+                              "width": 110
+                        },
+                        {
+                              "title": "供应商编码",
+                              "field": "供应商编码",
+                              "name": "供应商编码",
+                              "width": 110
+                        },
+                        {
+                              "title": "供应商名称",
+                              "field": "供应商名称",
+                              "name": "供应商名称",
+                              "width": 170
+                        },
+                        {
+                              "title": "客户编码",
+                              "field": "客户编码",
+                              "name": "客户编码",
+                              "width": 110
+                        },
+                        {
+                              "title": "客户名称",
+                              "field": "客户名称",
+                              "name": "客户名称",
+                              "width": 170
+                        },
+                        {
+                              "title": "产线名称",
+                              "field": "产线名称",
+                              "name": "产线名称",
+                              "width": 120
+                        },
+                        {
+                              "title": "车间名称",
+                              "field": "车间名称",
+                              "name": "车间名称",
+                              "width": 120
+                        },
+                        {
+                              "title": "优先级",
+                              "field": "优先级",
+                              "name": "优先级",
+                              "width": 80
+                        },
+                        {
+                              "title": "研发项目号",
+                              "field": "研发项目号",
+                              "name": "研发项目号",
+                              "width": 140
+                        },
+                        {
+                              "title": "采样点",
+                              "field": "采样点",
+                              "name": "采样点",
+                              "width": 130
+                        },
+                        {
+                              "title": "报检批号",
+                              "field": "报检批号",
+                              "name": "报检批号",
+                              "width": 120
+                        },
+                        {
+                              "title": "报检件数",
+                              "field": "报检件数",
+                              "name": "报检件数",
+                              "width": 90
+                        },
+                        {
+                              "title": "取样件数",
+                              "field": "取样件数",
+                              "name": "取样件数",
+                              "width": 90
+                        },
+                        {
+                              "title": "应取样件数",
+                              "field": "应取样件数",
+                              "name": "应取样件数",
+                              "width": 100
+                        },
+                        {
+                              "title": "已取样件数",
+                              "field": "已取样件数",
+                              "name": "已取样件数",
+                              "width": 100
+                        },
+                        {
+                              "title": "合格样品件数",
+                              "field": "合格样品件数",
+                              "name": "合格样品件数",
+                              "width": 110
+                        },
+                        {
+                              "title": "不合格样品件数",
+                              "field": "不合格样品件数",
+                              "name": "不合格样品件数",
+                              "width": 120
+                        },
+                        {
+                              "title": "到货通知单号",
+                              "field": "到货通知单号",
+                              "name": "到货通知单号",
+                              "width": 140
+                        },
+                        {
+                              "title": "SAP生产订单号",
+                              "field": "SAP生产订单号",
+                              "name": "SAP生产订单号",
+                              "width": 140
+                        },
+                        {
+                              "title": "报检单号",
+                              "field": "报检单号",
+                              "name": "报检单号",
+                              "width": 140
+                        },
+                        {
+                              "title": "复核说明",
+                              "field": "复核说明",
+                              "name": "复核说明",
+                              "width": 160
+                        },
+                        {
+                              "title": "复核时间",
+                              "field": "复核时间",
+                              "name": "复核时间",
+                              "width": 160
+                        },
+                        {
+                              "title": "复核人",
+                              "field": "复核人",
+                              "name": "复核人",
+                              "width": 90
+                        },
+                        {
+                              "title": "问题大类",
+                              "field": "问题大类",
+                              "name": "问题大类",
+                              "width": 110
+                        },
+                        {
+                              "title": "问题小类",
+                              "field": "问题小类",
+                              "name": "问题小类",
+                              "width": 110
+                        },
+                        {
+                              "title": "问题描述",
+                              "field": "问题描述",
+                              "name": "问题描述",
+                              "width": 180
+                        },
+                        {
+                              "title": "处置说明",
+                              "field": "处置说明",
+                              "name": "处置说明",
+                              "width": 180
+                        },
+                        {
+                              "title": "处置报告",
+                              "field": "处置报告",
+                              "name": "处置报告",
+                              "width": 160
+                        },
+                        {
+                              "title": "处置时间",
+                              "field": "处置时间",
+                              "name": "处置时间",
+                              "width": 160
+                        },
+                        {
+                              "title": "处置人",
+                              "field": "处置人",
+                              "name": "处置人",
+                              "width": 90
+                        }
+                  ],
+                  "rowOps": []
+            }
+      ],
+      "formFields": [],
+      "detailFields": [],
+      "hasEdit": false,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true,
+      "formLineFields": [],
+      "formLineActions": []
+}
   ]
 };

@@ -165,12 +165,9 @@ window.WMS_DICT = (function () {
       ['PPE', '防护用品']
     ]))
     .concat(itemsOf('t14', [
-      ['DLV', '交期'],
-      ['QLT', '质量'],
-      ['PKG', '包装'],
-      ['LOG', '物流'],
-      ['SVC', '服务'],
-      ['OTH', '其他']
+      ['GRV', '客户抱怨'],
+      ['CPL', '客户投诉'],
+      ['RTN', '客户退货']
     ]))
     .concat(itemsOf('t15', [
       ['DLV', '时间交期'],
@@ -425,14 +422,30 @@ window.WMS_DICT = (function () {
       const exist = itemByKey[seed.id] || itemByKey[liveTypeId + '#' + seed.编码];
       if (exist) {
         exist.typeId = liveTypeId;
-        if (!exist.编码) exist.编码 = seed.编码;
-        if (!exist.名称) exist.名称 = seed.名称;
+        if (seed.typeId === 't14') {
+          exist.id = seed.id;
+          exist.编码 = seed.编码;
+          exist.名称 = seed.名称;
+        } else {
+          if (!exist.编码) exist.编码 = seed.编码;
+          if (!exist.名称) exist.名称 = seed.名称;
+        }
       } else {
         const row = Object.assign({}, seed, { typeId: liveTypeId });
         dict.main.push(row);
         itemByKey[row.id] = row;
       }
     });
+    if (byId.t14) {
+      const keepCc = {};
+      items.forEach(function (seed) { if (seed.typeId === 't14') keepCc[seed.id] = true; });
+      const ccTypeId = byId.t14.id;
+      dict.main = dict.main.filter(function (row) {
+        if (!row || row.typeId !== ccTypeId) return true;
+        if (keepCc[row.id]) return true;
+        return !/^t14-\d+$/.test(String(row.id || ''));
+      });
+    }
     return before !== JSON.stringify({ types: dict.types, main: dict.main });
   }
 

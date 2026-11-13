@@ -1039,7 +1039,7 @@ window.QMS_APP_MODULES = [
       qmItemNames(sample).forEach(n => { if (names.indexOf(n) < 0) names.push(n); });
       if (!names.length) names.push('HPLC纯度', '外观色泽');
       const items = {};
-      let badLeft = sample['检验结论'] === '不合格' || sample['检验结论'] === '异常';
+      let badLeft = sample['检验结论'] === '不合格';
       names.forEach((name, idx) => {
         const p = rowsOf('insp-project', 'tab-item').find(r => r['检验项名称'] === name) || {};
         const bad = badLeft;
@@ -1140,7 +1140,6 @@ window.QMS_APP_MODULES = [
         已拆分数量: '0',
         当前位置: loc || '—',
         位置编码: code || '—',
-        领用人: (stored && stored['领用人']) || '—',
         样品处置方式: flow.disp || (stored && stored['样品处置方式']) || '—',
         拆分备注: '—',
         拆分时间: '—',
@@ -1156,7 +1155,8 @@ window.QMS_APP_MODULES = [
         const loc = (liveBag('np-0201-12', 'tab-1') || []).find(r => r['样品编号'] === s['样品编号']);
         const gone = (liveBag('np-0201-12', 'tab-2') || []).some(r => r['样品编号'] === s['样品编号']);
         const parked = loc && loc['当前位置'] && loc['当前位置'] !== '—';
-        const left = (loc && loc['领用人'] && loc['领用人'] !== '—') || flow.dest;
+        const pos = loc && loc['当前位置'];
+        const left = !!(flow.dest || (pos && pos !== '—' && pos.indexOf('货架') < 0 && pos.indexOf('筐') < 0));
         if (id === 'app-split') return false;
         if (id === 'app-sin') return s['样品状态'] === '待检验' && !parked && !gone;
         if (id === 'app-sout') return !left && !gone && !flow.disp && (s['样品状态'] === '检验中' || (s['样品状态'] === '待检验' && parked));
@@ -3972,7 +3972,7 @@ window.QMS_APP_MODULES = [
     }
     function resultQuants(sample) { return resultItems(sample).filter(r => r.type !== '定性'); }
     function resultQuals(sample) { return resultItems(sample).filter(r => r.type === '定性'); }
-    function judgeBad(v) { return v === '不合格' || v === '异常'; }
+    function judgeBad(v) { return v === '不合格'; }
     function devOn(v) { const s = String(v || '').trim(); return !!s && s !== '—' && s !== '/' && s !== '合格'; }
     function showVal(v) {
       if (v == null || String(v).trim() === '') return '—';
@@ -4896,7 +4896,7 @@ window.QMS_APP_MODULES = [
       const cus = [text(row, '客户编码'), text(row, '客户名称')].filter(Boolean).join('/') || '—';
       const full = { '物料信息': 1, '供应商信息': 1, '客户信息': 1, '来样单位': 1, '样品名称': 1, '光刻参数': 1, '报检备注': 1, '检测要求': 1 };
       const map = {
-        'tab-pi': [['来源系统', v('来源系统')], ['来源单号', v('来源单号')], ['到货通知单号', v('到货通知单号')], ['物料信息', mat], ['供应商信息', sup], ['采样点', v('采样点')], ['厂内批号', v('厂内批号')], ['供应商批号', v('供应商批号')], ['报检件数', v('报检件数')], ['报检数量', v('报检数量')], ['基本单位', v('基本单位')], ['货物位置', v('货物位置')], ['预计送样时间', v('预计送样时间')], ['需求完成时间', v('需求完成时间')], ['研发项目号', v('研发项目号')], ['报检备注', v('报检备注')], ['报检人', v('报检人')], ['报检时间', v('报检时间')]],
+        'tab-pi': [['来源系统', v('来源系统')], ['来源单号', v('来源单号')], ['到货通知单号', v('到货通知单号')], ['物料信息', mat], ['供应商信息', sup], ['采样点', v('采样点')], ['厂内批号', v('厂内批号')], ['供应商批号', v('供应商批号')], ['供应商COA', v('供应商COA')], ['报检件数', v('报检件数')], ['报检数量', v('报检数量')], ['基本单位', v('基本单位')], ['货物位置', v('货物位置')], ['预计送样时间', v('预计送样时间')], ['需求完成时间', v('需求完成时间')], ['研发项目号', v('研发项目号')], ['报检备注', v('报检备注')], ['报检人', v('报检人')], ['报检时间', v('报检时间')]],
         'tab-pp': [['物料信息', mat], ['客户信息', cus], ['产线名称', v('产线名称')], ['车间名称', v('车间名称')], ['采样点', v('采样点')], ['报检批号', v('报检批号')], ['来源系统', v('来源系统')], ['来源单号', v('来源单号')], ['检验类型', v('检验类型')], ['SAP生产订单号', v('SAP生产订单号')], ['货物位置', v('货物位置')], ['预计送样时间', v('预计送样时间')], ['需求完成时间', v('需求完成时间')], ['研发项目号', v('研发项目号')], ['报检备注', v('报检备注')], ['报检人', v('报检人')], ['报检时间', v('报检时间')]],
         'tab-pm': [['物料信息', mat], ['客户信息', cus], ['产线名称', v('产线名称')], ['车间名称', v('车间名称')], ['采样点', v('采样点')], ['报检批号', v('报检批号')], ['货物位置', v('货物位置')], ['报检件数', v('报检件数')], ['报检数量', v('报检数量')], ['基本单位', v('基本单位')], ['来源系统', v('来源系统')], ['来源单号', v('来源单号')], ['检验类型', v('检验类型')], ['SAP生产订单号', v('SAP生产订单号')], ['预计送样时间', v('预计送样时间')], ['需求完成时间', v('需求完成时间')], ['研发项目号', v('研发项目号')], ['报检备注', v('报检备注')], ['报检人', v('报检人')], ['报检时间', v('报检时间')]],
         'tab-sst': [['物料信息', mat], ['客户信息', cus], ['产线名称', v('产线名称')], ['车间名称', v('车间名称')], ['采样点', v('采样点')], ['报检批号', v('报检批号')], ['货物位置', v('货物位置')], ['来源系统', v('来源系统')], ['来源单号', v('来源单号')], ['检验类型', v('检验类型')], ['SAP生产订单号', v('SAP生产订单号')], ['预计送样时间', v('预计送样时间')], ['需求完成时间', v('需求完成时间')], ['研发项目号', v('研发项目号')], ['报检备注', v('报检备注')], ['报检人', v('报检人')], ['报检时间', v('报检时间')]],
@@ -5093,7 +5093,9 @@ window.QMS_APP_MODULES = [
           报废原因: patch.disp === '报废' ? (patch.reason || '—') : '—',
           处置备注: note,
           处置时间: stamp,
-          处置人: user
+          处置人: user,
+          最近变更时间: stamp,
+          最近变更人: user
         });
         log.unshift({
           id: 'sf-' + Date.now() + '-' + sampleNo,
@@ -5104,7 +5106,6 @@ window.QMS_APP_MODULES = [
           报检批号: src['报检批号'] || '',
           原位置: oldLoc,
           新位置: newLoc,
-          领用人: '—',
           变更备注: note,
           操作人: user,
           操作时间: stamp
@@ -5112,7 +5113,6 @@ window.QMS_APP_MODULES = [
       } else {
         const locName = patch.loc || '—';
         const locCode = patch.code || '—';
-        const borrower = changeType === '领用检验' ? user : '—';
         let prev;
         if (idx >= 0) {
           prev = using[idx];
@@ -5132,7 +5132,6 @@ window.QMS_APP_MODULES = [
             检验班组: sample['检验班组'] || '',
             当前位置: '—',
             位置编码: '—',
-            领用人: '—',
             样品处置方式: '—'
           };
           using.unshift(prev);
@@ -5140,7 +5139,6 @@ window.QMS_APP_MODULES = [
         const oldLoc = prev['当前位置'] || '—';
         prev['当前位置'] = locName;
         prev['位置编码'] = locCode;
-        prev['领用人'] = borrower;
         prev['最近变更时间'] = stamp;
         prev['最近变更人'] = user;
         log.unshift({
@@ -5152,7 +5150,6 @@ window.QMS_APP_MODULES = [
           报检批号: prev['报检批号'] || sample['报检批号'] || '',
           原位置: oldLoc,
           新位置: locName,
-          领用人: borrower,
           变更备注: note,
           操作人: user,
           操作时间: stamp
@@ -5904,7 +5901,6 @@ window.QMS_APP_MODULES = [
             样品来源: '样品拆分',
             当前位置: '—',
             位置编码: '—',
-            领用人: '—',
             报检类型: k['报检类型'] || '',
             报检单号: k['报检单号'] || '',
             物料编码: k['物料编码'] || '',
