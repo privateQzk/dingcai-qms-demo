@@ -4301,6 +4301,11 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
                         <b v-if="!entrySpectra.length">—</b>
                       </div>
                     </div>
+                    <div class="entry-filters entry-filters--tab">
+                      <div class="entry-field"><label style="color:#f56c6c">* 开始时间</label>
+                        <el-date-picker v-model="formModel['开始时间']" type="datetime" format="YYYY-MM-DD HH:mm" value-format="YYYY-MM-DD HH:mm" placeholder="请选择" style="width:200px"></el-date-picker>
+                      </div>
+                    </div>
                     <div v-if="entryPubParams.length" class="entry-matrix" style="margin:0 0 12px">
                       <div class="entry-matrix__hd">公用参数 · {{ entryPubParams.length }}项</div>
                       <div v-if="!entryPubCols" style="color:#8c8c8c">请选择公共测试次数</div>
@@ -6846,7 +6851,7 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
           </div>
           <div v-if="!ledgerInspRaw.length" class="demo-readonly" style="padding:24px 0;text-align:center">暂无原始记录</div>
           <div v-for="g in ledgerInspRaw" :key="g.检验类" class="ledger-insp-raw__cat">
-            <div class="ledger-insp-raw__cat-hd">检验类：{{ g.检验类 }}</div>
+            <div class="ledger-insp-raw__cat-hd">检验类：{{ g.检验类 }}<span style="margin-left:32px;font-weight:400">开始时间：{{ g.开始时间 || '—' }}</span></div>
             <article v-for="(it, idx) in g.items" :key="g.检验类+'-'+idx" class="ledger-insp-raw__card">
               <div class="ledger-insp-raw__card-hd">
                 <span class="ledger-insp-raw__badge">{{ it['检验项类型'] || '定量' }}</span>
@@ -10773,15 +10778,15 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
 <script src="https://cdn.jsdelivr.net/npm/vxe-pc-ui@4/lib/index.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vxe-table@4/lib/index.umd.min.js"></script>
 <script src="./js/demo-announcements.js?v=1.4.24"></script>
-<script src="./js/page-configs.js?v=1.4.556"></script>
-<script src="./js/mock-rows.js?v=1.4.330"></script>
+<script src="./js/page-configs.js?v=1.4.566"></script>
+<script src="./js/mock-rows.js?v=1.4.337"></script>
 <script src="./js/dict-catalog.js?v=1.1.16"></script>
-<script src="./js/page-prd-notes.js?v=2.4.536"></script>
+<script src="./js/page-prd-notes.js?v=2.4.539"></script>
 <script src="./js/remarks-markdown.js?v=1.1.0"></script>
 <script type="module" src="./js/remarks-mermaid-init.js"></script>
 <script src="./js/remarks-mermaid.js"></script>
-<script src="./js/demo-store.js?v=1.0.157"></script>
-<script src="./js/ledger-insp.js?v=2"></script>
+<script src="./js/demo-store.js?v=1.0.160"></script>
+<script src="./js/ledger-insp.js?v=4"></script>
 <script>
 const { createApp, ref, computed, reactive, watch, onMounted, onBeforeUnmount, nextTick } = Vue;
 const { ElMessage } = ElementPlus;
@@ -12743,6 +12748,7 @@ const app = createApp({
           list = list.filter(r=> String(r['所属仓库']||'').split(/[、,，]/).map(s=> s.trim()).includes(ioPickWh.value));
         }
       }
+      if(ioPickKind.value==='qrIssueSample' && ioPickBind.value==='abnEvent') list = list.filter(r=> r['样品状态']==='已完成');
       if(ioPickKind.value==='mrbSrc') list = list.filter(r=> r['MRB状态']==='未评审');
       if(ioPickKind.value==='person'){
         const added = new Set((formLineRows.value||[]).map(r=> r['工号']));
@@ -13195,6 +13201,13 @@ const app = createApp({
       }
       const r = ioPickCurrent.value;
       if(!r){ ElMessage.warning('请选择一条数据'); return; }
+      if(ioPickBind.value==='abnEvent'){
+        formModel['关联单据'] = r['样品编号'] || '';
+        formModel['报检单号'] = r['报检单号'] || '';
+        formModel['物料名称'] = r['物料名称'] || '';
+        ioPickVisible.value = false;
+        return;
+      }
       if(ioPickBind.value==='waitSampScheme'){
         applyWaitSampScheme(r);
         ioPickVisible.value = false;
@@ -14765,6 +14778,7 @@ const app = createApp({
         files: (entryExtraFiles.value||[]).map(f=>({ name: f.name })),
         instruments: (entryInstruments.value||[]).slice(),
         spectra: (entrySpectra.value||[]).map(f=>({ id: f.id, name: f.name })),
+        startTime: formModel['开始时间'] || '',
         pubValues: JSON.parse(JSON.stringify(entryPubCells.value || {}))
       };
     }
@@ -14788,6 +14802,7 @@ const app = createApp({
       entryExtraFiles.value = ((st && st.files) || []).map(f=>({ name: f.name || '' })).filter(f=> f.name);
       entryInstruments.value = ((st && st.instruments) || []).slice();
       entrySpectra.value = ((st && st.spectra) || []).map(f=>({ id: f.id, name: f.name || '' })).filter(f=> f.name);
+      formModel['开始时间'] = (st && st.startTime) || '';
       entryMethodTab.value = '项目';
       entryMatSelected.value = [];
       entryMatScan.value = '';
@@ -21732,7 +21747,16 @@ const app = createApp({
       if(!Array.isArray(bag['tab-1'])) bag['tab-1'] = [];
       return bag['tab-1'];
     }
-    function nextWjNo(){
+        function nextAbnNo(){
+      const rows = (((window.WMS_MOCK_ROWS||MOCK)['np-0417-03']||{}).main)||[];
+      const seq = rows.reduce((m, r)=>{
+        const hit = /^YC\d{8}(\d{3})$/.exec(String(r['异常单号']||''));
+        return Math.max(m, hit ? parseInt(hit[1], 10) : 0);
+      }, 0) + 1;
+      const d = new Date();
+      return 'YC' + d.getFullYear() + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0') + String(seq).padStart(3,'0');
+    }
+function nextWjNo(){
       const seq = wjOrderRows().reduce((m, r)=> Math.max(m, parseInt(String(r['外校单号']||'').replace(/\D/g, ''), 10) || 0), 0) + 1;
       return 'YQWJ' + String(seq).padStart(8, '0');
     }
@@ -24235,12 +24259,12 @@ const app = createApp({
       if((formMode.value==='新增类型' || formMode.value==='编辑类型') && page.value?.treeField){
         return [{ name: page.value.treeField, type:'input', required:true, placeholder:'输入，唯一' }];
       }
-      if(tabView.value?.formFields && tabView.value.formFields.length) return tabView.value.formFields;
+      if(tabView.value?.formFields && tabView.value.formFields.length) return tabView.value.formFields.filter(f=> !(f.hideOnAdd && (formMode.value==='add' || formMode.value==='copy')));
       if(pageId.value==='retain-sample' && (page.value?.formFields||[]).length){
         return page.value.formFields.map(f=> f.name==='留样编码'
           ? { ...f, type:'picker', placeholder:'请点击选择物料' } : f);
       }
-      if(page.value?.formFields && page.value.formFields.length) return page.value.formFields;
+      if(page.value?.formFields && page.value.formFields.length) return page.value.formFields.filter(f=> !(f.hideOnAdd && (formMode.value==='add' || formMode.value==='copy')));
       const secs = activeFormSections.value || [];
       if(secs.length) return secs.flatMap(s=> s.fields || []);
       return [];
@@ -33665,7 +33689,7 @@ const app = createApp({
     }
     const QR_TABS = [
       {
-        key:'oqc-submit', title:'交验合格率',
+        key:'oqc-submit', title:'交验合格率与客诉统计',
         filters:[
           { key:'mat', label:'物料信息', type:'picker', kind:'mat' },
           { key:'cust', label:'客户信息', type:'picker', kind:'customer' },
@@ -36514,6 +36538,7 @@ const app = createApp({
         formModel['应取样件数'] = '1';
         if(activeTab.value==='tab-pi') formModel['原料类型'] = '其他';
       }
+      if((mode||'add')==='add' && pageId.value==='np-0417-03'){ formModel['异常单号'] = nextAbnNo(); }
       poMatPool.value = [];
       const lines = (activeFormLineFields.value||[]).length;
       formLineSelected.value = [];
@@ -37168,6 +37193,7 @@ const app = createApp({
     }
     function openLedgerInspDetail(row){
       const r = STORE ? STORE.overlayPcRow('ledger', { ...row }) : { ...row };
+      if(!r._entry){ const fs = flowSplitRow(r['样品编号']); if(fs && fs._entry) r._entry = fs._entry; }
       if(!r['异常报送'] && r['异常描述']) r['异常报送'] = r['异常描述'];
       const demo = buildLedgerInspDemo(r);
       ledgerInspRow.value = r;
@@ -39271,6 +39297,16 @@ const app = createApp({
               ElMessage.success('已删除');
               return;
             }
+            if(pageId.value==='np-0417-03'){
+              const set = new Set(selectedIds.value);
+              const key = activeTab.value || (tabView.value||{}).name || 'tab-1';
+              const bag = MOCK[pageId.value] = MOCK[pageId.value] || {};
+              bag[key] = (bag[key]||[]).filter(r=> !set.has(r.id));
+              selectedIds.value = [];
+              bumpStore();
+              ElMessage.success('已删除');
+              return;
+            }
             ElMessage.success(btn.name.includes('关闭')?'已关闭':'已删除');
           }).catch(()=>{});
         return;
@@ -39332,6 +39368,7 @@ const app = createApp({
         return;
       }
       if(btn.name==='API解析'){ ElMessage.success('已按 Api 地址解析字段（演示）'); return; }
+      if(btn.name==='SIP文件解析'){ ElMessage.info('Demo：上传 SIP 文件，解析生成检验方法'); return; }
       ElMessage.warning('Demo 未配置该操作：' + btn.name);
     }
     function onRowOp(op, row){
@@ -43481,7 +43518,7 @@ const app = createApp({
       if(pid==='mrb-review' && ['add','copy'].includes(m)){ qcSaveMrbAdd(); return true; }
       if(pid==='capa-internal' && ['add','copy','edit'].includes(m)){ qcSaveCapa(); return true; }
       if(pid==='capa-handle' && m==='capa-process'){ qcSaveCapaProcess(); return true; }
-      if(pid==='add-sample' && ['add','copy'].includes(m)){ qcSaveAddSample(); return true; }
+          if(pid==='add-sample' && ['add','copy'].includes(m)){ qcSaveAddSample(); return true; }
       if(pid==='spc-report-issue' && m==='保存SPC报告'){ qcSaveSpcReport(); return true; }
       if(m==='文件详情' || m==='detail'){ formVisible.value = false; return true; }
       return false;
@@ -47401,6 +47438,10 @@ const app = createApp({
       }
     }
     function openPicker(title, lineRow, bind){
+      if(pageId.value==='np-0417-03' && title==='关联单据' && !lineRow && (bind||'form')==='form'){
+        openIoPick('qrIssueSample', 'abnEvent', '关联单据');
+        return;
+      }
       if(pageId.value===CASS_PAGE && title==='物料编码' && lineRow){
         cassMatRow.value = lineRow;
         openIoPick('mat', 'cassMat', '物料编码');

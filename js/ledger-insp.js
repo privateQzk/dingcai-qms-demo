@@ -133,12 +133,27 @@ function ledgerInspMaster(){
       const items = ledgerInspItems(row);
       const qual = items.filter(it=> it['检验项类型']==='定性');
       const quant = items.filter(it=> it['检验项类型']!=='定性');
+      const byCat = (((row && row._entry) || {}).byCat) || {};
+      function catStartTime(cat){
+        const rec = byCat[cat] || {};
+        if(rec.startTime) return rec.startTime;
+        const st = row && row['样品状态'];
+        const base = st==='已完成' ? row['检验完成时间'] : (st==='检验中' ? row['取样时间'] : '');
+        if(!base || base==='—') return '—';
+        const d = new Date(String(base).replace(' ', 'T'));
+        if(isNaN(d)) return '—';
+        let h = 0;
+        for(let i = 0; i < cat.length; i++) h = (h * 33 + cat.charCodeAt(i)) >>> 0;
+        d.setMinutes(d.getMinutes() + (st==='已完成' ? -(120 + (h % 240)) : (30 + (h % 90))));
+        const p = n=> String(n).padStart(2, '0');
+        return d.getFullYear() + '-' + p(d.getMonth()+1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+      }
       const groups = [];
       items.forEach(it=>{
         const cat = it['所属检验类'] || '—';
         let g = groups.find(x=> x.检验类===cat);
         if(!g){
-          g = { 检验类: cat, items: [], mats: [], 内容说明: '', 附件: [] };
+          g = { 检验类: cat, 开始时间: catStartTime(cat), items: [], mats: [], 内容说明: '', 附件: [] };
           groups.push(g);
         }
         g.items.push({
