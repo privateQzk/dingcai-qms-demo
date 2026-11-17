@@ -61,6 +61,10 @@ body{background:#eef2f7;color:#1e293b;font-family:'Microsoft YaHei','PingFang SC
 .kb-track.scrolling:hover{animation-play-state:paused}
 @keyframes scrollY{0%{transform:translateY(0)}100%{transform:translateY(-50%)}}
 .kb-chips{display:flex;gap:6px;margin-bottom:8px;flex-shrink:0;flex-wrap:wrap}
+.kb-filters{display:flex;gap:6px;margin-bottom:8px;flex-shrink:0}
+.kb-inp{height:24px;font-size:11px;border:1px solid #e2e8f0;border-radius:6px;padding:0 8px;background:#fff;color:#334155;outline:none}
+.kb-inp:focus{border-color:#93c5fd}
+#kb-mat{width:110px}#kb-type{width:112px}#kb-kind{width:100px}
 .kb-chip{padding:3px 12px;font-size:11px;color:#64748b;border:1px solid #e2e8f0;border-radius:14px;cursor:pointer;background:#fff}
 .kb-chip.active{color:#2563eb;border-color:#93c5fd;background:#eff6ff;font-weight:700}
 .kb-chip b{font-weight:700}
@@ -106,13 +110,6 @@ body{background:#eef2f7;color:#1e293b;font-family:'Microsoft YaHei','PingFang SC
 .scroll-track{animation:scrollY 26s linear infinite}
 .scroll-track:hover,.scroll-track.still{animation:none}
 .panel-title .t-right{font-size:10px;color:#94a3b8;font-weight:400}
-.alert-bar{height:32px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;display:flex;align-items:center;padding:0 12px;gap:10px;overflow:hidden;flex-shrink:0}
-.alert-label{font-size:11px;color:#dc2626;font-weight:700;white-space:nowrap}
-.alert-scroll{flex:1;overflow:hidden}
-.alert-content{display:flex;gap:28px;animation:scrollA 30s linear infinite;white-space:nowrap}
-@keyframes scrollA{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.alert-item{font-size:11px;display:flex;align-items:center;gap:5px}
-.alert-dot{width:5px;height:5px;border-radius:50%}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:1000;align-items:center;justify-content:center}
 .modal-overlay.active{display:flex}
 .modal{background:#fff;border:1px solid #e2e8f0;border-radius:12px;width:92%;height:84%;max-width:1100px;padding:16px 18px;display:flex;flex-direction:column;box-shadow:0 12px 40px rgba(15,23,42,.18)}
@@ -157,6 +154,7 @@ body{background:#eef2f7;color:#1e293b;font-family:'Microsoft YaHei','PingFang SC
         <div class="panel-title"><span class="t-left">样品检验项完成看板</span><span style="font-size:10px;color:#94a3b8;font-weight:400">每个样品多检验项 · 点击查看明细</span></div>
         <div class="panel-body">
           <div class="kb-chips" id="kb-chips"></div>
+          <div class="kb-filters"><input id="kb-mat" class="kb-inp" placeholder="物料编码"><select id="kb-kind" class="kb-inp"></select><select id="kb-type" class="kb-inp"></select></div>
           <div class="kb-scroll"><div class="kb-track" id="kb-track"></div></div>
         </div>
       </div>
@@ -177,10 +175,6 @@ body{background:#eef2f7;color:#1e293b;font-family:'Microsoft YaHei','PingFang SC
         </div>
       </div>
     </div>
-  </div>
-  <div class="alert-bar">
-    <div class="alert-label">◆ 实时告警</div>
-    <div class="alert-scroll"><div class="alert-content" id="alert-content"></div></div>
   </div>
 </div>
 <div class="modal-overlay" id="dlg">
@@ -303,13 +297,19 @@ function chipHit(s, chip){
   return true;
 }
 function statusTag(s){ return s['样品状态']==='已完成' ? 'tag-done' : (s['样品状态']==='检验中' ? 'tag-run' : 'tag-wait'); }
+function kbFiltered(chip){
+  const mq = (($('kb-mat')||{}).value||'').trim();
+  const kq = (($('kb-kind')||{}).value||'');
+  const tq = (($('kb-type')||{}).value||'');
+  return samples.filter(s=> chipHit(s,chip) && (!mq || String(s['物料编码']||'').includes(mq)) && (!kq || s['物料种类']===kq) && (!tq || s['报检类型']===tq));
+}
 function renderKb(){
   $('kb-chips').innerHTML = KB_CHIPS.map(c=>{
-    const n = samples.filter(s=> chipHit(s,c)).length;
+    const n = kbFiltered(c).length;
     return `<span class="kb-chip${c===kbChip?' active':''}" data-c="${c}">${c}<b>${n}</b></span>`;
   }).join('');
   document.querySelectorAll('.kb-chip').forEach(el=> el.onclick = ()=> setChip(el.dataset.c));
-  const rows = samples.filter(s=> chipHit(s,kbChip));
+  const rows = kbFiltered(kbChip);
   const track = $('kb-track');
   if(!rows.length){
     track.className = 'kb-track';
@@ -416,14 +416,6 @@ function renderLoc(){
   track.innerHTML = shown.length > 5 ? html+html : html;
 }
 
-/* ---------- 实时告警 ---------- */
-function renderAlert(){
-  const items = [];
-  samples.filter(s=> s._overdue).slice(0,10).forEach(s=> items.push({t:`样品 ${s['样品编号']} 已逾期 ${fmtDur(NOW-s._eta)}`, c:'#dc2626'}));
-  samples.filter(s=> s['检验结论']==='不合格').slice(0,10).forEach(s=> items.push({t:`样品 ${s['样品编号']} 检验结论不合格`, c:'#b91c1c'}));
-  const html = items.length ? items.map(i=> `<span class="alert-item"><i class="alert-dot" style="background:${i.c}"></i>${esc(i.t)}</span>`).join('') : '<span class="alert-item">当前周期暂无告警</span>';
-  $('alert-content').innerHTML = html + html;
-}
 
 /* ---------- 明细弹窗 ---------- */
 function openDlg(title, html){ $('dlg-title').textContent = title; $('dlg-body').innerHTML = html; $('dlg').classList.add('active'); }
@@ -486,7 +478,16 @@ function openItemSamples(name){
 /* ---------- 时钟 & 初始化 ---------- */
 function tickClock(){ const d = new Date(); $('clock').textContent = `${d.getFullYear()}-${p2(d.getMonth()+1)}-${p2(d.getDate())} ${p2(d.getHours())}:${p2(d.getMinutes())}:${p2(d.getSeconds())}`; }
 tickClock(); setInterval(tickClock, 1000);
-renderKpis(); renderItemKpis(); renderProg(); renderKb(); renderCharts(); renderLoc(); renderAlert();
+(function initKbFilters(){
+  const kinds = [...new Set(samples.map(s=> s['物料种类']).filter(v=> v && v!=='—'))];
+  const types = [...new Set(samples.map(s=> s['报检类型']).filter(Boolean))];
+  $('kb-kind').innerHTML = '<option value="">物料种类（全部）</option>' + kinds.map(t=> `<option value="${esc(t)}">${esc(t)}</option>`).join('');
+  $('kb-type').innerHTML = '<option value="">报检类型（全部）</option>' + types.map(t=> `<option value="${esc(t)}">${esc(t)}</option>`).join('');
+  $('kb-kind').addEventListener('change', renderKb);
+  $('kb-type').addEventListener('change', renderKb);
+  $('kb-mat').addEventListener('input', renderKb);
+})();
+renderKpis(); renderItemKpis(); renderProg(); renderKb(); renderCharts(); renderLoc();
 window.addEventListener('resize', ()=> Object.values(charts).forEach(c=> c && c.resize()));
 </script>
 </body>

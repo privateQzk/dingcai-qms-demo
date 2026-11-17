@@ -52682,10 +52682,6 @@ window.WMS_PAGE_CONFIGS = {
             {
               "name": "完成时间",
               "type": "daterange"
-            },
-            {
-              "name": "关闭时间",
-              "type": "daterange"
             }
           ],
           "queryDefault": [
@@ -52697,8 +52693,7 @@ window.WMS_PAGE_CONFIGS = {
             "单据状态",
             "附件",
             "物料信息",
-            "完成时间",
-            "关闭时间"
+            "完成时间"
           ],
           "toolbar": [
             {
@@ -52806,17 +52801,7 @@ window.WMS_PAGE_CONFIGS = {
               "title": "创建时间",
               "width": 160
             },
-            {
-              "field": "关闭人",
-              "title": "关闭人",
-              "width": 90
-            },
-            {
-              "field": "关闭时间",
-              "title": "关闭时间",
-              "width": 160
-            },
-            {
+                                    {
               "field": "客诉单号",
               "title": "客诉单号",
               "width": 140
@@ -53213,204 +53198,211 @@ window.WMS_PAGE_CONFIGS = {
       "formLineActions": []
     },
     "np-0201-17": {
-      "id": "np-0201-17",
-      "title": "卡塞信息表",
-      "groups": [
-        "质量管理",
-        "检验管理"
-      ],
-      "breadcrumb": [
-        "质量管理",
-        "检验管理",
-        "卡塞信息表"
-      ],
-      "tabs": [],
-      "tabViews": [
-        {
-          "name": "main",
-          "label": "",
-          "queryFields": [
-            {
-              "name": "信息流水号",
-              "type": "input"
-            },
-            {
-              "name": "卡塞编号",
-              "type": "input"
-            },
-            {
-              "name": "卡塞类型",
-              "type": "select",
-              "options": [
-                "光刻胶生产",
-                "光刻胶研发"
-              ]
-            }
-          ],
-          "toolbar": [
-            {
-              "name": "新增",
-              "type": "primary",
-              "desc": "打开「新增卡塞」弹窗"
-            },
-            {
-              "name": "批量删除",
-              "type": "danger",
-              "desc": "删除勾选的卡塞信息"
-            }
-          ],
-          "columns": [
-            {
-              "field": "信息流水号",
-              "title": "信息流水号",
-              "width": 160,
-              "fixed": "left"
-            },
-            {
-              "field": "卡塞编号",
-              "title": "卡塞编号",
-              "width": 140
-            },
-            {
-              "field": "卡塞类型",
-              "title": "卡塞类型",
-              "width": 120,
-              "slot": "tag"
-            },
-            {
-              "field": "关联玻璃板数",
-              "title": "关联玻璃板数",
-              "width": 120
-            },
-            {
-              "field": "创建人",
-              "title": "创建人",
-              "width": 100
-            },
-            {
-              "field": "创建时间",
-              "title": "创建时间",
-              "width": 160
-            },
-            {
-              "field": "_actions",
-              "title": "操作",
-              "width": 90,
-              "fixed": "right",
-              "slot": "row_actions"
-            }
-          ],
-          "rowOps": [
-            {
-              "name": "详情"
-            }
-          ]
-        }
-      ],
-      "formFields": [
-        {
-          "name": "信息流水号",
-          "type": "readonly",
-          "required": false,
-          "placeholder": "系统自动生成"
-        },
+  "id": "np-0201-17",
+  "title": "卡塞信息表",
+  "groups": [
+    "质量管理",
+    "检验管理"
+  ],
+  "breadcrumb": [
+    "质量管理",
+    "检验管理",
+    "卡塞信息表"
+  ],
+  "tabs": [
+    {
+      "name": "main",
+      "label": "卡塞信息表"
+    }
+  ],
+  "tabViews": [
+    {
+      "name": "main",
+      "label": "卡塞信息表",
+      "queryFields": [
         {
           "name": "卡塞编号",
-          "type": "input",
-          "required": true,
-          "placeholder": "请输入"
+          "type": "input"
         },
         {
           "name": "卡塞类型",
           "type": "select",
-          "required": true,
           "options": [
             "光刻胶生产",
-            "光刻胶研发"
+            "6寸标准卡塞",
+            "4寸卡塞"
           ]
         }
       ],
-      "detailFields": [
+      "queryDefault": [
+        "单据号",
+        "DN单号",
+        "客户信息"
+      ],
+      "queryMore": [
+        "物料信息",
+        "计划发货日期"
+      ],
+      "toolbar": [
         {
-          "name": "信息流水号"
+          "name": "新增",
+          "type": "primary",
+          "desc": "手动补录发货 OQC 任务，单据号系统生成，保存后进入待执行"
         },
         {
-          "name": "卡塞编号"
+          "name": "上传附件",
+          "type": "default",
+          "desc": "勾选一条或多条任务，上传纸质检查单扫描件"
         },
         {
-          "name": "卡塞类型"
+          "name": "删除",
+          "type": "danger",
+          "desc": "勾选待执行任务后删除，删除后不可恢复"
         },
         {
-          "name": "创建人"
+          "name": "关闭",
+          "type": "default",
+          "desc": "勾选待执行任务后关闭，关闭后移入「已完成」，单据状态为已关闭"
         },
         {
-          "name": "创建时间"
+          "name": "导出",
+          "type": "default",
+          "desc": "见通用功能规范 · 导出数据弹窗"
         }
       ],
-      "detailLineTitle": "关联玻璃板",
-      "detailLineFields": [
+      "columns": [
         {
-          "name": "玻璃板序号"
+          "field": "信息流水号",
+          "title": "信息流水号",
+          "width": 150,
+          "fixed": "left"
         },
         {
-          "name": "批次号"
+          "field": "卡塞编号",
+          "title": "卡塞编号",
+          "width": 140
         },
         {
-          "name": "样品编号"
+          "field": "卡塞类型",
+          "title": "卡塞类型",
+          "width": 120,
+          "slot": "tag"
         },
         {
-          "name": "物料编码"
+          "field": "关联玻璃板数",
+          "title": "关联玻璃板数",
+          "width": 120
         },
         {
-          "name": "物料名称"
+          "field": "创建人",
+          "title": "创建人",
+          "width": 100
+        },
+        {
+          "field": "创建时间",
+          "title": "创建时间",
+          "width": 170
         }
       ],
-      "hasEdit": false,
-      "hasDetail": true,
-      "stub": false,
-      "formFlat": true,
-      "formLineTabLabel": "关联玻璃板",
-      "formLineTitle": "关联玻璃板",
-      "formLineTip": "记录卡塞内各批次玻璃板；可不填",
-      "formLineFields": [
+      "rowOps": [
         {
-          "name": "玻璃板序号",
-          "type": "readonly"
+          "name": "上传附件",
+          "desc": "打开上传检查附件弹窗"
         },
         {
-          "name": "批次号",
-          "type": "input",
-          "placeholder": "请输入"
+          "name": "编辑",
+          "desc": "编辑当前待执行任务；单据号不可改"
+        }
+      ],
+      "formFields": [
+        {
+          "name": "单据号",
+          "type": "readonly",
+          "required": false,
+          "ctrl": "系统生成：OQC + 当前年月日（yyyyMMdd）+ 3 位流水，按天流水"
         },
         {
-          "name": "样品编号",
+          "name": "DN单号",
           "type": "input",
-          "placeholder": "请输入"
+          "required": true,
+          "ctrl": "输入"
+        },
+        {
+          "name": "客户信息",
+          "type": "picker",
+          "required": true,
+          "ctrl": "点击右侧抽屉弹出「客户」列表，单选；可按客户编码/名称查询；回填「客户编码 / 客户名称」"
         },
         {
           "name": "物料编码",
-          "type": "input",
-          "placeholder": "请输入"
+          "type": "picker",
+          "required": true,
+          "ctrl": "点击右侧抽屉弹出「物料」列表，单选；可按物料编码/名称查询；回填物料编码/名称/规格/种类，并带出销售单位"
         },
         {
           "name": "物料名称",
-          "type": "input",
-          "placeholder": "请输入"
-        }
-      ],
-      "formLineActions": [
-        {
-          "name": "添加",
-          "type": "primary"
+          "type": "readonly",
+          "required": false,
+          "ctrl": "选择物料后自动带入"
         },
         {
-          "name": "批量删除",
-          "type": "danger"
+          "name": "物料规格",
+          "type": "readonly",
+          "required": false,
+          "ctrl": "选择物料后自动带入"
+        },
+        {
+          "name": "物料种类",
+          "type": "readonly",
+          "required": false,
+          "ctrl": "选择物料后自动带入"
+        },
+        {
+          "name": "批号",
+          "type": "input",
+          "required": true,
+          "ctrl": "输入"
+        },
+        {
+          "name": "发货数量",
+          "type": "input",
+          "required": true,
+          "ctrl": "输入"
+        },
+        {
+          "name": "销售单位",
+          "type": "select",
+          "required": true,
+          "ctrl": "根据物料自动带入，可修改；下拉选择（单位列表，单选）",
+          "options": [
+            "KG",
+            "g",
+            "L",
+            "mL",
+            "瓶",
+            "个",
+            "Pcs"
+          ]
+        },
+        {
+          "name": "计划发货日期",
+          "type": "date",
+          "required": true,
+          "ctrl": "选择日期"
         }
       ],
-      "formDialogWidth": "960px",
-      "formLabelWidth": "120px"
-    },
+      "rows": []
+    }
+  ],
+  "formFields": [],
+  "detailFields": [],
+  "hasEdit": false,
+  "hasDetail": false,
+  "stub": false,
+  "formFlat": true,
+  "formLineFields": [],
+  "formLineActions": []
+},
     "lab-io-form": {
       "id": "lab-io-form",
       "title": "实验室出入库表单",
@@ -137802,10 +137794,6 @@ window.WMS_PAGE_CONFIGS = {
             {
               "name": "完成时间",
               "type": "daterange"
-            },
-            {
-              "name": "关闭时间",
-              "type": "daterange"
             }
           ],
           "queryDefault": [
@@ -137817,8 +137805,7 @@ window.WMS_PAGE_CONFIGS = {
             "单据状态",
             "附件",
             "物料信息",
-            "完成时间",
-            "关闭时间"
+            "完成时间"
           ],
           "toolbar": [
             {
@@ -137926,17 +137913,7 @@ window.WMS_PAGE_CONFIGS = {
               "title": "创建时间",
               "width": 160
             },
-            {
-              "field": "关闭人",
-              "title": "关闭人",
-              "width": 90
-            },
-            {
-              "field": "关闭时间",
-              "title": "关闭时间",
-              "width": 160
-            },
-            {
+                                    {
               "field": "客诉单号",
               "title": "客诉单号",
               "width": 140

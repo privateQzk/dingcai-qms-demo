@@ -73,13 +73,6 @@ body{background:#eef2f7;color:#1e293b;font-family:'Microsoft YaHei','PingFang SC
 .spc-cap b{font-weight:700;margin-right:6px}
 .spc-cap .u{color:#dc2626}.spc-cap .uc{color:#f59e0b}.spc-cap .cc{color:#2563eb}.spc-cap .lc{color:#f59e0b}.spc-cap .l{color:#dc2626}
 .empty-tip{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:12px}
-.alert-bar{height:32px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;display:flex;align-items:center;padding:0 12px;gap:10px;overflow:hidden;flex-shrink:0}
-.alert-label{font-size:11px;color:#dc2626;font-weight:700;white-space:nowrap}
-.alert-scroll{flex:1;overflow:hidden}
-.alert-content{display:flex;gap:28px;animation:scrollA 28s linear infinite;white-space:nowrap}
-@keyframes scrollA{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.alert-item{font-size:11px;display:flex;align-items:center;gap:5px}
-.alert-dot{width:5px;height:5px;border-radius:50%}
 </style>
 </head>
 <body>
@@ -193,10 +186,6 @@ body{background:#eef2f7;color:#1e293b;font-family:'Microsoft YaHei','PingFang SC
         <div class="panel-body"><div id="chart-cost" class="chart"></div></div>
       </div>
     </div>
-  </div>
-  <div class="alert-bar">
-    <div class="alert-label">◆ 实时告警</div>
-    <div class="alert-scroll"><div class="alert-content" id="alert-content"></div></div>
   </div>
 </div>
 <script src="./js/mock-rows.js?v=1.4.345"></script>
@@ -735,29 +724,6 @@ function renderCost(){
         formatter:function(p){ return p.value+' · '+Math.round(p.value/sum*1000)/10+'%'; }}}]
   }, true);
 }
-function renderAlerts(patrol){
-  const p = period();
-  const items = [];
-  const cmpWait = rowsOf('np-0212-02', ['tab-1','tab-2']).filter(function(r){ return inRange(r['投诉日期'], p.start, p.end) && r['处理状态']==='待处理'; });
-  const grvWait = rowsOf('np-0212-01', ['tab-1','tab-2']).filter(function(r){ return inRange(r['抱怨日期'], p.start, p.end) && r['处理状态']==='待处理'; });
-  if(cmpWait.length+grvWait.length) items.push({color:'#dc2626', text:'[紧急] 客诉抱怨待处理 · 投诉 '+cmpWait.length+' 单 / 抱怨 '+grvWait.length+' 单'});
-  rangedOrders().filter(function(r){ return !CLOSED[r['单据状态']] && isOverdue(r['预计完成时间']); }).slice(0,2).forEach(function(r){
-    items.push({color:'#dc2626', text:'[紧急] '+r._type+' '+ (r['报检单号']||'') +' '+ (r['物料名称']||'') +' 已超过预计完成时间'});
-  });
-  const bad = [];
-  CATE_ORDER.forEach(function(k){ bad.push.apply(bad, ledgerByCate(k)); });
-  bad.filter(function(r){ return isBadSample(r) && inRange(sampleDay(r), p.start, p.end); }).slice(0,2).forEach(function(r){
-    items.push({color:'#dc2626', text:'[紧急] '+(r['报检单号']||r['样品编号']||'')+' '+(r['物料名称']||'')+' 检验结论'+r['检验结论']});
-  });
-  if(patrol.bad - patrol.closed > 0) items.push({color:'#d97706', text:'[预警] 巡检异常未结案 · '+(patrol.bad-patrol.closed)+' 项'});
-  const taskLate = rowsOf('np-0218-01', ['tab-1']).filter(function(r){ return isOverdue(r['计划完成时间']); }).length;
-  if(taskLate) items.push({color:'#d97706', text:'[预警] 品质专项任务逾期 · '+taskLate+' 项'});
-  if(!items.length) items.push({color:'#16a34a', text:'当前周期暂无告警'});
-  const html = items.map(function(it){
-    return '<div class="alert-item"><span class="alert-dot" style="background:'+it.color+'"></span>'+esc(it.text)+'</div>';
-  }).join('');
-  document.getElementById('alert-content').innerHTML = html + html;
-}
 
 function refresh(){
   orders = loadOrders();
@@ -783,7 +749,6 @@ function refresh(){
   renderCrmTrend();
   renderSpc();
   renderCost();
-  renderAlerts(patrol);
   Object.keys(charts).forEach(function(id){ charts[id].resize(); });
 }
 
