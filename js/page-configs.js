@@ -53418,6 +53418,238 @@ window.WMS_PAGE_CONFIGS = {
   "formLineFields": [],
   "formLineActions": []
 },
+    "lab-io-form": {
+      "id": "lab-io-form",
+      "title": "实验室出入库表单",
+      "groups": [
+        "基础数据",
+        "实验室资料"
+      ],
+      "breadcrumb": [
+        "基础数据",
+        "实验室资料",
+        "实验室出入库表单"
+      ],
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [
+            {
+              "name": "模板编码",
+              "type": "input"
+            },
+            {
+              "name": "模板名称",
+              "type": "input"
+            },
+            {
+              "name": "适用业务单据",
+              "type": "select",
+              "options": [
+                "试剂入库",
+                "试剂出库",
+                "试液入库",
+                "试液出库",
+                "标准物质入库",
+                "标准物质出库",
+                "留样入库",
+                "留样出库",
+                "耗材入库",
+                "耗材出库",
+                "标准物质开封"
+              ]
+            },
+            {
+              "name": "启用状态",
+              "type": "select",
+              "options": [
+                "启用",
+                "禁用"
+              ]
+            },
+            {
+              "name": "表单名称",
+              "type": "input"
+            }
+          ],
+          "queryDefault": [
+            "模板编码",
+            "模板名称",
+            "适用业务单据",
+            "启用状态"
+          ],
+          "queryMore": [
+            "表单名称"
+          ],
+          "toolbar": [
+            {
+              "name": "新增",
+              "type": "primary",
+              "desc": "打开新增弹窗"
+            },
+            {
+              "name": "批量删除",
+              "type": "danger",
+              "desc": "删除勾选行；已被业务单据引用则不可删"
+            },
+            {
+              "name": "导入",
+              "type": "default",
+              "desc": "见通用功能规范 · 导入数据弹窗"
+            },
+            {
+              "name": "导出",
+              "type": "default",
+              "desc": "见通用功能规范 · 导出数据弹窗"
+            }
+          ],
+          "columns": [
+            {
+              "field": "模板编码",
+              "title": "模板编码",
+              "width": 130,
+              "fixed": "left"
+            },
+            {
+              "field": "模板名称",
+              "title": "模板名称",
+              "width": 200
+            },
+            {
+              "field": "表单名称",
+              "title": "表单名称",
+              "width": 160
+            },
+            {
+              "field": "适用业务单据",
+              "title": "适用业务单据",
+              "width": 120
+            },
+            {
+              "field": "适用单据类型",
+              "title": "适用单据类型",
+              "width": 200
+            },
+            {
+              "field": "备注",
+              "title": "备注",
+              "width": 170
+            },
+            {
+              "field": "启用状态",
+              "title": "启用状态",
+              "width": 90,
+              "slot": "tag"
+            },
+            {
+              "field": "创建人",
+              "title": "创建人",
+              "width": 90
+            },
+            {
+              "field": "创建时间",
+              "title": "创建时间",
+              "width": 160
+            },
+            {
+              "field": "_actions",
+              "title": "操作",
+              "width": 80,
+              "fixed": "right",
+              "slot": "row_actions"
+            }
+          ],
+          "rowOps": [
+            {
+              "name": "编辑",
+              "desc": "编辑当前行"
+            }
+          ]
+        }
+      ],
+      "formFields": [
+        {
+          "name": "模板编码",
+          "type": "input",
+          "required": true,
+          "placeholder": "输入，唯一",
+          "ctrl": "输入，唯一；不可与其他模板重复"
+        },
+        {
+          "name": "模板名称",
+          "type": "input",
+          "required": true,
+          "placeholder": "输入",
+          "ctrl": "输入，唯一；不可与其他模板重复"
+        },
+        {
+          "name": "表单名称",
+          "type": "select",
+          "required": true,
+          "filterable": true,
+          "placeholder": "请选择表单",
+          "ctrl": "数据源：基础数据 / 表单配置 / 表单设计器"
+        },
+        {
+          "name": "适用业务单据",
+          "type": "select",
+          "required": true,
+          "options": [
+            "试剂入库",
+            "试剂出库",
+            "试液入库",
+            "试液出库",
+            "标准物质入库",
+            "标准物质出库",
+            "留样入库",
+            "留样出库",
+            "耗材入库",
+            "耗材出库",
+            "标准物质开封"
+          ],
+          "placeholder": "请选择"
+        },
+        {
+          "name": "适用单据类型",
+          "type": "select",
+          "required": true,
+          "multiple": true,
+          "placeholder": "请先选择适用业务单据",
+          "ctrl": "多选；取字典表「单据类型（适用业务单据）」，根据适用业务单据过滤；未选适用业务单据时无选项；与适用业务单据组合唯一，所选任一类型不可已存在于其他模板"
+        },
+        {
+          "name": "备注",
+          "type": "input",
+          "placeholder": "输入"
+        },
+        {
+          "name": "启用状态",
+          "type": "switch",
+          "required": true,
+          "ctrl": "默认启用"
+        }
+      ],
+      "detailFields": [],
+      "hasEdit": true,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true,
+      "formLineFields": [],
+      "formLineActions": [],
+      "labList": true,
+      "formFooterActions": [
+        {
+          "name": "取消",
+          "type": "default"
+        },
+        {
+          "name": "保存",
+          "type": "primary"
+        }
+      ]
+    },
     "np-0208-01": {
       "id": "np-0208-01",
       "title": "色谱柱台账",
