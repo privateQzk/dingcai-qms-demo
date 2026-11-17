@@ -128,7 +128,7 @@ window.QMS_LINKS = {
   "np-0409-01": { group: "质量管理/检验成本统计", tab: "检验类流水表", tabs: 0, depends: [], emits: [] },
   "np-0409-02": { group: "质量管理/检验成本统计", tab: "多维度统计表", tabs: 0, depends: [], emits: [] },
   "np-0417-01": { group: "质量管理/质量统计", tab: "检验合格率多维表", tabs: 0, depends: [], emits: [] },
-  "np-0417-02": { group: "质量管理/质量统计", tab: "品质综合报表", tabs: 0, depends: [], emits: [] },
+  "np-0417-02": { group: "质量管理/质量统计", tab: "品质综合报表", tabs: 0, depends: [], emits: [], components: ["QmsQualityReport"], migrated: true },
   "instrument": { group: "仪器管理/仪器档案", tab: "仪器台账", tabs: 0, depends: [], emits: [], components: ["QmsTreeListPanel"], migrated: true },
   "np-0301-02": { group: "仪器管理/仪器档案", tab: "仪器履历", tabs: 2, depends: [], emits: [] },
   "np-0302-01": { group: "仪器管理/仪器点检", tab: "点检方案", tabs: 0, depends: [], emits: [] },

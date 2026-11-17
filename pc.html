@@ -714,58 +714,7 @@
             </el-drawer>
           </section>
 
-          <section v-else-if="page.layout==='quality-report'" class="cost-stat insp-report quality-report">
-            <el-tabs v-model="qr.tab" class="qr-tabs" @tab-change="qrOnTab">
-              <el-tab-pane v-for="t in QR_TABS" :key="t.key" :label="t.title" :name="t.key"></el-tab-pane>
-            </el-tabs>
-            <div class="cost-stat__box">
-              <el-form :inline="true" class="query-form">
-                <el-form-item v-for="f in qrDef().filters" :key="f.key" :label="f.label">
-                  <el-input v-if="f.type==='input'" v-model="qr.q[f.key]" clearable :placeholder="'请输入'+f.label" style="width:180px"></el-input>
-                  <el-select v-else-if="f.type==='select'" v-model="qr.q[f.key]" multiple collapse-tags collapse-tags-tooltip filterable clearable placeholder="全部" style="width:200px">
-                    <el-option v-for="o in qrOptions(f)" :key="o" :label="o" :value="o"></el-option>
-                  </el-select>
-                  <el-input v-else-if="f.type==='picker'" :model-value="qr.q[f.key+'Label']" :title="qr.q[f.key+'Label']" readonly clearable class="demo-picker-input" placeholder="请点击选择，可多选" @click="qrOpenPick(f)" @clear="qrClearPick(f)"></el-input>
-                  <el-date-picker v-else-if="f.type==='date'" v-model="qr.q[f.key]" type="daterange" value-format="YYYY-MM-DD" start-placeholder="开始日期" end-placeholder="结束日期" clearable></el-date-picker>
-                </el-form-item>
-              </el-form>
-              <div class="cost-stat__foot">
-                <el-button type="primary" @click="qrQuery">查询</el-button>
-                <el-button @click="qrReset">重置</el-button>
-              </div>
-            </div>
-            <template v-if="qr.queried">
-              <div class="qr-kpis">
-                <div v-for="c in qrCards()" :key="c.label" class="qr-kpi" :class="'qr-kpi--'+(c.tone||'blue')">
-                  <div class="qr-kpi__v">{{ c.value }}</div>
-                  <div class="qr-kpi__l">{{ c.label }}</div>
-                </div>
-              </div>
-              <div class="qr-groups" v-if="qrGroups().length">
-                <div v-for="g in qrGroups()" :key="g.title" class="qr-groups__item">
-                  <div class="qr-groups__title">{{ g.title }}</div>
-                  <el-table :data="g.rows" border size="small" empty-text="暂无数据">
-                    <el-table-column prop="name" :label="g.dim" min-width="140" show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="count" label="单据数" width="90" align="right"></el-table-column>
-                    <el-table-column prop="pct" label="占比" width="90" align="right"></el-table-column>
-                  </el-table>
-                </div>
-              </div>
-              <div class="cost-stat__bar">
-                <div class="cost-stat__sum">明细 {{ qr.rows.length }} 条</div>
-                <el-button @click="qrExport">导出 Excel</el-button>
-              </div>
-              <el-table class="demo-data-table" :data="qr.rows" border empty-text="暂无数据" max-height="460">
-                <el-table-column type="index" label="序号" width="60"></el-table-column>
-                <el-table-column v-for="c in qrDef().cols" :key="c.prop" :prop="c.prop" :label="c.label" :min-width="c.w" show-overflow-tooltip>
-                  <template #default="{ row }">
-                    <span v-if="QR_TAG_FIELDS.includes(c.prop) && row[c.prop] && row[c.prop]!=='—'" class="tag" :class="tagClass(row[c.prop])">{{ row[c.prop] }}</span>
-                    <span v-else>{{ (row[c.prop]==null || row[c.prop]==='') ? '—' : row[c.prop] }}</span>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </template>
-          </section>
+          <qms-quality-report            v-else-if="page.layout==='quality-report'"            :qr="qr"            :tabs="QR_TABS"            :tag-fields="QR_TAG_FIELDS"            :def="qrDef"            :options="qrOptions"            :cards="qrCards"            :groups="qrGroups"            :tag-class-name="tagClass"            @tab-change="qrOnTab"            @query="qrQuery"            @reset="qrReset"            @export="qrExport"            @open-pick="qrOpenPick"            @clear-pick="qrClearPick">          </qms-quality-report>
 
           <qms-util-report            v-else-if="page.layout==='util-report'"            :util="util"            :util-cards="utilCards"            :util-detail="utilDetail"            :inst-all-types="instAllTypes"            :util-picker-type="utilPickerType"            @gran-change="util.range = utDefaultRange()"            @query="utQuery"            @reset="utReset"            @export="utExport"            @open-detail="utOpenDetail">          </qms-util-report>
 
@@ -9502,6 +9451,7 @@
 <script src="./js/components/layouts/simple-list-panel.js?v=1.0.0"></script>
 <script src="./js/components/layouts/col-model-panel.js?v=1.0.0"></script>
 <script src="./js/components/layouts/util-report.js?v=1.0.0"></script>
+<script src="./js/components/layouts/quality-report.js?v=1.0.0"></script>
 <script src="./js/app.js?v=1.0.0"></script>
 </body>
 </html>

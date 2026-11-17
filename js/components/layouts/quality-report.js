@@ -1,0 +1,75 @@
+/* 质量报表 · 路线A（quality-report 布局） */
+(function () {
+  'use strict';
+  var QmsQualityReport = {
+    name: 'QmsQualityReport',
+    props: {
+      qr: { type: Object, default: function () { return {}; } },
+      tabs: { type: Array, default: function () { return []; } },
+      tagFields: { type: Array, default: function () { return []; } },
+      def: { type: Function, default: function () { return { filters: [], cols: [] }; } },
+      options: { type: Function, default: function () { return []; } },
+      cards: { type: Function, default: function () { return []; } },
+      groups: { type: Function, default: function () { return []; } },
+      tagClassName: { type: Function, default: function () { return ''; } }
+    },
+    emits: ['tab-change', 'query', 'reset', 'export', 'open-pick', 'clear-pick'],
+    template: [
+      '<section class="cost-stat insp-report quality-report">',
+      '  <el-tabs v-model="qr.tab" class="qr-tabs" @tab-change="$emit(\'tab-change\', $event)">',
+      '    <el-tab-pane v-for="t in tabs" :key="t.key" :label="t.title" :name="t.key"></el-tab-pane>',
+      '  </el-tabs>',
+      '  <div class="cost-stat__box">',
+      '    <el-form :inline="true" class="query-form">',
+      '      <el-form-item v-for="f in def().filters" :key="f.key" :label="f.label">',
+      '        <el-input v-if="f.type===\'input\'" v-model="qr.q[f.key]" clearable :placeholder="\'请输入\'+f.label" style="width:180px"></el-input>',
+      '        <el-select v-else-if="f.type===\'select\'" v-model="qr.q[f.key]" multiple collapse-tags collapse-tags-tooltip filterable clearable placeholder="全部" style="width:200px">',
+      '          <el-option v-for="o in options(f)" :key="o" :label="o" :value="o"></el-option>',
+      '        </el-select>',
+      '        <el-input v-else-if="f.type===\'picker\'" :model-value="qr.q[f.key+\'Label\']" :title="qr.q[f.key+\'Label\']" readonly clearable class="demo-picker-input" placeholder="请点击选择，可多选" @click="$emit(\'open-pick\', f)" @clear="$emit(\'clear-pick\', f)"></el-input>',
+      '        <el-date-picker v-else-if="f.type===\'date\'" v-model="qr.q[f.key]" type="daterange" value-format="YYYY-MM-DD" start-placeholder="开始日期" end-placeholder="结束日期" clearable></el-date-picker>',
+      '      </el-form-item>',
+      '    </el-form>',
+      '    <div class="cost-stat__foot">',
+      '      <el-button type="primary" @click="$emit(\'query\')">查询</el-button>',
+      '      <el-button @click="$emit(\'reset\')">重置</el-button>',
+      '    </div>',
+      '  </div>',
+      '  <template v-if="qr.queried">',
+      '    <div class="qr-kpis">',
+      '      <div v-for="c in cards()" :key="c.label" class="qr-kpi" :class="\'qr-kpi--\'+(c.tone||\'blue\')">',
+      '        <div class="qr-kpi__v">{{ c.value }}</div>',
+      '        <div class="qr-kpi__l">{{ c.label }}</div>',
+      '      </div>',
+      '    </div>',
+      '    <div class="qr-groups" v-if="groups().length">',
+      '      <div v-for="g in groups()" :key="g.title" class="qr-groups__item">',
+      '        <div class="qr-groups__title">{{ g.title }}</div>',
+      '        <el-table :data="g.rows" border size="small" empty-text="暂无数据">',
+      '          <el-table-column prop="name" :label="g.dim" min-width="140" show-overflow-tooltip></el-table-column>',
+      '          <el-table-column prop="count" label="单据数" width="90" align="right"></el-table-column>',
+      '          <el-table-column prop="pct" label="占比" width="90" align="right"></el-table-column>',
+      '        </el-table>',
+      '      </div>',
+      '    </div>',
+      '    <div class="cost-stat__bar">',
+      '      <div class="cost-stat__sum">明细 {{ qr.rows.length }} 条</div>',
+      '      <el-button @click="$emit(\'export\')">导出 Excel</el-button>',
+      '    </div>',
+      '    <el-table class="demo-data-table" :data="qr.rows" border empty-text="暂无数据" max-height="460">',
+      '      <el-table-column type="index" label="序号" width="60"></el-table-column>',
+      '      <el-table-column v-for="c in def().cols" :key="c.prop" :prop="c.prop" :label="c.label" :min-width="c.w" show-overflow-tooltip>',
+      '        <template #default="{ row }">',
+      '          <span v-if="tagFields.includes(c.prop) && row[c.prop] && row[c.prop]!==\'—\'" class="tag" :class="tagClassName(row[c.prop])">{{ row[c.prop] }}</span>',
+      '          <span v-else>{{ (row[c.prop]==null || row[c.prop]===\'\') ? \'—\' : row[c.prop] }}</span>',
+      '        </template>',
+      '      </el-table-column>',
+      '    </el-table>',
+      '  </template>',
+      '</section>'
+    ].join('\n')
+  };
+  window.QMS_COMPONENTS = window.QMS_COMPONENTS || {};
+  window.QMS_COMPONENTS.QmsQualityReport = QmsQualityReport;
+})();
+
