@@ -914,13 +914,7 @@
             </el-drawer>
           </section>
 
-          <section v-else-if="page.layout==='quality-cockpit'" class="qcock-launch">
-            <div class="qcock-launch__card">
-              <h2>{{ page.title }}</h2>
-              <p>驾驶舱在独立窗口中打开，不嵌在当前页面里。若浏览器拦截了弹出窗口，点下面的按钮再打开一次。</p>
-              <el-button type="primary" @click="openQualityCockpit">打开{{ page.title }}</el-button>
-            </div>
-          </section>
+          <qms-cockpit-launch            v-else-if="page.layout==='quality-cockpit'"            :title="page.title"            @open="openQualityCockpit">          </qms-cockpit-launch>
 
           <section v-else-if="page.layout==='spc-process'" class="spc-chart-panel spc-process">
             <p class="spc-chart-panel__tips" v-if="page.spcTips">{{ page.spcTips }}</p>
@@ -9648,6 +9642,7 @@
 <script src="./js/components/layouts/dict-panel.js?v=1.0.0"></script>
 <script src="./js/components/layouts/tree-list-panel.js?v=1.0.0"></script>
 <script src="./js/components/layouts/spc-chart-panel.js?v=1.0.0"></script>
+<script src="./js/components/layouts/cockpit-launch.js?v=1.0.0"></script>
 <script src="./js/app.js?v=1.0.0"></script>
 </body>
 </html>
