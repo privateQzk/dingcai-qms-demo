@@ -193,7 +193,7 @@ window.QMS_LINKS = {
   "np-0502-01": { group: "实验室管理/环境监测管理", tab: "监测参数台账", tabs: 0, depends: [], emits: [] },
   "np-0503-01": { group: "实验室管理/环境监测管理", tab: "监测参数统计", tabs: 0, depends: [], emits: [], components: ["QmsEnvStat"], migrated: true },
   "np-0601-01": { group: "批次追溯", tab: "批次关系事件表", tabs: 0, depends: [], emits: [] },
-  "np-0602-01": { group: "批次追溯", tab: "批次追溯导图", tabs: 0, depends: [], emits: [] },
+  "np-0602-01": { group: "批次追溯", tab: "批次追溯导图", tabs: 0, depends: [], emits: [], components: ["QmsBatchTrace"], migrated: true },
   "np-0701-01": { group: "BI驾驶舱", tab: "看板设置", tabs: 0, depends: [], emits: [] },
   "np-0702-01": { group: "BI驾驶舱", tab: "质量数字驾驶舱", tabs: 0, depends: [], emits: [], components: ["QmsCockpitLaunch"], migrated: true },
   "np-0702-02": { group: "BI驾驶舱", tab: "检验数字驾驶舱", tabs: 0, depends: [], emits: [], components: ["QmsCockpitLaunch"], migrated: true },

@@ -296,145 +296,7 @@
 
           <qms-env-stat            v-else-if="page.layout==='env-stat'"            :env="envStat"            :names="envStatNames"            :item-options="envStatItemOptions"            @name-change="envStatOnName"            @query="envStatQuery"            @reset="envStatReset"            @open-set="envStatOpenSet"            @open-samples="envStatOpenSamples"            @export="envStatExport"            @save-set="envStatSaveSet">          </qms-env-stat>
 
-          <section v-else-if="page.layout==='batch-trace'" class="batch-trace" :class="{ 'is-full': batchTrace.full }">
-            <div class="batch-trace__query">
-              <div class="batch-trace__field"><label class="is-req">批号</label>
-                <el-input v-model="batchTrace.lot" placeholder="输入" clearable style="width:220px" @keyup.enter="batchTrace.query()"></el-input>
-              </div>
-              <div class="batch-trace__field"><label>方向</label>
-                <el-checkbox-group v-model="batchTrace.dirs">
-                  <el-checkbox :value="'正向追溯'">正向追溯(追产出料)</el-checkbox>
-                  <el-checkbox :value="'反向追溯'">反向追溯(追来源料)</el-checkbox>
-                </el-checkbox-group>
-              </div>
-              <div class="batch-trace__ops">
-                <el-button type="primary" @click="batchTrace.query()">查询</el-button>
-                <el-button @click="batchTrace.reset()">重置</el-button>
-                <el-button @click="batchTrace.openSet()">设置</el-button>
-                <el-button v-if="batchTrace.full" @click="batchTrace.full=false">退出全屏</el-button>
-              </div>
-            </div>
-            <div class="batch-trace__tabs">
-              <button type="button" class="batch-trace__tab" :class="{ 'is-on': batchTrace.tab==='关系总览' }" @click="batchTrace.tab='关系总览'">关系总览</button>
-              <button type="button" class="batch-trace__tab" :class="{ 'is-on': batchTrace.tab==='检验明细' }" @click="batchTrace.tab='检验明细'">检验明细</button>
-              <button type="button" class="batch-trace__tab" :class="{ 'is-on': batchTrace.tab==='批次关联' }" @click="batchTrace.tab='批次关联'">批次关联</button>
-            </div>
-            <div v-show="batchTrace.tab==='关系总览'" class="batch-trace__body">
-              <div class="batch-trace__canvas">
-                <div class="batch-trace__tools">
-                  <button type="button" @click="batchTrace.focus('上溯')">上溯批号</button>
-                  <button type="button" @click="batchTrace.focus('定位')">定位批号</button>
-                  <button type="button" @click="batchTrace.focus('下溯')">下溯批号</button>
-                  <button type="button" @click="batchTrace.expandAll()">全部展开</button>
-                  <button type="button" @click="batchTrace.relayout()">重新排版</button>
-                  <button type="button" @click="batchTrace.full=!batchTrace.full">全屏</button>
-                  <button type="button" @click="batchTrace.zoom(-0.1)">缩小</button>
-                  <button type="button" @click="batchTrace.zoom(0.1)">放大</button>
-                  <div class="batch-trace__legend">
-                    <el-checkbox v-model="batchTrace.legend.back">反向</el-checkbox>
-                    <el-checkbox v-model="batchTrace.legend.pin">定位</el-checkbox>
-                    <el-checkbox v-model="batchTrace.legend.forward">正向</el-checkbox>
-                  </div>
-                </div>
-                <div class="batch-trace__board">
-                  <div v-if="!batchTrace.cols.length" class="bt-empty">请输入批号后查询</div>
-                  <div v-else class="batch-trace__flow" :style="{ transform: 'scale('+batchTrace.scale+')' }">
-                    <template v-for="(col, ci) in batchTrace.visibleCols()" :key="col.depth">
-                      <div v-if="ci>0" class="batch-trace__arrow"><span>{{ col.event || '投料' }}</span><i></i></div>
-                      <div class="batch-trace__col">
-                        <div v-for="n in col.nodes" :key="n.no" class="batch-card" :data-no="n.no" :class="{ 'is-back': n.depth<=0, 'is-on': batchTrace.selected===n.no }" :title="n.no+' '+n.name+' '+(n.code||'')+' '+(n.event||'')" @click="batchTrace.pick(n)">
-                          <div class="batch-card__no">{{ n.no }}</div>
-                          <div class="batch-card__name">{{ n.name }}</div>
-                          <div class="batch-card__name">{{ n.code }}</div>
-                          <button v-if="n.kidCount" type="button" class="batch-card__fold" @click.stop="batchTrace.toggle(n)">{{ batchTrace.collapsed[n.no] ? ('—'+n.kidCount) : '折叠' }}</button>
-                        </div>
-                      </div>
-                    </template>
-                  </div>
-                </div>
-              </div>
-              <aside class="batch-trace__side">
-                <h4>批次检验信息</h4>
-                <div class="bt-tree" v-if="batchTrace.selected">
-                  <div class="bt-tree__l1">
-                    <b>{{ batchTrace.tree().info.no }}</b>
-                    <span>{{ batchTrace.tree().info.name }}</span>
-                    <span>{{ batchTrace.tree().info.code }} {{ batchTrace.tree().info.spec }}</span>
-                  </div>
-                  <div v-for="t in batchTrace.tree().types" :key="t.name" class="bt-tree__l2">
-                    <div class="bt-tree__type">{{ t.name }}</div>
-                    <div v-for="b in t.bills" :key="b.单号" class="bt-tree__l3">
-                      <div>单号 {{ b.单号 }}</div>
-                      <div v-if="b.采样点">采样点 {{ b.采样点 }}</div>
-                      <div v-if="batchTrace.showVal(b.复核结论)">复核结论 {{ b.复核结论 }}</div>
-                      <div v-for="s in b.samples" :key="s.编号" class="bt-tree__l4">
-                        <button type="button" class="bt-link" @click="batchTrace.openSample(s.编号)">{{ s.编号 }}</button>
-                        <span v-if="batchTrace.showVal(s.检验结论)">检验结论 {{ s.检验结论 }}</span>
-                        <span v-if="batchTrace.showVal(s.偏差结论)">偏差结论 {{ s.偏差结论 }}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div v-if="!batchTrace.tree().types.length" class="bt-empty">该批号暂无开启的报检数据</div>
-                </div>
-              </aside>
-            </div>
-            <div v-show="batchTrace.tab==='检验明细'" class="batch-trace__plain">
-              <div class="bt-tree" v-if="batchTrace.selected" style="max-width:640px">
-                <div class="bt-tree__l1">
-                  <b>{{ batchTrace.tree().info.no }}</b>
-                  <span>{{ batchTrace.tree().info.name }}</span>
-                </div>
-                <div v-for="t in batchTrace.tree().types" :key="'d-'+t.name" class="bt-tree__l2">
-                  <div class="bt-tree__type">{{ t.name }}</div>
-                  <div v-for="b in t.bills" :key="'d-'+b.单号" class="bt-tree__l3">
-                    <div>单号 {{ b.单号 }}</div>
-                    <div v-if="b.采样点">采样点 {{ b.采样点 }}</div>
-                    <div v-if="batchTrace.showVal(b.复核结论)">复核结论 {{ b.复核结论 }}</div>
-                    <div v-for="s in b.samples" :key="'d-'+s.编号" class="bt-tree__l4">
-                      <button type="button" class="bt-link" @click="batchTrace.openSample(s.编号)">{{ s.编号 }}</button>
-                      <span v-if="batchTrace.showVal(s.检验结论)">检验结论 {{ s.检验结论 }}</span>
-                      <span v-if="batchTrace.showVal(s.偏差结论)">偏差结论 {{ s.偏差结论 }}</span>
-                    </div>
-                  </div>
-                </div>
-                <div v-if="!batchTrace.tree().types.length" class="bt-empty">该批号暂无开启的报检数据</div>
-              </div>
-            </div>
-            <div v-show="batchTrace.tab==='批次关联'" class="batch-trace__plain">
-              <el-table :data="batchTrace.relRows" border size="small" max-height="520">
-                <el-table-column type="index" label="序号" width="64"></el-table-column>
-                <el-table-column prop="事件类型" label="事件类型" width="90"></el-table-column>
-                <el-table-column prop="来源批号" label="来源批号" width="130"></el-table-column>
-                <el-table-column prop="来源物料名称" label="来源物料名称" min-width="140"></el-table-column>
-                <el-table-column prop="产出批号" label="产出批号" width="130"></el-table-column>
-                <el-table-column prop="产出物料名称" label="产出物料名称" min-width="140"></el-table-column>
-                <el-table-column prop="来源单据名称" label="来源单据名称" width="120"></el-table-column>
-                <el-table-column prop="来源单号" label="来源单号" width="120"></el-table-column>
-              </el-table>
-            </div>
-            <el-dialog v-model="batchTrace.setOpen" title="设置" width="640px" append-to-body>
-              <div style="margin-bottom:14px">
-                <div style="font-weight:600;margin-bottom:8px">追溯层级</div>
-                <div style="display:flex;gap:16px;align-items:center;margin-bottom:8px">正向追溯（追产出料），最大 <el-input v-model="batchTrace.draft.forwardMax" style="width:80px" placeholder="级"></el-input> 级</div>
-                <div style="display:flex;gap:16px;align-items:center">反向追溯（追来源料），最大 <el-input v-model="batchTrace.draft.backMax" style="width:80px" placeholder="级"></el-input> 级</div>
-                <div class="bt-empty">留空表示不限制。只填写正整数，超出的层级不再展示。</div>
-              </div>
-              <div>
-                <div style="font-weight:600;margin-bottom:8px">数据源</div>
-                <div style="display:flex;flex-direction:column;gap:8px">
-                  <div>采购来料检 <el-switch v-model="batchTrace.draft['采购来料检']"></el-switch></div>
-                  <div>生产过程检 <el-switch v-model="batchTrace.draft['生产过程检']"></el-switch></div>
-                  <div>生产物料检 <el-switch v-model="batchTrace.draft['生产物料检']"></el-switch></div>
-                  <div>库内复检 <el-switch v-model="batchTrace.draft['库内复检']"></el-switch></div>
-                  <div>通用检 <el-switch v-model="batchTrace.draft['通用检']"></el-switch></div>
-                </div>
-              </div>
-              <template #footer>
-                <el-button @click="batchTrace.setOpen=false">取消</el-button>
-                <el-button type="primary" @click="batchTrace.saveSet()">确定</el-button>
-              </template>
-            </el-dialog>
-          </section>
+          <qms-batch-trace            v-else-if="page.layout==='batch-trace'"            :p="batchTrace">          </qms-batch-trace>
 
           <qms-cost-stat            v-else-if="page.layout==='cost-stat'"            :pivot="costPivot"            :flow-dlg="costFlowDlg"            :dims="COST_DIMS"            :measures="COST_MEASURES"            :opts="costFlowOpts"            :row-class="costPivotRowClass"            @drag-start="costDragStart"            @drag-over="costDragOver"            @drag-drop="costDragDrop"            @drag-end="costDragEnd"            @remove-dim="costRemoveDim"            @add-dim="costAddDim"            @query="costPivotQuery"            @reset="costPivotReset"            @export="costPivotExport"            @open-flow="costOpenFlow">          </qms-cost-stat>
 
@@ -9079,6 +8941,7 @@
 <script src="./js/components/layouts/cost-stat.js?v=1.0.0"></script>
 <script src="./js/components/layouts/spc-process.js?v=1.0.0"></script>
 <script src="./js/components/layouts/env-stat.js?v=1.0.0"></script>
+<script src="./js/components/layouts/batch-trace.js?v=1.0.0"></script>
 <script src="./js/app.js?v=1.0.0"></script>
 </body>
 </html>
