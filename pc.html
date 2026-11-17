@@ -1054,20 +1054,7 @@
           </section>
 
           <!-- SPC 图表页：图种 Tab + 图表占位 -->
-          <section v-if="page.layout==='spc-chart'" class="spc-chart-panel">
-            <div class="page-tabs" v-if="(page.chartTabs||[]).length" style="margin:0 0 4px;padding:0">
-              <el-tabs v-model="activeChartTab">
-                <el-tab-pane v-for="t in page.chartTabs" :key="t" :name="t" :label="t"></el-tab-pane>
-              </el-tabs>
-            </div>
-            <p class="spc-chart-panel__tips" v-if="page.spcTips">{{ page.spcTips }}</p>
-            <div class="spc-chart-grid" :style="spcChartCards.length===1 ? 'grid-template-columns:1fr' : ''">
-              <div class="spc-chart-card" v-for="c in spcChartCards" :key="c">
-                <div class="spc-chart-card__title">{{ c }}</div>
-                <div class="spc-chart-card__body">控制图占位 · {{ c }}（演示）</div>
-              </div>
-            </div>
-          </section>
+          <qms-spc-chart-panel            v-if="page.layout==='spc-chart'"            :tabs="page.chartTabs || []"            :active-tab="activeChartTab"            :tips="page.spcTips"            :cards="spcChartCards"            @update:active-tab="activeChartTab = $event">          </qms-spc-chart-panel>
 
           <div v-if="tabView.listTips" class="list-tips">{{ tabView.listTips }}</div>
           <div v-if="tabView.listLegend" class="list-tips list-legend">
@@ -9660,6 +9647,7 @@
 <script src="./js/components/index.js?v=1.0.0"></script>
 <script src="./js/components/layouts/dict-panel.js?v=1.0.0"></script>
 <script src="./js/components/layouts/tree-list-panel.js?v=1.0.0"></script>
+<script src="./js/components/layouts/spc-chart-panel.js?v=1.0.0"></script>
 <script src="./js/app.js?v=1.0.0"></script>
 </body>
 </html>
