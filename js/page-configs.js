@@ -52834,6 +52834,590 @@ window.WMS_PAGE_CONFIGS = {
       "formLineFields": [],
       "formLineActions": []
     },
+    "np-0201-16": {
+      "id": "np-0201-16",
+      "title": "光刻任务需求",
+      "groups": [
+        "质量管理",
+        "检验管理"
+      ],
+      "breadcrumb": [
+        "质量管理",
+        "检验管理",
+        "光刻任务需求"
+      ],
+      "tabs": [
+        {
+          "name": "tab-1",
+          "label": "光刻任务需求"
+        },
+        {
+          "name": "tab-2",
+          "label": "已完成"
+        }
+      ],
+      "tabViews": [
+        {
+          "name": "tab-1",
+          "label": "光刻任务需求",
+          "queryFields": [
+            {
+              "name": "需求单号",
+              "type": "input"
+            },
+            {
+              "name": "需求状态",
+              "type": "select",
+              "options": [
+                "待发起",
+                "已发起",
+                "已关闭"
+              ]
+            },
+            {
+              "name": "样品编号",
+              "type": "input"
+            },
+            {
+              "name": "报检单号",
+              "type": "input"
+            },
+            {
+              "name": "物料信息",
+              "type": "picker",
+              "ctrl": "点击右侧抽屉单选物料列表（仅启用），回填「物料编码 / 物料名称 / 物料规格」"
+            },
+            {
+              "name": "卡塞二维码号",
+              "type": "input"
+            },
+            {
+              "name": "发起人",
+              "type": "input"
+            },
+            {
+              "name": "发起时间",
+              "type": "daterange"
+            }
+          ],
+          "queryDefault": [
+            "需求单号",
+            "需求状态",
+            "样品编号",
+            "报检单号"
+          ],
+          "queryMore": [
+            "物料信息",
+            "卡塞二维码号",
+            "发起人",
+            "发起时间"
+          ],
+          "toolbar": [
+            {
+              "name": "新增",
+              "type": "primary",
+              "desc": "新增需求，状态为待发起，不推送"
+            },
+            {
+              "name": "批量关闭",
+              "type": "danger",
+              "desc": "仅待发起可关闭。勾选后状态改为已关闭，仍留在本 Tab"
+            },
+            {
+              "name": "发起需求",
+              "type": "default",
+              "desc": "勾选后弹窗编辑制板要求（自动带入主列表），确定后回写并推送"
+            },
+            {
+              "name": "批量删除",
+              "type": "danger",
+              "desc": "仅待发起或已关闭可删除。勾选后删除，不可恢复"
+            },
+            {
+              "name": "导出",
+              "type": "default",
+              "desc": "见通用功能规范 · 导出数据弹窗"
+            }
+          ],
+          "columns": [
+            {
+              "field": "需求状态",
+              "title": "需求状态",
+              "width": 90,
+              "slot": "tag"
+            },
+            {
+              "field": "需求单号",
+              "title": "需求单号",
+              "width": 140,
+              "fixed": "left"
+            },
+            {
+              "field": "样品编号",
+              "title": "样品编号",
+              "width": 140
+            },
+            {
+              "field": "报检类型",
+              "title": "报检类型",
+              "width": 110
+            },
+            {
+              "field": "报检单号",
+              "title": "报检单号",
+              "width": 150
+            },
+            {
+              "field": "物料编码",
+              "title": "物料编码",
+              "width": 130
+            },
+            {
+              "field": "物料名称",
+              "title": "物料名称",
+              "width": 160
+            },
+            {
+              "field": "报检批号",
+              "title": "报检批号",
+              "width": 120
+            },
+            {
+              "field": "制板类型",
+              "title": "制板类型",
+              "width": 90
+            },
+            {
+              "field": "发起提醒",
+              "title": "发起提醒",
+              "width": 260
+            },
+            {
+              "field": "制板要求",
+              "title": "制板要求",
+              "width": 200
+            },
+            {
+              "field": "需求完成时间",
+              "title": "需求完成时间",
+              "width": 120
+            },
+            {
+              "field": "发起人",
+              "title": "发起人",
+              "width": 90
+            },
+            {
+              "field": "发起时间",
+              "title": "发起时间",
+              "width": 160
+            },
+            {
+              "field": "FES需求单号",
+              "title": "FES需求单号",
+              "width": 160
+            },
+            {
+              "field": "接收时间",
+              "title": "接收时间",
+              "width": 160
+            },
+            {
+              "field": "_actions",
+              "title": "操作",
+              "width": 120,
+              "fixed": "right",
+              "slot": "row_actions"
+            }
+          ],
+          "rowOps": [
+            {
+              "name": "编辑",
+              "desc": "仅待发起可点击；打开全屏编辑页，带入当前行，需求单号不变"
+            },
+            {
+              "name": "复制",
+              "desc": "打开全屏复制页，带入当前行；确定后生成新的待发起需求"
+            }
+          ]
+        },
+        {
+          "name": "tab-2",
+          "label": "已完成",
+          "queryFields": [
+            {
+              "name": "需求单号",
+              "type": "input"
+            },
+            {
+              "name": "需求状态",
+              "type": "select",
+              "options": [
+                "已完成"
+              ]
+            },
+            {
+              "name": "样品编号",
+              "type": "input"
+            },
+            {
+              "name": "报检单号",
+              "type": "input"
+            },
+            {
+              "name": "物料信息",
+              "type": "picker",
+              "ctrl": "点击右侧抽屉单选物料列表（仅启用），回填「物料编码 / 物料名称 / 物料规格」"
+            },
+            {
+              "name": "卡塞二维码号",
+              "type": "input"
+            },
+            {
+              "name": "发起人",
+              "type": "input"
+            },
+            {
+              "name": "发起时间",
+              "type": "daterange"
+            }
+          ],
+          "queryDefault": [
+            "需求单号",
+            "需求状态",
+            "样品编号",
+            "报检单号"
+          ],
+          "queryMore": [
+            "物料信息",
+            "卡塞二维码号",
+            "发起人",
+            "发起时间"
+          ],
+          "toolbar": [
+            {
+              "name": "导出",
+              "type": "default",
+              "desc": "见通用功能规范 · 导出数据弹窗"
+            }
+          ],
+          "columns": [
+            {
+              "field": "需求状态",
+              "title": "需求状态",
+              "width": 90,
+              "slot": "tag"
+            },
+            {
+              "field": "需求单号",
+              "title": "需求单号",
+              "width": 140,
+              "fixed": "left"
+            },
+            {
+              "field": "样品编号",
+              "title": "样品编号",
+              "width": 140
+            },
+            {
+              "field": "报检类型",
+              "title": "报检类型",
+              "width": 110
+            },
+            {
+              "field": "报检单号",
+              "title": "报检单号",
+              "width": 150
+            },
+            {
+              "field": "物料编码",
+              "title": "物料编码",
+              "width": 130
+            },
+            {
+              "field": "物料名称",
+              "title": "物料名称",
+              "width": 160
+            },
+            {
+              "field": "报检批号",
+              "title": "报检批号",
+              "width": 120
+            },
+            {
+              "field": "制板类型",
+              "title": "制板类型",
+              "width": 90
+            },
+            {
+              "field": "发起提醒",
+              "title": "发起提醒",
+              "width": 260
+            },
+            {
+              "field": "制板要求",
+              "title": "制板要求",
+              "width": 200
+            },
+            {
+              "field": "需求完成时间",
+              "title": "需求完成时间",
+              "width": 120
+            },
+            {
+              "field": "发起人",
+              "title": "发起人",
+              "width": 90
+            },
+            {
+              "field": "发起时间",
+              "title": "发起时间",
+              "width": 160
+            },
+            {
+              "field": "FES需求单号",
+              "title": "FES需求单号",
+              "width": 160
+            },
+            {
+              "field": "接收时间",
+              "title": "接收时间",
+              "width": 160
+            },
+            {
+              "field": "光刻参数",
+              "title": "光刻参数",
+              "minWidth": 160
+            },
+            {
+              "field": "完成时间",
+              "title": "完成时间",
+              "width": 160
+            },
+            {
+              "field": "取消原因",
+              "title": "取消原因",
+              "width": 180
+            }
+          ],
+          "rowOps": []
+        }
+      ],
+      "formFields": [],
+      "detailFields": [],
+      "hasEdit": false,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true,
+      "formLineFields": [],
+      "formLineActions": []
+    },
+    "np-0201-17": {
+  "id": "np-0201-17",
+  "title": "卡塞信息表",
+  "groups": [
+    "质量管理",
+    "检验管理"
+  ],
+  "breadcrumb": [
+    "质量管理",
+    "检验管理",
+    "卡塞信息表"
+  ],
+  "tabs": [
+    {
+      "name": "main",
+      "label": "卡塞信息表"
+    }
+  ],
+  "tabViews": [
+    {
+      "name": "main",
+      "label": "卡塞信息表",
+      "queryFields": [
+        {
+          "name": "卡塞编号",
+          "type": "input"
+        },
+        {
+          "name": "卡塞类型",
+          "type": "select",
+          "options": [
+            "光刻胶生产",
+            "6寸标准卡塞",
+            "4寸卡塞"
+          ]
+        }
+      ],
+      "queryDefault": [
+        "单据号",
+        "DN单号",
+        "客户信息"
+      ],
+      "queryMore": [
+        "物料信息",
+        "计划发货日期"
+      ],
+      "toolbar": [
+        {
+          "name": "新增",
+          "type": "primary",
+          "desc": "手动补录发货 OQC 任务，单据号系统生成，保存后进入待执行"
+        },
+        {
+          "name": "上传附件",
+          "type": "default",
+          "desc": "勾选一条或多条任务，上传纸质检查单扫描件"
+        },
+        {
+          "name": "删除",
+          "type": "danger",
+          "desc": "勾选待执行任务后删除，删除后不可恢复"
+        },
+        {
+          "name": "关闭",
+          "type": "default",
+          "desc": "勾选待执行任务后关闭，关闭后移入「已完成」，单据状态为已关闭"
+        },
+        {
+          "name": "导出",
+          "type": "default",
+          "desc": "见通用功能规范 · 导出数据弹窗"
+        }
+      ],
+      "columns": [
+        {
+          "field": "信息流水号",
+          "title": "信息流水号",
+          "width": 150,
+          "fixed": "left"
+        },
+        {
+          "field": "卡塞编号",
+          "title": "卡塞编号",
+          "width": 140
+        },
+        {
+          "field": "卡塞类型",
+          "title": "卡塞类型",
+          "width": 120,
+          "slot": "tag"
+        },
+        {
+          "field": "关联玻璃板数",
+          "title": "关联玻璃板数",
+          "width": 120
+        },
+        {
+          "field": "创建人",
+          "title": "创建人",
+          "width": 100
+        },
+        {
+          "field": "创建时间",
+          "title": "创建时间",
+          "width": 170
+        }
+      ],
+      "rowOps": [
+        {
+          "name": "上传附件",
+          "desc": "打开上传检查附件弹窗"
+        },
+        {
+          "name": "编辑",
+          "desc": "编辑当前待执行任务；单据号不可改"
+        }
+      ],
+      "formFields": [
+        {
+          "name": "单据号",
+          "type": "readonly",
+          "required": false,
+          "ctrl": "系统生成：OQC + 当前年月日（yyyyMMdd）+ 3 位流水，按天流水"
+        },
+        {
+          "name": "DN单号",
+          "type": "input",
+          "required": true,
+          "ctrl": "输入"
+        },
+        {
+          "name": "客户信息",
+          "type": "picker",
+          "required": true,
+          "ctrl": "点击右侧抽屉弹出「客户」列表，单选；可按客户编码/名称查询；回填「客户编码 / 客户名称」"
+        },
+        {
+          "name": "物料编码",
+          "type": "picker",
+          "required": true,
+          "ctrl": "点击右侧抽屉弹出「物料」列表，单选；可按物料编码/名称查询；回填物料编码/名称/规格/种类，并带出销售单位"
+        },
+        {
+          "name": "物料名称",
+          "type": "readonly",
+          "required": false,
+          "ctrl": "选择物料后自动带入"
+        },
+        {
+          "name": "物料规格",
+          "type": "readonly",
+          "required": false,
+          "ctrl": "选择物料后自动带入"
+        },
+        {
+          "name": "物料种类",
+          "type": "readonly",
+          "required": false,
+          "ctrl": "选择物料后自动带入"
+        },
+        {
+          "name": "批号",
+          "type": "input",
+          "required": true,
+          "ctrl": "输入"
+        },
+        {
+          "name": "发货数量",
+          "type": "input",
+          "required": true,
+          "ctrl": "输入"
+        },
+        {
+          "name": "销售单位",
+          "type": "select",
+          "required": true,
+          "ctrl": "根据物料自动带入，可修改；下拉选择（单位列表，单选）",
+          "options": [
+            "KG",
+            "g",
+            "L",
+            "mL",
+            "瓶",
+            "个",
+            "Pcs"
+          ]
+        },
+        {
+          "name": "计划发货日期",
+          "type": "date",
+          "required": true,
+          "ctrl": "选择日期"
+        }
+      ],
+      "rows": []
+    }
+  ],
+  "formFields": [],
+  "detailFields": [],
+  "hasEdit": false,
+  "hasDetail": false,
+  "stub": false,
+  "formFlat": true,
+  "formLineFields": [],
+  "formLineActions": []
+},
     "np-0208-01": {
       "id": "np-0208-01",
       "title": "色谱柱台账",
