@@ -210,46 +210,10 @@
           <qms-dict-panel            v-if="page.layout==='dict-split'"            :title="page.treeTitle"            :keyword="dictTypeKw"            :compact="isChromLedgerPage()"            :has-nodes="!!filteredDictTypeTree.length"            empty-text-compact="暂无可用的分类（可点「新增」，或到「漂移规则设置」配置物料 × 色谱柱型号）"            @update:keyword="dictTypeKw = $event"            @query="onQuery"            @add-type="openDictTypeForm('add')"            @add-cat="openChromCatAdd">            <dict-type-tree-nodes              :nodes="filteredDictTypeTree"              :active-id="dictTypeId"              :editable="!isChromLedgerPage()"              :collapsed="dictTypeKw.trim() ? {} : dictTypeCollapsed"              @select="selectDictType"              @toggle="toggleDictTypeNode"              @edit="(n)=>openDictTypeForm('edit', n)"              @remove="removeDictType"            ></dict-type-tree-nodes>          </qms-dict-panel>
 
           <!-- 数据录入-按类型：左侧检验类树 -->
-          <aside v-else-if="page.layout==='entry-category'" class="dict-type-panel">
-            <div class="dict-type-panel__hd">
-              <div class="dict-type-panel__title"><span>检验类</span></div>
-              <el-input v-model="entryCategoryKw" clearable placeholder="搜索检验类" size="small"></el-input>
-            </div>
-            <div class="dict-type-panel__body">
-              <div
-                class="dict-type-node"
-                :class="{ active: !entryCategoryId }"
-                style="padding:8px 12px;cursor:pointer"
-                @click="entryCategoryId=''"
-              >全部检验类</div>
-              <div
-                v-for="c in filteredEntryCategories"
-                :key="c"
-                class="dict-type-node"
-                :class="{ active: entryCategoryId===c }"
-                style="padding:8px 12px;cursor:pointer"
-                @click="entryCategoryId=c"
-              >{{ c }}</div>
-            </div>
-          </aside>
+          <qms-simple-list-panel            v-else-if="page.layout==='entry-category'"            title="检验类"            placeholder="搜索检验类"            :keyword="entryCategoryKw"            :items="filteredEntryCategories"            :active-id="entryCategoryId"            :show-all="true"            all-label="全部检验类"            @update:keyword="entryCategoryKw = $event"            @select="entryCategoryId = $event">          </qms-simple-list-panel>
 
           <!-- SPC查询总览：左侧工艺树 -->
-          <aside v-else-if="page.layout==='spc-overview'" class="dict-type-panel">
-            <div class="dict-type-panel__hd">
-              <div class="dict-type-panel__title"><span>SPC工艺</span></div>
-              <el-input v-model="spcProcessKw" clearable placeholder="请输入关键字" size="small"></el-input>
-            </div>
-            <div class="dict-type-panel__body">
-              <div
-                v-for="c in filteredSpcProcesses"
-                :key="c"
-                class="dict-type-node"
-                :class="{ active: spcProcessId===c }"
-                style="padding:8px 12px;cursor:pointer"
-                @click="spcProcessId=c"
-              >{{ c }}</div>
-            </div>
-          </aside>
+          <qms-simple-list-panel            v-else-if="page.layout==='spc-overview'"            title="SPC工艺"            placeholder="请输入关键字"            :keyword="spcProcessKw"            :items="filteredSpcProcesses"            :active-id="spcProcessId"            @update:keyword="spcProcessKw = $event"            @select="spcProcessId = $event">          </qms-simple-list-panel>
 
           <!-- 仪器台账：左侧仪器类型 -->
           <aside v-else-if="pageId===INST_PAGE" class="dict-type-panel">
@@ -292,31 +256,7 @@
           <qms-tree-list-panel            v-else-if="page.layout==='tree-list'"            :title="page.treeTitle"            :toolbar="page.treeToolbar || []"            :keyword="treeListKw"            :nodes="filteredTreeListNodes"            :active-id="treeListId"            :ops="page.treeOps || []"            @update:keyword="treeListKw = $event"            @toolbar-action="onTreeToolbar"            @select="treeListId = $event"            @op="(cmd, c) => onTreeListOp(cmd, c)">          </qms-tree-list-panel>
 
           <!-- 色谱柱台账：左侧色谱柱型号列表 -->
-          <aside v-else-if="page.layout==='col-split'" class="dict-type-panel">
-            <div class="dict-type-panel__hd">
-              <div class="dict-type-panel__title">
-                <span>{{ page.treeTitle || '色谱柱型号' }}</span>
-                <el-button type="primary" size="small" @click="openColModel('add')">新建型号</el-button>
-              </div>
-              <el-input v-model="colModelKw" clearable placeholder="搜索型号" size="small"></el-input>
-            </div>
-            <div class="dict-type-panel__body">
-              <div v-if="!colModelList.length" class="dict-empty-tip">暂无匹配的色谱柱型号</div>
-              <div
-                v-for="m in colModelList"
-                :key="m.id"
-                class="dict-type-node"
-                :class="{ 'is-active': colModelId===m.id }"
-                @click="selectColModel(m.id)"
-              >
-                <span class="dict-type-node__name" :title="m['名称'] + (m['备注'] ? '（' + m['备注'] + '）' : '')">{{ m['名称'] }}</span>
-                <span class="dict-type-node__ops" @click.stop>
-                  <el-button link type="primary" size="small" @click="openColModel('edit', m)">编辑</el-button>
-                  <el-button link type="danger" size="small" @click="removeColModel(m)">删除</el-button>
-                </span>
-              </div>
-            </div>
-          </aside>
+          <qms-col-model-panel            v-else-if="page.layout==='col-split'"            :title="page.treeTitle"            :keyword="colModelKw"            :items="colModelList"            :active-id="colModelId"            @update:keyword="colModelKw = $event"            @add="openColModel('add')"            @edit="openColModel('edit', $event)"            @remove="removeColModel"            @select="selectColModel">          </qms-col-model-panel>
 
           <!-- 内审整改：左侧内审年度 -->
           <aside v-else-if="page.layout==='iar-year'" class="dict-type-panel">
@@ -9625,6 +9565,8 @@
 <script src="./js/components/layouts/spc-chart-panel.js?v=1.0.0"></script>
 <script src="./js/components/layouts/cockpit-launch.js?v=1.0.0"></script>
 <script src="./js/components/layouts/sigma-config.js?v=1.0.0"></script>
+<script src="./js/components/layouts/simple-list-panel.js?v=1.0.0"></script>
+<script src="./js/components/layouts/col-model-panel.js?v=1.0.0"></script>
 <script src="./js/app.js?v=1.0.0"></script>
 </body>
 </html>
