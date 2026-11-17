@@ -561,110 +561,7 @@
 
           <qms-cockpit-launch            v-else-if="page.layout==='quality-cockpit'"            :title="page.title"            @open="openQualityCockpit">          </qms-cockpit-launch>
 
-          <section v-else-if="page.layout==='spc-process'" class="spc-chart-panel spc-process">
-            <p class="spc-chart-panel__tips" v-if="page.spcTips">{{ page.spcTips }}</p>
-            <div class="spc-p-query">
-              <div class="spc-p-block" v-for="tp in SPC_P_TYPES" :key="tp.key">
-                <div class="spc-p-block__head" @click="spcP.types[tp.key].open=!spcP.types[tp.key].open">
-                  <span class="spc-p-block__arrow">{{ spcP.types[tp.key].open ? '▾' : '▸' }}</span>
-                  <span class="spc-p-block__title">{{ tp.label }}</span>
-                  <span class="spc-p-block__sel" v-if="spcP.types[tp.key].mats.length">已选物料 {{ spcP.types[tp.key].mats.length }} 个</span>
-                </div>
-                <div v-show="spcP.types[tp.key].open" class="spc-p-block__body">
-                  <el-form :inline="true" class="query-form">
-                    <el-form-item label="物料信息" required>
-                      <el-input :model-value="spcP.types[tp.key].mats.length ? ('已选 ' + spcP.types[tp.key].mats.length + ' 个物料') : ''" readonly clearable class="demo-picker-input" placeholder="点击选择（可多选）" @click="openIoPick('mat','spcP',tp.key+'.mats',true)" @clear="spcP.types[tp.key].mats=[]"></el-input>
-                    </el-form-item>
-                    <el-form-item label="检验方案" required>
-                      <el-input :model-value="spcP.types[tp.key].scheme" readonly clearable class="demo-picker-input" placeholder="点击选择" @click="openIoPick('inspScheme','spcP',tp.key+'.scheme')" @clear="spcP.types[tp.key].scheme=''"></el-input>
-                    </el-form-item>
-                    <el-form-item label="检验项" required>
-                      <el-input :model-value="spcP.types[tp.key].items.join('、')" readonly clearable class="demo-picker-input" placeholder="点击选择（可多选）" @click="openIoPick('spcItem','spcP',tp.key+'.items',true)" @clear="spcP.types[tp.key].items=[]"></el-input>
-                    </el-form-item>
-                    <el-form-item label="日期范围" required>
-                      <el-date-picker v-model="spcP.types[tp.key].dates" type="daterange" value-format="YYYY-MM-DD" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
-                    </el-form-item>
-                    <template v-if="spcP.more">
-                      <el-form-item label="采样点">
-                        <el-input :model-value="spcP.types[tp.key].point" readonly clearable class="demo-picker-input" placeholder="点击选择" @click="openIoPick('point','spcP',tp.key+'.point')" @clear="spcP.types[tp.key].point=''"></el-input>
-                      </el-form-item>
-                      <el-form-item label="供应商信息" v-if="tp.filters.includes('supplier')">
-                        <el-input :model-value="spcP.types[tp.key].supplier" readonly clearable class="demo-picker-input" placeholder="点击选择" @click="openIoPick('supplier','spcP',tp.key+'.supplier')" @clear="spcP.types[tp.key].supplier=''"></el-input>
-                      </el-form-item>
-                      <el-form-item label="客户信息" v-if="tp.filters.includes('customer')">
-                        <el-input :model-value="spcP.types[tp.key].customer" readonly clearable class="demo-picker-input" placeholder="点击选择" @click="openIoPick('customer','spcP',tp.key+'.customer')" @clear="spcP.types[tp.key].customer=''"></el-input>
-                      </el-form-item>
-                    </template>
-                  </el-form>
-                  <div class="spc-p-tags" v-if="spcP.types[tp.key].mats.length">
-                    <el-tag v-for="m in spcP.types[tp.key].mats" :key="m" closable @close="spcPRemoveMat(tp.key, m)">{{ spcPMatName(m) }}</el-tag>
-                  </div>
-                </div>
-              </div>
-              <div class="spc-p-actions">
-                <el-button type="primary" @click="spcPQuery">查询</el-button>
-                <el-button @click="spcPReset">重置</el-button>
-                <el-button @click="spcPOpenSettings">设置</el-button>
-                <el-button link type="primary" @click="spcP.more=!spcP.more">{{ spcP.more ? '收起' : '更多' }}</el-button>
-              </div>
-            </div>
-            <div class="spc-p-chartbar" v-if="(page.chartTabs||[]).length">
-              <el-tabs v-model="spcP.chartTab">
-                <el-tab-pane v-for="t in page.chartTabs" :key="t" :name="t" :label="t"></el-tab-pane>
-              </el-tabs>
-              <div class="spc-p-chartbar__btns">
-                <el-button @click="spcPOpenSamples">I图样本数据</el-button>
-                <el-button @click="spcPExport">导出</el-button>
-              </div>
-            </div>
-            <template v-if="spcP.queried">
-              <div class="spc-p-group" v-for="g in spcP.groups" :key="g.key">
-                <div class="spc-p-group__title">{{ g.label }} · {{ g.combos.length }} 张图</div>
-                <div class="spc-chart-grid">
-                  <div class="spc-chart-card" v-for="c in g.combos" :key="c.key">
-                    <div class="spc-chart-card__title">{{ c.matName }} · {{ c.item }}（{{ spcP.chartTab }}）</div>
-                    <div class="spc-chart-card__body spc-chart-card__body--live" :id="c.domId"></div>
-                  </div>
-                </div>
-              </div>
-              <div v-if="!spcP.groups.some(g=> g.combos.length)" class="spc-p-empty">暂无符合条件的「物料 × 检验项」组合</div>
-              <div class="spc-p-samples">
-                <el-tabs v-model="spcP.anaTab">
-                  <el-tab-pane v-for="tp in SPC_P_TYPES" :key="tp.key" :name="tp.key">
-                    <template #label>{{ tp.label }}<span class="spc-p-badge">{{ spcPAnaRows(tp.key).length }}</span></template>
-                  </el-tab-pane>
-                </el-tabs>
-                <el-table class="demo-data-table demo-data-table--striped" :data="spcPAnaRows(spcP.anaTab)" border stripe max-height="460" empty-text="暂无数据">
-                  <el-table-column type="index" label="序号" width="60"></el-table-column>
-                  <el-table-column v-for="c in spcPAnaCols" :key="c" :prop="c" :label="c" :min-width="spcPAnaColWidth(c)" show-overflow-tooltip></el-table-column>
-                </el-table>
-              </div>
-            </template>
-            <el-dialog v-model="spcP.sampleDlg" title="I图样本数据" width="min(1240px, 94vw)" top="4vh" append-to-body :close-on-click-modal="false">
-              <el-tabs v-model="spcP.sampleTab">
-                <el-tab-pane v-for="tp in SPC_P_TYPES" :key="tp.key" :name="tp.key">
-                  <template #label>{{ tp.label }}<span class="spc-p-badge">{{ spcP.samples[tp.key].length }}</span></template>
-                </el-tab-pane>
-              </el-tabs>
-              <el-table class="demo-data-table demo-data-table--striped" :data="spcP.samples[spcP.sampleTab]" border stripe max-height="520" empty-text="暂无数据">
-                <el-table-column type="index" label="序号" width="60"></el-table-column>
-                <el-table-column prop="样品编号" label="样品编号" width="140"></el-table-column>
-                <el-table-column prop="报检单号" label="报检单号" width="140"></el-table-column>
-                <el-table-column prop="报检类型" label="报检类型" width="110"></el-table-column>
-                <el-table-column prop="物料信息" label="物料信息" min-width="200" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="检验项" label="检验项" width="140" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="样本值" label="样本值" width="100" align="right"></el-table-column>
-                <el-table-column prop="单位" label="单位" width="80"></el-table-column>
-                <el-table-column prop="检验结论" label="检验结论" width="90">
-                  <template #default="{ row }"><span class="tag" :class="tagClass(row['检验结论'])">{{ row['检验结论'] }}</span></template>
-                </el-table-column>
-                <el-table-column prop="采样点" label="采样点" width="150" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="供应商名称" label="供应商名称" min-width="160" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="客户名称" label="客户名称" min-width="160" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="检验完成时间" label="检验完成时间" width="150"></el-table-column>
-              </el-table>
-            </el-dialog>
-          </section>
+          <qms-spc-process            v-else-if="page.layout==='spc-process'"            :p="spcP"            :types="SPC_P_TYPES"            :chart-tabs="page.chartTabs || []"            :tips="page.spcTips"            :ana-cols="spcPAnaCols"            :ana-rows="spcPAnaRows"            :ana-col-width="spcPAnaColWidth"            :mat-name="spcPMatName"            :tag-class-name="tagClass"            @open-pick="openIoPick"            @remove-mat="spcPRemoveMat"            @query="spcPQuery"            @reset="spcPReset"            @open-settings="spcPOpenSettings"            @open-samples="spcPOpenSamples"            @export="spcPExport">          </qms-spc-process>
 
           <template v-else>
           <section class="query-area">
@@ -9295,6 +9192,7 @@
 <script src="./js/components/layouts/quality-report.js?v=1.0.0"></script>
 <script src="./js/components/layouts/insp-report.js?v=1.0.0"></script>
 <script src="./js/components/layouts/cost-stat.js?v=1.0.0"></script>
+<script src="./js/components/layouts/spc-process.js?v=1.0.0"></script>
 <script src="./js/app.js?v=1.0.0"></script>
 </body>
 </html>

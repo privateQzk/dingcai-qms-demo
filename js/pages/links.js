@@ -88,7 +88,7 @@ window.QMS_LINKS = {
   "spc-multi": { group: "质量管理/SPC统计", tab: "计量SPC(多图)", tabs: 3, depends: [], emits: [], components: ["QmsSpcChartPanel"], migrated: true },
   "spc-single": { group: "质量管理/SPC统计", tab: "计量SPC(单图)", tabs: 3, depends: [], emits: [], components: ["QmsSpcChartPanel"], migrated: true },
   "spc-compare": { group: "质量管理/SPC统计", tab: "比对SPC(多图)", tabs: 3, depends: [], emits: [], components: ["QmsSpcChartPanel"], migrated: true },
-  "spc-process": { group: "质量管理/SPC统计", tab: "制程SPC(多图)", tabs: 0, depends: [], emits: [] },
+  "spc-process": { group: "质量管理/SPC统计", tab: "制程SPC(多图)", tabs: 0, depends: [], emits: [], components: ["QmsSpcProcess"], migrated: true },
   "spc-report-issue": { group: "质量管理/SPC统计", tab: "SPC报告开具", tabs: 3, depends: [], emits: [], components: ["QmsSpcChartPanel"], migrated: true },
   "spc-report-ledger": { group: "质量管理/SPC统计", tab: "SPC报告台账", tabs: 0, depends: [], emits: [] },
   "qr-datasource": { group: "质量管理/质量报告", tab: "质量报告数据源", tabs: 0, depends: [], emits: [], components: ["QmsTreeListPanel"], migrated: true },
