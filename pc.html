@@ -289,40 +289,7 @@
           </aside>
 
           <!-- 质量报告等：通用左树右表 -->
-          <aside v-else-if="page.layout==='tree-list'" class="dict-type-panel">
-            <div class="dict-type-panel__hd">
-              <div class="dict-type-panel__title">
-                <span>{{ page.treeTitle || '分类' }}</span>
-                <el-button
-                  v-if="(page.treeToolbar||[]).length"
-                  type="primary"
-                  size="small"
-                  @click="onTreeToolbar()"
-                >{{ page.treeToolbar[0].name }}</el-button>
-              </div>
-              <el-input v-model="treeListKw" clearable placeholder="请输入关键字" size="small"></el-input>
-            </div>
-            <div class="dict-type-panel__body">
-              <div
-                v-for="c in filteredTreeListNodes"
-                :key="c"
-                class="dict-type-node"
-                :class="{ active: treeListId===c }"
-                style="padding:8px 12px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px"
-                @click="treeListId=c"
-              >
-                <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ c }}</span>
-                <el-dropdown v-if="(page.treeOps||[]).length" trigger="click" @command="(cmd)=>onTreeListOp(cmd, c)" @click.stop>
-                  <span class="el-dropdown-link" style="color:#64748b;padding:0 4px" @click.stop>⋯</span>
-                  <template #dropdown>
-                    <el-dropdown-menu>
-                      <el-dropdown-item v-for="op in page.treeOps" :key="op" :command="op" :style="op==='删除'?'color:#FF4D4F':''">{{ op }}</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </template>
-                </el-dropdown>
-              </div>
-            </div>
-          </aside>
+          <qms-tree-list-panel            v-else-if="page.layout==='tree-list'"            :title="page.treeTitle"            :toolbar="page.treeToolbar || []"            :keyword="treeListKw"            :nodes="filteredTreeListNodes"            :active-id="treeListId"            :ops="page.treeOps || []"            @update:keyword="treeListKw = $event"            @toolbar-action="onTreeToolbar"            @select="treeListId = $event"            @op="(cmd, c) => onTreeListOp(cmd, c)">          </qms-tree-list-panel>
 
           <!-- 色谱柱台账：左侧色谱柱型号列表 -->
           <aside v-else-if="page.layout==='col-split'" class="dict-type-panel">
@@ -9692,6 +9659,7 @@
 <script src="./js/pages/loader.js?v=1.0.0"></script>
 <script src="./js/components/index.js?v=1.0.0"></script>
 <script src="./js/components/layouts/dict-panel.js?v=1.0.0"></script>
+<script src="./js/components/layouts/tree-list-panel.js?v=1.0.0"></script>
 <script src="./js/app.js?v=1.0.0"></script>
 </body>
 </html>
