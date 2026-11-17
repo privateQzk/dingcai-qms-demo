@@ -637,82 +637,7 @@
             </el-drawer>
           </section>
 
-          <section v-else-if="page.layout==='insp-report'" class="cost-stat insp-report">
-            <div class="cost-stat__box">
-              <el-form :inline="true" class="query-form">
-                <el-form-item label="报检类型"><el-select v-model="inspRpt.types" multiple collapse-tags collapse-tags-tooltip filterable clearable placeholder="全部" style="width:100%"><el-option v-for="o in inspTypeOptions()" :key="o" :label="o" :value="o"></el-option></el-select></el-form-item>
-                <el-form-item label="物料信息"><el-input :model-value="inspRpt.matLabel" :title="inspRpt.matLabel" readonly clearable class="demo-picker-input" placeholder="请点击选择，可多选" @click="openInspPick('物料信息')" @clear="inspClearPick('物料信息')"></el-input></el-form-item>
-                <el-form-item label="物料种类"><el-select v-model="inspRpt.kinds" multiple collapse-tags collapse-tags-tooltip filterable clearable placeholder="全部" style="width:100%"><el-option v-for="o in inspKindOptions()" :key="o" :label="o" :value="o"></el-option></el-select></el-form-item>
-                <el-form-item label="检验项"><el-select v-model="inspRpt.items" multiple collapse-tags collapse-tags-tooltip filterable clearable placeholder="全部" style="width:100%"><el-option v-for="o in inspItemOptions()" :key="o" :label="o" :value="o"></el-option></el-select></el-form-item>
-                <el-form-item label="检验结论"><el-select v-model="inspRpt.results" multiple collapse-tags collapse-tags-tooltip clearable placeholder="全部" style="width:100%"><el-option v-for="o in ['合格','不合格']" :key="o" :label="o" :value="o"></el-option></el-select></el-form-item>
-                <el-form-item label="采样点"><el-input :model-value="inspRpt.pointLabel" :title="inspRpt.pointLabel" readonly clearable class="demo-picker-input" placeholder="请点击选择，可多选" @click="openInspPick('采样点')" @clear="inspClearPick('采样点')"></el-input></el-form-item>
-                <el-form-item label="供应商信息"><el-input :model-value="inspRpt.supplierLabel" :title="inspRpt.supplierLabel" readonly clearable class="demo-picker-input" placeholder="请点击选择，可多选" @click="openInspPick('供应商信息')" @clear="inspClearPick('供应商信息')"></el-input></el-form-item>
-                <el-form-item label="客户信息"><el-input :model-value="inspRpt.customerLabel" :title="inspRpt.customerLabel" readonly clearable class="demo-picker-input" placeholder="请点击选择，可多选" @click="openInspPick('客户信息')" @clear="inspClearPick('客户信息')"></el-input></el-form-item>
-                <el-form-item label="时间范围"><el-date-picker v-model="inspRpt.date" type="daterange" value-format="YYYY-MM-DD" start-placeholder="开始日期" end-placeholder="结束日期" clearable></el-date-picker></el-form-item>
-              </el-form>
-              <div class="cost-stat__row">
-                <div class="cost-stat__dimblock">
-                  <div class="cost-stat__field"><label>行维度</label>
-                  <div class="cost-stat__chips">
-                    <span v-for="(d,i) in inspRpt.rows" :key="d" class="cost-stat__chip" draggable="true" :class="{ 'is-over': inspRpt.dragOver===i }" @dragstart="inspDragStart(i,$event)" @dragover.prevent="inspDragOver(i)" @drop="inspDragDrop(i)" @dragend="inspDragEnd">{{ d }}<i class="cost-stat__x" @click="inspRemoveDim(i)">×</i></span>
-                    <el-select v-model="inspRpt.dimAdd" placeholder="添加行维度" style="width:140px" @change="inspAddDim">
-                      <el-option v-for="d in inspDimChoices()" :key="d" :label="d" :value="d"></el-option>
-                    </el-select>
-                  </div>
-                  </div>
-                  <div class="cost-stat__hintline">拖拽标签调整顺序，从左到右为汇总层级</div>
-                </div>
-                <div class="cost-stat__field"><label>列维度</label>
-                  <el-select v-model="inspRpt.col" clearable placeholder="不透视" style="width:160px">
-                    <el-option v-for="d in inspColChoices()" :key="d" :label="d" :value="d"></el-option>
-                  </el-select>
-                </div>
-                <div>
-                  <div style="margin-bottom:8px;color:#334155;font-size:13px">指标</div>
-                  <el-checkbox-group v-model="inspRpt.measures" class="cost-stat__measures">
-                    <el-checkbox v-for="m in INSP_MEASURES" :key="m" :value="m">{{ m }}</el-checkbox>
-                  </el-checkbox-group>
-                </div>
-              </div>
-              <div class="cost-stat__foot">
-                <el-button type="primary" @click="inspRptQuery">查询</el-button>
-                <el-button @click="inspRptReset">重置</el-button>
-              </div>
-            </div>
-            <div class="cost-stat__bar" v-if="inspRpt.queried">
-              <div class="cost-stat__sum">命中项次 {{ inspRpt.hit }} · 合格率 {{ inspRpt.rate }} · 样品数 {{ inspRpt.samples }} · 报检单数 {{ inspRpt.orders }}</div>
-              <el-button @click="inspRptExport">导出 Excel</el-button>
-            </div>
-            <el-table v-if="inspRpt.queried" class="demo-data-table" :data="inspRpt.table" border :row-class-name="inspRptRowClass" empty-text="暂无数据" max-height="520">
-              <el-table-column v-for="c in inspRpt.columns" :key="c.prop" :prop="c.prop" :label="c.label" :min-width="c.width" :fixed="c.fixed" show-overflow-tooltip>
-                <template #default="{ row }">
-                  <el-button v-if="c.link && row[c.prop]!=='—'" link type="primary" @click="inspOpenDetail(row, c)">{{ row[c.prop] }}</el-button>
-                  <span v-else>{{ row[c.prop] }}</span>
-                </template>
-              </el-table-column>
-              <el-table-column label="操作" width="100" fixed="right">
-                <template #default="{ row }"><el-button v-if="!row._total" link type="primary" @click="inspOpenDetail(row)">查看明细</el-button></template>
-              </el-table-column>
-            </el-table>
-            <el-drawer v-model="inspDetailDlg.visible" :title="'检验明细 · '+inspDetailDlg.title" direction="rtl" size="70%" append-to-body>
-              <el-table :data="inspDetailDlg.rows" border height="100%" empty-text="暂无明细">
-                <el-table-column type="index" label="序号" width="60"></el-table-column>
-                <el-table-column prop="报检类型" label="报检类型" width="120"></el-table-column>
-                <el-table-column prop="报检单号" label="报检单号" width="140"></el-table-column>
-                <el-table-column prop="样品编号" label="样品编号" width="120"></el-table-column>
-                <el-table-column prop="物料名称" label="物料名称" min-width="140" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="供应商名称" label="供应商名称" min-width="160" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="客户名称" label="客户名称" min-width="160" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="采样点" label="采样点" min-width="140" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="检验项名称" label="检验项名称" width="120"></el-table-column>
-                <el-table-column prop="检验项类型" label="检验项类型" width="100"></el-table-column>
-                <el-table-column label="检验结果" width="100"><template #default="{ row }">{{ inspResultText(row) || '—' }}</template></el-table-column>
-                <el-table-column prop="检验结论" label="检验结论" width="90"></el-table-column>
-                <el-table-column prop="检验人" label="检验人" width="90"></el-table-column>
-                <el-table-column prop="检验完成时间" label="检验完成时间" width="160"></el-table-column>
-              </el-table>
-            </el-drawer>
-          </section>
+          <qms-insp-report            v-else-if="page.layout==='insp-report'"            :rpt="inspRpt"            :detail="inspDetailDlg"            :measures="INSP_MEASURES"            :type-options="inspTypeOptions"            :kind-options="inspKindOptions"            :item-options="inspItemOptions"            :dim-choices="inspDimChoices"            :col-choices="inspColChoices"            :row-class="inspRptRowClass"            :result-text="inspResultText"            @open-pick="openInspPick"            @clear-pick="inspClearPick"            @drag-start="inspDragStart"            @drag-over="inspDragOver"            @drag-drop="inspDragDrop"            @drag-end="inspDragEnd"            @remove-dim="inspRemoveDim"            @add-dim="inspAddDim"            @query="inspRptQuery"            @reset="inspRptReset"            @export="inspRptExport"            @open-detail="inspOpenDetail">          </qms-insp-report>
 
           <qms-quality-report            v-else-if="page.layout==='quality-report'"            :qr="qr"            :tabs="QR_TABS"            :tag-fields="QR_TAG_FIELDS"            :def="qrDef"            :options="qrOptions"            :cards="qrCards"            :groups="qrGroups"            :tag-class-name="tagClass"            @tab-change="qrOnTab"            @query="qrQuery"            @reset="qrReset"            @export="qrExport"            @open-pick="qrOpenPick"            @clear-pick="qrClearPick">          </qms-quality-report>
 
@@ -9452,6 +9377,7 @@
 <script src="./js/components/layouts/col-model-panel.js?v=1.0.0"></script>
 <script src="./js/components/layouts/util-report.js?v=1.0.0"></script>
 <script src="./js/components/layouts/quality-report.js?v=1.0.0"></script>
+<script src="./js/components/layouts/insp-report.js?v=1.0.0"></script>
 <script src="./js/app.js?v=1.0.0"></script>
 </body>
 </html>
