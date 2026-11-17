@@ -569,6 +569,11 @@ window.WMS_PAGE_CONFIGS = {
               "pageId": "spc-compare"
             },
             {
+              "title": "制程SPC(多图)",
+              "index": "spc-process",
+              "pageId": "spc-process"
+            },
+            {
               "title": "SPC报告开具",
               "index": "spc-report-issue",
               "pageId": "spc-report-issue"
@@ -1032,6 +1037,11 @@ window.WMS_PAGE_CONFIGS = {
           "title": "仪器调拨",
           "index": "np-0312-01",
           "pageId": "np-0312-01"
+        },
+        {
+          "title": "仪器稼动率表",
+          "index": "np-0314-01",
+          "pageId": "np-0314-01"
         }
       ]
     },
@@ -8136,6 +8146,14 @@ window.WMS_PAGE_CONFIGS = {
            ],
            "toolbar": [
              {
+               "name": "隐藏",
+               "type": "warning"
+             },
+             {
+               "name": "显示",
+               "type": "warning"
+             },
+             {
                "name": "新增",
                "type": "primary"
              },
@@ -8795,6 +8813,14 @@ window.WMS_PAGE_CONFIGS = {
            ],
            "toolbar": [
              {
+               "name": "隐藏",
+               "type": "warning"
+             },
+             {
+               "name": "显示",
+               "type": "warning"
+             },
+             {
                "name": "新增",
                "type": "primary"
              },
@@ -9400,6 +9426,14 @@ window.WMS_PAGE_CONFIGS = {
              }
            ],
            "toolbar": [
+             {
+               "name": "隐藏",
+               "type": "warning"
+             },
+             {
+               "name": "显示",
+               "type": "warning"
+             },
              {
                "name": "新增",
                "type": "primary"
@@ -10035,6 +10069,14 @@ window.WMS_PAGE_CONFIGS = {
            ],
            "toolbar": [
              {
+               "name": "隐藏",
+               "type": "warning"
+             },
+             {
+               "name": "显示",
+               "type": "warning"
+             },
+             {
                "name": "新增",
                "type": "primary"
              },
@@ -10593,6 +10635,14 @@ window.WMS_PAGE_CONFIGS = {
            ],
            "toolbar": [
              {
+               "name": "隐藏",
+               "type": "warning"
+             },
+             {
+               "name": "显示",
+               "type": "warning"
+             },
+             {
                "name": "新增",
                "type": "primary"
              },
@@ -11119,6 +11169,14 @@ window.WMS_PAGE_CONFIGS = {
            ],
            "toolbar": [
              {
+               "name": "隐藏",
+               "type": "warning"
+             },
+             {
+               "name": "显示",
+               "type": "warning"
+             },
+             {
                "name": "新增",
                "type": "primary"
              },
@@ -11596,6 +11654,14 @@ window.WMS_PAGE_CONFIGS = {
              }
            ],
            "toolbar": [
+             {
+               "name": "隐藏",
+               "type": "warning"
+             },
+             {
+               "name": "显示",
+               "type": "warning"
+             },
              {
                "name": "新增",
                "type": "primary"
@@ -12093,6 +12159,14 @@ window.WMS_PAGE_CONFIGS = {
            ],
            "toolbar": [
              {
+               "name": "隐藏",
+               "type": "warning"
+             },
+             {
+               "name": "显示",
+               "type": "warning"
+             },
+             {
                "name": "新增",
                "type": "primary"
              },
@@ -12384,6 +12458,14 @@ window.WMS_PAGE_CONFIGS = {
              }
            ],
            "toolbar": [
+             {
+               "name": "隐藏",
+               "type": "warning"
+             },
+             {
+               "name": "显示",
+               "type": "warning"
+             },
              {
                "name": "新增",
                "type": "primary"
@@ -20952,6 +21034,12 @@ window.WMS_PAGE_CONFIGS = {
                "width": 110
              },
              {
+               "title": "分析仪器",
+               "field": "分析仪器",
+               "name": "分析仪器",
+               "width": 160
+             },
+             {
                "title": "检验方案",
                "field": "检验方案",
                "name": "检验方案",
@@ -21200,6 +21288,12 @@ window.WMS_PAGE_CONFIGS = {
                "field": "检验班组",
                "name": "检验班组",
                "width": 110
+             },
+             {
+               "title": "分析仪器",
+               "field": "分析仪器",
+               "name": "分析仪器",
+               "width": 160
              },
              {
                "title": "检验方案",
@@ -21476,6 +21570,12 @@ window.WMS_PAGE_CONFIGS = {
                "width": 110
              },
              {
+               "title": "分析仪器",
+               "field": "分析仪器",
+               "name": "分析仪器",
+               "width": 160
+             },
+             {
                "title": "检验方案",
                "field": "检验方案",
                "name": "检验方案",
@@ -21664,6 +21764,12 @@ window.WMS_PAGE_CONFIGS = {
                "field": "检验班组",
                "name": "检验班组",
                "width": 110
+             },
+             {
+               "title": "分析仪器",
+               "field": "分析仪器",
+               "name": "分析仪器",
+               "width": 160
              },
              {
                "title": "检验方案",
@@ -21856,6 +21962,12 @@ window.WMS_PAGE_CONFIGS = {
                "width": 110
              },
              {
+               "title": "分析仪器",
+               "field": "分析仪器",
+               "name": "分析仪器",
+               "width": 160
+             },
+             {
                "title": "检验方案",
                "field": "检验方案",
                "name": "检验方案",
@@ -22038,6 +22150,12 @@ window.WMS_PAGE_CONFIGS = {
                "field": "检验班组",
                "name": "检验班组",
                "width": 110
+             },
+             {
+               "title": "分析仪器",
+               "field": "分析仪器",
+               "name": "分析仪器",
+               "width": 160
              },
              {
                "title": "检验方案",
@@ -22236,6 +22354,12 @@ window.WMS_PAGE_CONFIGS = {
                "width": 110
              },
              {
+               "title": "分析仪器",
+               "field": "分析仪器",
+               "name": "分析仪器",
+               "width": 160
+             },
+             {
                "title": "检验方案",
                "field": "检验方案",
                "name": "检验方案",
@@ -22430,6 +22554,12 @@ window.WMS_PAGE_CONFIGS = {
                "field": "检验班组",
                "name": "检验班组",
                "width": 110
+             },
+             {
+               "title": "分析仪器",
+               "field": "分析仪器",
+               "name": "分析仪器",
+               "width": 160
              },
              {
                "title": "检验方案",
@@ -22658,6 +22788,12 @@ window.WMS_PAGE_CONFIGS = {
                "width": 110
              },
              {
+               "title": "分析仪器",
+               "field": "分析仪器",
+               "name": "分析仪器",
+               "width": 160
+             },
+             {
                "title": "检验方案",
                "field": "检验方案",
                "name": "检验方案",
@@ -22825,10 +22961,14 @@ window.WMS_PAGE_CONFIGS = {
        "formDialogWidth": "min(720px, 94vw)",
        "layoutHint": "源系统为左侧检验类树 + 右侧样品明细；Demo 用检验类列 + 顶栏 Tab 近似",
        "categoryTree": [
-         "外观类",
+         "HPLC类",
+         "GC类",
          "金属离子类",
-         "色谱类",
-         "物理性能类",
+         "外观类",
+         "光谱类",
+         "器件测试类",
+         "有害物质类",
+         "理化类",
          "其他"
        ]
      },
@@ -23014,6 +23154,12 @@ window.WMS_PAGE_CONFIGS = {
                "field": "检验班组",
                "name": "检验班组",
                "width": 110
+             },
+             {
+               "title": "分析仪器",
+               "field": "分析仪器",
+               "name": "分析仪器",
+               "width": 160
              },
              {
                "title": "检验方案",
@@ -23313,10 +23459,14 @@ window.WMS_PAGE_CONFIGS = {
        "formDialogWidth": "min(720px, 94vw)",
        "layoutHint": "源系统为左侧检验类树 + 右侧样品明细；报检单类型在列表中展示",
        "categoryTree": [
-         "外观类",
+         "HPLC类",
+         "GC类",
          "金属离子类",
-         "色谱类",
-         "物理性能类",
+         "外观类",
+         "光谱类",
+         "器件测试类",
+         "有害物质类",
+         "理化类",
          "其他"
        ]
      },
@@ -34607,6 +34757,53 @@ window.WMS_PAGE_CONFIGS = {
       "formFlat": true,
       "spcTips": "比对查询支持多行条件（添加行/复制/删除）；相关性分析图仅允许 2 行。",
       "compareQuery": true
+    },
+    "spc-process": {
+      "id": "spc-process",
+      "title": "制程SPC(多图)",
+      "groups": [
+        "质量管理",
+        "SPC统计"
+      ],
+      "breadcrumb": [
+        "质量管理",
+        "SPC统计",
+        "制程SPC(多图)"
+      ],
+      "layout": "spc-process",
+      "chartTabs": [
+        "I图",
+        "MR图",
+        "Xbar(R)图",
+        "R图",
+        "Xbar(S)图",
+        "S图",
+        "CPK分析图",
+        "CPK趋势图",
+        "合格率统计图",
+        "不合格项分布柏拉图"
+      ],
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [],
+          "queryDefault": [],
+          "queryMore": [],
+          "toolbar": [],
+          "columns": [],
+          "rowOps": []
+        }
+      ],
+      "formFields": [],
+      "formSections": [],
+      "detailFields": [],
+      "hasEdit": false,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true,
+      "spcTips": "查询条件分「生产物料 / 生产过程 / 采购来料」三个类型块独立设置；每类可多选物料与检验项，图表按 生产物料 → 生产过程 → 采购来料 顺序分组展示。"
     },
     "spc-report-issue": {
       "id": "spc-report-issue",
@@ -49030,7 +49227,7 @@ window.WMS_PAGE_CONFIGS = {
               "name": "数据比对",
               "type": "default"
             },
-            {
+                        {
               "name": "关闭",
               "type": "default"
             },
@@ -49049,6 +49246,9 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
               "name": "编辑"
+            },
+            {
+              "name": "修改数据B"
             },
             {
               "name": "更多",
@@ -49387,7 +49587,7 @@ window.WMS_PAGE_CONFIGS = {
               "name": "数据比对",
               "type": "default"
             },
-            {
+                        {
               "name": "关闭",
               "type": "default"
             },
@@ -49406,6 +49606,9 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
               "name": "编辑"
+            },
+            {
+              "name": "修改数据B"
             },
             {
               "name": "更多",
@@ -49744,7 +49947,7 @@ window.WMS_PAGE_CONFIGS = {
               "name": "数据比对",
               "type": "default"
             },
-            {
+                        {
               "name": "关闭",
               "type": "default"
             },
@@ -49763,6 +49966,9 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
               "name": "编辑"
+            },
+            {
+              "name": "修改数据B"
             },
             {
               "name": "更多",
@@ -50065,7 +50271,7 @@ window.WMS_PAGE_CONFIGS = {
               "name": "数据比对",
               "type": "default"
             },
-            {
+                        {
               "name": "关闭",
               "type": "default"
             },
@@ -50084,6 +50290,9 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
               "name": "编辑"
+            },
+            {
+              "name": "修改数据B"
             },
             {
               "name": "更多",
@@ -50368,7 +50577,7 @@ window.WMS_PAGE_CONFIGS = {
               "name": "数据比对",
               "type": "default"
             },
-            {
+                        {
               "name": "关闭",
               "type": "default"
             },
@@ -50387,6 +50596,9 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
               "name": "编辑"
+            },
+            {
+              "name": "修改数据B"
             },
             {
               "name": "更多",
@@ -50671,7 +50883,7 @@ window.WMS_PAGE_CONFIGS = {
               "name": "数据比对",
               "type": "default"
             },
-            {
+                        {
               "name": "关闭",
               "type": "default"
             },
@@ -50690,6 +50902,9 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
               "name": "编辑"
+            },
+            {
+              "name": "修改数据B"
             },
             {
               "name": "更多",
@@ -50998,7 +51213,7 @@ window.WMS_PAGE_CONFIGS = {
               "name": "数据比对",
               "type": "default"
             },
-            {
+                        {
               "name": "关闭",
               "type": "default"
             },
@@ -51017,6 +51232,9 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
               "name": "编辑"
+            },
+            {
+              "name": "修改数据B"
             },
             {
               "name": "更多",
@@ -51325,7 +51543,7 @@ window.WMS_PAGE_CONFIGS = {
               "name": "数据比对",
               "type": "default"
             },
-            {
+                        {
               "name": "关闭",
               "type": "default"
             },
@@ -51344,6 +51562,9 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
               "name": "编辑"
+            },
+            {
+              "name": "修改数据B"
             },
             {
               "name": "更多",
@@ -51692,7 +51913,7 @@ window.WMS_PAGE_CONFIGS = {
               "name": "数据比对",
               "type": "default"
             },
-            {
+                        {
               "name": "关闭",
               "type": "default"
             },
@@ -51711,6 +51932,9 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
               "name": "编辑"
+            },
+            {
+              "name": "修改数据B"
             },
             {
               "name": "更多",
@@ -61084,11 +61308,11 @@ window.WMS_PAGE_CONFIGS = {
         "仪器档案",
         "仪器履历"
       ],
-      "tabs": [],
+      "tabs": [ { "name": "tab-1", "label": "仪器履历" }, { "name": "tab-2", "label": "仪器使用时长流水" } ],
       "tabViews": [
         {
-          "name": "main",
-          "label": "",
+          "name": "tab-1",
+          "label": "仪器履历",
           "queryFields": [
             {
               "name": "仪器编号",
@@ -61203,7 +61427,38 @@ window.WMS_PAGE_CONFIGS = {
               "name": "查看详情"
             }
           ]
-        }
+        },
+        {
+          "name": "tab-2",
+          "label": "仪器使用时长流水",
+          "queryFields": [
+            { "name": "仪器编号", "type": "input" },
+            { "name": "仪器名称", "type": "input" },
+            { "name": "仪器类型", "type": "select", "options": ["色谱","光谱","天平","滴定","通用"] },
+            { "name": "样品编号", "type": "input" },
+            { "name": "报检单号", "type": "input" },
+            { "name": "报检单类型", "type": "select", "options": ["采购来料检","生产过程检","生产物料检","生产SST检","研发检","外来小样检","库内复检","通用检","内部委托"] },
+            { "name": "检验类", "type": "select" },
+            { "name": "物料名称", "type": "input" },
+            { "name": "开始时间", "type": "daterange" }
+          ],
+          "toolbar": [ { "name": "导出数据", "type": "default" } ],
+          "columns": [
+            { "field": "仪器编号", "title": "仪器编号", "minWidth": 120 },
+            { "field": "仪器名称", "title": "仪器名称", "minWidth": 150 },
+            { "field": "仪器类型", "title": "仪器类型", "width": 100 },
+            { "field": "样品编号", "title": "样品编号", "minWidth": 140 },
+            { "field": "报检单号", "title": "报检单号", "minWidth": 130 },
+            { "field": "报检单类型", "title": "报检单类型", "width": 110 },
+            { "field": "检验类", "title": "检验类", "width": 110 },
+            { "field": "物料编码", "title": "物料编码", "minWidth": 130 },
+            { "field": "物料名称", "title": "物料名称", "minWidth": 150 },
+            { "field": "开始时间", "title": "开始时间", "minWidth": 150 },
+            { "field": "结束时间", "title": "结束时间", "minWidth": 150 },
+            { "field": "使用时长", "title": "使用时长（时）", "width": 110 }
+          ],
+          "rowOps": []
+        },
       ],
       "formFields": [],
       "detailFields": [],
@@ -82065,7 +82320,7 @@ window.WMS_PAGE_CONFIGS = {
               "name": "批量编辑",
               "type": "default"
             },
-            {
+                        {
               "name": "导出",
               "type": "default",
               "desc": "按当前查询条件导出"
@@ -82340,6 +82595,40 @@ window.WMS_PAGE_CONFIGS = {
       "formLineFields": [],
       "formLineActions": [],
       "layout": "quality-report"
+    },
+    "np-0314-01": {
+      "id": "np-0314-01",
+      "title": "仪器稼动率表",
+      "groups": [
+        "仪器管理"
+      ],
+      "breadcrumb": [
+        "仪器管理",
+        "仪器稼动率表"
+      ],
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [],
+          "queryDefault": [],
+          "queryMore": [],
+          "toolbar": [],
+          "columns": [],
+          "rowOps": []
+        }
+      ],
+      "formFields": [],
+      "formSections": [],
+      "detailFields": [],
+      "hasEdit": false,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true,
+      "formLineFields": [],
+      "formLineActions": [],
+      "layout": "util-report"
     },
     "np-0417-03": {
           "id": "np-0417-03",
@@ -92093,6 +92382,14 @@ window.WMS_PAGE_CONFIGS = {
            ],
            "toolbar": [
              {
+               "name": "隐藏",
+               "type": "warning"
+             },
+             {
+               "name": "显示",
+               "type": "warning"
+             },
+             {
                "name": "新增",
                "type": "primary"
              },
@@ -92752,6 +93049,14 @@ window.WMS_PAGE_CONFIGS = {
            ],
            "toolbar": [
              {
+               "name": "隐藏",
+               "type": "warning"
+             },
+             {
+               "name": "显示",
+               "type": "warning"
+             },
+             {
                "name": "新增",
                "type": "primary"
              },
@@ -93357,6 +93662,14 @@ window.WMS_PAGE_CONFIGS = {
              }
            ],
            "toolbar": [
+             {
+               "name": "隐藏",
+               "type": "warning"
+             },
+             {
+               "name": "显示",
+               "type": "warning"
+             },
              {
                "name": "新增",
                "type": "primary"
@@ -93992,6 +94305,14 @@ window.WMS_PAGE_CONFIGS = {
            ],
            "toolbar": [
              {
+               "name": "隐藏",
+               "type": "warning"
+             },
+             {
+               "name": "显示",
+               "type": "warning"
+             },
+             {
                "name": "新增",
                "type": "primary"
              },
@@ -94550,6 +94871,14 @@ window.WMS_PAGE_CONFIGS = {
            ],
            "toolbar": [
              {
+               "name": "隐藏",
+               "type": "warning"
+             },
+             {
+               "name": "显示",
+               "type": "warning"
+             },
+             {
                "name": "新增",
                "type": "primary"
              },
@@ -95076,6 +95405,14 @@ window.WMS_PAGE_CONFIGS = {
            ],
            "toolbar": [
              {
+               "name": "隐藏",
+               "type": "warning"
+             },
+             {
+               "name": "显示",
+               "type": "warning"
+             },
+             {
                "name": "新增",
                "type": "primary"
              },
@@ -95553,6 +95890,14 @@ window.WMS_PAGE_CONFIGS = {
              }
            ],
            "toolbar": [
+             {
+               "name": "隐藏",
+               "type": "warning"
+             },
+             {
+               "name": "显示",
+               "type": "warning"
+             },
              {
                "name": "新增",
                "type": "primary"
@@ -96050,6 +96395,14 @@ window.WMS_PAGE_CONFIGS = {
            ],
            "toolbar": [
              {
+               "name": "隐藏",
+               "type": "warning"
+             },
+             {
+               "name": "显示",
+               "type": "warning"
+             },
+             {
                "name": "新增",
                "type": "primary"
              },
@@ -96341,6 +96694,14 @@ window.WMS_PAGE_CONFIGS = {
              }
            ],
            "toolbar": [
+             {
+               "name": "隐藏",
+               "type": "warning"
+             },
+             {
+               "name": "显示",
+               "type": "warning"
+             },
              {
                "name": "新增",
                "type": "primary"
@@ -104921,6 +105282,12 @@ window.WMS_PAGE_CONFIGS = {
                "width": 110
              },
              {
+               "title": "分析仪器",
+               "field": "分析仪器",
+               "name": "分析仪器",
+               "width": 160
+             },
+             {
                "title": "检验方案",
                "field": "检验方案",
                "name": "检验方案",
@@ -105169,6 +105536,12 @@ window.WMS_PAGE_CONFIGS = {
                "field": "检验班组",
                "name": "检验班组",
                "width": 110
+             },
+             {
+               "title": "分析仪器",
+               "field": "分析仪器",
+               "name": "分析仪器",
+               "width": 160
              },
              {
                "title": "检验方案",
@@ -105445,6 +105818,12 @@ window.WMS_PAGE_CONFIGS = {
                "width": 110
              },
              {
+               "title": "分析仪器",
+               "field": "分析仪器",
+               "name": "分析仪器",
+               "width": 160
+             },
+             {
                "title": "检验方案",
                "field": "检验方案",
                "name": "检验方案",
@@ -105633,6 +106012,12 @@ window.WMS_PAGE_CONFIGS = {
                "field": "检验班组",
                "name": "检验班组",
                "width": 110
+             },
+             {
+               "title": "分析仪器",
+               "field": "分析仪器",
+               "name": "分析仪器",
+               "width": 160
              },
              {
                "title": "检验方案",
@@ -105825,6 +106210,12 @@ window.WMS_PAGE_CONFIGS = {
                "width": 110
              },
              {
+               "title": "分析仪器",
+               "field": "分析仪器",
+               "name": "分析仪器",
+               "width": 160
+             },
+             {
                "title": "检验方案",
                "field": "检验方案",
                "name": "检验方案",
@@ -106007,6 +106398,12 @@ window.WMS_PAGE_CONFIGS = {
                "field": "检验班组",
                "name": "检验班组",
                "width": 110
+             },
+             {
+               "title": "分析仪器",
+               "field": "分析仪器",
+               "name": "分析仪器",
+               "width": 160
              },
              {
                "title": "检验方案",
@@ -106205,6 +106602,12 @@ window.WMS_PAGE_CONFIGS = {
                "width": 110
              },
              {
+               "title": "分析仪器",
+               "field": "分析仪器",
+               "name": "分析仪器",
+               "width": 160
+             },
+             {
                "title": "检验方案",
                "field": "检验方案",
                "name": "检验方案",
@@ -106399,6 +106802,12 @@ window.WMS_PAGE_CONFIGS = {
                "field": "检验班组",
                "name": "检验班组",
                "width": 110
+             },
+             {
+               "title": "分析仪器",
+               "field": "分析仪器",
+               "name": "分析仪器",
+               "width": 160
              },
              {
                "title": "检验方案",
@@ -106627,6 +107036,12 @@ window.WMS_PAGE_CONFIGS = {
                "width": 110
              },
              {
+               "title": "分析仪器",
+               "field": "分析仪器",
+               "name": "分析仪器",
+               "width": 160
+             },
+             {
                "title": "检验方案",
                "field": "检验方案",
                "name": "检验方案",
@@ -106794,10 +107209,14 @@ window.WMS_PAGE_CONFIGS = {
        "formDialogWidth": "min(720px, 94vw)",
        "layoutHint": "源系统为左侧检验类树 + 右侧样品明细；Demo 用检验类列 + 顶栏 Tab 近似",
        "categoryTree": [
-         "外观类",
+         "HPLC类",
+         "GC类",
          "金属离子类",
-         "色谱类",
-         "物理性能类",
+         "外观类",
+         "光谱类",
+         "器件测试类",
+         "有害物质类",
+         "理化类",
          "其他"
        ]
      },
@@ -106984,6 +107403,12 @@ window.WMS_PAGE_CONFIGS = {
                "field": "检验班组",
                "name": "检验班组",
                "width": 110
+             },
+             {
+               "title": "分析仪器",
+               "field": "分析仪器",
+               "name": "分析仪器",
+               "width": 160
              },
              {
                "title": "检验方案",
@@ -107283,10 +107708,14 @@ window.WMS_PAGE_CONFIGS = {
        "formDialogWidth": "min(720px, 94vw)",
        "layoutHint": "源系统为左侧检验类树 + 右侧样品明细；报检单类型在列表中展示",
        "categoryTree": [
-         "外观类",
+         "HPLC类",
+         "GC类",
          "金属离子类",
-         "色谱类",
-         "物理性能类",
+         "外观类",
+         "光谱类",
+         "器件测试类",
+         "有害物质类",
+         "理化类",
          "其他"
        ]
      },
@@ -118592,6 +119021,54 @@ window.WMS_PAGE_CONFIGS = {
       "formFlat": true,
       "spcTips": "比对查询支持多行条件（添加行/复制/删除）；相关性分析图仅允许 2 行。",
       "compareQuery": true
+    },
+
+    {
+      "id": "spc-process",
+      "title": "制程SPC(多图)",
+      "groups": [
+        "质量管理",
+        "SPC统计"
+      ],
+      "breadcrumb": [
+        "质量管理",
+        "SPC统计",
+        "制程SPC(多图)"
+      ],
+      "layout": "spc-process",
+      "chartTabs": [
+        "I图",
+        "MR图",
+        "Xbar(R)图",
+        "R图",
+        "Xbar(S)图",
+        "S图",
+        "CPK分析图",
+        "CPK趋势图",
+        "合格率统计图",
+        "不合格项分布柏拉图"
+      ],
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [],
+          "queryDefault": [],
+          "queryMore": [],
+          "toolbar": [],
+          "columns": [],
+          "rowOps": []
+        }
+      ],
+      "formFields": [],
+      "formSections": [],
+      "detailFields": [],
+      "hasEdit": false,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true,
+      "spcTips": "查询条件分「生产物料 / 生产过程 / 采购来料」三个类型块独立设置；每类可多选物料与检验项，图表按 生产物料 → 生产过程 → 采购来料 顺序分组展示。"
     },
 
     {
@@ -133059,7 +133536,7 @@ window.WMS_PAGE_CONFIGS = {
               "name": "数据比对",
               "type": "default"
             },
-            {
+                        {
               "name": "关闭",
               "type": "default"
             },
@@ -133078,6 +133555,9 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
               "name": "编辑"
+            },
+            {
+              "name": "修改数据B"
             },
             {
               "name": "更多",
@@ -133416,7 +133896,7 @@ window.WMS_PAGE_CONFIGS = {
               "name": "数据比对",
               "type": "default"
             },
-            {
+                        {
               "name": "关闭",
               "type": "default"
             },
@@ -133435,6 +133915,9 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
               "name": "编辑"
+            },
+            {
+              "name": "修改数据B"
             },
             {
               "name": "更多",
@@ -133773,7 +134256,7 @@ window.WMS_PAGE_CONFIGS = {
               "name": "数据比对",
               "type": "default"
             },
-            {
+                        {
               "name": "关闭",
               "type": "default"
             },
@@ -133792,6 +134275,9 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
               "name": "编辑"
+            },
+            {
+              "name": "修改数据B"
             },
             {
               "name": "更多",
@@ -134094,7 +134580,7 @@ window.WMS_PAGE_CONFIGS = {
               "name": "数据比对",
               "type": "default"
             },
-            {
+                        {
               "name": "关闭",
               "type": "default"
             },
@@ -134113,6 +134599,9 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
               "name": "编辑"
+            },
+            {
+              "name": "修改数据B"
             },
             {
               "name": "更多",
@@ -134397,7 +134886,7 @@ window.WMS_PAGE_CONFIGS = {
               "name": "数据比对",
               "type": "default"
             },
-            {
+                        {
               "name": "关闭",
               "type": "default"
             },
@@ -134416,6 +134905,9 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
               "name": "编辑"
+            },
+            {
+              "name": "修改数据B"
             },
             {
               "name": "更多",
@@ -134700,7 +135192,7 @@ window.WMS_PAGE_CONFIGS = {
               "name": "数据比对",
               "type": "default"
             },
-            {
+                        {
               "name": "关闭",
               "type": "default"
             },
@@ -134719,6 +135211,9 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
               "name": "编辑"
+            },
+            {
+              "name": "修改数据B"
             },
             {
               "name": "更多",
@@ -135027,7 +135522,7 @@ window.WMS_PAGE_CONFIGS = {
               "name": "数据比对",
               "type": "default"
             },
-            {
+                        {
               "name": "关闭",
               "type": "default"
             },
@@ -135046,6 +135541,9 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
               "name": "编辑"
+            },
+            {
+              "name": "修改数据B"
             },
             {
               "name": "更多",
@@ -135354,7 +135852,7 @@ window.WMS_PAGE_CONFIGS = {
               "name": "数据比对",
               "type": "default"
             },
-            {
+                        {
               "name": "关闭",
               "type": "default"
             },
@@ -135373,6 +135871,9 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
               "name": "编辑"
+            },
+            {
+              "name": "修改数据B"
             },
             {
               "name": "更多",
@@ -135721,7 +136222,7 @@ window.WMS_PAGE_CONFIGS = {
               "name": "数据比对",
               "type": "default"
             },
-            {
+                        {
               "name": "关闭",
               "type": "default"
             },
@@ -135740,6 +136241,9 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
               "name": "编辑"
+            },
+            {
+              "name": "修改数据B"
             },
             {
               "name": "更多",
@@ -145138,11 +145642,11 @@ window.WMS_PAGE_CONFIGS = {
         "仪器档案",
         "仪器履历"
       ],
-      "tabs": [],
+      "tabs": [ { "name": "tab-1", "label": "仪器履历" }, { "name": "tab-2", "label": "仪器使用时长流水" } ],
       "tabViews": [
         {
-          "name": "main",
-          "label": "",
+          "name": "tab-1",
+          "label": "仪器履历",
           "queryFields": [
             {
               "name": "仪器编号",
@@ -145257,7 +145761,38 @@ window.WMS_PAGE_CONFIGS = {
               "name": "查看详情"
             }
           ]
-        }
+        },
+        {
+          "name": "tab-2",
+          "label": "仪器使用时长流水",
+          "queryFields": [
+            { "name": "仪器编号", "type": "input" },
+            { "name": "仪器名称", "type": "input" },
+            { "name": "仪器类型", "type": "select", "options": ["色谱","光谱","天平","滴定","通用"] },
+            { "name": "样品编号", "type": "input" },
+            { "name": "报检单号", "type": "input" },
+            { "name": "报检单类型", "type": "select", "options": ["采购来料检","生产过程检","生产物料检","生产SST检","研发检","外来小样检","库内复检","通用检","内部委托"] },
+            { "name": "检验类", "type": "select" },
+            { "name": "物料名称", "type": "input" },
+            { "name": "开始时间", "type": "daterange" }
+          ],
+          "toolbar": [ { "name": "导出数据", "type": "default" } ],
+          "columns": [
+            { "field": "仪器编号", "title": "仪器编号", "minWidth": 120 },
+            { "field": "仪器名称", "title": "仪器名称", "minWidth": 150 },
+            { "field": "仪器类型", "title": "仪器类型", "width": 100 },
+            { "field": "样品编号", "title": "样品编号", "minWidth": 140 },
+            { "field": "报检单号", "title": "报检单号", "minWidth": 130 },
+            { "field": "报检单类型", "title": "报检单类型", "width": 110 },
+            { "field": "检验类", "title": "检验类", "width": 110 },
+            { "field": "物料编码", "title": "物料编码", "minWidth": 130 },
+            { "field": "物料名称", "title": "物料名称", "minWidth": 150 },
+            { "field": "开始时间", "title": "开始时间", "minWidth": 150 },
+            { "field": "结束时间", "title": "结束时间", "minWidth": 150 },
+            { "field": "使用时长", "title": "使用时长（时）", "width": 110 }
+          ],
+          "rowOps": []
+        },
       ],
       "formFields": [],
       "detailFields": [],
@@ -166176,11 +166711,7 @@ window.WMS_PAGE_CONFIGS = {
             "研发项目号"
           ],
           "toolbar": [
-            {
-              "name": "批量编辑",
-              "type": "default"
-            },
-            {
+                        {
               "name": "导出",
               "type": "default",
               "desc": "按当前查询条件导出"
@@ -166368,6 +166899,10 @@ window.WMS_PAGE_CONFIGS = {
           "queryMore": [],
           "toolbar": [
             {
+              "name": "批量编辑",
+              "type": "default"
+            },
+            {
               "name": "导出 Excel",
               "type": "default",
               "desc": "导出当前统计结果"
@@ -166458,6 +166993,40 @@ window.WMS_PAGE_CONFIGS = {
       "formLineFields": [],
       "formLineActions": [],
       "layout": "quality-report"
+    },
+    {
+      "id": "np-0314-01",
+      "title": "仪器稼动率表",
+      "groups": [
+        "仪器管理"
+      ],
+      "breadcrumb": [
+        "仪器管理",
+        "仪器稼动率表"
+      ],
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [],
+          "queryDefault": [],
+          "queryMore": [],
+          "toolbar": [],
+          "columns": [],
+          "rowOps": []
+        }
+      ],
+      "formFields": [],
+      "formSections": [],
+      "detailFields": [],
+      "hasEdit": false,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true,
+      "formLineFields": [],
+      "formLineActions": [],
+      "layout": "util-report"
     },
 
     {

@@ -21,7 +21,11 @@ function ledgerInspMaster(){
     function ledgerItemSpec(name, typ){
       const known = {
         'HPLC纯度': { USL:'—', LSL:'99.50', UCL:'—', LCL:'99.70', UWL:'—', LWL:'99.80', 指标:'≥99.50%', good:'99.92', oos:'97.20', ooc:'99.62', oow:'99.75' },
-        '残留溶剂PGMEA': { USL:'0.50', LSL:'—', UCL:'0.30', LCL:'—', UWL:'0.20', LWL:'—', 指标:'≤0.50%', good:'0.08', oos:'0.82', ooc:'0.41', oow:'0.25' }
+        '残留溶剂PGMEA': { USL:'0.50', LSL:'—', UCL:'0.30', LCL:'—', UWL:'0.20', LWL:'—', 指标:'≤0.50%', good:'0.08', oos:'0.82', ooc:'0.41', oow:'0.25' },
+        '水汽透过率': { USL:'0.05', LSL:'—', UCL:'0.04', LCL:'—', UWL:'0.03', LWL:'—', 指标:'≤0.05 g/(m²·24h)', good:'0.02', oos:'0.08', ooc:'0.045', oow:'0.035' },
+        '拉伸强度': { USL:'120', LSL:'80', UCL:'115', LCL:'85', UWL:'110', LWL:'90', 指标:'80～120 MPa', good:'102', oos:'72', ooc:'118', oow:'112' },
+        '点亮测试': { USL:'—', LSL:'—', UCL:'—', LCL:'—', UWL:'—', LWL:'—', 指标:'正常点亮、无暗点亮点', good:'符合', oos:'不符合', ooc:'不符合', oow:'不符合' },
+        '像素均匀性': { USL:'100', LSL:'95', UCL:'99.5', LCL:'95.5', UWL:'99', LWL:'96', 指标:'≥95%', good:'98.2', oos:'93.1', ooc:'96.0', oow:'96.8' }
       };
       if(known[name]) return known[name];
       if(typ==='定性') return { USL:'—', LSL:'—', UCL:'—', LCL:'—', UWL:'—', LWL:'—', 指标:'无色至浅黄色、澄清', good:'符合', oos:'不符合', ooc:'不符合', oow:'不符合' };

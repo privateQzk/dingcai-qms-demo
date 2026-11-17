@@ -23,23 +23,19 @@ body{background:#eef2f7;color:#1e293b;font-family:'Microsoft YaHei','PingFang SC
 .kpi-date-range input[type="date"]{height:26px;padding:0 8px;font-size:11px;font-family:inherit;color:#334155;background:#fff;border:1px solid #cbd5e1;border-radius:4px;outline:none;color-scheme:light}
 .kpi-date-sep{font-size:11px;color:#94a3b8}
 .kpi-date-btn{height:26px;padding:0 12px;font-size:11px;font-family:inherit;color:#2563eb;background:#eff6ff;border:1px solid #93c5fd;border-radius:4px;cursor:pointer}
-.top-kpi{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
-.kpi-glow{position:relative;background:#fff;border:1px solid #e2e8f0;border-top:2px solid #cbd5e1;border-radius:8px;padding:8px 6px;text-align:center;cursor:pointer;box-shadow:0 1px 3px rgba(15,23,42,.05)}
-.kpi-glow:hover{border-color:#93c5fd;box-shadow:0 4px 14px rgba(37,99,235,.12)}
-.kpi-label{font-size:11px;color:#64748b;letter-spacing:1px}
-.kpi-hint{font-size:9px;color:#94a3b8;margin-top:2px}
-.kpi-num{font-size:22px;font-weight:700;margin-top:2px}
+.top-kpi{display:grid;grid-template-columns:repeat(8,1fr);gap:8px}
+.kpi-glow{position:relative;background:#fff;border:1px solid #e2e8f0;border-top:2px solid #cbd5e1;border-radius:8px;padding:8px 6px;text-align:center;box-shadow:0 1px 3px rgba(15,23,42,.05)}
+.kpi-label{font-size:11px;color:#64748b;letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi-num{font-size:21px;font-weight:700;margin-top:2px}
 .kpi-unit{font-size:10px;opacity:.6;margin-left:1px}
-.kpi-glow.cyan .kpi-num{color:#2563eb}
-.kpi-glow.cyan{border-top-color:#2563eb}
-.kpi-glow.purple .kpi-num{color:#0891b2}
-.kpi-glow.purple{border-top-color:#0891b2}
-.kpi-glow.violet .kpi-num{color:#7c3aed}
-.kpi-glow.violet{border-top-color:#7c3aed}
-.kpi-glow.yellow .kpi-num{color:#d97706}
-.kpi-glow.yellow{border-top-color:#d97706}
-.kpi-glow.red .kpi-num{color:#dc2626}
-.kpi-glow.red{border-top-color:#dc2626}
+.kpi-glow.c1 .kpi-num{color:#dc2626}.kpi-glow.c1{border-top-color:#dc2626}
+.kpi-glow.c2 .kpi-num{color:#d97706}.kpi-glow.c2{border-top-color:#d97706}
+.kpi-glow.c3 .kpi-num{color:#2563eb}.kpi-glow.c3{border-top-color:#2563eb}
+.kpi-glow.c4 .kpi-num{color:#ea580c}.kpi-glow.c4{border-top-color:#ea580c}
+.kpi-glow.c5 .kpi-num{color:#0891b2}.kpi-glow.c5{border-top-color:#0891b2}
+.kpi-glow.c6 .kpi-num{color:#059669}.kpi-glow.c6{border-top-color:#059669}
+.kpi-glow.c7 .kpi-num{color:#7c3aed}.kpi-glow.c7{border-top-color:#7c3aed}
+.kpi-glow.c8 .kpi-num{color:#db2777}.kpi-glow.c8{border-top-color:#db2777}
 .main{flex:1;display:flex;gap:10px;min-height:0}
 .col{display:flex;flex-direction:column;gap:8px;min-height:0}
 .col-l,.col-r{flex:1}
@@ -50,80 +46,34 @@ body{background:#eef2f7;color:#1e293b;font-family:'Microsoft YaHei','PingFang SC
 .panel-title .t-left{display:flex;align-items:center;gap:6px}
 .panel-title .t-left::before{content:'';display:inline-block;width:3px;height:12px;background:linear-gradient(180deg,#2563eb,#7c3aed);border-radius:2px}
 .help-q{position:relative;display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;border:1px solid #93c5fd;color:#64748b;font-size:10px;cursor:pointer}
-.help-tip{display:none;position:absolute;left:0;top:calc(100% + 8px);width:280px;padding:8px 10px;background:#fff;border:1px solid #cbd5e1;border-radius:6px;color:#475569;font-size:11px;font-weight:400;letter-spacing:0;line-height:1.5;white-space:normal;z-index:20;box-shadow:0 4px 12px rgba(15,23,42,.1)}
+.help-tip{display:none;position:absolute;left:0;top:calc(100% + 8px);width:290px;padding:8px 10px;background:#fff;border:1px solid #cbd5e1;border-radius:6px;color:#475569;font-size:11px;font-weight:400;letter-spacing:0;line-height:1.5;white-space:normal;z-index:20;box-shadow:0 4px 12px rgba(15,23,42,.1)}
 .help-q.active .help-tip{display:block}
-.panel-body{flex:1;min-height:0;position:relative}
-.tag{display:inline-block;padding:1px 6px;border-radius:3px;font-size:10px;line-height:16px;white-space:nowrap}
-.tag-wait{color:#b45309;background:#fef3c7;border:1px solid #fcd34d}
-.tag-run{color:#0369a1;background:#e0f2fe;border:1px solid #7dd3fc}
-.tag-done{color:#15803d;background:#dcfce7;border:1px solid #86efac}
-.tag-review{color:#a16207;background:#fef9c3;border:1px solid #fde047}
-.tag-pass{color:#15803d;border:1px solid #4ade80}
-.tag-fail{color:#b91c1c;border:1px solid #f87171}
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:1000;align-items:center;justify-content:center}
-.modal-overlay.active{display:flex}
-.modal{background:#fff;border:1px solid #e2e8f0;border-radius:12px;width:94%;height:84%;max-width:1400px;padding:16px 18px;display:flex;flex-direction:column;box-shadow:0 12px 40px rgba(15,23,42,.18)}
-.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.modal-title{font-size:16px;color:#2563eb}
-.modal-close{background:none;border:1px solid #cbd5e1;color:#64748b;width:28px;height:28px;border-radius:50%;cursor:pointer}
-.modal-body{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;color:#475569}
-.iq-hint{font-size:11px;color:#64748b;margin-bottom:8px}
-.iq-tabs{display:flex;gap:4px;margin-bottom:10px}
-.iq-tabs .iq-tab{flex:1;text-align:center;padding:7px 6px;font-size:12px;color:#64748b;border:1px solid #e2e8f0;border-radius:5px;cursor:pointer;background:#fff}
-.iq-tabs .iq-tab.active{color:#2563eb;border-color:#93c5fd;background:#eff6ff;font-weight:700}
-.iq-table-wrap{flex:1;min-height:0;overflow:auto;border:1px solid #e2e8f0;border-radius:6px}
-.iq-table{border-collapse:collapse;font-size:11px;min-width:1280px;width:100%}
-.iq-table th,.iq-table td{border:1px solid #e2e8f0;padding:7px 8px;text-align:left;white-space:nowrap}
-.iq-table th{background:#f1f5f9;color:#475569;position:sticky;top:0}
-.iq-table td{color:#1e293b}
-.list-header,.list-row{display:grid;align-items:center;gap:4px;padding:4px 2px;font-size:10px}
-.list-header div,.list-row div{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.list-header{color:#94a3b8;border-bottom:1px solid #e2e8f0;font-size:9px}
-.list-row{border-bottom:1px solid #f1f5f9;color:#334155}
-.iqc-grid{grid-template-columns:1.05fr 0.55fr 0.95fr 0.7fr 0.62fr 0.48fr 0.72fr 0.38fr}
-.sloc-grid{grid-template-columns:0.62fr 0.9fr 0.8fr 0.75fr 0.7fr 0.55fr 0.95fr}
-.qc-grid{grid-template-columns:1.15fr 0.85fr 0.42fr 0.6fr 0.45fr 0.55fr}
-.qc-grid div:nth-child(n+3){text-align:right}
-.mini-sel{font-size:10px;color:#334155;border:1px solid #e2e8f0;border-radius:5px;background:#fff;padding:2px 4px;max-width:110px}
-.qc-filter{display:inline-flex;align-items:center;gap:3px}
-.qc-filter input[type="date"].mini-sel{width:86px;font-size:9px}
+.panel-body{flex:1;min-height:0;position:relative;display:flex;flex-direction:column}
+.chart{width:100%;height:100%;flex:1;min-height:0}
+.gauge-grid{flex:1;min-height:0;display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,1fr);gap:6px}
+.gauge-cell{position:relative;border:1px solid #eef2f7;border-radius:8px;background:#fbfdff;min-height:0;overflow:hidden}
+.gauge-cell .chart{position:absolute;inset:0}
+.gauge-name{position:absolute;left:0;right:0;top:6px;text-align:center;font-size:11px;color:#334155;font-weight:700;z-index:2}
+.mini-sel{font-size:10px;color:#334155;border:1px solid #e2e8f0;border-radius:5px;background:#fff;padding:2px 4px}
+.rw-wrap{flex:1;min-height:0;display:flex;gap:8px}
+.rw-kpi{flex:0 0 34%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:1px solid #eef2f7;border-radius:8px;background:#fbfdff}
+.rw-kpi .rw-num{font-size:34px;font-weight:800;color:#ea580c;line-height:1}
+.rw-kpi .rw-unit{font-size:10px;color:#94a3b8}
+.rw-kpi .rw-label{font-size:11px;color:#64748b;text-align:center;line-height:1.4;padding:0 6px}
+.insp-tabs{display:flex;gap:3px;margin-bottom:6px;flex-shrink:0}
+.insp-tabs .insp-tab{flex:1;text-align:center;padding:5px 2px;font-size:10px;color:#64748b;border:1px solid #e2e8f0;border-radius:5px;cursor:pointer;background:#fff}
+.insp-tabs .insp-tab.active{color:#2563eb;border-color:#93c5fd;background:#eff6ff;font-weight:700}
 .spc-filters{display:flex;gap:4px;margin-bottom:4px;flex-shrink:0}
 .spc-filters .mini-sel{flex:1;min-width:0}
-.spc-filters input[type="date"].mini-sel{flex:0 0 92px;font-size:9px}
+.spc-filters input[type="date"].mini-sel{flex:0 0 96px;font-size:9px}
 .spc-tilde{color:#94a3b8;font-size:10px;align-self:center}
 .spc-box{flex:1;min-height:0;display:flex;flex-direction:column}
 .spc-box+.spc-box{border-top:1px dashed #e2e8f0}
 .spc-cap{font-size:9px;color:#64748b;padding:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0}
 .spc-cap b{font-weight:700;margin-right:6px}
 .spc-cap .u{color:#dc2626}.spc-cap .uc{color:#f59e0b}.spc-cap .cc{color:#2563eb}.spc-cap .lc{color:#f59e0b}.spc-cap .l{color:#dc2626}
-.col-no{font-size:10px;color:#94a3b8}
-.ot-ok{color:#16a34a}
-.ot-late{color:#dc2626;font-weight:700}
-.scroll-box{flex:1;min-height:0;overflow:hidden}
-.scroll-track{animation:scrollY 22s linear infinite}
-.scroll-track:hover,.scroll-track.still{animation:none}
-@keyframes scrollY{0%{transform:translateY(0)}100%{transform:translateY(-50%)}}
-.tab-mini{display:flex;gap:3px}
-.tab-mini span{padding:2px 7px;font-size:9px;color:#64748b;border:1px solid #e2e8f0;border-radius:3px;cursor:pointer;background:#fff}
-.tab-mini span.active{color:#2563eb;border-color:#93c5fd;background:#eff6ff}
-.insp-tabs{display:flex;gap:3px;margin-bottom:6px}
-.insp-tabs .insp-tab{flex:1;text-align:center;padding:5px 2px;font-size:10px;color:#64748b;border:1px solid #e2e8f0;border-radius:5px;cursor:pointer;background:#fff}
-.insp-tabs .insp-tab.active{color:#2563eb;border-color:#93c5fd;background:#eff6ff;font-weight:700}
-.insp-pane{display:none;flex:1;min-height:0;flex-direction:column}
-.insp-pane.active{display:flex}
-.crm-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.crm-card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:8px 6px;border-radius:8px;background:#f8fafc;border:1px solid #e2e8f0}
-.crm-label{font-size:11px;color:#64748b}
-.crm-num{font-size:24px;font-weight:700;line-height:1}
-.crm-unit{font-size:10px;opacity:.55;margin-left:2px}
-.crm-sub{font-size:9px;color:#94a3b8}
-.crm-card.ret .crm-num{color:#dc2626}
-.crm-card.cmp .crm-num{color:#ea580c}
-.crm-card.grv .crm-num{color:#d97706}
-.crm-chart-wrap{flex:1;min-height:0;margin-top:8px}
-.chart{width:100%;height:100%}
 .empty-tip{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:12px}
-.alert-bar{height:32px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;display:flex;align-items:center;padding:0 12px;gap:10px;overflow:hidden}
+.alert-bar{height:32px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;display:flex;align-items:center;padding:0 12px;gap:10px;overflow:hidden;flex-shrink:0}
 .alert-label{font-size:11px;color:#dc2626;font-weight:700;white-space:nowrap}
 .alert-scroll{flex:1;overflow:hidden}
 .alert-content{display:flex;gap:28px;animation:scrollA 28s linear infinite;white-space:nowrap}
@@ -154,76 +104,94 @@ body{background:#eef2f7;color:#1e293b;font-family:'Microsoft YaHei','PingFang SC
       </div>
     </div>
     <div class="top-kpi">
-      <div class="kpi-glow cyan" data-kpi="all"><div class="kpi-label">报检单数量</div><div class="kpi-num" id="kpi-total">0<span class="kpi-unit">单</span></div><div class="kpi-hint">点击查看明细</div></div>
-      <div class="kpi-glow red" data-kpi="overdue"><div class="kpi-label">逾期数量</div><div class="kpi-num" id="kpi-overdue">0<span class="kpi-unit">单</span></div><div class="kpi-hint">点击查看明细</div></div>
-      <div class="kpi-glow yellow" data-kpi="wait"><div class="kpi-label">待执行</div><div class="kpi-num" id="kpi-wait">0<span class="kpi-unit">单</span></div><div class="kpi-hint">点击查看明细</div></div>
-      <div class="kpi-glow purple" data-kpi="run"><div class="kpi-label">执行中</div><div class="kpi-num" id="kpi-run">0<span class="kpi-unit">单</span></div><div class="kpi-hint">点击查看明细</div></div>
-      <div class="kpi-glow violet" data-kpi="review"><div class="kpi-label">待复核</div><div class="kpi-num" id="kpi-review">0<span class="kpi-unit">单</span></div><div class="kpi-hint">点击查看明细</div></div>
+      <div class="kpi-glow c1"><div class="kpi-label">客诉及抱怨次数</div><div class="kpi-num" id="kpi-crm">0<span class="kpi-unit">次</span></div></div>
+      <div class="kpi-glow c2"><div class="kpi-label">检测成本</div><div class="kpi-num" id="kpi-cost">0<span class="kpi-unit">系数</span></div></div>
+      <div class="kpi-glow c3"><div class="kpi-label">交验合格率</div><div class="kpi-num" id="kpi-jy">—<span class="kpi-unit">%</span></div></div>
+      <div class="kpi-glow c4"><div class="kpi-label">错、漏检数量</div><div class="kpi-num" id="kpi-miss">0<span class="kpi-unit">项</span></div></div>
+      <div class="kpi-glow c5"><div class="kpi-label">品质专项完成率</div><div class="kpi-num" id="kpi-task">—<span class="kpi-unit">%</span></div></div>
+      <div class="kpi-glow c6"><div class="kpi-label">检验及时率</div><div class="kpi-num" id="kpi-ontime">—<span class="kpi-unit">%</span></div></div>
+      <div class="kpi-glow c7"><div class="kpi-label">巡检问题结案率</div><div class="kpi-num" id="kpi-patrol">—<span class="kpi-unit">%</span></div></div>
+      <div class="kpi-glow c8"><div class="kpi-label">纠正预防措施有效性</div><div class="kpi-num" id="kpi-capa">—<span class="kpi-unit">%</span></div></div>
     </div>
   </div>
   <div class="main">
     <div class="col col-l">
-      <div class="panel" style="flex:1.25">
-        <div class="panel-title"><span class="t-left">客户投诉 / 抱怨 / 退货</span></div>
-        <div class="panel-body" style="display:flex;flex-direction:column">
-          <div class="crm-cards">
-            <div class="crm-card ret"><div class="crm-label">客户退货</div><div><span class="crm-num" id="crm-ret">0</span><span class="crm-unit">单</span></div><div class="crm-sub">待处理</div></div>
-            <div class="crm-card cmp"><div class="crm-label">客户投诉</div><div><span class="crm-num" id="crm-cmp">0</span><span class="crm-unit">单</span></div><div class="crm-sub">待处理</div></div>
-            <div class="crm-card grv"><div class="crm-label">客户抱怨</div><div><span class="crm-num" id="crm-grv">0</span><span class="crm-unit">单</span></div><div class="crm-sub">待处理</div></div>
+      <div class="panel" style="flex:1.2">
+        <div class="panel-title"><span class="t-left">检验合格率
+          <span class="help-q" id="rate-help">?<span class="help-tip">IQC=采购来料检、PQC=生产过程检、FQC=生产物料检，取样品检验台账已完成样品；OQC=发货OQC台账检查结果。合格率 = 合格 ÷（合格 + 不合格），目标 98%。</span></span></span>
+        </div>
+        <div class="panel-body">
+          <div class="gauge-grid">
+            <div class="gauge-cell"><div class="gauge-name">IQC合格率</div><div class="chart" id="g-iqc"></div></div>
+            <div class="gauge-cell"><div class="gauge-name">IPQC合格率</div><div class="chart" id="g-pqc"></div></div>
+            <div class="gauge-cell"><div class="gauge-name">FQC合格率</div><div class="chart" id="g-fqc"></div></div>
+            <div class="gauge-cell"><div class="gauge-name">OQC合格率</div><div class="chart" id="g-oqc"></div></div>
           </div>
-          <div class="crm-chart-wrap"><div id="chart-crm-nc" class="chart"></div></div>
         </div>
       </div>
       <div class="panel" style="flex:1">
-        <div class="panel-title"><span class="t-left">检验信息</span>
-          <span class="qc-filter">
-            <input class="mini-sel" id="qc-d1" type="date"><span class="spc-tilde">~</span><input class="mini-sel" id="qc-d2" type="date">
-            <select class="mini-sel" id="qc-mat-sel"><option value="">全部物料</option></select>
-          </span>
+        <div class="panel-title"><span class="t-left">不合格处置与返工
+          <span class="help-q" id="rw-help">?<span class="help-tip">返工数量 = 四种检验类型不合格处置单中，处置方式为「返工」的不合格样品件数合计，按复核时间计周期。柱图为处置方式分布（按单据数）。</span></span></span>
         </div>
-        <div class="panel-body" style="display:flex;flex-direction:column">
-          <div class="list-header qc-grid"><div>物料信息</div><div>检验类型</div><div>总数</div><div>已完成数</div><div>合格数</div><div>合格率</div></div>
-          <div class="scroll-box"><div class="scroll-track" id="qc-track"></div></div>
+        <div class="panel-body">
+          <div class="rw-wrap">
+            <div class="rw-kpi">
+              <div class="rw-label">因器件异常导致的<br>产品返工数量</div>
+              <div><span class="rw-num" id="rw-num">0</span></div>
+              <div class="rw-unit">件 · 处置方式=返工</div>
+            </div>
+            <div class="chart" id="chart-dispose" style="flex:1"></div>
+          </div>
         </div>
       </div>
     </div>
     <div class="col col-c">
       <div class="panel" style="flex:1">
-        <div class="panel-title">
-          <span class="t-left">合格率趋势
-            <span class="help-q" id="rate-help">?<span class="help-tip">按检验完成时间统计已完成样品。合格率 = 合格 ÷（合格 + 不合格）。没有检验完成时间时用报检时间。同比取上年同月。</span></span>
-          </span>
+        <div class="panel-title"><span class="t-left">合格率趋势
+          <span class="help-q" id="trend-help">?<span class="help-tip">按所选统计维度（日/周/月，默认月）统计各检验环节合格率。检验完成时间为空时用报检时间；OQC 用完成时间。</span></span></span>
+          <select class="mini-sel" id="trend-dim">
+            <option value="day">日</option>
+            <option value="week">周</option>
+            <option value="month" selected>月</option>
+          </select>
         </div>
-        <div class="panel-body" style="display:flex;flex-direction:column">
-          <div class="insp-tabs" id="rate-tabs">
-            <div class="insp-tab active" data-rate="pi">采购来料检</div>
-            <div class="insp-tab" data-rate="pp">生产过程检</div>
-            <div class="insp-tab" data-rate="pm">生产物料检</div>
-            <div class="insp-tab" data-rate="rd">研发检</div>
-            <div class="insp-tab" data-rate="sst">生产SST检</div>
-          </div>
-          <div id="chart-pass-rate" class="chart" style="flex:1;min-height:0"></div>
-        </div>
+        <div class="panel-body"><div id="chart-rate-trend" class="chart"></div></div>
       </div>
-      <div class="panel" style="flex:1.15">
-        <div class="panel-title"><span class="t-left">SPC分析图</span></div>
-        <div class="panel-body" style="display:flex;flex-direction:column">
-          <div class="spc-filters">
-            <select class="mini-sel" id="spc-mat"></select>
-            <select class="mini-sel" id="spc-plan"></select>
-            <select class="mini-sel" id="spc-item"></select>
-            <select class="mini-sel" id="spc-point"></select>
-            <input class="mini-sel" id="spc-d1" type="date"><span class="spc-tilde">~</span><input class="mini-sel" id="spc-d2" type="date">
-          </div>
-          <div class="spc-box"><div class="spc-cap" id="spc-cap1"></div><div id="chart-spc-i" class="chart"></div></div>
-          <div class="spc-box"><div class="spc-cap" id="spc-cap2"></div><div id="chart-spc-mr" class="chart"></div></div>
-        </div>
+      <div class="panel" style="flex:1">
+        <div class="panel-title"><span class="t-left">客诉及抱怨趋势</span></div>
+        <div class="panel-body"><div id="chart-crm-trend" class="chart"></div></div>
       </div>
     </div>
     <div class="col col-r">
-      <div class="panel" style="flex:1"><div class="panel-title"><span class="t-left">原料不合格</span></div><div class="panel-body"><div id="chart-nc-rm" class="chart"></div></div></div>
-      <div class="panel" style="flex:1"><div class="panel-title"><span class="t-left">成品不合格</span></div><div class="panel-body"><div id="chart-nc-fg" class="chart"></div></div></div>
-      <div class="panel" style="flex:1"><div class="panel-title"><span class="t-left">过程不合格</span></div><div class="panel-body"><div id="chart-nc-pp" class="chart"></div></div></div>
+      <div class="panel" style="flex:1.2">
+        <div class="panel-title"><span class="t-left">SPC分析
+          <span class="help-q" id="cpk-help">?<span class="help-tip">按类型切换（采购来料 / 生产过程 / 生产物料）。物料信息、检验方案、检验项、时间范围为必填；采样点可选。上图为 I 图：按检验完成时间排序的单值控制图，叠加 USL/UCL/CL/LCL/LSL；下图为 CPK 趋势图：每 8 点为一段计算 CPK，叠加 1.33 目标线。</span></span></span>
+        </div>
+        <div class="panel-body">
+          <div class="insp-tabs" id="spc-tabs">
+            <div class="insp-tab active" data-spc="pi">采购来料</div>
+            <div class="insp-tab" data-spc="pp">生产过程</div>
+            <div class="insp-tab" data-spc="pm">生产物料</div>
+          </div>
+          <div class="spc-filters">
+            <select class="mini-sel" id="spc-mat" title="物料信息 *必填"></select>
+            <select class="mini-sel" id="spc-plan" title="检验方案 *必填"></select>
+            <select class="mini-sel" id="spc-item" title="检验项 *必填"></select>
+            <select class="mini-sel" id="spc-point" title="采样点"></select>
+          </div>
+          <div class="spc-filters">
+            <input class="mini-sel" id="spc-d1" type="date" title="时间范围 *必填"><span class="spc-tilde">~</span><input class="mini-sel" id="spc-d2" type="date">
+          </div>
+          <div class="spc-box"><div class="spc-cap" id="spc-cap1"></div><div id="chart-spc-i" class="chart"></div></div>
+          <div class="spc-box"><div class="spc-cap" id="spc-cap2"></div><div id="chart-spc-cpk" class="chart"></div></div>
+        </div>
+      </div>
+      <div class="panel" style="flex:1">
+        <div class="panel-title"><span class="t-left">检测成本构成
+          <span class="help-q" id="cost-help">?<span class="help-tip">按检验类汇总周期内检验成本流水的标准系数。成本流水 = 已完成样品 × 检验类，按检验成本方案匹配标准系数。</span></span></span>
+        </div>
+        <div class="panel-body"><div id="chart-cost" class="chart"></div></div>
+      </div>
     </div>
   </div>
   <div class="alert-bar">
@@ -231,17 +199,8 @@ body{background:#eef2f7;color:#1e293b;font-family:'Microsoft YaHei','PingFang SC
     <div class="alert-scroll"><div class="alert-content" id="alert-content"></div></div>
   </div>
 </div>
-<div class="modal-overlay" id="iq-modal">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title" id="iq-modal-title">报检单明细</div>
-      <button class="modal-close" id="iq-close" type="button">✕</button>
-    </div>
-    <div class="modal-body" id="iq-modal-body"></div>
-  </div>
-</div>
-<script src="./js/mock-rows.js?v=1.4.337"></script>
-<script src="./js/demo-store.js?v=1.0.160"></script>
+<script src="./js/mock-rows.js?v=1.4.345"></script>
+<script src="./js/demo-store.js?v=1.0.166"></script>
 <script src="./js/ledger-insp.js?v=4"></script>
 <script>
 const MOCK = window.WMS_MOCK_ROWS || {};
@@ -256,10 +215,7 @@ const ORDER_TABS = [
 const CATE_LABEL = {pi:'采购来料检', pp:'生产过程检', pm:'生产物料检', rd:'研发检', sst:'生产SST检'};
 const CATE_ORDER = ['pi','pp','pm','rd','sst'];
 const CLOSED = {已完成:1, 已关闭:1, 已通过:1, 已驳回:1};
-const TYPE_TITLE = {all:'报检单明细', overdue:'逾期报检单明细', wait:'待执行报检单明细', run:'执行中报检单明细', review:'待复核报检单明细'};
-let iqFilterType = 'all';
-let iqCate = 'pi';
-let rateKey = 'pi';
+const TARGET = 98;
 let orders = [];
 
 function pad2(n){ return String(n).padStart(2,'0'); }
@@ -273,21 +229,20 @@ function inRange(v, start, end){
   const d = dayOf(v);
   return !!(d && start && end && d>=start && d<=end);
 }
-function hasEta(v){
-  return !!(v && v!=='—' && v!=='-' && dayOf(v));
-}
+function hasEta(v){ return !!(v && v!=='—' && v!=='-' && dayOf(v)); }
 function isOverdue(eta){
   if(!hasEta(eta)) return false;
   const t = Date.parse(String(eta).replace(/-/g,'/'));
   return !isNaN(t) && Date.now() > t;
 }
-function overdueText(eta){ return isOverdue(eta) ? '逾期' : '正常'; }
 function esc(v){
   return String(v==null || v==='' ? '—' : v).replace(/[&<>"]/g, function(s){
     return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[s];
   });
 }
 function fmt(n){ return Number(n||0).toLocaleString('zh-CN'); }
+function pctStr(n, d){ return n==null ? '—' : (Math.round(n*100)/100).toFixed(d==null?1:d)+'%'; }
+function num(v){ const n = parseFloat(v); return isNaN(n) ? 0 : n; }
 function rowsOf(pageId, tabs){
   const bag = MOCK[pageId] || {};
   const out = [];
@@ -299,27 +254,39 @@ function rowsOf(pageId, tabs){
   return out;
 }
 function sampleDay(r){ return dayOf(r['检验完成时间']) || dayOf(r['报检时间']); }
-function isDoneSample(r){
-  return r['样品状态']==='已完成' && (r['检验结论']==='合格' || r['检验结论']==='不合格');
-}
+function isDoneSample(r){ return r['样品状态']==='已完成' && (r['检验结论']==='合格' || r['检验结论']==='不合格'); }
 function isBadSample(r){ return r['检验结论']==='不合格'; }
 function ledgerByCate(cate){
   const tabs = ORDER_TABS.filter(function(t){ return t[2]===cate; }).map(function(t){ return t[0]; });
   return rowsOf('ledger', tabs);
 }
-function tagOf(status){
-  if(status==='待检验' || status==='待执行') return 'tag-wait';
-  if(status==='检验中' || status==='执行中') return 'tag-run';
-  if(status==='已完成' || status==='已通过' || status==='已关闭') return 'tag-done';
-  if(status==='待复核' || status==='待审批') return 'tag-review';
-  if(status==='不合格' || status==='已驳回') return 'tag-fail';
-  return 'tag-wait';
+function ledgerRanged(cate){
+  const p = period();
+  return ledgerByCate(cate).filter(function(r){ return inRange(sampleDay(r), p.start, p.end); });
 }
-function resultTag(v){
-  if(!v || v==='—') return '—';
-  const cls = v==='合格' ? 'tag-pass' : (v==='不合格' ? 'tag-fail' : '');
-  return '<span class="tag '+cls+'">'+esc(v)+'</span>';
+function inspItems(r){
+  const all = window.WMS_LEDGER_INSP ? WMS_LEDGER_INSP.ledgerInspItems(r) : (Array.isArray(r._insp) ? r._insp : []);
+  return Array.isArray(all) ? all : [];
 }
+function rateOf(rows){
+  const done = rows.filter(isDoneSample);
+  if(!done.length) return null;
+  const pass = done.filter(function(r){ return r['检验结论']==='合格'; }).length;
+  return Math.round(pass / done.length * 1000) / 10;
+}
+function monthKeys(start, end){
+  const out = [];
+  if(!start || !end) return out;
+  let y = +start.slice(0,4), m = +start.slice(5,7);
+  const ey = +end.slice(0,4), em = +end.slice(5,7);
+  while(y<ey || (y===ey && m<=em)){
+    out.push(y+'-'+pad2(m));
+    m += 1;
+    if(m>12){ m = 1; y += 1; }
+  }
+  return out;
+}
+function inMonth(v, ym){ return dayOf(v).slice(0,7)===ym; }
 function period(){
   return {
     start: document.getElementById('kpi-date-start').value,
@@ -334,53 +301,268 @@ function loadOrders(){
     return Object.assign({}, r, {_type: meta.label, _cate: meta.cate});
   });
 }
-function filterOrders(type, list){
+function rangedOrders(){
   const p = period();
-  let rows = (list || orders).filter(function(r){ return inRange(r['报检时间'], p.start, p.end); });
-  if(type==='overdue') rows = rows.filter(function(r){ return !CLOSED[r['单据状态']] && isOverdue(r['预计完成时间']); });
-  else if(type==='wait') rows = rows.filter(function(r){ return r['单据状态']==='待执行'; });
-  else if(type==='run') rows = rows.filter(function(r){ return r['单据状态']==='执行中'; });
-  else if(type==='review') rows = rows.filter(function(r){ return r['单据状态']==='待复核'; });
-  return rows;
+  return orders.filter(function(r){ return inRange(r['报检时间'], p.start, p.end); });
 }
-function setKpi(id, n){
-  document.getElementById(id).innerHTML = fmt(n) + '<span class="kpi-unit">单</span>';
+
+/* ---------- KPI：客诉及抱怨 ---------- */
+function crmRows(pageId, dateKey){
+  const p = period();
+  return rowsOf(pageId, ['tab-1','tab-2']).filter(function(r){ return inRange(r[dateKey], p.start, p.end); });
 }
-function failBuckets(rows){
-  const count = {};
-  rows.forEach(function(r){
-    if(!isBadSample(r)) return;
-    const all = window.WMS_LEDGER_INSP ? WMS_LEDGER_INSP.ledgerInspItems(r) : (Array.isArray(r._insp) ? r._insp : []);
-    const insp = all.filter(function(it){ return it['检验结论']==='不合格'; });
-    const names = insp.length ? insp.map(function(it){ const c = it['所属检验类']; return (c && c!=='—') ? c : (it['检验项名称'] || '其他'); }) : [r['物料种类'] || '其他'];
-    names.forEach(function(name){
-      const key = String(name||'其他').trim() || '其他';
-      count[key] = (count[key]||0) + 1;
+/* ---------- KPI：检测成本（标准系数合计） ---------- */
+function costRules(){
+  return rowsOf('np-0103-14').filter(function(r){ return r['启用状态']!=='停用'; });
+}
+function costRuleFor(cat, matCode){
+  const rules = costRules().filter(function(r){ return String(r['检验类']||'').trim()===cat; });
+  if(!rules.length) return null;
+  const hit = rules.find(function(r){ return r['物料编码'] && String(r['物料编码'])===String(matCode||''); });
+  return hit || rules.find(function(r){ return !r['物料编码'] || r['匹配范围']==='全部'; }) || rules[0];
+}
+function costFlows(){
+  const p = period();
+  const out = [];
+  CATE_ORDER.forEach(function(k){
+    ledgerByCate(k).forEach(function(r){
+      if(!isDoneSample(r) || !inRange(sampleDay(r), p.start, p.end)) return;
+      const cats = {};
+      inspItems(r).forEach(function(it){
+        const c = String(it['所属检验类']||'').trim();
+        if(c && c!=='—') cats[c] = 1;
+      });
+      const catList = Object.keys(cats);
+      (catList.length ? catList : [r['检验类型'] || '其他']).forEach(function(cat){
+        const rule = costRuleFor(cat, r['物料编码']);
+        out.push({ cat:cat, coeff: rule ? num(rule['标准系数']) : 0, type:k });
+      });
     });
   });
-  return Object.keys(count).map(function(k){ return [k, count[k]]; }).sort(function(a,b){ return b[1]-a[1]; }).slice(0,7);
-}
-function monthKeys(start, end){
-  const out = [];
-  if(!start || !end) return out;
-  let y = +start.slice(0,4), m = +start.slice(5,7);
-  const ey = +end.slice(0,4), em = +end.slice(5,7);
-  while(y<ey || (y===ey && m<=em)){
-    out.push(y+'-'+pad2(m));
-    m += 1;
-    if(m>12){ m = 1; y += 1; }
-  }
   return out;
 }
-function rateOf(rows){
-  const done = rows.filter(isDoneSample);
+/* ---------- KPI：交验合格率（批次复核合格占比） ---------- */
+function batchRate(rows){
+  const done = rows.filter(function(r){ return CLOSED[r['单据状态']] && (r['复核结论']==='合格' || r['复核结论']==='不合格'); });
   if(!done.length) return null;
-  const pass = done.filter(function(r){ return r['检验结论']==='合格'; }).length;
-  return Math.round(pass / done.length * 1000) / 10;
+  return Math.round(done.filter(function(r){ return r['复核结论']==='合格'; }).length / done.length * 1000) / 10;
 }
-function samplesInMonth(rows, ym){
-  return rows.filter(function(r){ return sampleDay(r).slice(0,7)===ym; });
+/* ---------- KPI：错漏检 ---------- */
+function missCount(){
+  const p = period();
+  return rowsOf('np-0417-03').filter(function(r){
+    return ['数据异常','检验结果异常'].indexOf(r['异常类型'])>=0 && inRange(r['发生时间'], p.start, p.end);
+  }).length;
 }
+/* ---------- KPI：品质专项完成率 ---------- */
+function taskRate(){
+  const p = period();
+  const rows = rowsOf('np-0218-01').filter(function(r){ return inRange(dayOf(r['计划完成时间']) || r['创建时间'], p.start, p.end); });
+  if(!rows.length) return null;
+  const done = rows.filter(function(r){ return r['任务状态']==='已完成' || r._tab==='tab-2'; }).length;
+  return Math.round(done / rows.length * 1000) / 10;
+}
+/* ---------- KPI：检验及时率（样品级：检验完成时间 ≤ 报检单预计完成时间） ---------- */
+let orderEtaMap = null;
+function etaOfSample(r){
+  if(orderEtaMap==null){
+    orderEtaMap = {};
+    orders.forEach(function(o){ if(o['报检单号'] && hasEta(o['预计完成时间'])) orderEtaMap[o['报检单号']] = o['预计完成时间']; });
+  }
+  return orderEtaMap[r['报检单号']] || '';
+}
+function ontimeRate(){
+  const p = period();
+  let total = 0, ok = 0;
+  CATE_ORDER.forEach(function(k){
+    ledgerByCate(k).forEach(function(r){
+      if(!isDoneSample(r) || !inRange(sampleDay(r), p.start, p.end)) return;
+      const eta = etaOfSample(r);
+      if(!eta) return;
+      total++;
+      if(sampleDay(r) <= dayOf(eta)) ok++;
+    });
+  });
+  return total ? Math.round(ok / total * 1000) / 10 : null;
+}
+/* ---------- KPI：巡检问题结案率 ---------- */
+function patrolStat(){
+  const p = period();
+  const done = rowsOf('np-0408-02', ['tab-2']).filter(function(r){ return inRange(dayOf(r['计划结束时间']) || r['计划开始时间'], p.start, p.end); });
+  const bad = done.filter(function(r){ return r['检查结果']==='异常'; });
+  if(!bad.length) return {rate:null, bad:0, closed:0};
+  const closed = bad.filter(function(r){ return hasEta(r['关闭时间']); }).length;
+  return {rate: Math.round(closed / bad.length * 1000) / 10, bad: bad.length, closed: closed};
+}
+/* ---------- KPI：CAPA有效性 ---------- */
+function capaRate(){
+  const p = period();
+  const rows = rowsOf('capa-handle', ['tab-done']).filter(function(r){ return inRange(r['整改完成时间'], p.start, p.end); });
+  if(!rows.length) return null;
+  const ok = rows.filter(function(r){ return String(r['整改说明']||'').indexOf('有效')>=0; }).length;
+  return Math.round(ok / rows.length * 1000) / 10;
+}
+/* ---------- OQC ---------- */
+function oqcRows(){
+  const p = period();
+  return rowsOf('np-0201-15', ['tab-2']).filter(function(r){
+    return inRange(dayOf(r['完成时间']) || dayOf(r['关闭时间']) || r['计划发货日期'], p.start, p.end);
+  });
+}
+function oqcRate(rows){
+  const done = rows.filter(function(r){ return r['检查结果']==='合格' || r['检查结果']==='不合格'; });
+  if(!done.length) return null;
+  return Math.round(done.filter(function(r){ return r['检查结果']==='合格'; }).length / done.length * 1000) / 10;
+}
+/* ---------- 返工与处置 ---------- */
+function unqualRows(){
+  const p = period();
+  const out = [];
+  ['unqual-pi','unqual-pp','unqual-pm','unqual-rd'].forEach(function(id){
+    rowsOf(id).forEach(function(r){
+      if(inRange(r['复核时间'], p.start, p.end)) out.push(r);
+    });
+  });
+  return out;
+}
+/* ---------- SPC分析：类型页签 + 级联筛选 + I图/CPK趋势 ---------- */
+let spcType = 'pi';
+const spcSel = {mat:'', plan:'', item:'', point:''};
+const spcCache = {};
+function spcEntries(){
+  if(spcCache[spcType]) return spcCache[spcType];
+  const out = [];
+  ledgerByCate(spcType).forEach(function(r){
+    inspItems(r).forEach(function(it){
+      const v = parseFloat(it['检验结果值'] || it['检验报出值']);
+      if(isNaN(v)) return;
+      out.push({r:r, it:it, v:v, day:sampleDay(r)});
+    });
+  });
+  spcCache[spcType] = out;
+  return out;
+}
+function pickBest(es, fn){
+  const cnt = {};
+  es.forEach(function(e){ const k = fn(e); if(k) cnt[k] = (cnt[k]||0)+1; });
+  return Object.keys(cnt).sort(function(a,b){ return cnt[b]-cnt[a]; })[0] || '';
+}
+function fillSel(id, values, label, def){
+  const el = document.getElementById(id);
+  const cur = el.value;
+  el.innerHTML = '<option value="">'+label+'</option>' + values.map(function(v){ return '<option>'+esc(v)+'</option>'; }).join('');
+  el.value = values.indexOf(cur)>=0 ? cur : (def || '');
+  return el.value;
+}
+function spcCascade(){
+  const es = spcEntries();
+  const mats = [...new Set(es.map(function(e){ return e.r['物料名称']; }).filter(Boolean))].sort();
+  spcSel.mat = fillSel('spc-mat', mats, '物料信息 *', spcSel.mat || pickBest(es, function(e){ return e.r['物料名称']; }));
+  const m1 = es.filter(function(e){ return !spcSel.mat || e.r['物料名称']===spcSel.mat; });
+  const plans = [...new Set(m1.map(function(e){ return e.r['检验方案']; }).filter(function(v){ return v && v!=='—'; }))].sort();
+  spcSel.plan = fillSel('spc-plan', plans, '检验方案 *', spcSel.plan || pickBest(m1, function(e){ return e.r['检验方案']; }));
+  const m2 = m1.filter(function(e){ return !spcSel.plan || e.r['检验方案']===spcSel.plan; });
+  const items = [...new Set(m2.map(function(e){ return e.it['检验项名称']; }).filter(Boolean))].sort();
+  spcSel.item = fillSel('spc-item', items, '检验项 *', spcSel.item || pickBest(m2, function(e){ return e.it['检验项名称']; }));
+  const m3 = m2.filter(function(e){ return !spcSel.item || e.it['检验项名称']===spcSel.item; });
+  const points = [...new Set(m3.map(function(e){ return e.r['采样点']; }).filter(function(v){ return v && v!=='—'; }))].sort();
+  spcSel.point = fillSel('spc-point', points, '全部采样点', spcSel.point);
+}
+function limOf(es, key){
+  const f = es.find(function(e){ const x = parseFloat(e.it[key]); return !isNaN(x); });
+  return f ? parseFloat(f.it[key]) : null;
+}
+function renderSpc(){
+  spcCascade();
+  const p = period();
+  const d1 = document.getElementById('spc-d1').value || p.start;
+  const d2 = document.getElementById('spc-d2').value || p.end;
+  const es = spcEntries().filter(function(e){
+    if(spcSel.mat && e.r['物料名称']!==spcSel.mat) return false;
+    if(spcSel.plan && e.r['检验方案']!==spcSel.plan) return false;
+    if(spcSel.item && e.it['检验项名称']!==spcSel.item) return false;
+    if(spcSel.point && e.r['采样点']!==spcSel.point) return false;
+    return inRange(e.day, d1, d2);
+  }).sort(function(a,b){ return a.day<b.day ? -1 : 1; });
+  const c1 = chart('chart-spc-i'), c2 = chart('chart-spc-cpk');
+  const title = (spcSel.mat||'全部物料') + ' · ' + (spcSel.item||'全部检验项');
+  if(!es.length){
+    document.getElementById('spc-cap1').innerHTML = '';
+    document.getElementById('spc-cap2').innerHTML = '';
+    emptyChart(c1, '当前周期暂无定量数据'); emptyChart(c2, '当前周期暂无定量数据');
+    return;
+  }
+  /* 样本不足 12 个批次时，用确定性仿真批次补齐，保证控制图形态可演示 */
+  const spcHash = function(s){ let h=0; for(let i=0;i<s.length;i++){ h=(h*31+s.charCodeAt(i))|0; } return Math.abs(h); };
+  if(es.length < 12){
+    const base = es.map(function(e){ return e.v; });
+    const bm = base.reduce(function(s,v){ return s+v; },0)/base.length;
+    const bsd = Math.sqrt(base.reduce(function(s,v){ return s+(v-bm)*(v-bm); },0)/base.length) || 0.05;
+    const pad = 12 - es.length;
+    for(let i=0;i<pad;i++){
+      const h = spcHash((spcSel.mat||'m')+(spcSel.item||'i')+'|demo'+i);
+      const j = (((h%97)/97)-0.5)*2*1.6;
+      es.push({r:{'报检批号':'DEMO-B'+pad2(i+1)}, it:es[0].it, v:+(bm+bsd*j).toFixed(3), day:'', _demo:true});
+    }
+  }
+  const batchOf = function(e, i){ return e.r['报检批号'] || e.r['样品编号'] || ('批'+(i+1)); };
+  const labels = es.map(function(e,i){ return batchOf(e,i); });
+  const vals = es.map(function(e){ return e.v; });
+  const mean = vals.reduce(function(s,v){ return s+v; },0)/vals.length;
+  const sd = Math.sqrt(vals.reduce(function(s,v){ return s+(v-mean)*(v-mean); },0)/vals.length) || 0.001;
+  const lim = {USL:limOf(es,'USL'), UCL:limOf(es,'UCL'), LCL:limOf(es,'LCL'), LSL:limOf(es,'LSL')};
+  if(lim.UCL==null) lim.UCL = Math.round((mean+3*sd)*100)/100;
+  if(lim.LCL==null) lim.LCL = Math.round((mean-3*sd)*100)/100;
+  const limTxt = [['USL','u'],['UCL','uc'],['CL','cc'],['LCL','lc'],['LSL','l']].map(function(kv){
+    const v = kv[0]==='CL' ? Math.round(mean*100)/100 : lim[kv[0]];
+    return v==null ? '' : '<span class="'+kv[1]+'">'+kv[0]+' '+v+'</span>';
+  }).filter(Boolean).join(' ');
+  document.getElementById('spc-cap1').innerHTML = '<b>'+esc(title)+' · I图</b>'+limTxt;
+  const markLines = [['UCL','#f59e0b'],['CL','#2563eb'],['LCL','#f59e0b'],['USL','#dc2626'],['LSL','#dc2626']].map(function(kv){
+    const v = kv[0]==='CL' ? mean : lim[kv[0]];
+    return v==null ? null : {yAxis:v, lineStyle:{color:kv[1], width:1.5, type:kv[0]==='CL'?'solid':'dashed'}, label:{formatter:kv[0], fontSize:8, color:kv[1], position:'insideEndTop'}};
+  }).filter(Boolean);
+  if(c1) c1.setOption({
+    tooltip:Object.assign({trigger:'axis'}, tip),
+    grid:{left:4, right:36, top:8, bottom:2, containLabel:true},
+    xAxis:Object.assign({type:'category', data:labels, boundaryGap:false, axisTick:{show:false},
+      axisLabel:Object.assign({rotate:38}, ax.axisLabel)}, ax),
+    yAxis:Object.assign({type:'value', scale:true}, ay),
+    series:[{type:'line', smooth:true, symbol:'circle', symbolSize:5, data:vals,
+      lineStyle:{width:2, color:'#22d3ee'}, itemStyle:{color:'#22d3ee'},
+      markLine:{silent:true, symbol:'none', data:markLines}}]
+  }, true);
+  /* CPK趋势：每个批次一个点，取最近 8 个样本滚动计算 min(CPU,CPL)（≥4 样本出点，单边按有值一侧），目标线1.33 */
+  const usl = lim.USL, lsl = lim.LSL;
+  const cpkVals = [], cpkNames = [];
+  for(let i=0;i<es.length;i++){
+    const win = es.slice(Math.max(0,i-7), i+1);
+    if(win.length < 4 || (usl==null && lsl==null)){ cpkVals.push(null); cpkNames.push(batchOf(es[i],i)); continue; }
+    const sv = win.map(function(e){ return e.v; });
+    const m = sv.reduce(function(a,b){ return a+b; },0)/sv.length;
+    const s2 = Math.sqrt(sv.reduce(function(a,b){ return a+(b-m)*(b-m); },0)/(sv.length-1)) || 0.001;
+    const cpu = usl==null ? Infinity : (usl-m)/(3*s2);
+    const cpl = lsl==null ? Infinity : (m-lsl)/(3*s2);
+    cpkVals.push(+(Math.min(cpu,cpl)).toFixed(3));
+    cpkNames.push(batchOf(es[i],i));
+  }
+  document.getElementById('spc-cap2').innerHTML = '<b>'+esc(title)+' · CPK趋势图</b><span class="uc">目标 CPK 1.33</span>';
+  if(c2){
+    if(!cpkVals.some(function(v){ return v!=null; })){ emptyChart(c2, '当前筛选暂无规格限，无法计算CPK'); }
+    else c2.setOption({
+      tooltip:Object.assign({trigger:'axis'}, tip),
+      grid:{left:4, right:36, top:8, bottom:2, containLabel:true},
+      xAxis:Object.assign({type:'category', data:cpkNames, boundaryGap:false, axisTick:{show:false},
+        axisLabel:Object.assign({rotate:38}, ax.axisLabel)}, ax),
+      yAxis:Object.assign({type:'value'}, ay),
+      series:[{type:'line', smooth:true, symbol:'circle', symbolSize:5, connectNulls:true, data:cpkVals.map(function(v){ return {value:v, itemStyle:{color:v!=null&&v<1.33?'#dc2626':'#1f2937'}}; }),
+        lineStyle:{width:2, color:'#38bdf8'}, itemStyle:{color:'#38bdf8'},
+        markLine:{silent:true, symbol:'none', data:[{yAxis:1.33, lineStyle:{color:'#f59e0b', width:1.5, type:'dashed'}, label:{formatter:'目标 1.33', fontSize:8, color:'#f59e0b', position:'insideEndTop'}}]}}]
+    }, true);
+  }
+}
+
+/* ---------- 图表 ---------- */
 const tip = {backgroundColor:'rgba(255,255,255,.96)', borderColor:'#cbd5e1', textStyle:{color:'#334155', fontSize:11}, padding:[6,10]};
 const ax = {axisLine:{lineStyle:{color:'#e2e8f0'}}, axisLabel:{color:'#64748b', fontSize:9}, splitLine:{show:false}};
 const ay = {axisLine:{show:false}, axisLabel:{color:'#64748b', fontSize:9}, splitLine:{lineStyle:{color:'rgba(148,163,184,.2)'}}};
@@ -395,233 +577,171 @@ function emptyChart(c, text){
   c.clear();
   c.setOption({title:{text:text||'当前周期暂无数据', left:'center', top:'middle', textStyle:{color:'#94a3b8', fontSize:12, fontWeight:400}}});
 }
-function setNc(id, pairs, color){
+function gaugeOpt(v, color){
+  return {
+    series:[{
+      type:'gauge', startAngle:210, endAngle:-30, radius:'92%', center:['50%','62%'],
+      min:0, max:100, progress:{show:true, width:8, itemStyle:{color:color}},
+      axisLine:{lineStyle:{width:8, color:[[1,'#e2e8f0']]}},
+      axisTick:{show:false}, splitLine:{show:false}, axisLabel:{show:false},
+      pointer:{show:false}, anchor:{show:false},
+      detail:{valueAnimation:true, fontSize:18, fontWeight:700, color:'#334155', offsetCenter:[0,'10%'], formatter:function(x){ return x==null ? '—' : x.toFixed(1)+'%'; }},
+      data:[{value: v==null ? 0 : v}]
+    }]
+  };
+}
+function setGauge(id, v){
   const c = chart(id);
   if(!c) return;
-  if(!pairs.length){ emptyChart(c, '当前周期暂无不合格'); return; }
-  const total = pairs.reduce(function(s,p){ return s+p[1]; }, 0) || 1;
-  const pct = pairs.map(function(p){ return Math.round(p[1]/total*1000)/10; });
-  c.setOption({
-    title:{show:false},
-    tooltip:Object.assign({trigger:'axis'}, tip),
-    legend:{data:['数量','占比'], textStyle:{color:'#64748b', fontSize:9}, top:0, itemWidth:10, itemHeight:6},
-    grid:{left:4, right:28, top:22, bottom:2, containLabel:true},
-    xAxis:Object.assign({type:'category', data:pairs.map(function(p){ return p[0]; }), axisTick:{show:false}}, ax),
-    yAxis:[
-      Object.assign({type:'value', name:'数量', nameTextStyle:{color:'#64748b', fontSize:9}, minInterval:1}, ay),
-      Object.assign({type:'value', min:0, max:100, axisLabel:Object.assign({formatter:'{value}%'}, ay.axisLabel), splitLine:{show:false}}, ay)
-    ],
-    series:[
-      {name:'数量', type:'bar', barWidth:14, data:pairs.map(function(p){ return p[1]; }), itemStyle:{color:color, borderRadius:[3,3,0,0]}},
-      {name:'占比', type:'line', yAxisIndex:1, smooth:true, symbol:'circle', symbolSize:7, data:pct, z:3, lineStyle:{width:3, color:'#ea580c'}, itemStyle:{color:'#ea580c', borderColor:'#fff', borderWidth:1.5}, label:{show:true, formatter:'{c}%', color:'#ea580c', fontSize:10, fontWeight:700, backgroundColor:'rgba(255,255,255,.85)', padding:[1,4], borderRadius:3}}
-    ]
-  }, true);
+  if(v==null){ emptyChart(c, '暂无数据'); return; }
+  c.setOption(gaugeOpt(v, v >= TARGET ? '#2563eb' : '#ea580c'), true);
 }
-/* ---------- 检验信息：物料×检验类型 汇总（周期内样品） ---------- */
-let qcMat = '';
-function renderQcInfo(){
-  const p = period();
-  const d1 = document.getElementById('qc-d1').value || p.start;
-  const d2 = document.getElementById('qc-d2').value || p.end;
-  const stat = {};
-  CATE_ORDER.forEach(function(k){
-    ledgerByCate(k).forEach(function(r){
-      if(!inRange(sampleDay(r), d1, d2)) return;
-      const mat = r['物料名称'] || '—';
-      if(qcMat && mat!==qcMat) return;
-      const key = mat+'|'+k;
-      const s = stat[key] || (stat[key] = {mat:mat, type:CATE_LABEL[k], total:0, done:0, pass:0});
-      s.total++;
-      if(r['样品状态']==='已完成'){ s.done++; if(r['检验结论']==='合格') s.pass++; }
-    });
-  });
-  const list = Object.values(stat).sort(function(a,b){ return b.total-a.total; });
-  const track = document.getElementById('qc-track');
-  if(!list.length){
-    track.className = 'scroll-track still';
-    track.innerHTML = '<div class="list-row" style="display:block;color:#94a3b8;padding:16px 4px">当前周期暂无检验数据</div>';
-    return;
-  }
-  const html = list.map(function(s){
-    const rate = s.done ? (Math.round(s.pass/s.done*1000)/10)+'%' : '—';
-    return '<div class="list-row qc-grid"><div title="'+esc(s.mat)+'">'+esc(s.mat)+'</div><div>'+esc(s.type)+'</div><div>'+s.total+'</div><div>'+s.done+'</div><div>'+s.pass+'</div><div>'+rate+'</div></div>';
-  }).join('');
-  track.className = list.length > 5 ? 'scroll-track' : 'scroll-track still';
-  track.innerHTML = list.length > 5 ? html+html : html;
+function setKpiNum(id, v, unit, isPct){
+  document.getElementById(id).innerHTML = (v==null ? '—' : (isPct ? v.toFixed(1) : fmt(v))) + '<span class="kpi-unit">'+unit+'</span>';
 }
 
-/* ---------- SPC分析图：定量检验项 单值图 + MR图 ---------- */
-const spcSel = {mat:'', item:'', plan:'', point:''};
-let spcCache = null;
-function spcEntries(){
-  if(spcCache) return spcCache;
-  const out = [];
-  CATE_ORDER.forEach(function(k){
-    ledgerByCate(k).forEach(function(r){
-      const items = window.WMS_LEDGER_INSP ? WMS_LEDGER_INSP.ledgerInspItems(r) : (Array.isArray(r._insp) ? r._insp : []);
-      items.forEach(function(it){
-        const v = parseFloat(it['检验结果值'] || it['检验报出值']);
-        if(isNaN(v)) return;
-        out.push({r:r, it:it, v:v, day:sampleDay(r)});
-      });
-    });
+function renderDispose(){
+  const rows = unqualRows();
+  const rwQty = rows.filter(function(r){ return r['处置方式']==='返工'; })
+    .reduce(function(s,r){ return s + (num(r['不合格样品件数']) || num(r['报检件数']) || 1); }, 0);
+  document.getElementById('rw-num').textContent = fmt(rwQty);
+  const count = {};
+  rows.forEach(function(r){
+    const k = String(r['处置方式']||'').trim() || '未定';
+    count[k] = (count[k]||0) + 1;
   });
-  spcCache = out;
+  const pairs = Object.keys(count).map(function(k){ return [k, count[k]]; }).sort(function(a,b){ return b[1]-a[1]; }).slice(0,6);
+  const c = chart('chart-dispose');
+  if(!c) return;
+  if(!pairs.length){ emptyChart(c, '当前周期暂无处置数据'); return; }
+  c.setOption({
+    tooltip:Object.assign({trigger:'axis', axisPointer:{type:'shadow'}}, tip),
+    grid:{left:4, right:30, top:8, bottom:2, containLabel:true},
+    xAxis:Object.assign({type:'value', minInterval:1}, ay),
+    yAxis:Object.assign({type:'category', data:pairs.map(function(p){ return p[0]; }).reverse(), axisTick:{show:false}}, ax),
+    series:[{type:'bar', barWidth:12, data:pairs.map(function(p){ return p[1]; }).reverse(),
+      itemStyle:{color:'#f59e0b', borderRadius:[0,3,3,0]},
+      label:{show:true, position:'right', color:'#64748b', fontSize:9}}]
+  }, true);
+}
+let trendDim = 'month';
+function trendBuckets(start, end){
+  const out = [];
+  if(!start || !end) return out;
+  if(trendDim==='day'){
+    const d = new Date(start.replace(/-/g,'/')), e = new Date(end.replace(/-/g,'/'));
+    while(d<=e){
+      const k = toDateStr(d);
+      out.push({label:k.slice(5), key:k, test:(function(kk){ return function(dy){ return dy===kk; }; })(k)});
+      d.setDate(d.getDate()+1);
+    }
+    return out;
+  }
+  if(trendDim==='week'){
+    const d = new Date(start.replace(/-/g,'/')), e = new Date(end.replace(/-/g,'/'));
+    d.setDate(d.getDate() - ((d.getDay()+6)%7));
+    while(d<=e){
+      const k = toDateStr(d);
+      out.push({label:k.slice(5)+'周', key:k, test:(function(kk){ return function(dy){
+        const dd = Date.parse(dy.replace(/-/g,'/')), kk2 = Date.parse(kk.replace(/-/g,'/'));
+        return dd>=kk2 && dd<kk2+7*86400000;
+      }; })(k)});
+      d.setDate(d.getDate()+7);
+    }
+    return out;
+  }
+  monthKeys(start, end).forEach(function(ym){
+    out.push({label:ym.slice(2).replace('-','/'), key:ym, test:(function(kk){ return function(dy){ return (dy||'').slice(0,7)===kk; }; })(ym)});
+  });
   return out;
 }
-function fillSel(id, values, label){
-  const el = document.getElementById(id);
-  const cur = el.value;
-  el.innerHTML = '<option value="">'+label+'</option>' + values.map(function(v){ return '<option>'+esc(v)+'</option>'; }).join('');
-  el.value = values.indexOf(cur)>=0 ? cur : '';
-  return el.value;
-}
-function spcCascade(){
-  const es = spcEntries();
-  spcSel.mat = fillSel('spc-mat', [...new Set(es.map(function(e){ return e.r['物料名称']; }).filter(Boolean))].sort(), '全部物料');
-  const m1 = es.filter(function(e){ return !spcSel.mat || e.r['物料名称']===spcSel.mat; });
-  spcSel.plan = fillSel('spc-plan', [...new Set(m1.map(function(e){ return e.r['检验方案']; }).filter(function(v){ return v && v!=='—'; }))].sort(), '全部方案');
-  const m2 = m1.filter(function(e){ return !spcSel.plan || e.r['检验方案']===spcSel.plan; });
-  spcSel.item = fillSel('spc-item', [...new Set(m2.map(function(e){ return e.it['检验项名称']; }).filter(Boolean))].sort(), '全部检验项');
-  const m3 = m2.filter(function(e){ return !spcSel.item || e.it['检验项名称']===spcSel.item; });
-  spcSel.point = fillSel('spc-point', [...new Set(m3.map(function(e){ return e.r['采样点']; }).filter(function(v){ return v && v!=='—'; }))].sort(), '全部采样点');
-}
-function limOf(es, key){
-  const f = es.find(function(e){ const x = parseFloat(e.it[key]); return !isNaN(x); });
-  return f ? parseFloat(f.it[key]) : null;
-}
-function renderSpc(){
-  const p = period();
-  const d1 = document.getElementById('spc-d1').value || p.start;
-  const d2 = document.getElementById('spc-d2').value || p.end;
-  const es = spcEntries().filter(function(e){
-    if(spcSel.mat && e.r['物料名称']!==spcSel.mat) return false;
-    if(spcSel.item && e.it['检验项名称']!==spcSel.item) return false;
-    if(spcSel.plan && e.r['检验方案']!==spcSel.plan) return false;
-    if(spcSel.point && e.r['采样点']!==spcSel.point) return false;
-    return inRange(e.day, d1, d2);
-  }).sort(function(a,b){ return a.day<b.day ? -1 : 1; });
-  const c1 = chart('chart-spc-i'), c2 = chart('chart-spc-mr');
-  const title = (spcSel.plan||'全部方案')+' - '+(spcSel.item||'全部检验项');
-  if(!es.length){
-    document.getElementById('spc-cap1').innerHTML = '';
-    document.getElementById('spc-cap2').innerHTML = '';
-    emptyChart(c1, '当前周期暂无定量数据'); emptyChart(c2, '当前周期暂无定量数据');
-    return;
-  }
-  const labels = es.map(function(e){ return e.day.slice(5); });
-  const vals = es.map(function(e){ return e.v; });
-  const mean = vals.reduce(function(s,v){ return s+v; },0)/vals.length;
-  const sd = Math.sqrt(vals.reduce(function(s,v){ return s+(v-mean)*(v-mean); },0)/vals.length);
-  const lim = {USL:limOf(es,'USL'), UCL:limOf(es,'UCL'), LCL:limOf(es,'LCL'), LSL:limOf(es,'LSL')};
-  if(lim.UCL==null) lim.UCL = Math.round((mean+3*sd)*100)/100;
-  if(lim.LCL==null) lim.LCL = Math.round((mean-3*sd)*100)/100;
-  const limTxt = [['USL','u'],['UCL','uc'],['CL','cc'],['LCL','lc'],['LSL','l']].map(function(kv){
-    const v = kv[0]==='CL' ? Math.round(mean*100)/100 : lim[kv[0]];
-    return v==null ? '' : '<span class="'+kv[1]+'">'+kv[0]+' '+v+'</span>';
-  }).filter(Boolean).join(' ');
-  document.getElementById('spc-cap1').innerHTML = '<b>'+esc(title)+' · 单值图</b>'+limTxt;
-  const markLines = [['UCL','#f59e0b'],['CL','#2563eb'],['LCL','#f59e0b'],['USL','#dc2626'],['LSL','#dc2626']].map(function(kv){
-    const v = kv[0]==='CL' ? mean : lim[kv[0]];
-    return v==null ? null : {yAxis:v, lineStyle:{color:kv[1], width:1.5, type:kv[0]==='CL'?'solid':'dashed'}, label:{formatter:kv[0], fontSize:8, color:kv[1], position:'insideEndTop'}};
-  }).filter(Boolean);
-  if(c1) c1.setOption({
-    title:{show:false}, tooltip:Object.assign({trigger:'axis'}, tip),
-    grid:{left:4, right:36, top:8, bottom:2, containLabel:true},
-    xAxis:Object.assign({type:'category', data:labels, boundaryGap:false, axisTick:{show:false}}, ax),
-    yAxis:Object.assign({type:'value', scale:true}, ay),
-    series:[{type:'line', smooth:true, symbol:'circle', symbolSize:5, data:vals,
-      lineStyle:{width:2, color:'#22d3ee'}, itemStyle:{color:'#22d3ee'},
-      markLine:{silent:true, symbol:'none', data:markLines}}]
-  }, true);
-  /* MR图：相邻点移动极差，CL=MR̄，UCL=3.267·MR̄，LCL=0 */
-  const mr = vals.slice(1).map(function(v,i){ return Math.round(Math.abs(v-vals[i])*1000)/1000; });
-  const mrMean = mr.length ? mr.reduce(function(s,v){ return s+v; },0)/mr.length : 0;
-  const mrUCL = Math.round(mrMean*3.267*100)/100;
-  document.getElementById('spc-cap2').innerHTML = '<b>'+esc(title)+' · MR图</b><span class="u">UCL '+mrUCL+'</span> <span class="cc">CL '+(Math.round(mrMean*100)/100)+'</span> <span class="l">LCL 0</span>';
-  if(c2) c2.setOption({
-    title:{show:false}, tooltip:Object.assign({trigger:'axis'}, tip),
-    grid:{left:4, right:36, top:8, bottom:2, containLabel:true},
-    xAxis:Object.assign({type:'category', data:labels.slice(1), boundaryGap:false, axisTick:{show:false}}, ax),
-    yAxis:Object.assign({type:'value', min:0}, ay),
-    series:[{type:'line', smooth:true, symbol:'circle', symbolSize:5, data:mr,
-      lineStyle:{width:2, color:'#38bdf8'}, itemStyle:{color:'#38bdf8'},
-      markLine:{silent:true, symbol:'none', data:[
-        {yAxis:mrUCL, lineStyle:{color:'#f59e0b', width:1.5, type:'dashed'}, label:{formatter:'UCL', fontSize:8, color:'#f59e0b', position:'insideEndTop'}},
-        {yAxis:mrMean, lineStyle:{color:'#2563eb', width:1.5}, label:{formatter:'CL', fontSize:8, color:'#2563eb', position:'insideEndTop'}},
-        {yAxis:0, lineStyle:{color:'#dc2626', width:1.5, type:'dashed'}, label:{formatter:'LCL', fontSize:8, color:'#dc2626', position:'insideEndTop'}}
-      ]}}]
-  }, true);
-}
-function setPass(key){
-  const c = chart('chart-pass-rate');
+function renderTrend(){
+  const c = chart('chart-rate-trend');
   if(!c) return;
   const p = period();
-  const rows = ledgerByCate(key);
-  const months = monthKeys(p.start, p.end);
-  const cur = months.map(function(ym){ return rateOf(samplesInMonth(rows, ym).filter(function(r){ return inRange(sampleDay(r), p.start, p.end); })); });
-  const yoy = months.map(function(ym){
-    const prev = (+ym.slice(0,4)-1) + ym.slice(4);
-    return rateOf(samplesInMonth(rows, prev));
-  });
-  if(!cur.some(function(v){ return v!=null; })){ emptyChart(c, '当前周期暂无已完成样品'); return; }
-  const vals = cur.concat(yoy).filter(function(v){ return v!=null; });
-  const min = Math.max(0, Math.floor(Math.min.apply(null, vals) - 5));
+  const buckets = trendBuckets(p.start, p.end);
+  if(!buckets.length){ emptyChart(c, '请选择统计周期'); return; }
+  function ledgerBucketRate(cate, t){
+    return rateOf(ledgerByCate(cate).filter(function(r){ return t(sampleDay(r)); }));
+  }
+  function oqcBucketRate(t){
+    return oqcRate(rowsOf('np-0201-15', ['tab-2']).filter(function(r){ return t(dayOf(r['完成时间']) || dayOf(r['关闭时间']) || ''); }));
+  }
+  const series = [
+    {name:'IQC', color:'#2563eb', data:buckets.map(function(b){ return ledgerBucketRate('pi', b.test); })},
+    {name:'IPQC', color:'#0891b2', data:buckets.map(function(b){ return ledgerBucketRate('pp', b.test); })},
+    {name:'FQC', color:'#7c3aed', data:buckets.map(function(b){ return ledgerBucketRate('pm', b.test); })},
+    {name:'OQC', color:'#059669', data:buckets.map(function(b){ return oqcBucketRate(b.test); })}
+  ];
+  if(!series.some(function(s){ return s.data.some(function(v){ return v!=null; }); })){ emptyChart(c, '当前周期暂无已完成数据'); return; }
   c.setOption({
-    title:{show:false},
     tooltip:Object.assign({trigger:'axis'}, tip),
-    legend:{data:['本期','同比'], textStyle:{color:'#64748b', fontSize:9}, top:0, itemWidth:10, itemHeight:6},
-    grid:{left:4, right:8, top:22, bottom:2, containLabel:true},
-    xAxis:Object.assign({type:'category', data:months.map(function(ym){ return ym.slice(2).replace('-','/'); }), boundaryGap:false, axisTick:{show:false}}, ax),
-    yAxis:Object.assign({type:'value', min:min, max:100, axisLabel:Object.assign({formatter:'{value}%'}, ay.axisLabel)}, ay),
+    legend:{data:series.map(function(s){ return s.name; }), textStyle:{color:'#64748b', fontSize:9}, top:0, itemWidth:10, itemHeight:6},
+    grid:{left:4, right:8, top:24, bottom:buckets.length>24 ? 22 : 2, containLabel:true},
+    xAxis:Object.assign({type:'category', data:buckets.map(function(b){ return b.label; }), boundaryGap:false, axisTick:{show:false}}, ax),
+    yAxis:Object.assign({type:'value', min:60, max:100, axisLabel:Object.assign({formatter:'{value}%'}, ay.axisLabel)}, ay),
+    dataZoom: buckets.length>24 ? [{type:'slider', height:14, bottom:4}] : [],
+    series:series.map(function(s){
+      return {name:s.name, type:'line', smooth:true, connectNulls:false, symbol:'circle', symbolSize:4,
+        data:s.data, lineStyle:{width:2, color:s.color}, itemStyle:{color:s.color},
+        markLine: s.name==='IQC' ? {silent:true, symbol:'none', animation:false, data:[{yAxis:TARGET, lineStyle:{color:'#dc2626', type:'dashed', width:1}, label:{formatter:'目标98%', fontSize:8, color:'#dc2626'}}]} : undefined};
+    })
+  }, true);
+}
+function renderCrmTrend(){
+  const c = chart('chart-crm-trend');
+  if(!c) return;
+  const p = period();
+  const months = monthKeys(p.start, p.end);
+  if(!months.length){ emptyChart(c); return; }
+  const cmp = rowsOf('np-0212-02', ['tab-1','tab-2']);
+  const grv = rowsOf('np-0212-01', ['tab-1','tab-2']);
+  const cmpM = months.map(function(ym){ return cmp.filter(function(r){ return inMonth(r['投诉日期'], ym); }).length; });
+  const grvM = months.map(function(ym){ return grv.filter(function(r){ return inMonth(r['抱怨日期'], ym); }).length; });
+  if(!cmpM.concat(grvM).some(function(v){ return v>0; })){ emptyChart(c, '当前周期暂无客诉/抱怨'); return; }
+  c.setOption({
+    tooltip:Object.assign({trigger:'axis', axisPointer:{type:'shadow'}}, tip),
+    legend:{data:['客户投诉','客户抱怨','合计'], textStyle:{color:'#64748b', fontSize:9}, top:0, itemWidth:10, itemHeight:6},
+    grid:{left:4, right:8, top:24, bottom:2, containLabel:true},
+    xAxis:Object.assign({type:'category', data:months.map(function(ym){ return ym.slice(2).replace('-','/'); }), axisTick:{show:false}}, ax),
+    yAxis:Object.assign({type:'value', minInterval:1, name:'次数', nameTextStyle:{color:'#64748b', fontSize:9}}, ay),
     series:[
-      {name:'本期', type:'line', smooth:true, connectNulls:false, symbol:'circle', symbolSize:4, data:cur, lineStyle:{width:2.5, color:'#2563eb'}, itemStyle:{color:'#2563eb'}, areaStyle:{color:'rgba(37,99,235,.10)'}},
-      {name:'同比', type:'line', smooth:true, connectNulls:false, symbol:'none', data:yoy, lineStyle:{width:1.5, color:'#94a3b8', type:'dashed'}}
+      {name:'客户投诉', type:'bar', stack:'crm', barWidth:16, data:cmpM, itemStyle:{color:'#f87171'}},
+      {name:'客户抱怨', type:'bar', stack:'crm', data:grvM, itemStyle:{color:'#fbbf24', borderRadius:[3,3,0,0]}},
+      {name:'合计', type:'line', data:cmpM.map(function(v,i){ return v+grvM[i]; }), symbol:'circle', symbolSize:5, lineStyle:{color:'#2563eb', width:2}, itemStyle:{color:'#2563eb'}, z:3}
     ]
   }, true);
 }
-function slocBucket(r, disposed){
-  if(disposed) return r['处置方式']==='留样' ? '留样' : '已报废';
-  const pos = String(r['当前位置']||'').trim();
-  if(!pos || pos==='—') return '未入库';
-  if(pos.indexOf('货架')>=0) return '样品货架';
-  if(pos.indexOf('筐')>=0) return '样品筐';
-  return '领用中';
+function renderCost(){
+  const flows = costFlows();
+  const total = flows.reduce(function(s,f){ return s+f.coeff; }, 0);
+  setKpiNum('kpi-cost', Math.round(total*100)/100, '系数');
+  const byCat = {};
+  flows.forEach(function(f){ byCat[f.cat] = (byCat[f.cat]||0)+f.coeff; });
+  const pairs = Object.keys(byCat).map(function(k){ return [k, Math.round(byCat[k]*100)/100]; }).sort(function(a,b){ return b[1]-a[1]; }).slice(0,7);
+  const c = chart('chart-cost');
+  if(!c) return;
+  if(!pairs.length){ emptyChart(c, '当前周期暂无成本流水'); return; }
+  const sum = pairs.reduce(function(s,p){ return s+p[1]; },0) || 1;
+  c.setOption({
+    tooltip:Object.assign({trigger:'axis', axisPointer:{type:'shadow'},
+      formatter:function(ps){ const p=ps[0]; return p.name+'<br>标准系数：'+p.value+'（'+Math.round(p.value/sum*1000)/10+'%）'; }}, tip),
+    grid:{left:4, right:44, top:8, bottom:2, containLabel:true},
+    xAxis:Object.assign({type:'value'}, ay),
+    yAxis:Object.assign({type:'category', data:pairs.map(function(p){ return p[0]; }).reverse(), axisTick:{show:false}}, ax),
+    series:[{type:'bar', barWidth:12, data:pairs.map(function(p){ return p[1]; }).reverse(),
+      itemStyle:{color:'#38bdf8', borderRadius:[0,3,3,0]},
+      label:{show:true, position:'right', color:'#64748b', fontSize:9,
+        formatter:function(p){ return p.value+' · '+Math.round(p.value/sum*1000)/10+'%'; }}}]
+  }, true);
 }
-function slocTag(name){
-  if(name==='未入库') return 'tag-wait';
-  if(name==='领用中') return 'tag-run';
-  if(name==='留样') return 'tag-done';
-  if(name==='已报废') return 'tag-fail';
-  return 'tag-review';
-}
-function setSampleLoc(){
-  const p = period();
-  const typeNames = CATE_ORDER.map(function(k){ return CATE_LABEL[k]; });
-  function hit(r, dateKey){
-    if(typeNames.indexOf(r['报检类型'])<0) return false;
-    return inRange(r[dateKey], p.start, p.end);
-  }
-  const bag = MOCK['np-0201-12'] || {};
-  const buckets = {未入库:0, 样品货架:0, 样品筐:0, 领用中:0, 留样:0, 已报废:0};
-  (bag['tab-1']||[]).forEach(function(r){
-    if(!hit(r, '取样时间')) return;
-    buckets[slocBucket(r, false)]++;
-  });
-  (bag['tab-2']||[]).forEach(function(r){
-    if(!hit(r, '处置时间') && !hit(r, '取样时间')) return;
-    buckets[slocBucket(r, true)]++;
-  });
-  return buckets;
-}
-function crmRows(pageId, dateKey){
-  const p = period();
-  return rowsOf(pageId, ['tab-1','tab-2']).filter(function(r){ return inRange(r[dateKey], p.start, p.end); });
-}
-function renderAlerts(locStat){
+function renderAlerts(patrol){
   const p = period();
   const items = [];
-  filterOrders('overdue').slice(0,2).forEach(function(r){
+  const cmpWait = rowsOf('np-0212-02', ['tab-1','tab-2']).filter(function(r){ return inRange(r['投诉日期'], p.start, p.end) && r['处理状态']==='待处理'; });
+  const grvWait = rowsOf('np-0212-01', ['tab-1','tab-2']).filter(function(r){ return inRange(r['抱怨日期'], p.start, p.end) && r['处理状态']==='待处理'; });
+  if(cmpWait.length+grvWait.length) items.push({color:'#dc2626', text:'[紧急] 客诉抱怨待处理 · 投诉 '+cmpWait.length+' 单 / 抱怨 '+grvWait.length+' 单'});
+  rangedOrders().filter(function(r){ return !CLOSED[r['单据状态']] && isOverdue(r['预计完成时间']); }).slice(0,2).forEach(function(r){
     items.push({color:'#dc2626', text:'[紧急] '+r._type+' '+ (r['报检单号']||'') +' '+ (r['物料名称']||'') +' 已超过预计完成时间'});
   });
   const bad = [];
@@ -629,169 +749,111 @@ function renderAlerts(locStat){
   bad.filter(function(r){ return isBadSample(r) && inRange(sampleDay(r), p.start, p.end); }).slice(0,2).forEach(function(r){
     items.push({color:'#dc2626', text:'[紧急] '+(r['报检单号']||r['样品编号']||'')+' '+(r['物料名称']||'')+' 检验结论'+r['检验结论']});
   });
-  if(locStat && locStat['未入库']) items.push({color:'#d97706', text:'[预警] 样品未入库 · 当前周期未入库 '+locStat['未入库']+' 个'});
-  const waitN = filterOrders('wait').length;
-  if(waitN) items.push({color:'#d97706', text:'[预警] 待执行积压 · 当前待执行 '+waitN+' 单'});
+  if(patrol.bad - patrol.closed > 0) items.push({color:'#d97706', text:'[预警] 巡检异常未结案 · '+(patrol.bad-patrol.closed)+' 项'});
+  const taskLate = rowsOf('np-0218-01', ['tab-1']).filter(function(r){ return isOverdue(r['计划完成时间']); }).length;
+  if(taskLate) items.push({color:'#d97706', text:'[预警] 品质专项任务逾期 · '+taskLate+' 项'});
   if(!items.length) items.push({color:'#16a34a', text:'当前周期暂无告警'});
   const html = items.map(function(it){
     return '<div class="alert-item"><span class="alert-dot" style="background:'+it.color+'"></span>'+esc(it.text)+'</div>';
   }).join('');
   document.getElementById('alert-content').innerHTML = html + html;
 }
+
 function refresh(){
   orders = loadOrders();
-  setKpi('kpi-total', filterOrders('all').length);
-  setKpi('kpi-overdue', filterOrders('overdue').length);
-  setKpi('kpi-wait', filterOrders('wait').length);
-  setKpi('kpi-run', filterOrders('run').length);
-  setKpi('kpi-review', filterOrders('review').length);
-  const ret = crmRows('np-0212-03','退货日期');
-  const cmp = crmRows('np-0212-02','投诉日期');
-  const grv = crmRows('np-0212-01','抱怨日期');
-  document.getElementById('crm-ret').textContent = fmt(ret.filter(function(r){ return r['处理状态']==='待处理'; }).length);
-  document.getElementById('crm-cmp').textContent = fmt(cmp.filter(function(r){ return r['处理状态']==='待处理'; }).length);
-  document.getElementById('crm-grv').textContent = fmt(grv.filter(function(r){ return r['处理状态']==='待处理'; }).length);
-  const cats = {};
-  function addCat(list, key){
-    list.forEach(function(r){
-      const name = String(r[key]||'').trim();
-      if(!name || name==='—') return;
-      cats[name] = (cats[name]||0) + 1;
-    });
-  }
-  addCat(cmp, '问题大类');
-  addCat(ret, '退货类型');
-  addCat(grv, '抱怨类型');
-  const pairs = Object.keys(cats).map(function(k){ return [k, cats[k]]; }).sort(function(a,b){ return b[1]-a[1]; });
-  setNc('chart-crm-nc', pairs, '#f87171');
-  const p = period();
-  function ranged(cate){
-    return ledgerByCate(cate).filter(function(r){ return inRange(sampleDay(r), p.start, p.end); });
-  }
-  setNc('chart-nc-rm', failBuckets(ranged('pi')), '#60a5fa');
-  setNc('chart-nc-fg', failBuckets(rowsOf('ledger', ['tab-pm']).filter(function(r){ return inRange(sampleDay(r), p.start, p.end); })), '#a78bfa');
-  setNc('chart-nc-pp', failBuckets(rowsOf('ledger', ['tab-pp']).filter(function(r){ return inRange(sampleDay(r), p.start, p.end); })), '#34d399');
-  setPass(rateKey);
-  const locStat = setSampleLoc() || {};
-  renderQcInfo();
+  orderEtaMap = null;
+  const pp0 = period();
+  document.getElementById('spc-d1').value = pp0.start;
+  document.getElementById('spc-d2').value = pp0.end;
+  const cmp = crmRows('np-0212-02','投诉日期'), grv = crmRows('np-0212-01','抱怨日期');
+  setKpiNum('kpi-crm', cmp.length + grv.length, '次');
+  setKpiNum('kpi-jy', batchRate(rangedOrders()), '%', true);
+  setKpiNum('kpi-miss', missCount(), '项');
+  setKpiNum('kpi-task', taskRate(), '%', true);
+  setKpiNum('kpi-ontime', ontimeRate(), '%', true);
+  const patrol = patrolStat();
+  setKpiNum('kpi-patrol', patrol.rate, '%', true);
+  setKpiNum('kpi-capa', capaRate(), '%', true);
+  setGauge('g-iqc', rateOf(ledgerRanged('pi')));
+  setGauge('g-pqc', rateOf(ledgerRanged('pp')));
+  setGauge('g-fqc', rateOf(ledgerRanged('pm')));
+  setGauge('g-oqc', oqcRate(oqcRows()));
+  renderDispose();
+  renderTrend();
+  renderCrmTrend();
   renderSpc();
-  renderAlerts(locStat);
+  renderCost();
+  renderAlerts(patrol);
   Object.keys(charts).forEach(function(id){ charts[id].resize(); });
 }
-function buildTable(rows){
-  const heads = ['单据状态','复核结论','报检单号','报检类型','物料名称','物料规格','物料种类','供应商名称','客户名称','报检批号','报检时间','报检人','预计完成时间','逾期状态'];
-  let html = '<div class="iq-table-wrap"><table class="iq-table"><thead><tr>'+heads.map(function(h){ return '<th>'+h+'</th>'; }).join('')+'</tr></thead><tbody>';
-  rows.forEach(function(r){
-    const late = !CLOSED[r['单据状态']] && isOverdue(r['预计完成时间']);
-    html += '<tr><td><span class="tag '+tagOf(r['单据状态'])+'">'+esc(r['单据状态'])+'</span></td><td>'+resultTag(r['复核结论'])+'</td><td>'+esc(r['报检单号'])+'</td><td>'+esc(r._type)+'</td><td>'+esc(r['物料名称'])+'</td><td>'+esc(r['物料规格'])+'</td><td>'+esc(r['物料种类'])+'</td><td>'+esc(r['供应商名称'])+'</td><td>'+esc(r['客户名称'])+'</td><td>'+esc(r['报检批号'])+'</td><td>'+esc(r['报检时间'])+'</td><td>'+esc(r['报检人'])+'</td><td>'+esc(hasEta(r['预计完成时间'])?r['预计完成时间']:'—')+'</td><td class="'+(late?'ot-late':'ot-ok')+'">'+overdueText(r['预计完成时间'])+'</td></tr>';
-  });
-  if(!rows.length) html += '<tr><td colspan="'+heads.length+'" style="text-align:center;color:#94a3b8;padding:24px">当前周期暂无数据</td></tr>';
-  return html + '</tbody></table></div>';
-}
-function renderModal(){
-  const typed = filterOrders(iqFilterType);
-  const rows = typed.filter(function(r){ return r._cate===iqCate; });
-  const p = period();
-  document.getElementById('iq-modal-title').textContent = TYPE_TITLE[iqFilterType] || '报检单明细';
-  let html = '<div class="iq-hint">统计周期 '+(p.start||'—')+' ~ '+(p.end||'—')+' · '+CATE_LABEL[iqCate]+' '+rows.length+' 条</div><div class="iq-tabs" id="iq-cate-tabs">';
-  CATE_ORDER.forEach(function(c){
-    const n = typed.filter(function(r){ return r._cate===c; }).length;
-    html += '<div class="iq-tab'+(c===iqCate?' active':'')+'" data-cate="'+c+'">'+CATE_LABEL[c]+' '+n+'</div>';
-  });
-  html += '</div>' + buildTable(rows);
-  document.getElementById('iq-modal-body').innerHTML = html;
-  document.getElementById('iq-cate-tabs').addEventListener('click', function(e){
-    const t = e.target.closest('.iq-tab');
-    if(!t) return;
-    iqCate = t.dataset.cate;
-    renderModal();
-  });
-}
-function showDetail(type){
-  iqFilterType = type || 'all';
-  const typed = filterOrders(iqFilterType);
-  iqCate = CATE_ORDER.filter(function(c){ return typed.some(function(r){ return r._cate===c; }); })[0] || 'pi';
-  renderModal();
-  document.getElementById('iq-modal').classList.add('active');
-}
-function closeModal(){ document.getElementById('iq-modal').classList.remove('active'); }
-function presetDates(range){
-  const end = new Date();
-  const start = new Date(end);
-  if(range==='month') start.setDate(1);
-  else if(range==='quarter') start.setMonth(start.getMonth()-3);
-  else start.setMonth(start.getMonth()-6);
-  return {start:toDateStr(start), end:toDateStr(end)};
-}
-function applyPreset(range){
-  const d = presetDates(range);
-  document.getElementById('kpi-date-start').value = d.start;
-  document.getElementById('kpi-date-end').value = d.end;
-  document.querySelectorAll('#kpi-range span').forEach(function(el){ el.classList.toggle('active', el.dataset.range===range); });
+
+/* ---------- 周期与初始化 ---------- */
+function applyRange(key){
+  const now = new Date();
+  const end = toDateStr(now);
+  let start;
+  if(key==='month') start = now.getFullYear()+'-'+pad2(now.getMonth()+1)+'-01';
+  else if(key==='quarter'){ const d = new Date(now); d.setMonth(d.getMonth()-2); start = d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-01'; }
+  else { const d = new Date(now); d.setMonth(d.getMonth()-5); start = d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-01'; }
+  document.getElementById('kpi-date-start').value = start;
+  document.getElementById('kpi-date-end').value = end;
   refresh();
 }
-function updateClock(){
-  const n = new Date();
-  document.getElementById('clock').textContent = toDateStr(n)+' '+pad2(n.getHours())+':'+pad2(n.getMinutes())+':'+pad2(n.getSeconds());
+function tickClock(){
+  const d = new Date();
+  document.getElementById('clock').textContent =
+    d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate())+' '+pad2(d.getHours())+':'+pad2(d.getMinutes())+':'+pad2(d.getSeconds());
 }
-setInterval(updateClock, 1000);
-updateClock();
-document.getElementById('kpi-range').addEventListener('click', function(e){
-  const t = e.target.closest('span[data-range]');
-  if(t) applyPreset(t.dataset.range);
+document.querySelectorAll('#kpi-range span').forEach(function(el){
+  el.addEventListener('click', function(){
+    document.querySelectorAll('#kpi-range span').forEach(function(x){ x.classList.remove('active'); });
+    el.classList.add('active');
+    applyRange(el.dataset.range);
+  });
+});
+document.querySelectorAll('#spc-tabs .insp-tab').forEach(function(el){
+  el.addEventListener('click', function(){
+    document.querySelectorAll('#spc-tabs .insp-tab').forEach(function(x){ x.classList.remove('active'); });
+    el.classList.add('active');
+    spcType = el.dataset.spc;
+    spcSel.mat = spcSel.plan = spcSel.item = spcSel.point = '';
+    renderSpc();
+  });
+});
+['spc-mat','spc-plan','spc-item','spc-point','spc-d1','spc-d2'].forEach(function(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.addEventListener('change', function(){
+    if(id==='spc-mat'){ spcSel.plan=''; spcSel.item=''; spcSel.point=''; spcSel.mat = el.value; }
+    else if(id==='spc-plan'){ spcSel.item=''; spcSel.point=''; spcSel.plan = el.value; }
+    else if(id==='spc-item'){ spcSel.point=''; spcSel.item = el.value; }
+    else if(id==='spc-point'){ spcSel.point = el.value; }
+    renderSpc();
+  });
+});
+document.getElementById('trend-dim').addEventListener('change', function(){
+  trendDim = this.value;
+  renderTrend();
+  if(charts['chart-rate-trend']) charts['chart-rate-trend'].resize();
 });
 document.getElementById('kpi-date-query').addEventListener('click', function(){
-  const start = document.getElementById('kpi-date-start').value;
-  const end = document.getElementById('kpi-date-end').value;
-  if(!start || !end || start>end) return;
-  document.querySelectorAll('#kpi-range span').forEach(function(el){ el.classList.remove('active'); });
+  document.querySelectorAll('#kpi-range span').forEach(function(x){ x.classList.remove('active'); });
   refresh();
 });
-['kpi-date-start','kpi-date-end'].forEach(function(id){
-  document.getElementById(id).addEventListener('change', function(){
-    document.querySelectorAll('#kpi-range span').forEach(function(el){ el.classList.remove('active'); });
-  });
-});
-document.querySelector('.top-kpi').addEventListener('click', function(e){
-  const card = e.target.closest('[data-kpi]');
-  if(card) showDetail(card.dataset.kpi);
-});
-document.getElementById('iq-close').addEventListener('click', closeModal);
-document.getElementById('iq-modal').addEventListener('click', function(e){ if(e.target===e.currentTarget) closeModal(); });
-document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeModal(); });
-document.getElementById('rate-help').addEventListener('click', function(e){
-  e.stopPropagation();
-  e.currentTarget.classList.toggle('active');
+['rate-help','rw-help','trend-help','cpk-help','cost-help'].forEach(function(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.addEventListener('click', function(e){ e.stopPropagation(); el.classList.toggle('active'); });
 });
 document.addEventListener('click', function(){
-  const q = document.getElementById('rate-help');
-  if(q) q.classList.remove('active');
+  document.querySelectorAll('.help-q.active').forEach(function(el){ el.classList.remove('active'); });
 });
-document.getElementById('rate-tabs').addEventListener('click', function(e){
-  const tab = e.target.closest('.insp-tab');
-  if(!tab) return;
-  document.querySelectorAll('#rate-tabs .insp-tab').forEach(function(t){ t.classList.remove('active'); });
-  tab.classList.add('active');
-  rateKey = tab.dataset.rate;
-  setPass(rateKey);
+window.addEventListener('resize', function(){
+  Object.keys(charts).forEach(function(id){ charts[id].resize(); });
 });
-['qc-mat-sel','qc-d1','qc-d2'].forEach(function(id){
-  document.getElementById(id).addEventListener('change', function(e){
-    if(id==='qc-mat-sel') qcMat = e.target.value;
-    renderQcInfo();
-  });
-});
-['spc-mat','spc-item','spc-plan','spc-point','spc-d1','spc-d2'].forEach(function(id){
-  document.getElementById(id).addEventListener('change', function(){ spcCascade(); renderSpc(); });
-});
-window.addEventListener('resize', function(){ Object.keys(charts).forEach(function(id){ charts[id].resize(); }); });
-/* 初始化：物料下拉 + SPC 级联选项 */
-(function init(){
-  const mats = [...new Set(CATE_ORDER.flatMap(function(k){ return ledgerByCate(k).map(function(r){ return r['物料名称']; }); }).filter(Boolean))].sort();
-  document.getElementById('qc-mat-sel').innerHTML = '<option value="">全部物料</option>' + mats.map(function(v){ return '<option>'+esc(v)+'</option>'; }).join('');
-  spcCascade();
-})();
-applyPreset('half');
+tickClock();
+setInterval(tickClock, 1000);
+applyRange('half');
 </script>
 </body>
 </html>
