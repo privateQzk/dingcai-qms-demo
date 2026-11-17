@@ -157,7 +157,7 @@ window.QMS_LINKS = {
   "np-0310-01": { group: "仪器管理", tab: "仪器启用", tabs: 0, depends: [], emits: [] },
   "np-0311-01": { group: "仪器管理", tab: "仪器报废", tabs: 0, depends: [], emits: [] },
   "np-0312-01": { group: "仪器管理", tab: "仪器调拨", tabs: 0, depends: [], emits: [] },
-  "np-0314-01": { group: "仪器管理", tab: "仪器稼动率表", tabs: 0, depends: [], emits: [] },
+  "np-0314-01": { group: "仪器管理", tab: "仪器稼动率表", tabs: 0, depends: [], emits: [], components: ["QmsUtilReport"], migrated: true },
   "np-0401-01": { group: "实验室管理/试剂管理", tab: "试剂入库", tabs: 2, depends: [], emits: [] },
   "np-0401-02": { group: "实验室管理/试剂管理", tab: "试剂出库", tabs: 2, depends: [], emits: [] },
   "np-0401-03": { group: "实验室管理/试剂管理", tab: "临期提醒", tabs: 0, depends: [], emits: [] },

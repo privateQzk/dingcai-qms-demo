@@ -767,73 +767,7 @@
             </template>
           </section>
 
-          <section v-else-if="page.layout==='util-report'" class="cost-stat insp-report quality-report">
-            <div class="cost-stat__box">
-              <el-form :inline="true" class="query-form">
-                <el-form-item label="统计粒度">
-                  <el-select v-model="util.gran" placeholder="月" style="width:110px" @change="util.range=utDefaultRange()">
-                    <el-option v-for="g in ['日','周','月','年']" :key="g" :label="g" :value="g"></el-option>
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="时间范围" required>
-                  <el-date-picker v-model="util.range" :type="utilPickerType" value-format="YYYY-MM-DD" :start-placeholder="util.gran==='日'?'开始日期':'开始'" :end-placeholder="util.gran==='日'?'结束日期':'结束'" clearable style="width:260px"></el-date-picker>
-                </el-form-item>
-                <el-form-item label="仪器类型">
-                  <el-select v-model="util.instType" clearable filterable placeholder="全部" style="width:130px">
-                    <el-option v-for="t in instAllTypes" :key="t.id" :label="t['仪器类型']" :value="t['仪器类型']"></el-option>
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="仪器编号"><el-input v-model="util.code" clearable placeholder="模糊查询" style="width:140px"></el-input></el-form-item>
-              </el-form>
-              <div class="cost-stat__foot">
-                <el-button type="primary" @click="utQuery">查询</el-button>
-                <el-button @click="utReset">重置</el-button>
-              </div>
-            </div>
-            <template v-if="util.queried">
-              <div class="qr-kpis">
-                <div v-for="c in utilCards" :key="c.label" class="qr-kpi" :class="'qr-kpi--'+(c.tone||'blue')">
-                  <div class="qr-kpi__v">{{ c.value }}</div>
-                  <div class="qr-kpi__l">{{ c.label }}</div>
-                </div>
-              </div>
-              <div class="cost-stat__bar">
-                <div class="cost-stat__sum">统计行 {{ util.rows.length }} 条</div>
-                <el-button @click="utExport">导出 Excel</el-button>
-              </div>
-              <el-table class="demo-data-table" :data="util.rows" border empty-text="暂无数据" max-height="520">
-                <el-table-column type="index" label="序号" width="60"></el-table-column>
-                <el-table-column prop="仪器编号" label="仪器编号" min-width="120"></el-table-column>
-                <el-table-column prop="仪器名称" label="仪器名称" min-width="170" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="仪器类型" label="仪器类型" width="100"></el-table-column>
-                <el-table-column prop="责任部门" label="责任部门" width="110"></el-table-column>
-                <el-table-column prop="统计周期" label="统计周期" width="110"></el-table-column>
-                <el-table-column prop="计划时长" label="计划时长（时）" width="110" align="right"></el-table-column>
-                <el-table-column prop="使用时长" label="使用时长（时）" width="110" align="right"></el-table-column>
-                <el-table-column prop="稼动率" label="稼动率（%）" width="100" align="right"></el-table-column>
-                <el-table-column label="操作" width="100" fixed="right">
-                  <template #default="{ row }"><el-button link type="primary" @click="utOpenDetail(row)">使用明细</el-button></template>
-                </el-table-column>
-              </el-table>
-            </template>
-            <el-drawer v-model="utilDetail.visible" :title="utilDetail.title" direction="rtl" size="60%" append-to-body>
-              <el-table :data="utilDetail.rows" border height="100%" empty-text="暂无流水">
-                <el-table-column type="index" label="序号" width="60"></el-table-column>
-                <el-table-column prop="仪器编号" label="仪器编号" min-width="110"></el-table-column>
-                <el-table-column prop="仪器名称" label="仪器名称" min-width="150" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="仪器类型" label="仪器类型" width="90"></el-table-column>
-                <el-table-column prop="样品编号" label="样品编号" min-width="120"></el-table-column>
-                <el-table-column prop="报检单号" label="报检单号" min-width="120"></el-table-column>
-                <el-table-column prop="报检单类型" label="报检单类型" width="105"></el-table-column>
-                <el-table-column prop="检验类" label="检验类" width="100"></el-table-column>
-                <el-table-column prop="物料编码" label="物料编码" min-width="120"></el-table-column>
-                <el-table-column prop="物料名称" label="物料名称" min-width="140" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="开始时间" label="开始时间" min-width="140"></el-table-column>
-                <el-table-column prop="结束时间" label="结束时间" min-width="140"></el-table-column>
-                <el-table-column prop="使用时长" label="使用时长（时）" width="110" align="right"></el-table-column>
-              </el-table>
-            </el-drawer>
-          </section>
+          <qms-util-report            v-else-if="page.layout==='util-report'"            :util="util"            :util-cards="utilCards"            :util-detail="utilDetail"            :inst-all-types="instAllTypes"            :util-picker-type="utilPickerType"            @gran-change="util.range = utDefaultRange()"            @query="utQuery"            @reset="utReset"            @export="utExport"            @open-detail="utOpenDetail">          </qms-util-report>
 
           <qms-cockpit-launch            v-else-if="page.layout==='quality-cockpit'"            :title="page.title"            @open="openQualityCockpit">          </qms-cockpit-launch>
 
@@ -9567,6 +9501,7 @@
 <script src="./js/components/layouts/sigma-config.js?v=1.0.0"></script>
 <script src="./js/components/layouts/simple-list-panel.js?v=1.0.0"></script>
 <script src="./js/components/layouts/col-model-panel.js?v=1.0.0"></script>
+<script src="./js/components/layouts/util-report.js?v=1.0.0"></script>
 <script src="./js/app.js?v=1.0.0"></script>
 </body>
 </html>
