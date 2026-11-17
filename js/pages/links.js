@@ -22,7 +22,7 @@ window.QMS_LINKS = {
   "np-0103-12": { group: "基础数据/检验资料", tab: "自动化派单方案", tabs: 0, depends: [], emits: [] },
   "np-0103-13": { group: "基础数据/检验资料", tab: "样品仓库", tabs: 2, depends: [], emits: [] },
   "np-0103-14": { group: "基础数据/检验资料", tab: "检验成本方案", tabs: 0, depends: [], emits: [] },
-  "sigma-method": { group: "基础数据/SPC资料", tab: "σ计算方法", tabs: 0, depends: [], emits: [] },
+  "sigma-method": { group: "基础数据/SPC资料", tab: "σ计算方法", tabs: 0, depends: [], emits: [], components: ["QmsSigmaConfig"], migrated: true },
   "spc-rule": { group: "基础数据/SPC资料", tab: "规则设置", tabs: 0, depends: [], emits: [] },
   "rule-auth-insp": { group: "基础数据/SPC资料", tab: "检验-判异授权", tabs: 0, depends: [], emits: [] },
   "spc-scheme-insp": { group: "基础数据/SPC资料", tab: "检验-SPC查询方案", tabs: 0, depends: [], emits: [] },

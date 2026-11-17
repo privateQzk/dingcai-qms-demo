@@ -352,26 +352,7 @@
           <el-alert v-if="page.layoutHint" type="info" :closable="false" show-icon style="margin:0 16px 12px" :title="page.layoutHint"></el-alert>
 
           <!-- SPC · σ计算方法配置页 -->
-          <section v-if="page.layout==='sigma-config'" class="sigma-config">
-            <div class="sigma-config__tips">
-              <p><span class="sigma-config__tips-label">e.g：</span>{{ (page.sigmaConfig&&page.sigmaConfig.tips) || '' }}</p>
-              <p class="sigma-config__tips-doc">
-                公式详情可查看文档
-                <el-link type="primary" :underline="false" @click="ElMessage.info('Demo：已打开 ' + ((page.sigmaConfig&&page.sigmaConfig.docTitle)||'公式文档'))">{{ (page.sigmaConfig&&page.sigmaConfig.docTitle) || '《SPC各类指标计算公式》' }}</el-link>
-              </p>
-            </div>
-            <div v-for="row in ((page.sigmaConfig&&page.sigmaConfig.rows)||[])" :key="row" class="sigma-config__row">
-              <span class="sigma-config__label">{{ row }}：</span>
-              <el-radio-group v-model="sigmaConfigModel[row]" class="sigma-config__radios">
-                <el-radio v-for="opt in ((page.sigmaConfig&&page.sigmaConfig.options)||[])" :key="opt" :value="opt">
-                  {{ opt }}<span v-if="opt===((page.sigmaConfig&&page.sigmaConfig.defaultOption)||'')" class="sigma-config__default">（默认）</span>
-                </el-radio>
-              </el-radio-group>
-            </div>
-            <div class="sigma-config__footer">
-              <el-button type="primary" @click="onSigmaConfigConfirm">确定变更</el-button>
-            </div>
-          </section>
+          <qms-sigma-config            v-if="page.layout==='sigma-config'"            :tips="(page.sigmaConfig && page.sigmaConfig.tips) || ''"            :doc-title="(page.sigmaConfig && page.sigmaConfig.docTitle) || ''"            :rows="(page.sigmaConfig && page.sigmaConfig.rows) || []"            :options="(page.sigmaConfig && page.sigmaConfig.options) || []"            :default-option="(page.sigmaConfig && page.sigmaConfig.defaultOption) || ''"            :model="sigmaConfigModel"            @update:model="sigmaConfigModel = $event"            @confirm="onSigmaConfigConfirm">          </qms-sigma-config>
 
           <section v-else-if="page.layout==='env-stat'" class="env-stat">
             <div class="env-stat__query">
@@ -9643,6 +9624,7 @@
 <script src="./js/components/layouts/tree-list-panel.js?v=1.0.0"></script>
 <script src="./js/components/layouts/spc-chart-panel.js?v=1.0.0"></script>
 <script src="./js/components/layouts/cockpit-launch.js?v=1.0.0"></script>
+<script src="./js/components/layouts/sigma-config.js?v=1.0.0"></script>
 <script src="./js/app.js?v=1.0.0"></script>
 </body>
 </html>
