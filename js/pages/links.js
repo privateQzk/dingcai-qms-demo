@@ -126,7 +126,7 @@ window.QMS_LINKS = {
   "np-0313-02": { group: "质量管理/测量系统分析", tab: "稳定性分析", tabs: 0, depends: [], emits: [] },
   "np-0313-03": { group: "质量管理/测量系统分析", tab: "偏倚分析", tabs: 0, depends: [], emits: [] },
   "np-0409-01": { group: "质量管理/检验成本统计", tab: "检验类流水表", tabs: 0, depends: [], emits: [] },
-  "np-0409-02": { group: "质量管理/检验成本统计", tab: "多维度统计表", tabs: 0, depends: [], emits: [] },
+  "np-0409-02": { group: "质量管理/检验成本统计", tab: "多维度统计表", tabs: 0, depends: [], emits: [], components: ["QmsCostStat"], migrated: true },
   "np-0417-01": { group: "质量管理/质量统计", tab: "检验合格率多维表", tabs: 0, depends: [], emits: [], components: ["QmsInspReport"], migrated: true },
   "np-0417-02": { group: "质量管理/质量统计", tab: "品质综合报表", tabs: 0, depends: [], emits: [], components: ["QmsQualityReport"], migrated: true },
   "instrument": { group: "仪器管理/仪器档案", tab: "仪器台账", tabs: 0, depends: [], emits: [], components: ["QmsTreeListPanel"], migrated: true },
