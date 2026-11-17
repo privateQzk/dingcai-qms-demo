@@ -7,7 +7,7 @@ window.QMS_LINKS = {
   "customer": { group: "基础数据/基础资料", tab: "客户列表", tabs: 0, depends: [], emits: [] },
   "supplier": { group: "基础数据/基础资料", tab: "供应商列表", tabs: 0, depends: [], emits: [] },
   "unit": { group: "基础数据/基础资料", tab: "单位列表", tabs: 0, depends: [], emits: [] },
-  "dict": { group: "基础数据/基础资料", tab: "数据字典", tabs: 0, depends: [], emits: [] },
+  "dict": { group: "基础数据/基础资料", tab: "数据字典", tabs: 0, depends: [], emits: [], components: ["QmsDictPanel"], migrated: true },
   "workshop": { group: "基础数据/生产资料", tab: "车间", tabs: 0, depends: [], emits: [] },
   "prod-line": { group: "基础数据/生产资料", tab: "产线", tabs: 0, depends: [], emits: [] },
   "insp-team": { group: "基础数据/检验资料", tab: "检验班组", tabs: 0, depends: [], emits: [] },

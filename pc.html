@@ -207,38 +207,7 @@
             </el-tabs>
           </div>
           <!-- 数据字典左侧：字典类型树 -->
-          <aside v-if="page.layout==='dict-split'" class="dict-type-panel">
-            <div class="dict-type-panel__hd">
-              <!-- GC/LC 台账：关键字 + 查询 + 新增；分类由漂移规则派生，亦可手工「新增分类」 -->
-              <div class="chrom-cat-search" v-if="isChromLedgerPage()">
-                <el-input v-model="dictTypeKw" clearable placeholder="输入关键字" @keyup.enter="onQuery"></el-input>
-                <el-button type="primary" @click="onQuery">查询</el-button>
-                <el-button type="primary" @click="openChromCatAdd">新增</el-button>
-              </div>
-              <template v-else>
-                <div class="dict-type-panel__title">
-                  <span>{{ page.treeTitle || '主数据分类' }}</span>
-                  <el-button type="primary" size="small" @click="openDictTypeForm('add')">新增字典类型</el-button>
-                </div>
-                <el-input v-model="dictTypeKw" clearable placeholder="请输入关键字" size="small"></el-input>
-              </template>
-            </div>
-            <div class="dict-type-panel__body">
-              <div v-if="!filteredDictTypeTree.length" class="dict-empty-tip">{{ isChromLedgerPage() ? '暂无可用的分类（可点「新增」，或到「漂移规则设置」配置物料 × 色谱柱型号）' : '暂无匹配的字典类型' }}</div>
-              <template v-else>
-                <dict-type-tree-nodes
-                  :nodes="filteredDictTypeTree"
-                  :active-id="dictTypeId"
-                  :editable="!isChromLedgerPage()"
-                  :collapsed="dictTypeKw.trim() ? {} : dictTypeCollapsed"
-                  @select="selectDictType"
-                  @toggle="toggleDictTypeNode"
-                  @edit="(n)=>openDictTypeForm('edit', n)"
-                  @remove="removeDictType"
-                ></dict-type-tree-nodes>
-              </template>
-            </div>
-          </aside>
+          <qms-dict-panel            v-if="page.layout==='dict-split'"            :title="page.treeTitle"            :keyword="dictTypeKw"            :compact="isChromLedgerPage()"            :has-nodes="!!filteredDictTypeTree.length"            empty-text-compact="暂无可用的分类（可点「新增」，或到「漂移规则设置」配置物料 × 色谱柱型号）"            @update:keyword="dictTypeKw = $event"            @query="onQuery"            @add-type="openDictTypeForm('add')"            @add-cat="openChromCatAdd">            <dict-type-tree-nodes              :nodes="filteredDictTypeTree"              :active-id="dictTypeId"              :editable="!isChromLedgerPage()"              :collapsed="dictTypeKw.trim() ? {} : dictTypeCollapsed"              @select="selectDictType"              @toggle="toggleDictTypeNode"              @edit="(n)=>openDictTypeForm('edit', n)"              @remove="removeDictType"            ></dict-type-tree-nodes>          </qms-dict-panel>
 
           <!-- 数据录入-按类型：左侧检验类树 -->
           <aside v-else-if="page.layout==='entry-category'" class="dict-type-panel">
@@ -9722,6 +9691,7 @@
 <script src="./js/pages/links.js?v=1.0.0"></script>
 <script src="./js/pages/loader.js?v=1.0.0"></script>
 <script src="./js/components/index.js?v=1.0.0"></script>
+<script src="./js/components/layouts/dict-panel.js?v=1.0.0"></script>
 <script src="./js/app.js?v=1.0.0"></script>
 </body>
 </html>
