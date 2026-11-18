@@ -799,6 +799,11 @@ window.WMS_PAGE_CONFIGS = {
               "pageId": "np-0215-05"
             },
             {
+              "title": "厂内检验流水",
+              "index": "np-0215-08",
+              "pageId": "np-0215-08"
+            },
+            {
               "title": "文件变更",
               "index": "np-0215-06",
               "pageId": "np-0215-06"
@@ -63004,6 +63009,194 @@ window.WMS_PAGE_CONFIGS = {
       "formLineActions": [],
       "formFullscreen": true
     },
+    "np-0215-08": {
+      "id": "np-0215-08",
+      "title": "厂内检验流水",
+      "groups": [
+        "质量管理",
+        "有害物质管理"
+      ],
+      "breadcrumb": [
+        "质量管理",
+        "有害物质管理",
+        "厂内检验流水"
+      ],
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [
+            {
+              "name": "申请单号",
+              "type": "input"
+            },
+            {
+              "name": "文件编号",
+              "type": "input"
+            },
+            {
+              "name": "标准编号",
+              "type": "input"
+            },
+            {
+              "name": "标准名称",
+              "type": "input"
+            },
+            {
+              "name": "比对结果",
+              "type": "select",
+              "options": [
+                "合格",
+                "不符合"
+              ]
+            },
+            {
+              "name": "物料类",
+              "type": "select",
+              "options": [
+                "光刻胶原料",
+                "OLED有机材料",
+                "包装辅材"
+              ]
+            },
+            {
+              "name": "文件名称",
+              "type": "input"
+            },
+            {
+              "name": "创建时间",
+              "type": "daterange"
+            }
+          ],
+          "queryDefault": [
+            "申请单号",
+            "文件编号",
+            "标准编号",
+            "标准名称"
+          ],
+          "queryMore": [
+            "比对结果",
+            "物料类",
+            "文件名称",
+            "创建时间"
+          ],
+          "toolbar": [
+            {
+              "name": "导出",
+              "type": "default",
+              "desc": "见通用功能规范 · 导出数据弹窗"
+            }
+          ],
+          "columns": [
+            {
+              "field": "申请单号",
+              "title": "申请单号",
+              "width": 110
+            },
+            {
+              "field": "文件编号",
+              "title": "文件编号",
+              "width": 150
+            },
+            {
+              "field": "文件名称",
+              "title": "文件名称",
+              "width": 180
+            },
+            {
+              "field": "物料类",
+              "title": "物料类",
+              "width": 110
+            },
+            {
+              "field": "文件类型",
+              "title": "文件类型",
+              "width": 100
+            },
+            {
+              "field": "使用期限类型",
+              "title": "使用期限类型",
+              "width": 110
+            },
+            {
+              "field": "生效日期",
+              "title": "生效日期",
+              "width": 110
+            },
+            {
+              "field": "使用周期",
+              "title": "使用周期",
+              "width": 90
+            },
+            {
+              "field": "提前预警",
+              "title": "提前预警",
+              "width": 90
+            },
+            {
+              "field": "失效日期",
+              "title": "失效日期",
+              "width": 110
+            },
+            {
+              "field": "内容描述",
+              "title": "内容描述",
+              "width": 160
+            },
+            {
+              "field": "备注",
+              "title": "备注",
+              "width": 120
+            },
+            {
+              "field": "创建人",
+              "title": "创建人",
+              "width": 80
+            },
+            {
+              "field": "创建时间",
+              "title": "创建时间",
+              "width": 150
+            },
+            {
+              "field": "标准编号",
+              "title": "标准编号",
+              "width": 110
+            },
+            {
+              "field": "标准名称",
+              "title": "标准名称",
+              "width": 160
+            },
+            {
+              "field": "测试值",
+              "title": "测试值",
+              "width": 90
+            },
+            {
+              "field": "单位",
+              "title": "单位",
+              "width": 80
+            },
+            {
+              "field": "比对结果",
+              "title": "比对结果",
+              "width": 220
+            }
+          ],
+          "rowOps": []
+        }
+      ],
+      "formFields": [],
+      "detailFields": [],
+      "hasEdit": false,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true,
+      "formLineFields": [],
+      "formLineActions": []
+    },
     "np-0215-04": {
       "id": "np-0215-04",
       "title": "回收站",
@@ -84404,8 +84597,7 @@ window.WMS_PAGE_CONFIGS = {
               "field": "客户名称",
               "title": "客户名称",
               "width": 200
-            },
-            {
+            },{
               "field": "车间名称",
               "title": "车间名称",
               "width": 130
@@ -88209,8 +88401,7 @@ window.WMS_PAGE_CONFIGS = {
               "field": "客户名称",
               "title": "客户名称",
               "width": 180
-            },
-            {
+            },{
               "field": "客户简称",
               "title": "客户简称",
               "width": 110
@@ -139891,8 +140082,7 @@ window.WMS_PAGE_CONFIGS = {
               "field": "客户名称",
               "title": "客户名称",
               "width": 170
-            },
-            {
+            },{
               "field": "物料编码",
               "title": "物料编码",
               "width": 130
@@ -140117,8 +140307,7 @@ window.WMS_PAGE_CONFIGS = {
               "field": "客户名称",
               "title": "客户名称",
               "width": 170
-            },
-            {
+            },{
               "field": "物料编码",
               "title": "物料编码",
               "width": 130
@@ -148534,6 +148723,194 @@ window.WMS_PAGE_CONFIGS = {
       "formFullscreen": true
     },
 
+    {
+      "id": "np-0215-08",
+      "title": "厂内检验流水",
+      "groups": [
+        "质量管理",
+        "有害物质管理"
+      ],
+      "breadcrumb": [
+        "质量管理",
+        "有害物质管理",
+        "厂内检验流水"
+      ],
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [
+            {
+              "name": "申请单号",
+              "type": "input"
+            },
+            {
+              "name": "文件编号",
+              "type": "input"
+            },
+            {
+              "name": "标准编号",
+              "type": "input"
+            },
+            {
+              "name": "标准名称",
+              "type": "input"
+            },
+            {
+              "name": "比对结果",
+              "type": "select",
+              "options": [
+                "合格",
+                "不符合"
+              ]
+            },
+            {
+              "name": "物料类",
+              "type": "select",
+              "options": [
+                "光刻胶原料",
+                "OLED有机材料",
+                "包装辅材"
+              ]
+            },
+            {
+              "name": "文件名称",
+              "type": "input"
+            },
+            {
+              "name": "创建时间",
+              "type": "daterange"
+            }
+          ],
+          "queryDefault": [
+            "申请单号",
+            "文件编号",
+            "标准编号",
+            "标准名称"
+          ],
+          "queryMore": [
+            "比对结果",
+            "物料类",
+            "文件名称",
+            "创建时间"
+          ],
+          "toolbar": [
+            {
+              "name": "导出",
+              "type": "default",
+              "desc": "见通用功能规范 · 导出数据弹窗"
+            }
+          ],
+          "columns": [
+            {
+              "field": "申请单号",
+              "title": "申请单号",
+              "width": 110
+            },
+            {
+              "field": "文件编号",
+              "title": "文件编号",
+              "width": 150
+            },
+            {
+              "field": "文件名称",
+              "title": "文件名称",
+              "width": 180
+            },
+            {
+              "field": "物料类",
+              "title": "物料类",
+              "width": 110
+            },
+            {
+              "field": "文件类型",
+              "title": "文件类型",
+              "width": 100
+            },
+            {
+              "field": "使用期限类型",
+              "title": "使用期限类型",
+              "width": 110
+            },
+            {
+              "field": "生效日期",
+              "title": "生效日期",
+              "width": 110
+            },
+            {
+              "field": "使用周期",
+              "title": "使用周期",
+              "width": 90
+            },
+            {
+              "field": "提前预警",
+              "title": "提前预警",
+              "width": 90
+            },
+            {
+              "field": "失效日期",
+              "title": "失效日期",
+              "width": 110
+            },
+            {
+              "field": "内容描述",
+              "title": "内容描述",
+              "width": 160
+            },
+            {
+              "field": "备注",
+              "title": "备注",
+              "width": 120
+            },
+            {
+              "field": "创建人",
+              "title": "创建人",
+              "width": 80
+            },
+            {
+              "field": "创建时间",
+              "title": "创建时间",
+              "width": 150
+            },
+            {
+              "field": "标准编号",
+              "title": "标准编号",
+              "width": 110
+            },
+            {
+              "field": "标准名称",
+              "title": "标准名称",
+              "width": 160
+            },
+            {
+              "field": "测试值",
+              "title": "测试值",
+              "width": 90
+            },
+            {
+              "field": "单位",
+              "title": "单位",
+              "width": 80
+            },
+            {
+              "field": "比对结果",
+              "title": "比对结果",
+              "width": 220
+            }
+          ],
+          "rowOps": []
+        }
+      ],
+      "formFields": [],
+      "detailFields": [],
+      "hasEdit": false,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true,
+      "formLineFields": [],
+      "formLineActions": []
+    },
     {
       "id": "np-0215-04",
       "title": "回收站",
@@ -234131,6 +234508,194 @@ window.WMS_PAGE_CONFIGS = {
       "formFullscreen": true
     },
 
+    {
+      "id": "np-0215-08",
+      "title": "厂内检验流水",
+      "groups": [
+        "质量管理",
+        "有害物质管理"
+      ],
+      "breadcrumb": [
+        "质量管理",
+        "有害物质管理",
+        "厂内检验流水"
+      ],
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [
+            {
+              "name": "申请单号",
+              "type": "input"
+            },
+            {
+              "name": "文件编号",
+              "type": "input"
+            },
+            {
+              "name": "标准编号",
+              "type": "input"
+            },
+            {
+              "name": "标准名称",
+              "type": "input"
+            },
+            {
+              "name": "比对结果",
+              "type": "select",
+              "options": [
+                "合格",
+                "不符合"
+              ]
+            },
+            {
+              "name": "物料类",
+              "type": "select",
+              "options": [
+                "光刻胶原料",
+                "OLED有机材料",
+                "包装辅材"
+              ]
+            },
+            {
+              "name": "文件名称",
+              "type": "input"
+            },
+            {
+              "name": "创建时间",
+              "type": "daterange"
+            }
+          ],
+          "queryDefault": [
+            "申请单号",
+            "文件编号",
+            "标准编号",
+            "标准名称"
+          ],
+          "queryMore": [
+            "比对结果",
+            "物料类",
+            "文件名称",
+            "创建时间"
+          ],
+          "toolbar": [
+            {
+              "name": "导出",
+              "type": "default",
+              "desc": "见通用功能规范 · 导出数据弹窗"
+            }
+          ],
+          "columns": [
+            {
+              "field": "申请单号",
+              "title": "申请单号",
+              "width": 110
+            },
+            {
+              "field": "文件编号",
+              "title": "文件编号",
+              "width": 150
+            },
+            {
+              "field": "文件名称",
+              "title": "文件名称",
+              "width": 180
+            },
+            {
+              "field": "物料类",
+              "title": "物料类",
+              "width": 110
+            },
+            {
+              "field": "文件类型",
+              "title": "文件类型",
+              "width": 100
+            },
+            {
+              "field": "使用期限类型",
+              "title": "使用期限类型",
+              "width": 110
+            },
+            {
+              "field": "生效日期",
+              "title": "生效日期",
+              "width": 110
+            },
+            {
+              "field": "使用周期",
+              "title": "使用周期",
+              "width": 90
+            },
+            {
+              "field": "提前预警",
+              "title": "提前预警",
+              "width": 90
+            },
+            {
+              "field": "失效日期",
+              "title": "失效日期",
+              "width": 110
+            },
+            {
+              "field": "内容描述",
+              "title": "内容描述",
+              "width": 160
+            },
+            {
+              "field": "备注",
+              "title": "备注",
+              "width": 120
+            },
+            {
+              "field": "创建人",
+              "title": "创建人",
+              "width": 80
+            },
+            {
+              "field": "创建时间",
+              "title": "创建时间",
+              "width": 150
+            },
+            {
+              "field": "标准编号",
+              "title": "标准编号",
+              "width": 110
+            },
+            {
+              "field": "标准名称",
+              "title": "标准名称",
+              "width": 160
+            },
+            {
+              "field": "测试值",
+              "title": "测试值",
+              "width": 90
+            },
+            {
+              "field": "单位",
+              "title": "单位",
+              "width": 80
+            },
+            {
+              "field": "比对结果",
+              "title": "比对结果",
+              "width": 220
+            }
+          ],
+          "rowOps": []
+        }
+      ],
+      "formFields": [],
+      "detailFields": [],
+      "hasEdit": false,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true,
+      "formLineFields": [],
+      "formLineActions": []
+    },
     {
       "id": "np-0215-04",
       "title": "回收站",

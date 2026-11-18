@@ -248,6 +248,20 @@
       hmSyncVoid();
       hmSyncChg();
     }
+    const HM_FLOW_HEAD = ['申请单号','文件编号','文件名称','物料类','文件类型','客户名称','法规名称','使用期限类型','生效日期','使用周期','提前预警','失效日期','内容描述','备注','审核单号','创建人','创建时间'];
+    const HM_FLOW_LINE = ['标准编号','标准名称','测试值','单位','比对结果'];
+    function hmFlowRows(){
+      const out = [];
+      hmImpRows().filter(r=> hmDone(r) && String(r['文件类型']||'').trim()==='厂内文件').forEach(r=>{
+        (r._entryLines||[]).forEach((l,i)=>{
+          const rec = { id: r.id+'-f'+(l.id||i), _srcPage: HM_IMP_PAGE, _srcId: r.id };
+          HM_FLOW_HEAD.forEach(k=>{ rec[k] = r[k]==null?'':r[k]; });
+          HM_FLOW_LINE.forEach(k=>{ rec[k] = l[k]==null?'':l[k]; });
+          out.push(rec);
+        });
+      });
+      return out;
+    }
     const HM_BIN_PAGE = 'np-0215-04';
     const hmFilePick = reactive({ visible:false, no:'', name:'', current:null });
     function hmVoidRows(){

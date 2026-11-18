@@ -116,6 +116,16 @@
         list = applyContainsExactQuery(list, query, ['处置单号','物料名称','物料编码','处置人','报检单号'], ['处置类型','MRB状态','处置方式']);
         return list.slice().sort(function(a,b){ return String(b['处置时间']||'').localeCompare(String(a['处置时间']||'')); });
       }
+      if(pageId.value===HM_FLOW_PAGE){
+        // 厂内检验流水：已确认导入且文件类型=厂内文件的导入单，表头+数据录入行平铺
+        list = hmFlowRows();
+        list = applyDateRangeQuery(list, query, '创建时间');
+        const hmFlowBs = String(query['比对结果']||'').trim();
+        if(hmFlowBs==='合格') list = list.filter(r=> String(r['比对结果']||'')==='合格');
+        else if(hmFlowBs) list = list.filter(r=> String(r['比对结果']||'').includes('不符合'));
+        list = applyContainsExactQuery(list, query, ['申请单号','文件编号','文件名称','标准编号','标准名称','客户名称','法规名称'], ['物料类','文件类型']);
+        return list.slice().sort(function(a,b){ return String(b['创建时间']||'').localeCompare(String(a['创建时间']||'')); });
+      }
       if(pageId.value===DEV_SUM_PAGE){
         // 偏差处置汇总：实时合并四个来源页「已处理」Tab 的数据，字段取并集
         list = devSumRows();

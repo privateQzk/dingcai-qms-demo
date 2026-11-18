@@ -224,6 +224,7 @@
 
     /** 有害物质 · 文件导入 / 文件库 */
     const HM_IMP_PAGE = 'np-0215-05';
+    const HM_FLOW_PAGE = 'np-0215-08';
     const HM_LIB_PAGE = 'np-0215-02';
     const HM_CHG_PAGE = 'np-0215-06';
     const HM_VOID_PAGE = 'np-0215-07';
@@ -249,9 +250,11 @@
       hmImpEntryTab.value = 'entry';
     }
     function hmImpLoadEntry(row){
-      hmImpEntryRows.value = (Array.isArray(row && row._entryLines) ? row._entryLines : []).map((r,i)=> Object.assign({
-        id: r.id || ('hmie-'+i), 标准编号:'', 标准名称:'', 测试值:'', 比对结果:''
-      }, r));
+      hmImpEntryRows.value = (Array.isArray(row && row._entryLines) ? row._entryLines : []).map((r,i)=> {
+        const line = Object.assign({ id: r.id || ('hmie-'+i), 标准编号:'', 标准名称:'', 测试值:'', 单位:'', 比对结果:'' }, r);
+        if(!line['单位']){ const a = hmImpArchByCode(line['标准编号']); if(a) line['单位'] = a['单位']||''; }
+        return line;
+      });
       hmImpEntrySel.value = [];
       hmImpEntryTarget.value = null;
       hmImpEntryTab.value = 'entry';

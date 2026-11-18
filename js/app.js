@@ -2336,7 +2336,7 @@ const app = createApp({
           const target = hmImpEntryTarget.value;
           let filled = 0;
           add.forEach((r, i)=>{
-            const line = { id:'hmie-'+Date.now().toString(36)+i, 标准编号: r['标准编号']||'', 标准名称: r['标准名称']||'', 测试值:'', 比对结果:'', _archId: r.id };
+            const line = { id:'hmie-'+Date.now().toString(36)+i, 标准编号: r['标准编号']||'', 标准名称: r['标准名称']||'', 测试值:'', 单位: r['单位']||'', 比对结果:'', _archId: r.id };
             if(i===0 && target && !String(target['标准编号']||'').trim()){
               Object.assign(target, line, { id: target.id || line.id });
               filled++;
@@ -24157,6 +24157,7 @@ function nextWjNo(){
 
     /** 有害物质 · 文件导入 / 文件库 */
     const HM_IMP_PAGE = 'np-0215-05';
+    const HM_FLOW_PAGE = 'np-0215-08';
     const HM_LIB_PAGE = 'np-0215-02';
     const HM_CHG_PAGE = 'np-0215-06';
     const HM_VOID_PAGE = 'np-0215-07';
@@ -24182,9 +24183,11 @@ function nextWjNo(){
       hmImpEntryTab.value = 'entry';
     }
     function hmImpLoadEntry(row){
-      hmImpEntryRows.value = (Array.isArray(row && row._entryLines) ? row._entryLines : []).map((r,i)=> Object.assign({
-        id: r.id || ('hmie-'+i), 标准编号:'', 标准名称:'', 测试值:'', 比对结果:''
-      }, r));
+      hmImpEntryRows.value = (Array.isArray(row && row._entryLines) ? row._entryLines : []).map((r,i)=> {
+        const line = Object.assign({ id: r.id || ('hmie-'+i), 标准编号:'', 标准名称:'', 测试值:'', 单位:'', 比对结果:'' }, r);
+        if(!line['单位']){ const a = hmImpArchByCode(line['标准编号']); if(a) line['单位'] = a['单位']||''; }
+        return line;
+      });
       hmImpEntrySel.value = [];
       hmImpEntryTarget.value = null;
       hmImpEntryTab.value = 'entry';
@@ -24643,6 +24646,20 @@ function nextWjNo(){
       hmLibRows().forEach(r=>{ r['使用状态'] = hmLibStatus(r); });
       hmSyncVoid();
       hmSyncChg();
+    }
+    const HM_FLOW_HEAD = ['申请单号','文件编号','文件名称','物料类','文件类型','客户名称','法规名称','使用期限类型','生效日期','使用周期','提前预警','失效日期','内容描述','备注','审核单号','创建人','创建时间'];
+    const HM_FLOW_LINE = ['标准编号','标准名称','测试值','单位','比对结果'];
+    function hmFlowRows(){
+      const out = [];
+      hmImpRows().filter(r=> hmDone(r) && String(r['文件类型']||'').trim()==='厂内文件').forEach(r=>{
+        (r._entryLines||[]).forEach((l,i)=>{
+          const rec = { id: r.id+'-f'+(l.id||i), _srcPage: HM_IMP_PAGE, _srcId: r.id };
+          HM_FLOW_HEAD.forEach(k=>{ rec[k] = r[k]==null?'':r[k]; });
+          HM_FLOW_LINE.forEach(k=>{ rec[k] = l[k]==null?'':l[k]; });
+          out.push(rec);
+        });
+      });
+      return out;
     }
     const HM_BIN_PAGE = 'np-0215-04';
     const hmFilePick = reactive({ visible:false, no:'', name:'', current:null });
@@ -25170,6 +25187,7 @@ function nextWjNo(){
         标准编号: r['标准编号']||'',
         标准名称: r['标准名称']||'',
         测试值: r['测试值']||'',
+        单位: r['单位']||'',
         比对结果: r['比对结果']||'',
         _archId: r._archId || ''
       }));
@@ -25430,6 +25448,16 @@ function nextWjNo(){
         list = applyDateRangeQuery(list, query, '处置时间');
         list = applyContainsExactQuery(list, query, ['处置单号','物料名称','物料编码','处置人','报检单号'], ['处置类型','MRB状态','处置方式']);
         return list.slice().sort(function(a,b){ return String(b['处置时间']||'').localeCompare(String(a['处置时间']||'')); });
+      }
+      if(pageId.value===HM_FLOW_PAGE){
+        // 厂内检验流水：已确认导入且文件类型=厂内文件的导入单，表头+数据录入行平铺
+        list = hmFlowRows();
+        list = applyDateRangeQuery(list, query, '创建时间');
+        const hmFlowBs = String(query['比对结果']||'').trim();
+        if(hmFlowBs==='合格') list = list.filter(r=> String(r['比对结果']||'')==='合格');
+        else if(hmFlowBs) list = list.filter(r=> String(r['比对结果']||'').includes('不符合'));
+        list = applyContainsExactQuery(list, query, ['申请单号','文件编号','文件名称','标准编号','标准名称','客户名称','法规名称'], ['物料类','文件类型']);
+        return list.slice().sort(function(a,b){ return String(b['创建时间']||'').localeCompare(String(a['创建时间']||'')); });
       }
       if(pageId.value===DEV_SUM_PAGE){
         // 偏差处置汇总：实时合并四个来源页「已处理」Tab 的数据，字段取并集

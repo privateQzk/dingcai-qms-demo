@@ -2954,6 +2954,9 @@
               <el-table-column label="测试值" min-width="140">
                 <template #default="{ row }"><el-input v-model="row['测试值']" placeholder="数值或 ND" clearable :disabled="formMode==='detail'" @input="row['比对结果']=''"></el-input></template>
               </el-table-column>
+              <el-table-column label="单位" min-width="90">
+                <template #default="{ row }"><span class="demo-readonly">{{ row['单位'] || '—' }}</span></template>
+              </el-table-column>
               <el-table-column label="比对结果" min-width="240" show-overflow-tooltip>
                 <template #default="{ row }">
                   <span v-if="row['比对结果']==='合格'" style="color:#389E0D;font-weight:600">合格</span>
@@ -8937,10 +8940,10 @@
 <script src="https://cdn.jsdelivr.net/npm/vxe-table@4/lib/index.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
 <script src="./js/demo-announcements.js?v=1.4.24"></script>
-<script src="./js/page-configs.js?v=1.4.591"></script>
+<script src="./js/page-configs.js?v=1.4.593"></script>
 <script src="./js/mock-rows.js?v=1.4.356"></script>
 <script src="./js/dict-catalog.js?v=1.1.16"></script>
-<script src="./js/page-prd-notes.js?v=2.4.548"></script>
+<script src="./js/page-prd-notes.js?v=2.4.550"></script>
 <script src="./js/remarks-markdown.js?v=1.1.0"></script>
 <script type="module" src="./js/remarks-mermaid-init.js"></script>
 <script src="./js/remarks-mermaid.js"></script>
@@ -8965,6 +8968,6 @@
 <script src="./js/components/layouts/env-stat.js?v=1.0.0"></script>
 <script src="./js/components/layouts/batch-trace.js?v=1.0.0"></script>
 <script src="./js/components/layouts/sched-board.js?v=1.0.14"></script>
-<script src="./js/app.js?v=1.0.17"></script>
+<script src="./js/app.js?v=1.0.19"></script>
 </body>
 </html>

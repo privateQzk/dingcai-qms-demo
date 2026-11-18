@@ -466,7 +466,7 @@
           const target = hmImpEntryTarget.value;
           let filled = 0;
           add.forEach((r, i)=>{
-            const line = { id:'hmie-'+Date.now().toString(36)+i, 标准编号: r['标准编号']||'', 标准名称: r['标准名称']||'', 测试值:'', 比对结果:'', _archId: r.id };
+            const line = { id:'hmie-'+Date.now().toString(36)+i, 标准编号: r['标准编号']||'', 标准名称: r['标准名称']||'', 测试值:'', 单位: r['单位']||'', 比对结果:'', _archId: r.id };
             if(i===0 && target && !String(target['标准编号']||'').trim()){
               Object.assign(target, line, { id: target.id || line.id });
               filled++;
