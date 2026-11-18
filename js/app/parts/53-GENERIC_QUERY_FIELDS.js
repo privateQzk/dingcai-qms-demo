@@ -363,6 +363,10 @@
         formModel['应取样件数'] = '1';
         if(activeTab.value==='tab-pi') formModel['原料类型'] = '其他';
       }
+      if((mode||'add')==='add' && pageId.value===SHIFT_PAGE){
+        formModel['休息时长'] = '60';
+        formModel['班次颜色'] = '#3B82F6';
+      }
       if((mode||'add')==='add' && pageId.value==='np-0417-03'){ formModel['异常单号'] = nextAbnNo(); }
       poMatPool.value = [];
       const lines = (activeFormLineFields.value||[]).length;
@@ -647,6 +651,9 @@
       else if(pageId.value==='wh-insp-plan' && (mode||'add')==='add'){
         formLineRows.value = [];
         formModel['是否影响后续'] = '临时计划，不更新';
+      }
+      else if(pageId.value===CAL_PAGE){
+        formLineRows.value = [];
       }
       else if(pageId.value==='customer'){
         formLineRows.value = [];

@@ -442,6 +442,12 @@
         if(f.name==='适用检验类') return inspCatNames();
         if(f.name==='派单班组') return teamNames();
       }
+      if(pageId.value===SHIFT_PAGE && f.name==='适用班组') return teamNames();
+      if(pageId.value===CAL_PAGE){
+        if(f.name==='类型') return ['休息日','加班日'];
+        if(f.name==='每周工作日') return ['周一','周二','周三','周四','周五','周六','周日'];
+        if(f.name==='适用班组') return teamNames();
+      }
       if(pageId.value===COST_PAGE && f.name==='检验类') return inspCatNames();
       if(pageId.value===MAINT_PERSON_PAGE && f.name==='所属维保班组') return maintTeamNames();
       if(pageId.value===FAULT_TYPE_PAGE && f.name==='适用仪器类型') return inspCatInstrumentTypeOptions.value;

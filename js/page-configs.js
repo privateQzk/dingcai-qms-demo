@@ -61,6 +61,16 @@ window.WMS_PAGE_CONFIGS = {
           "index": "g-基础数据/检验资料",
           "children": [
             {
+              "title": "班次",
+              "index": "np-0103-15",
+              "pageId": "np-0103-15"
+            },
+            {
+              "title": "检验日历",
+              "index": "np-0103-16",
+              "pageId": "np-0103-16"
+            },
+            {
               "title": "检验班组",
               "index": "insp-team",
               "pageId": "insp-team"
@@ -365,6 +375,12 @@ window.WMS_PAGE_CONFIGS = {
               "title": "时间反馈",
               "index": "np-0201-05",
               "pageId": "np-0201-05",
+              "titleRed": true
+            },
+            {
+              "title": "检验排程",
+              "index": "np-0201-18",
+              "pageId": "np-0201-18",
               "titleRed": true
             },
             {
@@ -3035,6 +3051,513 @@ window.WMS_PAGE_CONFIGS = {
       "formFlat": true,
       "formLineFields": [],
       "formLineActions": []
+    },
+    "np-0103-15": {
+      "id": "np-0103-15",
+      "title": "班次",
+      "groups": [
+            "基础数据",
+            "检验资料"
+      ],
+      "breadcrumb": [
+            "基础数据",
+            "检验资料",
+            "班次"
+      ],
+      "tabs": [],
+      "tabViews": [
+            {
+                  "name": "main",
+                  "label": "",
+                  "queryFields": [
+                        {
+                              "name": "班次编码",
+                              "type": "input"
+                        },
+                        {
+                              "name": "班次名称",
+                              "type": "input"
+                        },
+                        {
+                              "name": "跨天",
+                              "type": "select",
+                              "options": [
+                                    "是",
+                                    "否"
+                              ]
+                        },
+                        {
+                              "name": "适用班组",
+                              "type": "select"
+                        },
+                        {
+                              "name": "启用状态",
+                              "type": "select",
+                              "options": [
+                                    "启用",
+                                    "禁用"
+                              ]
+                        }
+                  ],
+                  "queryDefault": [
+                        "班次编码",
+                        "班次名称",
+                        "跨天"
+                  ],
+                  "queryMore": [
+                        "适用班组",
+                        "启用状态"
+                  ],
+                  "toolbar": [
+                        {
+                              "name": "新增",
+                              "type": "primary",
+                              "desc": "打开新增弹窗"
+                        },
+                        {
+                              "name": "批量删除",
+                              "type": "danger",
+                              "desc": "删除勾选行"
+                        },
+                        {
+                              "name": "导入",
+                              "type": "default",
+                              "desc": "见通用功能规范 · 导入数据弹窗"
+                        },
+                        {
+                              "name": "导出",
+                              "type": "default",
+                              "desc": "见通用功能规范 · 导出数据弹窗"
+                        }
+                  ],
+                  "columns": [
+                        {
+                              "field": "班次编码",
+                              "title": "班次编码",
+                              "width": 100,
+                              "fixed": "left"
+                        },
+                        {
+                              "field": "班次名称",
+                              "title": "班次名称",
+                              "width": 120
+                        },
+                        {
+                              "field": "开始时间",
+                              "title": "开始时间",
+                              "width": 90,
+                              "align": "center"
+                        },
+                        {
+                              "field": "结束时间",
+                              "title": "结束时间",
+                              "width": 90,
+                              "align": "center"
+                        },
+                        {
+                              "field": "跨天",
+                              "title": "跨天",
+                              "width": 80,
+                              "slot": "tag"
+                        },
+                        {
+                              "field": "休息时长",
+                              "title": "休息时长",
+                              "width": 90,
+                              "align": "center"
+                        },
+                        {
+                              "field": "工作时长",
+                              "title": "工作时长",
+                              "width": 90,
+                              "align": "center"
+                        },
+                        {
+                              "field": "适用班组",
+                              "title": "适用班组",
+                              "width": 280
+                        },
+                        {
+                              "field": "班次颜色",
+                              "title": "班次颜色",
+                              "width": 110,
+                              "slot": "shift_color"
+                        },
+                        {
+                              "field": "备注",
+                              "title": "备注",
+                              "width": 200
+                        },
+                        {
+                              "field": "启用状态",
+                              "title": "启用状态",
+                              "width": 90,
+                              "slot": "tag"
+                        },
+                        {
+                              "field": "创建人",
+                              "title": "创建人",
+                              "width": 90
+                        },
+                        {
+                              "field": "创建时间",
+                              "title": "创建时间",
+                              "width": 160
+                        },
+                        {
+                              "field": "_actions",
+                              "title": "操作",
+                              "width": 120,
+                              "fixed": "right",
+                              "slot": "row_actions"
+                        }
+                  ],
+                  "rowOps": [
+                        {
+                              "name": "编辑",
+                              "desc": "编辑班次"
+                        },
+                        {
+                              "name": "复制",
+                              "desc": "复制班次"
+                        }
+                  ]
+            }
+      ],
+      "formFields": [
+            {
+                  "name": "班次编码",
+                  "type": "readonly",
+                  "required": false,
+                  "placeholder": "保存后自动生成"
+            },
+            {
+                  "name": "班次名称",
+                  "type": "input",
+                  "required": true,
+                  "ctrl": "input"
+            },
+            {
+                  "name": "开始时间",
+                  "type": "time",
+                  "required": true,
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "结束时间",
+                  "type": "time",
+                  "required": true,
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "跨天",
+                  "type": "readonly",
+                  "required": false,
+                  "placeholder": "按起止时间自动判断"
+            },
+            {
+                  "name": "休息时长",
+                  "type": "number",
+                  "required": false,
+                  "min": 0,
+                  "max": 480,
+                  "precision": 0,
+                  "placeholder": "分钟"
+            },
+            {
+                  "name": "工作时长",
+                  "type": "readonly",
+                  "required": false,
+                  "placeholder": "起止跨度 − 休息时长"
+            },
+            {
+                  "name": "班次颜色",
+                  "type": "color",
+                  "required": false
+            },
+            {
+                  "name": "适用班组",
+                  "type": "picker",
+                  "required": false,
+                  "multiple": true,
+                  "placeholder": "请点击选择，多选",
+                  "ctrl": "点击右侧抽屉弹出「检验班组」启用班组，多选；不选为通用班次"
+            },
+            {
+                  "name": "备注",
+                  "type": "textarea",
+                  "required": false,
+                  "ctrl": "textarea"
+            },
+            {
+                  "name": "启用状态",
+                  "type": "switch",
+                  "required": true,
+                  "ctrl": "switch"
+            }
+      ],
+      "detailFields": [],
+      "hasEdit": true,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true,
+      "formLineFields": [],
+      "formLineActions": []
+    },
+    "np-0103-16": {
+      "id": "np-0103-16",
+      "title": "检验日历",
+      "groups": [
+            "基础数据",
+            "检验资料"
+      ],
+      "breadcrumb": [
+            "基础数据",
+            "检验资料",
+            "检验日历"
+      ],
+      "tabs": [],
+      "tabViews": [
+            {
+                  "name": "main",
+                  "label": "",
+                  "queryFields": [
+                        {
+                              "name": "日历编码",
+                              "type": "input"
+                        },
+                        {
+                              "name": "日历名称",
+                              "type": "input"
+                        },
+                        {
+                              "name": "适用班组",
+                              "type": "select"
+                        },
+                        {
+                              "name": "生效日期",
+                              "type": "daterange"
+                        },
+                        {
+                              "name": "启用状态",
+                              "type": "select",
+                              "options": [
+                                    "启用",
+                                    "禁用"
+                              ]
+                        }
+                  ],
+                  "queryDefault": [
+                        "日历编码",
+                        "日历名称",
+                        "适用班组"
+                  ],
+                  "queryMore": [
+                        "生效日期",
+                        "启用状态"
+                  ],
+                  "toolbar": [
+                        {
+                              "name": "新增",
+                              "type": "primary",
+                              "desc": "打开新增弹窗"
+                        },
+                        {
+                              "name": "批量删除",
+                              "type": "danger",
+                              "desc": "删除勾选行"
+                        },
+                        {
+                              "name": "导入",
+                              "type": "default",
+                              "desc": "见通用功能规范 · 导入数据弹窗"
+                        },
+                        {
+                              "name": "导出",
+                              "type": "default",
+                              "desc": "见通用功能规范 · 导出数据弹窗"
+                        }
+                  ],
+                  "columns": [
+                        {
+                              "field": "日历编码",
+                              "title": "日历编码",
+                              "width": 100,
+                              "fixed": "left"
+                        },
+                        {
+                              "field": "日历名称",
+                              "title": "日历名称",
+                              "width": 180
+                        },
+                        {
+                              "field": "生效日期",
+                              "title": "生效日期",
+                              "width": 110,
+                              "align": "center"
+                        },
+                        {
+                              "field": "结束日期",
+                              "title": "结束日期",
+                              "width": 110,
+                              "align": "center"
+                        },
+                        {
+                              "field": "每周工作日",
+                              "title": "每周工作日",
+                              "width": 240
+                        },
+                        {
+                              "field": "特殊日期",
+                              "title": "特殊日期",
+                              "width": 170
+                        },
+                        {
+                              "field": "适用班组",
+                              "title": "适用班组",
+                              "width": 300
+                        },
+                        {
+                              "field": "备注",
+                              "title": "备注",
+                              "width": 180
+                        },
+                        {
+                              "field": "启用状态",
+                              "title": "启用状态",
+                              "width": 90,
+                              "slot": "tag"
+                        },
+                        {
+                              "field": "创建人",
+                              "title": "创建人",
+                              "width": 90
+                        },
+                        {
+                              "field": "创建时间",
+                              "title": "创建时间",
+                              "width": 160
+                        },
+                        {
+                              "field": "_actions",
+                              "title": "操作",
+                              "width": 120,
+                              "fixed": "right",
+                              "slot": "row_actions"
+                        }
+                  ],
+                  "rowOps": [
+                        {
+                              "name": "编辑",
+                              "desc": "编辑日历"
+                        },
+                        {
+                              "name": "复制",
+                              "desc": "复制日历"
+                        }
+                  ]
+            }
+      ],
+      "formFields": [
+            {
+                  "name": "日历编码",
+                  "type": "readonly",
+                  "required": false,
+                  "placeholder": "保存后自动生成"
+            },
+            {
+                  "name": "日历名称",
+                  "type": "input",
+                  "required": true,
+                  "ctrl": "input"
+            },
+            {
+                  "name": "生效日期",
+                  "type": "date",
+                  "required": true,
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "结束日期",
+                  "type": "date",
+                  "required": true,
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "每周工作日",
+                  "type": "select",
+                  "required": true,
+                  "multiple": true,
+                  "options": [
+                        "周一",
+                        "周二",
+                        "周三",
+                        "周四",
+                        "周五",
+                        "周六",
+                        "周日"
+                  ],
+                  "placeholder": "请选择，多选"
+            },
+            {
+                  "name": "适用班组",
+                  "type": "picker",
+                  "required": false,
+                  "multiple": true,
+                  "placeholder": "请点击选择，多选",
+                  "ctrl": "点击右侧抽屉弹出「检验班组」启用班组，多选；不选为通用日历"
+            },
+            {
+                  "name": "备注",
+                  "type": "textarea",
+                  "required": false,
+                  "ctrl": "textarea"
+            },
+            {
+                  "name": "启用状态",
+                  "type": "switch",
+                  "required": true,
+                  "ctrl": "switch"
+            }
+      ],
+      "detailFields": [],
+      "hasEdit": true,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true,
+      "formLineTabLabel": "特殊日期",
+      "formLineTitle": "特殊日期",
+      "formLineTip": "日期须落在生效日期与结束日期之间，同一日期不可重复；类型=休息日当日不工作，类型=加班日当日按工作日",
+      "formLineFields": [
+            {
+                  "name": "日期",
+                  "type": "date",
+                  "width": 160
+            },
+            {
+                  "name": "类型",
+                  "type": "select",
+                  "width": 110,
+                  "options": [
+                        "休息日",
+                        "加班日"
+                  ]
+            },
+            {
+                  "name": "说明",
+                  "type": "input"
+            }
+      ],
+      "formLineActions": [
+            {
+                  "name": "添加",
+                  "type": "primary"
+            },
+            {
+                  "name": "批量删除",
+                  "type": "danger"
+            }
+      ]
     },
     "insp-team": {
       "id": "insp-team",
@@ -86015,6 +86538,42 @@ window.WMS_PAGE_CONFIGS = {
       "formLineFields": [],
       "formLineActions": []
     },
+    "np-0201-18": {
+      "id": "np-0201-18",
+      "title": "检验排程",
+      "groups": [
+        "质量管理",
+        "检验管理"
+      ],
+      "breadcrumb": [
+        "质量管理",
+        "检验管理",
+        "检验排程"
+      ],
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [],
+          "queryDefault": [],
+          "queryMore": [],
+          "toolbar": [],
+          "columns": [],
+          "rowOps": []
+        }
+      ],
+      "formFields": [],
+      "formSections": [],
+      "detailFields": [],
+      "hasEdit": false,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true,
+      "formLineFields": [],
+      "formLineActions": [],
+      "layout": "sched-board"
+    },
     "unqual-sum": {
       "id": "unqual-sum",
       "title": "不合格处置汇总表",
@@ -88062,6 +88621,515 @@ window.WMS_PAGE_CONFIGS = {
       "formFlat": true,
       "formLineFields": [],
       "formLineActions": []
+    },
+
+    {
+      "id": "np-0103-15",
+      "title": "班次",
+      "groups": [
+            "基础数据",
+            "检验资料"
+      ],
+      "breadcrumb": [
+            "基础数据",
+            "检验资料",
+            "班次"
+      ],
+      "tabs": [],
+      "tabViews": [
+            {
+                  "name": "main",
+                  "label": "",
+                  "queryFields": [
+                        {
+                              "name": "班次编码",
+                              "type": "input"
+                        },
+                        {
+                              "name": "班次名称",
+                              "type": "input"
+                        },
+                        {
+                              "name": "跨天",
+                              "type": "select",
+                              "options": [
+                                    "是",
+                                    "否"
+                              ]
+                        },
+                        {
+                              "name": "适用班组",
+                              "type": "select"
+                        },
+                        {
+                              "name": "启用状态",
+                              "type": "select",
+                              "options": [
+                                    "启用",
+                                    "禁用"
+                              ]
+                        }
+                  ],
+                  "queryDefault": [
+                        "班次编码",
+                        "班次名称",
+                        "跨天"
+                  ],
+                  "queryMore": [
+                        "适用班组",
+                        "启用状态"
+                  ],
+                  "toolbar": [
+                        {
+                              "name": "新增",
+                              "type": "primary",
+                              "desc": "打开新增弹窗"
+                        },
+                        {
+                              "name": "批量删除",
+                              "type": "danger",
+                              "desc": "删除勾选行"
+                        },
+                        {
+                              "name": "导入",
+                              "type": "default",
+                              "desc": "见通用功能规范 · 导入数据弹窗"
+                        },
+                        {
+                              "name": "导出",
+                              "type": "default",
+                              "desc": "见通用功能规范 · 导出数据弹窗"
+                        }
+                  ],
+                  "columns": [
+                        {
+                              "field": "班次编码",
+                              "title": "班次编码",
+                              "width": 100,
+                              "fixed": "left"
+                        },
+                        {
+                              "field": "班次名称",
+                              "title": "班次名称",
+                              "width": 120
+                        },
+                        {
+                              "field": "开始时间",
+                              "title": "开始时间",
+                              "width": 90,
+                              "align": "center"
+                        },
+                        {
+                              "field": "结束时间",
+                              "title": "结束时间",
+                              "width": 90,
+                              "align": "center"
+                        },
+                        {
+                              "field": "跨天",
+                              "title": "跨天",
+                              "width": 80,
+                              "slot": "tag"
+                        },
+                        {
+                              "field": "休息时长",
+                              "title": "休息时长",
+                              "width": 90,
+                              "align": "center"
+                        },
+                        {
+                              "field": "工作时长",
+                              "title": "工作时长",
+                              "width": 90,
+                              "align": "center"
+                        },
+                        {
+                              "field": "适用班组",
+                              "title": "适用班组",
+                              "width": 280
+                        },
+                        {
+                              "field": "班次颜色",
+                              "title": "班次颜色",
+                              "width": 110,
+                              "slot": "shift_color"
+                        },
+                        {
+                              "field": "备注",
+                              "title": "备注",
+                              "width": 200
+                        },
+                        {
+                              "field": "启用状态",
+                              "title": "启用状态",
+                              "width": 90,
+                              "slot": "tag"
+                        },
+                        {
+                              "field": "创建人",
+                              "title": "创建人",
+                              "width": 90
+                        },
+                        {
+                              "field": "创建时间",
+                              "title": "创建时间",
+                              "width": 160
+                        },
+                        {
+                              "field": "_actions",
+                              "title": "操作",
+                              "width": 120,
+                              "fixed": "right",
+                              "slot": "row_actions"
+                        }
+                  ],
+                  "rowOps": [
+                        {
+                              "name": "编辑",
+                              "desc": "编辑班次"
+                        },
+                        {
+                              "name": "复制",
+                              "desc": "复制班次"
+                        }
+                  ]
+            }
+      ],
+      "formFields": [
+            {
+                  "name": "班次编码",
+                  "type": "readonly",
+                  "required": false,
+                  "placeholder": "保存后自动生成"
+            },
+            {
+                  "name": "班次名称",
+                  "type": "input",
+                  "required": true,
+                  "ctrl": "input"
+            },
+            {
+                  "name": "开始时间",
+                  "type": "time",
+                  "required": true,
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "结束时间",
+                  "type": "time",
+                  "required": true,
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "跨天",
+                  "type": "readonly",
+                  "required": false,
+                  "placeholder": "按起止时间自动判断"
+            },
+            {
+                  "name": "休息时长",
+                  "type": "number",
+                  "required": false,
+                  "min": 0,
+                  "max": 480,
+                  "precision": 0,
+                  "placeholder": "分钟"
+            },
+            {
+                  "name": "工作时长",
+                  "type": "readonly",
+                  "required": false,
+                  "placeholder": "起止跨度 − 休息时长"
+            },
+            {
+                  "name": "班次颜色",
+                  "type": "color",
+                  "required": false
+            },
+            {
+                  "name": "适用班组",
+                  "type": "picker",
+                  "required": false,
+                  "multiple": true,
+                  "placeholder": "请点击选择，多选",
+                  "ctrl": "点击右侧抽屉弹出「检验班组」启用班组，多选；不选为通用班次"
+            },
+            {
+                  "name": "备注",
+                  "type": "textarea",
+                  "required": false,
+                  "ctrl": "textarea"
+            },
+            {
+                  "name": "启用状态",
+                  "type": "switch",
+                  "required": true,
+                  "ctrl": "switch"
+            }
+      ],
+      "detailFields": [],
+      "hasEdit": true,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true,
+      "formLineFields": [],
+      "formLineActions": []
+    },
+
+    {
+      "id": "np-0103-16",
+      "title": "检验日历",
+      "groups": [
+            "基础数据",
+            "检验资料"
+      ],
+      "breadcrumb": [
+            "基础数据",
+            "检验资料",
+            "检验日历"
+      ],
+      "tabs": [],
+      "tabViews": [
+            {
+                  "name": "main",
+                  "label": "",
+                  "queryFields": [
+                        {
+                              "name": "日历编码",
+                              "type": "input"
+                        },
+                        {
+                              "name": "日历名称",
+                              "type": "input"
+                        },
+                        {
+                              "name": "适用班组",
+                              "type": "select"
+                        },
+                        {
+                              "name": "生效日期",
+                              "type": "daterange"
+                        },
+                        {
+                              "name": "启用状态",
+                              "type": "select",
+                              "options": [
+                                    "启用",
+                                    "禁用"
+                              ]
+                        }
+                  ],
+                  "queryDefault": [
+                        "日历编码",
+                        "日历名称",
+                        "适用班组"
+                  ],
+                  "queryMore": [
+                        "生效日期",
+                        "启用状态"
+                  ],
+                  "toolbar": [
+                        {
+                              "name": "新增",
+                              "type": "primary",
+                              "desc": "打开新增弹窗"
+                        },
+                        {
+                              "name": "批量删除",
+                              "type": "danger",
+                              "desc": "删除勾选行"
+                        },
+                        {
+                              "name": "导入",
+                              "type": "default",
+                              "desc": "见通用功能规范 · 导入数据弹窗"
+                        },
+                        {
+                              "name": "导出",
+                              "type": "default",
+                              "desc": "见通用功能规范 · 导出数据弹窗"
+                        }
+                  ],
+                  "columns": [
+                        {
+                              "field": "日历编码",
+                              "title": "日历编码",
+                              "width": 100,
+                              "fixed": "left"
+                        },
+                        {
+                              "field": "日历名称",
+                              "title": "日历名称",
+                              "width": 180
+                        },
+                        {
+                              "field": "生效日期",
+                              "title": "生效日期",
+                              "width": 110,
+                              "align": "center"
+                        },
+                        {
+                              "field": "结束日期",
+                              "title": "结束日期",
+                              "width": 110,
+                              "align": "center"
+                        },
+                        {
+                              "field": "每周工作日",
+                              "title": "每周工作日",
+                              "width": 240
+                        },
+                        {
+                              "field": "特殊日期",
+                              "title": "特殊日期",
+                              "width": 170
+                        },
+                        {
+                              "field": "适用班组",
+                              "title": "适用班组",
+                              "width": 300
+                        },
+                        {
+                              "field": "备注",
+                              "title": "备注",
+                              "width": 180
+                        },
+                        {
+                              "field": "启用状态",
+                              "title": "启用状态",
+                              "width": 90,
+                              "slot": "tag"
+                        },
+                        {
+                              "field": "创建人",
+                              "title": "创建人",
+                              "width": 90
+                        },
+                        {
+                              "field": "创建时间",
+                              "title": "创建时间",
+                              "width": 160
+                        },
+                        {
+                              "field": "_actions",
+                              "title": "操作",
+                              "width": 120,
+                              "fixed": "right",
+                              "slot": "row_actions"
+                        }
+                  ],
+                  "rowOps": [
+                        {
+                              "name": "编辑",
+                              "desc": "编辑日历"
+                        },
+                        {
+                              "name": "复制",
+                              "desc": "复制日历"
+                        }
+                  ]
+            }
+      ],
+      "formFields": [
+            {
+                  "name": "日历编码",
+                  "type": "readonly",
+                  "required": false,
+                  "placeholder": "保存后自动生成"
+            },
+            {
+                  "name": "日历名称",
+                  "type": "input",
+                  "required": true,
+                  "ctrl": "input"
+            },
+            {
+                  "name": "生效日期",
+                  "type": "date",
+                  "required": true,
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "结束日期",
+                  "type": "date",
+                  "required": true,
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "每周工作日",
+                  "type": "select",
+                  "required": true,
+                  "multiple": true,
+                  "options": [
+                        "周一",
+                        "周二",
+                        "周三",
+                        "周四",
+                        "周五",
+                        "周六",
+                        "周日"
+                  ],
+                  "placeholder": "请选择，多选"
+            },
+            {
+                  "name": "适用班组",
+                  "type": "picker",
+                  "required": false,
+                  "multiple": true,
+                  "placeholder": "请点击选择，多选",
+                  "ctrl": "点击右侧抽屉弹出「检验班组」启用班组，多选；不选为通用日历"
+            },
+            {
+                  "name": "备注",
+                  "type": "textarea",
+                  "required": false,
+                  "ctrl": "textarea"
+            },
+            {
+                  "name": "启用状态",
+                  "type": "switch",
+                  "required": true,
+                  "ctrl": "switch"
+            }
+      ],
+      "detailFields": [],
+      "hasEdit": true,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true,
+      "formLineTabLabel": "特殊日期",
+      "formLineTitle": "特殊日期",
+      "formLineTip": "日期须落在生效日期与结束日期之间，同一日期不可重复；类型=休息日当日不工作，类型=加班日当日按工作日",
+      "formLineFields": [
+            {
+                  "name": "日期",
+                  "type": "date",
+                  "width": 160
+            },
+            {
+                  "name": "类型",
+                  "type": "select",
+                  "width": 110,
+                  "options": [
+                        "休息日",
+                        "加班日"
+                  ]
+            },
+            {
+                  "name": "说明",
+                  "type": "input"
+            }
+      ],
+      "formLineActions": [
+            {
+                  "name": "添加",
+                  "type": "primary"
+            },
+            {
+                  "name": "批量删除",
+                  "type": "danger"
+            }
+      ]
     },
 
     {
@@ -170399,6 +171467,42 @@ window.WMS_PAGE_CONFIGS = {
       "formFlat": true,
       "formLineFields": [],
       "formLineActions": []
+    },
+    {
+      "id": "np-0201-18",
+      "title": "检验排程",
+      "groups": [
+        "质量管理",
+        "检验管理"
+      ],
+      "breadcrumb": [
+        "质量管理",
+        "检验管理",
+        "检验排程"
+      ],
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [],
+          "queryDefault": [],
+          "queryMore": [],
+          "toolbar": [],
+          "columns": [],
+          "rowOps": []
+        }
+      ],
+      "formFields": [],
+      "formSections": [],
+      "detailFields": [],
+      "hasEdit": false,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true,
+      "formLineFields": [],
+      "formLineActions": [],
+      "layout": "sched-board"
     },
     {
       "id": "unqual-sum",

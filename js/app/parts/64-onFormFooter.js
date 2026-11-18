@@ -408,6 +408,9 @@
         openIoPick('calibArch', bind || 'form', '条码号');
         return;
       }
+      if((pageId.value===SHIFT_PAGE || pageId.value===CAL_PAGE) && !lineRow && (bind||'form')==='form' && title==='适用班组'){
+        openIoPick('inspTeam', 'form', title, true); return;
+      }
       if(pageId.value===DISPATCH_PAGE && !lineRow && (bind||'form')==='form' && (title==='适用检验类' || title==='派单班组' || title==='使用仪器')){
         openIoPick(title==='适用检验类' ? 'inspCat' : title==='使用仪器' ? 'inst' : 'inspTeam', 'form', title, true);
         return;

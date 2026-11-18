@@ -268,6 +268,19 @@
           return;
         }
       }
+      if(pageId.value===CAL_PAGE){
+        if(name==='添加'){
+          formLineRows.value = (formLineRows.value||[]).concat([{ 日期:'', 类型:'休息日', 说明:'' }]);
+          return;
+        }
+        if(String(name).includes('删除')){
+          const set = new Set(formLineSelected.value||[]);
+          if(!set.size){ ElMessage.warning('请先勾选要删除的特殊日期'); return; }
+          formLineRows.value = formLineRows.value.filter(r=> !set.has(r));
+          formLineSelected.value = [];
+          return;
+        }
+      }
       if(pageId.value===DISPATCH_PAGE || pageId.value===COST_PAGE){
         if(name==='添加'){ openIoPick('mat', 'dispatchMats', '物料名称', true); return; }
         if(String(name).includes('删除')){

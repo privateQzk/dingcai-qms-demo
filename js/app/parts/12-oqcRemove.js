@@ -139,6 +139,114 @@
       bumpStore();
       ElMessage.success(isAdd ? '已新增检验班组 '+name : '保存成功');
     }
+    function shiftSpanMin(s, e){
+      if(!s || !e) return null;
+      const a = String(s).split(':').map(Number), b = String(e).split(':').map(Number);
+      if(a.length<2 || b.length<2 || isNaN(a[0]) || isNaN(b[0])) return null;
+      let d = (b[0]*60 + (b[1]||0)) - (a[0]*60 + (a[1]||0));
+      if(d < 0) d += 1440;
+      return d;
+    }
+    function shiftWorkHours(s, e, rest){
+      const d = shiftSpanMin(s, e);
+      if(d == null) return '';
+      const r = Math.max(0, parseInt(rest, 10) || 0);
+      return ((d - r) / 60).toFixed(1);
+    }
+    function saveShiftForm(){
+      const txt = k=> String(formModel[k]||'').trim();
+      const isAdd = formMode.value==='add' || formMode.value==='copy';
+      const name = txt('班次名称'), st = txt('开始时间'), et = txt('结束时间');
+      if(!name){ ElMessage.warning('请输入班次名称'); return; }
+      if(!st){ ElMessage.warning('请选择开始时间'); return; }
+      if(!et){ ElMessage.warning('请选择结束时间'); return; }
+      if(st===et){ ElMessage.warning('开始时间与结束时间不能相同'); return; }
+      const restIn = parseInt(formModel['休息时长'], 10);
+      const rest = Number.isFinite(restIn) ? Math.max(0, Math.min(480, restIn)) : 60;
+      const span = shiftSpanMin(st, et);
+      if(span != null && rest >= span){ ElMessage.warning('休息时长不能超过班次跨度'); return; }
+      const list = (MOCK[SHIFT_PAGE] = MOCK[SHIFT_PAGE] || { main: [] }).main || (MOCK[SHIFT_PAGE].main = []);
+      const others = list.filter(r=> isAdd || r.id!==formModel._editId);
+      if(others.some(r=> r['班次名称']===name)){ ElMessage.warning('班次名称已存在'); return; }
+      const teams = splitDun(formModel['适用班组']);
+      const payload = {
+        班次名称: name, 开始时间: st, 结束时间: et,
+        跨天: et<=st ? '是' : '否', 休息时长: String(rest), 工作时长: shiftWorkHours(st, et, rest),
+        班次颜色: txt('班次颜色') || '#3B82F6',
+        适用班组: teams.join('、') || '通用', 备注: txt('备注'),
+        启用状态: formSwitch['启用状态']===false ? '禁用' : '启用'
+      };
+      if(isAdd){
+        const max = list.reduce((m, r)=> Math.max(m, parseInt(String(r['班次编码']||'').replace(/\D/g, ''), 10) || 0), 0);
+        const saved = Object.assign({ id: 'bc-'+Date.now(), 班次编码: 'BC'+String(max + 1).padStart(3, '0') }, payload, { 创建人:'管理员', 创建时间: nowStamp() });
+        list.unshift(saved);
+        formVisible.value = false;
+        bumpStore();
+        ElMessage.success('已新增班次 '+name);
+      } else {
+        const saved = list.find(r=> r.id===formModel._editId);
+        if(!saved){ ElMessage.warning('未找到待编辑数据'); return; }
+        Object.assign(saved, payload);
+        formVisible.value = false;
+        bumpStore();
+        ElMessage.success('保存成功');
+      }
+    }
+    function calSpecSummary(dates){
+      const rest = (dates||[]).filter(d=> d['类型']==='休息日').length;
+      const work = (dates||[]).filter(d=> d['类型']==='加班日').length;
+      const parts = [];
+      if(rest) parts.push('休息 '+rest+' 天');
+      if(work) parts.push('加班 '+work+' 天');
+      return parts.join('、') || '—';
+    }
+    function saveCalForm(){
+      const txt = k=> String(formModel[k]||'').trim();
+      const isAdd = formMode.value==='add' || formMode.value==='copy';
+      const name = txt('日历名称'), start = txt('生效日期'), end = txt('结束日期');
+      if(!name){ ElMessage.warning('请输入日历名称'); return; }
+      if(!start){ ElMessage.warning('请选择生效日期'); return; }
+      if(!end){ ElMessage.warning('请选择结束日期'); return; }
+      if(end < start){ ElMessage.warning('结束日期不能早于生效日期'); return; }
+      const week = splitDun(formModel['每周工作日']);
+      if(!week.length){ ElMessage.warning('请选择每周工作日'); return; }
+      const dates = (formLineRows.value||[]).map(r=> ({
+        日期: String(r['日期']||'').trim(), 类型: String(r['类型']||'').trim() || '休息日', 说明: String(r['说明']||'').trim()
+      }));
+      const seen = new Set();
+      for(let i=0; i<dates.length; i++){
+        const d = dates[i];
+        if(!d['日期']){ ElMessage.warning('特殊日期第 '+(i+1)+' 行请选择日期'); return; }
+        if(d['日期'] < start || d['日期'] > end){ ElMessage.warning('特殊日期第 '+(i+1)+' 行不在生效区间内'); return; }
+        if(seen.has(d['日期'])){ ElMessage.warning('特殊日期第 '+(i+1)+' 行日期重复'); return; }
+        seen.add(d['日期']);
+      }
+      const list = (MOCK[CAL_PAGE] = MOCK[CAL_PAGE] || { main: [] }).main || (MOCK[CAL_PAGE].main = []);
+      const others = list.filter(r=> isAdd || r.id!==formModel._editId);
+      if(others.some(r=> r['日历名称']===name)){ ElMessage.warning('日历名称已存在'); return; }
+      const teams = splitDun(formModel['适用班组']);
+      const payload = {
+        日历名称: name, 生效日期: start, 结束日期: end,
+        每周工作日: week.join('、'), 特殊日期: calSpecSummary(dates), _dates: dates,
+        适用班组: teams.join('、') || '通用', 备注: txt('备注'),
+        启用状态: formSwitch['启用状态']===false ? '禁用' : '启用'
+      };
+      if(isAdd){
+        const max = list.reduce((m, r)=> Math.max(m, parseInt(String(r['日历编码']||'').replace(/\D/g, ''), 10) || 0), 0);
+        const saved = Object.assign({ id: 'rl-'+Date.now(), 日历编码: 'RL'+String(max + 1).padStart(3, '0') }, payload, { 创建人:'管理员', 创建时间: nowStamp() });
+        list.unshift(saved);
+        formVisible.value = false;
+        bumpStore();
+        ElMessage.success('已新增检验日历 '+name);
+      } else {
+        const saved = list.find(r=> r.id===formModel._editId);
+        if(!saved){ ElMessage.warning('未找到待编辑数据'); return; }
+        Object.assign(saved, payload);
+        formVisible.value = false;
+        bumpStore();
+        ElMessage.success('保存成功');
+      }
+    }
     const MAINT_TEAM_PAGE = 'np-0109-01';
     function maintTeamInUse(row){
       const keys = new Set([row['班组编码'], row['班组名称']].filter(Boolean));

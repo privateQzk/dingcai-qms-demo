@@ -482,6 +482,16 @@
           formModel['使用仪器'] = formInstRows.value.map(r=> r['仪器名称']).filter(Boolean).join('、');
           if(op.name==='复制'){ formModel['方案编码'] = ''; delete formModel._editId; }
         }
+        if(pageId.value===SHIFT_PAGE){
+          if(splitDun(formModel['适用班组']).join('、')==='通用') formModel['适用班组'] = '';
+          if(op.name==='复制'){ formModel['班次编码'] = ''; delete formModel._editId; }
+        }
+        if(pageId.value===CAL_PAGE){
+          formLineRows.value = (row._dates || []).map(r=> ({ 日期: r['日期']||'', 类型: r['类型']||'休息日', 说明: r['说明']||'' }));
+          formLineSelected.value = [];
+          if(splitDun(formModel['适用班组']).join('、')==='通用') formModel['适用班组'] = '';
+          if(op.name==='复制'){ formModel['日历编码'] = ''; delete formModel._editId; }
+        }
         if(pageId.value==='insp-project' && (activeTab.value==='tab-category' || (tabView.value||{}).name==='tab-category')){
           formModel['检验类编码'] = row['检验类编码']||'';
           formModel['检验类名称'] = row['检验类名称']||'';

@@ -800,6 +800,18 @@
       if(pageId.value==='insp-team'){
         list = sortByCreateTimeDesc(applyContainsExactQuery(list, query, ['班组编码','班组名称'], ['启用状态']));
       }
+      if(pageId.value===SHIFT_PAGE){
+        list = applyContainsExactQuery(list, query, ['班次编码','班次名称'], ['跨天','启用状态']);
+        if(query['适用班组']) list = list.filter(r=> String(r['适用班组']||'')==='通用' || splitDun(r['适用班组']).includes(query['适用班组']));
+        list = list.slice().sort((a, b)=> String(a['班次编码']||'').localeCompare(String(b['班次编码']||'')));
+      }
+      if(pageId.value===CAL_PAGE){
+        list = applyContainsExactQuery(list, query, ['日历编码','日历名称'], ['启用状态']);
+        if(query['适用班组']) list = list.filter(r=> String(r['适用班组']||'')==='通用' || splitDun(r['适用班组']).includes(query['适用班组']));
+        const dr = query['生效日期'];
+        if(Array.isArray(dr) && dr[0] && dr[1]) list = list.filter(r=> String(r['生效日期']||'') <= dr[1] && String(r['结束日期']||'') >= dr[0]);
+        list = list.slice().sort((a, b)=> String(a['日历编码']||'').localeCompare(String(b['日历编码']||'')));
+      }
       if(pageId.value===MAINT_PERSON_PAGE){
         list = applyDateRangeQuery(applyContainsExactQuery(list, query, ['人员编码','人员姓名','所属部门'], ['员工状态']), query, '创建时间');
         const tq = String(query['所属维保班组']||'').trim();

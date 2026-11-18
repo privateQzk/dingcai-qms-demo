@@ -187,6 +187,12 @@
       const n = splitDun(v).length;
       formModel['分配方式'] = n ? (n > 1 ? '手动分配（多个候选班组）' : '自动分配') : '';
     }, { deep:true });
+    watch(()=> [formModel['开始时间'], formModel['结束时间'], formModel['休息时长']], ()=>{
+      if(pageId.value!==SHIFT_PAGE) return;
+      const st = String(formModel['开始时间']||'').trim(), et = String(formModel['结束时间']||'').trim();
+      formModel['跨天'] = st && et ? (et<=st ? '是' : '否') : '';
+      formModel['工作时长'] = shiftWorkHours(st, et, formModel['休息时长']);
+    });
     watch(()=> formModel['来样类型'], (nv, ov)=>{
       if(pageId.value!=='insp-order' || nv===ov || !ov) return;
       formModel['来样单位'] = '';

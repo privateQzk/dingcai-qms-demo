@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vxe-pc-ui@4/lib/style.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vxe-table@4/lib/style.css" />
-<link rel="stylesheet" href="./css/app.css?v=1.0.0" />
+<link rel="stylesheet" href="./css/app.css?v=1.0.1" />
 </head>
 <body>
 <div id="app" v-cloak>
@@ -310,6 +310,8 @@
 
           <qms-spc-process            v-else-if="page.layout==='spc-process'"            :p="spcP"            :types="SPC_P_TYPES"            :chart-tabs="page.chartTabs || []"            :tips="page.spcTips"            :ana-cols="spcPAnaCols"            :ana-rows="spcPAnaRows"            :ana-col-width="spcPAnaColWidth"            :mat-name="spcPMatName"            :tag-class-name="tagClass"            @open-pick="openIoPick"            @remove-mat="spcPRemoveMat"            @query="spcPQuery"            @reset="spcPReset"            @open-settings="spcPOpenSettings"            @open-samples="spcPOpenSamples"            @export="spcPExport">          </qms-spc-process>
 
+          <qms-sched-board            v-else-if="page.layout==='sched-board'"            :sb="sb"            :data="schedData">          </qms-sched-board>
+
           <template v-else>
           <section class="query-area">
             <div class="query-area__row">
@@ -378,6 +380,10 @@
                 <template #tag="{ row, column }">
                   <span v-if="isPresentTagValue(displayTagValue(row, column.field))" class="tag" :class="tagClass(displayTagValue(row, column.field))">{{ displayTagValue(row, column.field) }}</span>
                   <span v-else-if="String(displayTagValue(row, column.field)||'').trim()==='/'">/</span>
+                  <span v-else class="demo-readonly">—</span>
+                </template>
+                <template #shift_color="{ row }">
+                  <span v-if="row['班次名称']" class="shift-color-tag" :style="{ background: row['班次颜色'] || '#3B82F6' }">{{ row['班次名称'] }}</span>
                   <span v-else class="demo-readonly">—</span>
                 </template>
                 <template #ledger_dev="{ row }">
@@ -2810,6 +2816,8 @@
                 </template>
                 <el-option v-for="opt in formSelectOptions(f)" :key="opt.value" :label="opt.label" :value="opt.value"></el-option>
               </el-select>
+              <el-time-select v-else-if="f.type==='time'" v-model="formModel[f.name]" :start="f.minTime||'00:00'" :end="f.maxTime||'23:30'" :step="f.step||'00:30'" :placeholder="f.placeholder||'请选择'" style="width:100%"></el-time-select>
+              <el-color-picker v-else-if="f.type==='color'" v-model="formModel[f.name]"></el-color-picker>
               <el-tree-select v-else-if="f.type==='menu-tree'" v-model="formModel[f.name]" :data="demoMenuTreeData()" :render-after-expand="false" check-strictly filterable clearable placeholder="请选择菜单" style="width:100%" @change="onTagMenuTreeChange(f)"></el-tree-select>
             <div v-else-if="f.type==='number-unit'" class="demo-number-unit">
               <el-input class="demo-number-unit__num" v-model="formModel[f.name]" :placeholder="f.placeholder||'输入, 正整数'" clearable @input="(pageId==='serial-arch' && refreshSerialExpire(formModel)) || (pageId==='np-0215-05' && f.name==='使用周期' && refreshHmExpire()) || (pageId==='np-0215-02' && (f.name==='使用周期' || f.name==='提前预警') && refreshHmLibExpire())"></el-input>
@@ -8915,14 +8923,14 @@
 <script src="https://cdn.jsdelivr.net/npm/vxe-table@4/lib/index.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
 <script src="./js/demo-announcements.js?v=1.4.24"></script>
-<script src="./js/page-configs.js?v=1.4.579"></script>
-<script src="./js/mock-rows.js?v=1.4.346"></script>
+<script src="./js/page-configs.js?v=1.4.582"></script>
+<script src="./js/mock-rows.js?v=1.4.353"></script>
 <script src="./js/dict-catalog.js?v=1.1.16"></script>
 <script src="./js/page-prd-notes.js?v=2.4.544"></script>
 <script src="./js/remarks-markdown.js?v=1.1.0"></script>
 <script type="module" src="./js/remarks-mermaid-init.js"></script>
 <script src="./js/remarks-mermaid.js"></script>
-<script src="./js/demo-store.js?v=1.0.166"></script>
+<script src="./js/demo-store.js?v=1.0.169"></script>
 <script src="./js/ledger-insp.js?v=5"></script>
 <script src="./js/pages/index.js?v=1.0.0"></script>
 <script src="./js/pages/links.js?v=1.0.0"></script>
@@ -8942,6 +8950,7 @@
 <script src="./js/components/layouts/spc-process.js?v=1.0.0"></script>
 <script src="./js/components/layouts/env-stat.js?v=1.0.0"></script>
 <script src="./js/components/layouts/batch-trace.js?v=1.0.0"></script>
-<script src="./js/app.js?v=1.0.0"></script>
+<script src="./js/components/layouts/sched-board.js?v=1.0.11"></script>
+<script src="./js/app.js?v=1.0.9"></script>
 </body>
 </html>

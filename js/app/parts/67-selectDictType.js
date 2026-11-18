@@ -289,6 +289,10 @@
           '精确匹配':'tag-g','已匹配':'tag-g','兜底匹配':'tag-o','未配置':'tag-r' };
         if(m[v]) return m[v];
       }
+      if(pageId.value===SHIFT_PAGE){
+        const m = { '是':'tag-b','否':'tag-gr','启用':'tag-g','禁用':'tag-gr' };
+        if(m[v]) return m[v];
+      }
       if(pageId.value===SLPOS_PAGE){
         const m = { '样品货架':'tag-b','样品筐':'tag-c','仪器分析':'tag-b','理化检测':'tag-g','外送检测':'tag-o','已打印':'tag-g','未打印':'tag-gr' };
         if(m[v]) return m[v];
@@ -480,4 +484,5 @@
       openPicker, onPickerOk, onGenerateBatch, onBatchDeleteLines, onBatchOk, refreshSerialExpire,
       onCraftDragStart, addCraftNode, onCraftDrop, onCraftOk, openCraftProc, onCraftProcOk, removeCraftNode, addDesignField, onDesignDrop, selectDesignField, moveDesignField, copyDesignField, removeDesignField, removeDesignChild, openFormPreview, onDesignCancel, onDesignOk, onDetailLineAction, removeDetailPickLine, syncPrepPickQty, onSplitLineSelection, addSplitMaterialLine, addSplitBatchLineForMat, addSplitBatchLine, removeSplitSelectedBatchLines, removeSplitBatchLine, splitSpanMethod, isSplitMatHeadRow,
       addKpiGrade, delKpiGrades, addKpiProject, delKpiProjects, addKpiIndicator, delKpiIndicators, moveKpiProject, moveKpiIndicator, onKpiCfgOk, openKpiScore, onKpiScoreOk, kpiProjectScore, onKpiVendorDelete,
+      sb, schedData,
     };

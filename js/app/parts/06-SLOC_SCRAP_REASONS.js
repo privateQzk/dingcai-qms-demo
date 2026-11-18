@@ -153,6 +153,8 @@
     const TASK_PAGE = 'np-0201-13';
     const TIME_FB_PAGE = 'np-0201-05';
     const DISPATCH_PAGE = 'np-0103-12';
+    const SHIFT_PAGE = 'np-0103-15';
+    const CAL_PAGE = 'np-0103-16';
     function taskTab(name){
       const bag = (MOCK[TASK_PAGE] = MOCK[TASK_PAGE] || {});
       return (bag[name] = bag[name] || []);

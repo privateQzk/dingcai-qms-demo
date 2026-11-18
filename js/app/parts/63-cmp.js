@@ -505,6 +505,8 @@
       if(pageId.value===DISPATCH_PAGE && ['add','edit','copy'].includes(formMode.value)){ saveDispatchForm(); return; }
       if(pageId.value===COST_PAGE && ['add','edit','copy'].includes(formMode.value)){ saveCostForm(); return; }
       if(pageId.value==='insp-team' && ['add','edit','copy'].includes(formMode.value)){ saveInspTeamForm(); return; }
+      if(pageId.value===SHIFT_PAGE && ['add','edit','copy'].includes(formMode.value)){ saveShiftForm(); return; }
+      if(pageId.value===CAL_PAGE && ['add','edit','copy'].includes(formMode.value)){ saveCalForm(); return; }
       if(pageId.value===MAINT_TEAM_PAGE && ['add','edit','copy'].includes(formMode.value)){ saveMaintTeamForm(); return; }
       if(pageId.value===MAINT_PERSON_PAGE && ['add','edit','copy'].includes(formMode.value)){ saveMaintPersonForm(); return; }
       if(pageId.value===FAULT_TYPE_PAGE && ['add','edit','copy'].includes(formMode.value)){ saveFaultTypeForm(); return; }
