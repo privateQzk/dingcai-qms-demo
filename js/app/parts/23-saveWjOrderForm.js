@@ -366,11 +366,21 @@
       pi:{ dates:['2026-06-01','2026-11-30'], scheme:'OLED中间体来料检方案',
         mats:['OLED-HIL-001 / HIL空穴注入材料 / OLED电子级','OLED-ETL-001 / 电子传输层材料 / OLED电子级'], items:['HPLC纯度','残留溶剂PGMEA'] }
     };
-    function spcPBlank(key){
-      const d = (SPC_P_DEFS[key]) || {};
-      return { open:true, dates:(d.dates||[]).slice(), point:'', supplier:'', customer:'', scheme:d.scheme||'', mats:(d.mats||[]).slice(), items:(d.items||[]).slice() };
+    // init=true 填演示默认值（首行），false 给「添加一行」的新行留空
+    function spcPBlank(key, init){
+      const d = (init===false) ? {} : (SPC_P_DEFS[key]) || {};
+      return { dates:(d.dates||[]).slice(), point:'', supplier:'', customer:'', scheme:d.scheme||'', mats:(d.mats||[]).slice(), items:(d.items||[]).slice(), hl:'' };
     }
-    const spcP = reactive({ more:false, queried:false, chartTab:'I图', sampleTab:'pi', anaTab:'pi', sampleDlg:false, groups:[], samples:{ pi:[], pp:[], pm:[] }, types:{ pi:spcPBlank('pi'), pp:spcPBlank('pp'), pm:spcPBlank('pm') } });
+    function spcPBlock(key){ return { open:true, rows:[spcPBlank(key)] }; }
+    const spcP = reactive({ more:false, queried:false, chartTab:'I图', sampleTab:'pi', anaTab:'pi', sampleDlg:false, groups:[], samples:{ pi:[], pp:[], pm:[] }, types:{ pi:spcPBlock('pi'), pp:spcPBlock('pp'), pm:spcPBlock('pm') } });
+    function spcPAddRow(tk){ spcP.types[tk].rows.push(spcPBlank(tk, false)); }
+    function spcPCopyRow(tk, ri){
+      const rows = spcP.types[tk].rows, src = rows[ri];
+      if(!src) return;
+      rows.splice(ri+1, 0, { dates:(src.dates||[]).slice(), point:src.point||'', supplier:src.supplier||'', customer:src.customer||'', scheme:src.scheme||'', mats:(src.mats||[]).slice(), items:(src.items||[]).slice(), hl:src.hl||'' });
+    }
+    function spcPRemoveRow(tk, ri){ const rows = spcP.types[tk].rows; if(rows.length>1) rows.splice(ri, 1); }
+    function spcPRowMatCount(tk){ return (spcP.types[tk].rows||[]).reduce((n,r)=> n+(r.mats||[]).length, 0); }
     function spcPQuantMap(){
       const m = {};
       (((MOCK['insp-project']||{})['tab-item'])||[]).forEach(r=>{
@@ -381,11 +391,11 @@
     function spcPHash(s){ let h=0; const t=String(s||''); for(let i=0;i<t.length;i++) h=(h*31+t.charCodeAt(i))>>>0; return h; }
     function spcPMatName(m){ return (String(m||'').split(' / ')[1] || String(m||'').split(' / ')[0] || '').trim(); }
     function spcPMatCode(m){ return (String(m||'').split(' / ')[0] || '').trim(); }
-    function spcPRemoveMat(tk, m){ const tp = spcP.types[tk]; tp.mats = tp.mats.filter(x=> x!==m); }
+    function spcPRemoveMat(tk, ri, m){ const row = spcP.types[tk].rows[ri]; if(row) row.mats = row.mats.filter(x=> x!==m); }
     function spcPField(field){
-      const i = String(field||'').indexOf('.');
-      if(i<0) return { tp:null, key:'' };
-      return { tp: spcP.types[String(field).slice(0,i)], key: String(field).slice(i+1) };
+      const seg = String(field||'').split('.');
+      const blk = spcP.types[seg[0]];
+      return { tp: blk && blk.rows[+seg[1]], key: seg[2] };
     }
     function spcPApplyPick(field, rows){
       const { tp, key } = spcPField(field);
@@ -459,7 +469,7 @@
       return {
         key: def.key+'|'+mp.code+'|'+item,
         domId: 'spc-chart-'+def.key+'-'+spcPHash(mp.code+'|'+item).toString(36),
-        mat: mp.code, matName: mp.name || mp.code, item, unit, points: pts,
+        mat: mp.code, matName: mp.name || mp.code, item, unit, points: pts, hl: String(tp.hl||'').trim(),
         limits:{ usl, lsl, ucl, lcl, cl:+cl.toFixed(2), sigma:+sg.toFixed(3) },
         ana: {
           物料信息: [mp.code, mp.name].filter(Boolean).join(' / ') || '—',

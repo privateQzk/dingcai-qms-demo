@@ -50,6 +50,9 @@
         巡检方案名称: name,
         内容描述: formModel['内容描述']||'',
         表单名称: formModel['表单名称']||'',
+        事业部: formModel['事业部']||'',
+        车间: formModel['车间']||'',
+        生产班组: formModel['生产班组']||'',
         计划开始时间: start,
         标准作业时长: duration || '—',
         计划结束时间: labInspEndTime(start, duration),
@@ -282,6 +285,9 @@
         循环方式: formModel['循环方式']||'多次',
         执行条件: formModel['执行条件']||'按定时时间固定推移（默认）',
         表单名称: formModel['表单名称']||'',
+        事业部: formModel['事业部']||'',
+        车间: formModel['车间']||'',
+        生产班组: formModel['生产班组']||'',
         备注: formModel['备注']||'—',
         启用状态: formSwitch['启用状态']===false ? '禁用' : '启用'
       };

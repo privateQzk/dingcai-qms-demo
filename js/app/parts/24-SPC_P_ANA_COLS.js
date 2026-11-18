@@ -53,7 +53,11 @@
     function spcPChartOption(c){
       const t = spcP.chartTab, L = c.limits, pts = c.points;
       const names = pts.map(p=> p.name);
-      const red = '#e74c3c', orange = '#e6a23c', gray = '#909399', blue = '#1d7bff';
+      const red = '#e74c3c', orange = '#e6a23c', gray = '#909399', blue = '#1d7bff', hlc = '#9333ea';
+      const isHl = p=> !!(c.hl && String(p && p.name || '').includes(c.hl));
+      const hlDatum = (v, base, hl)=> hl
+        ? { value:v, itemStyle:{ color:hlc }, symbolSize:10, label:{ show:true, position:'top', fontSize:9, color:hlc } }
+        : { value:v, itemStyle:{ color:base } };
       const lim = arr=> arr.map(([n,y,col,d])=> spcPLimitSeries(n,y,col,d));
       const mkLine = (data, name, color)=> ({ name, type:'line', data, showSymbol:true, symbolSize:7,
         lineStyle:{ color:color||blue, width:1.5 }, itemStyle:{ color:color||blue }, connectNulls:true });
@@ -62,7 +66,7 @@
         const mr = mrs.length ? mrs.reduce((a,b)=>a+b,0)/mrs.length : 0;
         const u = +(3.267*mr).toFixed(2);
         return spcPBaseOpt(c, names.slice(1), [
-          mkLine(mrs.map(v=>({ value:v, itemStyle:{ color:v>u?red:'#1f2937' } })), c.item),
+          mkLine(mrs.map((v,i)=> hlDatum(v, v>u?red:'#1f2937', isHl(pts[i+1]))), c.item),
           ...lim([['UCL',u,orange,true],['CL',+mr.toFixed(2),gray,true]])
         ]);
       }
@@ -72,7 +76,7 @@
         const clx = means.reduce((a,b)=>a+b,0)/(means.length||1);
         const sx = L.sigma/Math.sqrt(5), ux = clx+3*sx, lx = clx-3*sx;
         return spcPBaseOpt(c, gs.map((_,i)=>'组'+(i+1)), [
-          mkLine(means.map(v=>({ value:v, itemStyle:{ color:(v>ux||v<lx)?red:'#1f2937' } })),'Xbar'),
+          mkLine(means.map((v,i)=> hlDatum(v, (v>ux||v<lx)?red:'#1f2937', gs[i].some(isHl))),'Xbar'),
           ...lim([['USL',L.usl,red],['LSL',L.lsl,red],['UCL',+ux.toFixed(2),orange,true],['LCL',+lx.toFixed(2),orange,true],['CL',+clx.toFixed(2),gray,true]])
         ]);
       }
@@ -87,7 +91,7 @@
         const cv = vals.reduce((a,b)=>a+b,0)/(vals.length||1);
         const uv = cv*(t==='R图'?2.114:2.089);
         return spcPBaseOpt(c, gs.map((_,i)=>'组'+(i+1)), [
-          mkLine(vals.map(v=>({ value:v, itemStyle:{ color:v>uv?red:'#1f2937' } })), t==='R图'?'R':'S'),
+          mkLine(vals.map((v,i)=> hlDatum(v, v>uv?red:'#1f2937', gs[i].some(isHl))), t==='R图'?'R':'S'),
           ...lim([['UCL',+uv.toFixed(2),orange,true],['CL',+cv.toFixed(2),gray,true]])
         ]);
       }
@@ -109,28 +113,30 @@
         ], { yAxis:{ type:'value', name:'频数' } });
       }
       if(t==='CPK趋势图'){
-        const out = [];
+        const out = [], hls = [];
         for(let i=0;i<pts.length;i+=8){
           const seg = pts.slice(i,i+8);
           if(seg.length<4) continue;
           const m = seg.reduce((a,b)=>a+b.v,0)/seg.length;
           const sd = Math.sqrt(seg.reduce((a,b)=>a+(b.v-m)*(b.v-m),0)/(seg.length-1)) || L.sigma;
           out.push(+Math.min((L.usl-m)/(3*sd),(m-L.lsl)/(3*sd)).toFixed(3));
+          hls.push(seg.some(isHl));
         }
         return spcPBaseOpt(c, out.map((_,i)=>'段'+(i+1)), [
-          mkLine(out.map(v=>({ value:v, itemStyle:{ color:v<1.33?red:'#1f2937' } })),'CPK'),
+          mkLine(out.map((v,i)=> hlDatum(v, v<1.33?red:'#1f2937', hls[i])),'CPK'),
           spcPLimitSeries('目标CPK', 1.33, orange, true)
         ]);
       }
       if(t==='合格率统计图'){
-        const win = Math.max(1, Math.ceil(pts.length/6)), cats=[], rates=[];
+        const win = Math.max(1, Math.ceil(pts.length/6)), cats=[], rates=[], hls=[];
         for(let i=0;i<pts.length;i+=win){
           const seg = pts.slice(i,i+win);
           const ok = seg.filter(p=> p.v<=L.usl && p.v>=L.lsl).length;
           cats.push('段'+(cats.length+1)); rates.push(+(ok/seg.length*100).toFixed(1));
+          hls.push(seg.some(isHl));
         }
         return spcPBaseOpt(c, cats, [
-          { name:'合格率', type:'bar', data:rates.map(v=>({ value:v, itemStyle:{ color:v<95?red:blue } })), barMaxWidth:36 },
+          { name:'合格率', type:'bar', data:rates.map((v,i)=>({ value:v, itemStyle:{ color: hls[i]?hlc : v<95?red:blue } })), barMaxWidth:36 },
           spcPLimitSeries('目标合格率', 98, orange, true)
         ], { yAxis:{ type:'value', name:'合格率%', max:100 } });
       }
@@ -147,7 +153,7 @@
         opt.yAxis = [{ type:'value', name:'数量' },{ type:'value', name:'累计%', max:100, axisLabel:{ formatter:'{value}%' } }];
         return opt;
       }
-      const ser = pts.map(p=>({ value:p.v, itemStyle:{ color:(p.v>L.ucl||p.v<L.lcl)?red:'#1f2937' } }));
+      const ser = pts.map(p=> hlDatum(p.v, (p.v>L.ucl||p.v<L.lcl)?red:'#1f2937', isHl(p)));
       return spcPBaseOpt(c, names, [
         mkLine(ser, c.item),
         ...lim([['USL',L.usl,red],['LSL',L.lsl,red],['UCL',L.ucl,orange,true],['LCL',L.lcl,orange,true],['CL',L.cl,gray,true]])
@@ -200,25 +206,45 @@
       });
       return rows;
     }
+    function spcPRowFilled(row){ return SPC_P_REQ.some(([k])=> spcPFieldOk(row, k)) || !!String(row.point||row.supplier||row.customer||row.hl||'').trim(); }
     function spcPQuery(){
       for(const def of SPC_P_TYPES){
-        const tp = spcP.types[def.key];
-        for(const [key, label] of SPC_P_REQ){
-          if(!spcPFieldOk(tp, key)){ ElMessage.warning(def.label+'：'+label+'为必填'); return; }
+        const rows = spcP.types[def.key].rows || [];
+        let usable = 0;
+        for(let i=0;i<rows.length;i++){
+          const r = rows[i];
+          if(!spcPRowFilled(r)) continue;
+          for(const [key, label] of SPC_P_REQ){
+            if(!spcPFieldOk(r, key)){ ElMessage.warning(def.label+' 第'+(i+1)+'行：'+label+'为必填'); return; }
+          }
+          usable++;
         }
+        if(!usable){ ElMessage.warning(def.label+'：请至少填写一行完整查询条件'); return; }
       }
       const qmap = spcPQuantMap();
       const groups = [], samples = { pm:[], pp:[], pi:[] };
       SPC_P_TYPES.forEach(def=>{
-        const tp = spcP.types[def.key];
-        const matched = spcPMatched(tp, def);
-        const combos = [];
-        tp.mats.forEach(m=>{
-          const mp = { code: spcPMatCode(m), name: spcPMatName(m) };
-          tp.items.forEach(it=> combos.push(spcPCombo(def, tp, mp, it, matched, qmap)));
+        const combos = [], seen = new Set(), srows = [];
+        (spcP.types[def.key].rows||[]).forEach(r=>{
+          if(!spcPRowFilled(r)) return;
+          const matched = spcPMatched(r, def);
+          r.mats.forEach(m=>{
+            const mp = { code: spcPMatCode(m), name: spcPMatName(m) };
+            r.items.forEach(it=>{
+              const ck = mp.code+'|'+it;
+              if(seen.has(ck)){
+                const ex = combos.find(x=> x.key.endsWith('|'+ck));
+                if(ex && !ex.hl && r.hl) ex.hl = String(r.hl).trim();
+                return;
+              }
+              seen.add(ck);
+              combos.push(spcPCombo(def, r, mp, it, matched, qmap));
+            });
+          });
+          srows.push.apply(srows, spcPSampleRows(def, r, matched, qmap));
         });
         groups.push({ key:def.key, label:def.label, combos });
-        samples[def.key] = spcPSampleRows(def, tp, matched, qmap);
+        samples[def.key] = srows;
       });
       spcP.groups = groups;
       spcP.samples = samples;
@@ -232,10 +258,10 @@
       spcP.more = false; spcP.queried = false; spcP.chartTab = 'I图'; spcP.sampleTab = 'pi'; spcP.anaTab = 'pi'; spcP.sampleDlg = false;
       spcP.groups = []; spcP.samples = { pi:[], pp:[], pm:[] };
       spcPDisposeCharts();
-      SPC_P_TYPES.forEach(t=> Object.assign(spcP.types[t.key], spcPBlank(t.key)));
+      SPC_P_TYPES.forEach(t=> Object.assign(spcP.types[t.key], spcPBlock(t.key)));
     }
     function spcPOpenSettings(){
-      const first = SPC_P_TYPES.map(t=> spcP.types[t.key]).find(tp=> tp.items.length);
+      const first = SPC_P_TYPES.map(t=> spcP.types[t.key].rows).flat().find(r=> (r.items||[]).length);
       query['检验项'] = first ? first.items[0] : '';
       openChartSpcSettings();
     }

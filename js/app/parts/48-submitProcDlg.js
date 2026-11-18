@@ -415,6 +415,10 @@
       return UQ_SUM_SRC.flatMap(s=> (((MOCK[s.page] || {})['tab-done']) || []).map(r=>
         Object.assign({}, r, { 处置类型: s.type, SAP生产订单号: r['SAP生产订单号'] || r['生产订单号'] || '', _srcPage: s.page })));
     }
+    function devSumRows(){
+      return DEV_SUM_SRC.flatMap(s=> (((MOCK[s.page] || {})['tab-done']) || []).map(r=>
+        Object.assign({}, r, { 偏差类型: s.type, _srcPage: s.page })));
+    }
     const QR_TABS = [
       {
         key:'oqc-submit', title:'交验合格率统计',

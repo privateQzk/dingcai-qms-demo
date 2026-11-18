@@ -404,6 +404,14 @@
     }
     function formFieldOptions(f){
       if(!f) return [];
+      if(isEntryByCat(pageId.value) && f.name==='仪器信息'){
+        const cat = entryCategoryId.value;
+        const crow = cat ? (((MOCK['insp-project']||{})['tab-category'])||[]).find(r=> r['检验类名称']===cat) : null;
+        const types = crow ? splitDun(crow['适用仪器类型']) : [];
+        return ((MOCK.instrument||{}).main||[])
+          .filter(r=> r['使用状态']==='在用' && (!types.length || types.includes('通用') || types.includes(r['仪器类型'])))
+          .map(r=> r['仪器名称']).filter(Boolean);
+      }
       if(pageId.value===SPLIT_PAGE && Array.isArray(f.options) && f.options.length) return f.options.slice();
       if(LAB_ARCH_LOC_PAGES.includes(pageId.value) && f.name==='存储库位') return labArchLocOpts.value;
       if(pageId.value==='retain-sample' && f.name==='留样种类'){

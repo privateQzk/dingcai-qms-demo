@@ -112,6 +112,7 @@
       }
       if(csPage() && csPage().onRowOp(op, row)) return;
       if(pageId.value===FLOW_WAIT && op.name==='结束取样'){ flowEndSampling([row]); return; }
+      if(pageId.value===FLOW_WAIT && op.name==='取样人员'){ wsPickOpen(row); return; }
       if(pageId.value===FLOW_ENTRY && op.name==='结束录入'){ flowEndEntry([row]); return; }
       if(pageId.value===FLOW_MY_TASK && op.name==='反馈时间'){ openFbTime(row); return; }
       if(isEntryByCat(pageId.value) && op.name==='直接提交'){ flowSubmitCat(row); return; }

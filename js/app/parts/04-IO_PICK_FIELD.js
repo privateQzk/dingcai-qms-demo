@@ -1,4 +1,4 @@
-    const IO_PICK_FIELD = { 客户信息:'customer', 供应商信息:'supplier', 物料信息:'mat', 物料编码:'mat', 适用物料:'mat', 采样点:'point', 采集方案:'gatherScheme' };
+    const IO_PICK_FIELD = { 客户信息:'customer', 供应商信息:'supplier', 物料信息:'mat', 物料编码:'mat', 适用物料:'mat', 采样点:'point', 采集方案:'gatherScheme', 通知人:'person' };
     const RETAIN_MAT_FIELDS = ['留样编码','留样名称','留样规格','留样种类'];
     const IO_ORDER_SAMPLE_TABS = ['tab-ext'];
     const ADD_SAMPLE_CARRY = ['物料编码','物料名称','物料规格','物料种类','供应商编码','供应商名称','客户编码','客户名称','产线名称','车间名称','采样点','报检批号'];
@@ -827,6 +827,11 @@
       }
       if(ioPickBind.value==='spcP'){
         spcPApplySingle(ioPickField.value, ioPickKind.value, r);
+        ioPickVisible.value = false;
+        return;
+      }
+      if(ioPickBind.value==='wsPick'){
+        wsPick.person = r['姓名'] || '';
         ioPickVisible.value = false;
         return;
       }

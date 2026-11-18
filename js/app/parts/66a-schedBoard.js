@@ -240,6 +240,8 @@
       batchLock(){ schedLockBatch(true); },
       batchUnlock(){ schedLockBatch(false); },
       pick(t){ this.detail.task = t; this.detail.visible = true; },
+      canMove(t){ return !schedMoveBlockReason(t); },
+      moveBlockReason(t){ return schedMoveBlockReason(t); },
       drop(t, instName, s, e){ schedDropPlan(t, instName, s, e); },
       dlgCalcEnd(){
         const f = this.dlg.form; const st = schedParse(f.开始);
@@ -373,7 +375,7 @@
     }
     function schedOpenDlg(t, mode){
       const plan = schedPlans().find(p=> p._key===t._key);
-      if(mode==='adjust' && plan && plan['锁定']==='是'){ ElMessage.warning('该排程已锁定，请先解锁'); return; }
+      if(mode==='adjust' && plan){ const why = schedMoveBlockReason(t); if(why){ ElMessage.warning(why); return; } }
       const pool = (t._cands && t._cands.length) ? t._cands : schedInstPool(t.仪器类型);
       sb.dlg.mode = mode || 'sched';
       sb.dlg.task = t;
@@ -486,12 +488,24 @@
         ElMessage.success('已取消 '+rows.length+' 个任务的排程');
       }).catch(()=>{});
     }
+    /** 任务不可调整的原因：''=可调整。锁定、当前时间之前的已完成/检验中、当前进行中的检验中不可动；未来时段的检验中/已完成仍可调整（提前检验/提前完成需手动更新甘特） */
+    function schedMoveBlockReason(t){
+      if(!t) return '任务不存在';
+      if(t['排程状态']==='待排程') return '该任务尚未排程';
+      if(t['锁定']==='是') return '该排程已锁定，请先解锁';
+      const now = schedParse(schedNow());
+      const s = schedParse(t['计划开始']), e = schedParse(t['计划结束']);
+      if(t['排程状态']==='检验中' && s && s<=now) return '该任务已在检验中，不可调整';
+      if(t['排程状态']==='已完成' && e && e<=now) return '该任务已完成，不可调整';
+      return '';
+    }
     /** 甘特拖动落位：instName=目标仪器名，s/e=毫秒时间戳；时长不变平移，可换候选仪器；重叠仅提示不拦截 */
     function schedDropPlan(t, instName, sMs, eMs){
       const inst = ((MOCK.instrument||{}).main||[]).find(r=> r['仪器名称']===instName);
       const exist = schedPlans().find(p=> p._key===t._key);
       if(!inst || !exist) return;
-      if(exist['锁定']==='是'){ ElMessage.warning('该排程已锁定，请先解锁'); return; }
+      const blockWhy = schedMoveBlockReason(t);
+      if(blockWhy){ ElMessage.warning(blockWhy); return; }
       const st = new Date(sMs), en = new Date(eMs);
       const oldDesc = schedPlanDesc(exist);
       const team = t._team || t.检验班组;

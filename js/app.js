@@ -1868,7 +1868,7 @@ const app = createApp({
       chromDriftRule: { title:'选择漂移规则', src:'np-0208-02', codeField:'规则编码', nameField:'规则名称',
         cols:[['规则编码',140],['规则名称',220],['规则分类',90],['适用检验类型',200],['启用状态',90]] }
     };
-    const IO_PICK_FIELD = { 客户信息:'customer', 供应商信息:'supplier', 物料信息:'mat', 物料编码:'mat', 适用物料:'mat', 采样点:'point', 采集方案:'gatherScheme' };
+    const IO_PICK_FIELD = { 客户信息:'customer', 供应商信息:'supplier', 物料信息:'mat', 物料编码:'mat', 适用物料:'mat', 采样点:'point', 采集方案:'gatherScheme', 通知人:'person' };
     const RETAIN_MAT_FIELDS = ['留样编码','留样名称','留样规格','留样种类'];
     const IO_ORDER_SAMPLE_TABS = ['tab-ext'];
     const ADD_SAMPLE_CARRY = ['物料编码','物料名称','物料规格','物料种类','供应商编码','供应商名称','客户编码','客户名称','产线名称','车间名称','采样点','报检批号'];
@@ -2697,6 +2697,11 @@ const app = createApp({
       }
       if(ioPickBind.value==='spcP'){
         spcPApplySingle(ioPickField.value, ioPickKind.value, r);
+        ioPickVisible.value = false;
+        return;
+      }
+      if(ioPickBind.value==='wsPick'){
+        wsPick.person = r['姓名'] || '';
         ioPickVisible.value = false;
         return;
       }
@@ -3721,6 +3726,11 @@ const app = createApp({
     function flowFbStatusOf(s){
       return (s && flowHas(s['反馈状态']) && s['反馈状态']==='已填写') ? '已填写' : '未填写';
     }
+    /** 样品检验类的实际检验仪器：检验排程计划仪器 > 任务分派适用仪器 */
+    function entryInstOf(smp, cat){
+      const p = (schedPlans()||[]).find(x=> x._key === (smp+'|'+cat));
+      return p && flowHas(p['检验仪器']) ? p['检验仪器'] : '';
+    }
     /** 数据录入 = 待检验 / 检验中且完全分配的母样；子样不单独录入，状态随母样；按类型每个检验类一行，已提交的检验类不再显示 */
     function flowSyncEntry(){
       const bySample = {}, byCat = {};
@@ -3738,7 +3748,7 @@ const app = createApp({
         const fb = flowFbStatusOf(s);
         asg.lines.forEach(ln=>{
           if(done.includes(ln['检验类'])) return;
-          const row = flowPick(flowCols(FLOW_ENTRY_CAT, tab), srcs, { 检验类名称: ln['检验类'], 检验班组: ln['分配班组'] || '—', 分析仪器: ln['分析仪器'] || '—' });
+          const row = flowPick(flowCols(FLOW_ENTRY_CAT, tab), srcs, { 检验类名称: ln['检验类'], 检验班组: ln['分配班组'] || '—', 分析仪器: ln['分析仪器'] || '—', 检验仪器: entryInstOf(s['样品编号'], ln['检验类']) || ln['分析仪器'] || '—' });
           row['逾期状态'] = flowCalcOverdue(row['预计完成时间']);
           byCat[tab].push(Object.assign(row, { id: 'ec-'+s['样品编号']+'-'+ln['检验类'], _items: ln['检验项'], _fb: fb }));
         });
@@ -3938,6 +3948,23 @@ const app = createApp({
         bumpStore();
         ElMessage.success('已结束取样 '+rows.length+' 个报检单');
       }).catch(()=>{});
+    }
+    /** 待取样任务 · 取样人员：行内弹窗抽屉选人，反写上游报检单随行同步 */
+    const wsPick = reactive({ visible:false, row:null, person:'' });
+    function wsPickOpen(row){
+      wsPick.row = row;
+      const v = row['取样人员'];
+      wsPick.person = (v && v!=='—') ? v : '';
+      wsPick.visible = true;
+    }
+    function wsPickConfirm(){
+      if(!String(wsPick.person||'').trim()){ ElMessage.warning('请选择取样人员'); return; }
+      const f = wsPick.row && flowOrderOf(wsPick.row['报检单号']);
+      if(f) f.row['取样人员'] = wsPick.person;
+      if(wsPick.row) wsPick.row['取样人员'] = wsPick.person;
+      wsPick.visible = false;
+      bumpStore();
+      ElMessage.success('已设置取样人员');
     }
     /** 子样不进入样品检验台账，台账只记录母样 */
     function flowLedgerDropKids(){
@@ -5894,6 +5921,13 @@ const app = createApp({
       { page:'unqual-pp', type:'生产过程不合格' },
       { page:'unqual-pm', type:'生产物料不合格' },
       { page:'unqual-rd', type:'研发不合格处置' }
+    ];
+    const DEV_SUM_PAGE = 'dev-sum';
+    const DEV_SUM_SRC = [
+      { page:'dev-pi', type:'采购来料偏差' },
+      { page:'dev-pp', type:'生产过程偏差' },
+      { page:'dev-pm', type:'生产物料偏差' },
+      { page:'dev-rd', type:'研发偏差' }
     ];
     function oqcTab(name){ const bag = (MOCK[OQC_PAGE] = MOCK[OQC_PAGE] || {}); return (bag[name] = bag[name] || []); }
     const oqcUploadVisible = ref(false);
@@ -10287,6 +10321,9 @@ const app = createApp({
         巡检方案名称: name,
         内容描述: formModel['内容描述']||'',
         表单名称: formModel['表单名称']||'',
+        事业部: formModel['事业部']||'',
+        车间: formModel['车间']||'',
+        生产班组: formModel['生产班组']||'',
         计划开始时间: start,
         标准作业时长: duration || '—',
         计划结束时间: labInspEndTime(start, duration),
@@ -10519,6 +10556,9 @@ const app = createApp({
         循环方式: formModel['循环方式']||'多次',
         执行条件: formModel['执行条件']||'按定时时间固定推移（默认）',
         表单名称: formModel['表单名称']||'',
+        事业部: formModel['事业部']||'',
+        车间: formModel['车间']||'',
+        生产班组: formModel['生产班组']||'',
         备注: formModel['备注']||'—',
         启用状态: formSwitch['启用状态']===false ? '禁用' : '启用'
       };
@@ -11523,11 +11563,21 @@ function nextWjNo(){
       pi:{ dates:['2026-06-01','2026-11-30'], scheme:'OLED中间体来料检方案',
         mats:['OLED-HIL-001 / HIL空穴注入材料 / OLED电子级','OLED-ETL-001 / 电子传输层材料 / OLED电子级'], items:['HPLC纯度','残留溶剂PGMEA'] }
     };
-    function spcPBlank(key){
-      const d = (SPC_P_DEFS[key]) || {};
-      return { open:true, dates:(d.dates||[]).slice(), point:'', supplier:'', customer:'', scheme:d.scheme||'', mats:(d.mats||[]).slice(), items:(d.items||[]).slice() };
+    // init=true 填演示默认值（首行），false 给「添加一行」的新行留空
+    function spcPBlank(key, init){
+      const d = (init===false) ? {} : (SPC_P_DEFS[key]) || {};
+      return { dates:(d.dates||[]).slice(), point:'', supplier:'', customer:'', scheme:d.scheme||'', mats:(d.mats||[]).slice(), items:(d.items||[]).slice(), hl:'' };
     }
-    const spcP = reactive({ more:false, queried:false, chartTab:'I图', sampleTab:'pi', anaTab:'pi', sampleDlg:false, groups:[], samples:{ pi:[], pp:[], pm:[] }, types:{ pi:spcPBlank('pi'), pp:spcPBlank('pp'), pm:spcPBlank('pm') } });
+    function spcPBlock(key){ return { open:true, rows:[spcPBlank(key)] }; }
+    const spcP = reactive({ more:false, queried:false, chartTab:'I图', sampleTab:'pi', anaTab:'pi', sampleDlg:false, groups:[], samples:{ pi:[], pp:[], pm:[] }, types:{ pi:spcPBlock('pi'), pp:spcPBlock('pp'), pm:spcPBlock('pm') } });
+    function spcPAddRow(tk){ spcP.types[tk].rows.push(spcPBlank(tk, false)); }
+    function spcPCopyRow(tk, ri){
+      const rows = spcP.types[tk].rows, src = rows[ri];
+      if(!src) return;
+      rows.splice(ri+1, 0, { dates:(src.dates||[]).slice(), point:src.point||'', supplier:src.supplier||'', customer:src.customer||'', scheme:src.scheme||'', mats:(src.mats||[]).slice(), items:(src.items||[]).slice(), hl:src.hl||'' });
+    }
+    function spcPRemoveRow(tk, ri){ const rows = spcP.types[tk].rows; if(rows.length>1) rows.splice(ri, 1); }
+    function spcPRowMatCount(tk){ return (spcP.types[tk].rows||[]).reduce((n,r)=> n+(r.mats||[]).length, 0); }
     function spcPQuantMap(){
       const m = {};
       (((MOCK['insp-project']||{})['tab-item'])||[]).forEach(r=>{
@@ -11538,11 +11588,11 @@ function nextWjNo(){
     function spcPHash(s){ let h=0; const t=String(s||''); for(let i=0;i<t.length;i++) h=(h*31+t.charCodeAt(i))>>>0; return h; }
     function spcPMatName(m){ return (String(m||'').split(' / ')[1] || String(m||'').split(' / ')[0] || '').trim(); }
     function spcPMatCode(m){ return (String(m||'').split(' / ')[0] || '').trim(); }
-    function spcPRemoveMat(tk, m){ const tp = spcP.types[tk]; tp.mats = tp.mats.filter(x=> x!==m); }
+    function spcPRemoveMat(tk, ri, m){ const row = spcP.types[tk].rows[ri]; if(row) row.mats = row.mats.filter(x=> x!==m); }
     function spcPField(field){
-      const i = String(field||'').indexOf('.');
-      if(i<0) return { tp:null, key:'' };
-      return { tp: spcP.types[String(field).slice(0,i)], key: String(field).slice(i+1) };
+      const seg = String(field||'').split('.');
+      const blk = spcP.types[seg[0]];
+      return { tp: blk && blk.rows[+seg[1]], key: seg[2] };
     }
     function spcPApplyPick(field, rows){
       const { tp, key } = spcPField(field);
@@ -11616,7 +11666,7 @@ function nextWjNo(){
       return {
         key: def.key+'|'+mp.code+'|'+item,
         domId: 'spc-chart-'+def.key+'-'+spcPHash(mp.code+'|'+item).toString(36),
-        mat: mp.code, matName: mp.name || mp.code, item, unit, points: pts,
+        mat: mp.code, matName: mp.name || mp.code, item, unit, points: pts, hl: String(tp.hl||'').trim(),
         limits:{ usl, lsl, ucl, lcl, cl:+cl.toFixed(2), sigma:+sg.toFixed(3) },
         ana: {
           物料信息: [mp.code, mp.name].filter(Boolean).join(' / ') || '—',
@@ -11689,7 +11739,11 @@ function nextWjNo(){
     function spcPChartOption(c){
       const t = spcP.chartTab, L = c.limits, pts = c.points;
       const names = pts.map(p=> p.name);
-      const red = '#e74c3c', orange = '#e6a23c', gray = '#909399', blue = '#1d7bff';
+      const red = '#e74c3c', orange = '#e6a23c', gray = '#909399', blue = '#1d7bff', hlc = '#9333ea';
+      const isHl = p=> !!(c.hl && String(p && p.name || '').includes(c.hl));
+      const hlDatum = (v, base, hl)=> hl
+        ? { value:v, itemStyle:{ color:hlc }, symbolSize:10, label:{ show:true, position:'top', fontSize:9, color:hlc } }
+        : { value:v, itemStyle:{ color:base } };
       const lim = arr=> arr.map(([n,y,col,d])=> spcPLimitSeries(n,y,col,d));
       const mkLine = (data, name, color)=> ({ name, type:'line', data, showSymbol:true, symbolSize:7,
         lineStyle:{ color:color||blue, width:1.5 }, itemStyle:{ color:color||blue }, connectNulls:true });
@@ -11698,7 +11752,7 @@ function nextWjNo(){
         const mr = mrs.length ? mrs.reduce((a,b)=>a+b,0)/mrs.length : 0;
         const u = +(3.267*mr).toFixed(2);
         return spcPBaseOpt(c, names.slice(1), [
-          mkLine(mrs.map(v=>({ value:v, itemStyle:{ color:v>u?red:'#1f2937' } })), c.item),
+          mkLine(mrs.map((v,i)=> hlDatum(v, v>u?red:'#1f2937', isHl(pts[i+1]))), c.item),
           ...lim([['UCL',u,orange,true],['CL',+mr.toFixed(2),gray,true]])
         ]);
       }
@@ -11708,7 +11762,7 @@ function nextWjNo(){
         const clx = means.reduce((a,b)=>a+b,0)/(means.length||1);
         const sx = L.sigma/Math.sqrt(5), ux = clx+3*sx, lx = clx-3*sx;
         return spcPBaseOpt(c, gs.map((_,i)=>'组'+(i+1)), [
-          mkLine(means.map(v=>({ value:v, itemStyle:{ color:(v>ux||v<lx)?red:'#1f2937' } })),'Xbar'),
+          mkLine(means.map((v,i)=> hlDatum(v, (v>ux||v<lx)?red:'#1f2937', gs[i].some(isHl))),'Xbar'),
           ...lim([['USL',L.usl,red],['LSL',L.lsl,red],['UCL',+ux.toFixed(2),orange,true],['LCL',+lx.toFixed(2),orange,true],['CL',+clx.toFixed(2),gray,true]])
         ]);
       }
@@ -11723,7 +11777,7 @@ function nextWjNo(){
         const cv = vals.reduce((a,b)=>a+b,0)/(vals.length||1);
         const uv = cv*(t==='R图'?2.114:2.089);
         return spcPBaseOpt(c, gs.map((_,i)=>'组'+(i+1)), [
-          mkLine(vals.map(v=>({ value:v, itemStyle:{ color:v>uv?red:'#1f2937' } })), t==='R图'?'R':'S'),
+          mkLine(vals.map((v,i)=> hlDatum(v, v>uv?red:'#1f2937', gs[i].some(isHl))), t==='R图'?'R':'S'),
           ...lim([['UCL',+uv.toFixed(2),orange,true],['CL',+cv.toFixed(2),gray,true]])
         ]);
       }
@@ -11745,28 +11799,30 @@ function nextWjNo(){
         ], { yAxis:{ type:'value', name:'频数' } });
       }
       if(t==='CPK趋势图'){
-        const out = [];
+        const out = [], hls = [];
         for(let i=0;i<pts.length;i+=8){
           const seg = pts.slice(i,i+8);
           if(seg.length<4) continue;
           const m = seg.reduce((a,b)=>a+b.v,0)/seg.length;
           const sd = Math.sqrt(seg.reduce((a,b)=>a+(b.v-m)*(b.v-m),0)/(seg.length-1)) || L.sigma;
           out.push(+Math.min((L.usl-m)/(3*sd),(m-L.lsl)/(3*sd)).toFixed(3));
+          hls.push(seg.some(isHl));
         }
         return spcPBaseOpt(c, out.map((_,i)=>'段'+(i+1)), [
-          mkLine(out.map(v=>({ value:v, itemStyle:{ color:v<1.33?red:'#1f2937' } })),'CPK'),
+          mkLine(out.map((v,i)=> hlDatum(v, v<1.33?red:'#1f2937', hls[i])),'CPK'),
           spcPLimitSeries('目标CPK', 1.33, orange, true)
         ]);
       }
       if(t==='合格率统计图'){
-        const win = Math.max(1, Math.ceil(pts.length/6)), cats=[], rates=[];
+        const win = Math.max(1, Math.ceil(pts.length/6)), cats=[], rates=[], hls=[];
         for(let i=0;i<pts.length;i+=win){
           const seg = pts.slice(i,i+win);
           const ok = seg.filter(p=> p.v<=L.usl && p.v>=L.lsl).length;
           cats.push('段'+(cats.length+1)); rates.push(+(ok/seg.length*100).toFixed(1));
+          hls.push(seg.some(isHl));
         }
         return spcPBaseOpt(c, cats, [
-          { name:'合格率', type:'bar', data:rates.map(v=>({ value:v, itemStyle:{ color:v<95?red:blue } })), barMaxWidth:36 },
+          { name:'合格率', type:'bar', data:rates.map((v,i)=>({ value:v, itemStyle:{ color: hls[i]?hlc : v<95?red:blue } })), barMaxWidth:36 },
           spcPLimitSeries('目标合格率', 98, orange, true)
         ], { yAxis:{ type:'value', name:'合格率%', max:100 } });
       }
@@ -11783,7 +11839,7 @@ function nextWjNo(){
         opt.yAxis = [{ type:'value', name:'数量' },{ type:'value', name:'累计%', max:100, axisLabel:{ formatter:'{value}%' } }];
         return opt;
       }
-      const ser = pts.map(p=>({ value:p.v, itemStyle:{ color:(p.v>L.ucl||p.v<L.lcl)?red:'#1f2937' } }));
+      const ser = pts.map(p=> hlDatum(p.v, (p.v>L.ucl||p.v<L.lcl)?red:'#1f2937', isHl(p)));
       return spcPBaseOpt(c, names, [
         mkLine(ser, c.item),
         ...lim([['USL',L.usl,red],['LSL',L.lsl,red],['UCL',L.ucl,orange,true],['LCL',L.lcl,orange,true],['CL',L.cl,gray,true]])
@@ -11836,25 +11892,45 @@ function nextWjNo(){
       });
       return rows;
     }
+    function spcPRowFilled(row){ return SPC_P_REQ.some(([k])=> spcPFieldOk(row, k)) || !!String(row.point||row.supplier||row.customer||row.hl||'').trim(); }
     function spcPQuery(){
       for(const def of SPC_P_TYPES){
-        const tp = spcP.types[def.key];
-        for(const [key, label] of SPC_P_REQ){
-          if(!spcPFieldOk(tp, key)){ ElMessage.warning(def.label+'：'+label+'为必填'); return; }
+        const rows = spcP.types[def.key].rows || [];
+        let usable = 0;
+        for(let i=0;i<rows.length;i++){
+          const r = rows[i];
+          if(!spcPRowFilled(r)) continue;
+          for(const [key, label] of SPC_P_REQ){
+            if(!spcPFieldOk(r, key)){ ElMessage.warning(def.label+' 第'+(i+1)+'行：'+label+'为必填'); return; }
+          }
+          usable++;
         }
+        if(!usable){ ElMessage.warning(def.label+'：请至少填写一行完整查询条件'); return; }
       }
       const qmap = spcPQuantMap();
       const groups = [], samples = { pm:[], pp:[], pi:[] };
       SPC_P_TYPES.forEach(def=>{
-        const tp = spcP.types[def.key];
-        const matched = spcPMatched(tp, def);
-        const combos = [];
-        tp.mats.forEach(m=>{
-          const mp = { code: spcPMatCode(m), name: spcPMatName(m) };
-          tp.items.forEach(it=> combos.push(spcPCombo(def, tp, mp, it, matched, qmap)));
+        const combos = [], seen = new Set(), srows = [];
+        (spcP.types[def.key].rows||[]).forEach(r=>{
+          if(!spcPRowFilled(r)) return;
+          const matched = spcPMatched(r, def);
+          r.mats.forEach(m=>{
+            const mp = { code: spcPMatCode(m), name: spcPMatName(m) };
+            r.items.forEach(it=>{
+              const ck = mp.code+'|'+it;
+              if(seen.has(ck)){
+                const ex = combos.find(x=> x.key.endsWith('|'+ck));
+                if(ex && !ex.hl && r.hl) ex.hl = String(r.hl).trim();
+                return;
+              }
+              seen.add(ck);
+              combos.push(spcPCombo(def, r, mp, it, matched, qmap));
+            });
+          });
+          srows.push.apply(srows, spcPSampleRows(def, r, matched, qmap));
         });
         groups.push({ key:def.key, label:def.label, combos });
-        samples[def.key] = spcPSampleRows(def, tp, matched, qmap);
+        samples[def.key] = srows;
       });
       spcP.groups = groups;
       spcP.samples = samples;
@@ -11868,10 +11944,10 @@ function nextWjNo(){
       spcP.more = false; spcP.queried = false; spcP.chartTab = 'I图'; spcP.sampleTab = 'pi'; spcP.anaTab = 'pi'; spcP.sampleDlg = false;
       spcP.groups = []; spcP.samples = { pi:[], pp:[], pm:[] };
       spcPDisposeCharts();
-      SPC_P_TYPES.forEach(t=> Object.assign(spcP.types[t.key], spcPBlank(t.key)));
+      SPC_P_TYPES.forEach(t=> Object.assign(spcP.types[t.key], spcPBlock(t.key)));
     }
     function spcPOpenSettings(){
-      const first = SPC_P_TYPES.map(t=> spcP.types[t.key]).find(tp=> tp.items.length);
+      const first = SPC_P_TYPES.map(t=> spcP.types[t.key].rows).flat().find(r=> (r.items||[]).length);
       query['检验项'] = first ? first.items[0] : '';
       openChartSpcSettings();
     }
@@ -15762,6 +15838,14 @@ function nextWjNo(){
     }
     function formFieldOptions(f){
       if(!f) return [];
+      if(isEntryByCat(pageId.value) && f.name==='仪器信息'){
+        const cat = entryCategoryId.value;
+        const crow = cat ? (((MOCK['insp-project']||{})['tab-category'])||[]).find(r=> r['检验类名称']===cat) : null;
+        const types = crow ? splitDun(crow['适用仪器类型']) : [];
+        return ((MOCK.instrument||{}).main||[])
+          .filter(r=> r['使用状态']==='在用' && (!types.length || types.includes('通用') || types.includes(r['仪器类型'])))
+          .map(r=> r['仪器名称']).filter(Boolean);
+      }
       if(pageId.value===SPLIT_PAGE && Array.isArray(f.options) && f.options.length) return f.options.slice();
       if(LAB_ARCH_LOC_PAGES.includes(pageId.value) && f.name==='存储库位') return labArchLocOpts.value;
       if(pageId.value==='retain-sample' && f.name==='留样种类'){
@@ -23649,6 +23733,10 @@ function nextWjNo(){
       return UQ_SUM_SRC.flatMap(s=> (((MOCK[s.page] || {})['tab-done']) || []).map(r=>
         Object.assign({}, r, { 处置类型: s.type, SAP生产订单号: r['SAP生产订单号'] || r['生产订单号'] || '', _srcPage: s.page })));
     }
+    function devSumRows(){
+      return DEV_SUM_SRC.flatMap(s=> (((MOCK[s.page] || {})['tab-done']) || []).map(r=>
+        Object.assign({}, r, { 偏差类型: s.type, _srcPage: s.page })));
+    }
     const QR_TABS = [
       {
         key:'oqc-submit', title:'交验合格率统计',
@@ -25343,6 +25431,13 @@ function nextWjNo(){
         list = applyContainsExactQuery(list, query, ['处置单号','物料名称','物料编码','处置人','报检单号'], ['处置类型','MRB状态','处置方式']);
         return list.slice().sort(function(a,b){ return String(b['处置时间']||'').localeCompare(String(a['处置时间']||'')); });
       }
+      if(pageId.value===DEV_SUM_PAGE){
+        // 偏差处置汇总：实时合并四个来源页「已处理」Tab 的数据，字段取并集
+        list = devSumRows();
+        list = applyDateRangeQuery(list, query, '处置时间');
+        list = applyContainsExactQuery(list, query, ['处置单号','物料名称','物料编码','偏差结论','处置人','报检单号'], ['偏差类型']);
+        return list.slice().sort(function(a,b){ return String(b['处置时间']||'').localeCompare(String(a['处置时间']||'')); });
+      }
       if(pageId.value===COST_FLOW) list = costFlowRows().slice();
       if(isChromLedgerPage()){
         // 未选分类展示当前页签全部；选中分类按物料（及型号）过滤；批号模糊 + 是否存在新杂 / 杂质偏差结论精确
@@ -26172,9 +26267,10 @@ function nextWjNo(){
       return applyGenericQuery(list);
     });
     /** 以下页面的这些查询条件没有专门的筛选逻辑，按通用规则筛选：文本包含、下拉精确、选择器按编码或名称、日期按天 */
-    const GENERIC_QUERY_FIELDS = {"mat-uom":["物料种类","换算单位"],"workshop":["车间编码","车间名称","启用状态"],"prod-line":["产线编码","产线名称","所属车间","启用状态"],"insp-person":["人员姓名","所属检验班组","负责检验类","员工状态"],"samp-point":["采样点编码","采样点名称","启用状态"],"insp-method":["检验方法编码","检验方法名称","启用状态","参数编码","参数名称","参数属性","参数代号"],"insp-project":["检验项编码","检验项名称","检验项类型","所属检验类","启用状态"],"insp-scheme":["检验方案编码","检验方案名称","启用状态"],"samp-scheme":["抽样方案编码","抽样方案名称","抽样类型","启用状态"],"auto-samp":["登样方案编码","登样方案名称","启用状态","循环方式","执行条件"],"item-uom":["检验项单位1编码","检验项单位1","检验项单位2"],"np-0103-13":["库位编码","库位名称","库位类型","启用状态","去向编码","去向名称"],"spc-rule":["规则名称","规则依据"],"rule-auth-insp":["判异规则授权编码","判异规则授权名称","启用状态"],"spc-scheme-insp":["SPC查询方案编码","SPC查询方案名称","启用状态"],"reagent":["试剂编码","试剂名称","试剂种类","启用状态","试剂规格","品牌"],"solution":["试液编码","试液名称","试液种类","启用状态","试液规格"],"ref-material":["标准物质编码","标准物质名称","标准物质种类","启用状态","标准物质规格"],"retain-sample":["留样编码","留样名称","留样种类","启用状态","留样规格"],"consumable":["耗材编码","耗材名称","耗材种类","启用状态","耗材规格"],"reagent-arch":["条码号","试剂编码","试剂名称","批号","试剂种类","供应商名称","生产日期","库存位置"],"solution-arch":["条码号","试液编码","试液名称","批号","试液种类","供应商名称","生产日期","库存位置"],"ref-material-arch":["条码号","标准物质编码","标准物质名称","批号","标准物质种类","供应商名称","生产日期","开封状态","库存位置"],"consumable-arch":["条码号","耗材编码","耗材名称","批号","耗材种类","供应商名称","生产日期","库存位置"],"retain-sample-arch":["条码号","留样编码","留样名称","批号","留样种类","供应商名称","留样日期","是否玻璃片"],"lab-io-form":["模板编码","模板名称","适用业务单据","启用状态","表单名称"],"opc-point":["同步状态","点位名称","采集平台","备注","启用状态"],"gather-item":["采集项编码","采集项名称","采集方式","启用状态"],"gather-scheme":["采集方案编码","采集方案名称","启用状态"],"np-0501-01":["采集状态","过程监测编码","过程监测名称"],"np-0502-01":["监测结论","过程监测名称","采集项名称","偏差结论","创建方式"],"np-0601-01":["事件类型","来源批号","产出批号","来源物料名称","创建方式"],"tag-data-source":["字段名","字段描述"],"tag-config":["启用状态"],"print-task":["任务ID","模板名称","打印状态"],"form-data-source":["字段名","字段描述"],"form-setting":["表单编码","表单名称"],"np-0201-01":["单据状态","放行单号","报检单类型","报检单号","物料编码","物料名称"],"np-0201-02":["单据状态","委托单号","报检单类型","报检单号","样品编号","委托组织"],"insp-order":["单据状态","复核结论","报检单号","报检部门","报检时间"],"add-sample":["报检单类型","报检单号","物料编码","物料名称"],"wait-samp":["报检单号","采样点","报检批号"],"np-0201-11":["样品编号","报检单号","报检类型","样品状态","母样编号","样品来源","物料信息","报检批号","取样时间"],"np-0201-12":["样品编号","母样编号","报检单号","报检类型","样品状态","当前位置","物料信息","报检批号","取样时间","处置方式","处置时间","变更类型","新位置","操作人","操作时间"],"ledger":["样品状态","检验结论","样品编号","报检单号","取样时间"],"entry-sample":["样品编号","报检单号","采样点","检验方案"],"entry-category":["样品编号","报检单号","采样点"],"my-task":["报检单类型","样品编号","报检单号","采样点","委托单号"],"recheck":["报检单号","物料编码","采样点","研发项目号","来样单位"],"spectrogram":["文件编号","文件名称","样本流水号","样本编号"],"spec-recog":["文件编号","文件名称","类型","上传人"],"unqual-pi":["处置单号","检验结论","MRB状态","处置方式"],"unqual-pp":["处置单号","检验结论","MRB状态","处置方式"],"unqual-pm":["处置单号","检验结论","MRB状态","处置方式"],"mrb-review":["MRB单号","来源处置类型","物料编码","来源处置单号","处置方式"],"dev-pi":["偏差结论","处置单号","物料编码"],"dev-pp":["偏差结论","处置单号","物料编码"],"dev-pm":["偏差结论","处置单号","物料编码"],"np-0212-02":["客诉单号"],"np-0212-03":["退货单号"],"capa-internal":["整改单号","整改状态","事件类型","物料编码","来源单号","计划整改完成日期","创建时间"],"capa-handle":["整改单号","事件类型","来源单号","物料编码","物料名称","物料种类","客户编码","客户名称","批号","问题大类","问题小类","计划整改完成日期","创建时间"],"spc-report-ledger":["报告名称","供应商信息","客户信息"],"qr-datasource":["字段名","字段描述"],"qr-special":["字段名称","字段类型"],"qr-template":["文件类型"],"qr-config":["报告模板名称","模板文件名称","启用状态","创建时间"],"qr-issue":["开具单号","来源单号","客户名称","物料名称","创建时间"],"cl-change":["变更单号","检验方案名称","计算指标","创建人","创建时间"],"cl-record":["记录编号","业务类型","检验方案","检验项","创建人","物料信息","采样点","供应商信息","客户信息","来源","方案编码","创建时间","单位"]};
+    const GENERIC_QUERY_FIELDS = {"mat-uom":["物料种类","换算单位"],"workshop":["车间编码","车间名称","启用状态"],"prod-line":["产线编码","产线名称","所属车间","启用状态"],"insp-person":["人员姓名","所属检验班组","负责检验类","员工状态"],"samp-point":["采样点编码","采样点名称","启用状态"],"insp-method":["检验方法编码","检验方法名称","启用状态","参数编码","参数名称","参数属性","参数代号"],"insp-project":["检验项编码","检验项名称","检验项类型","所属检验类","启用状态"],"insp-scheme":["检验方案编码","检验方案名称","启用状态"],"samp-scheme":["抽样方案编码","抽样方案名称","抽样类型","启用状态"],"auto-samp":["登样方案编码","登样方案名称","启用状态","循环方式","执行条件"],"item-uom":["检验项单位1编码","检验项单位1","检验项单位2"],"np-0103-13":["库位编码","库位名称","库位类型","启用状态","去向编码","去向名称"],"spc-rule":["规则名称","规则依据"],"rule-auth-insp":["判异规则授权编码","判异规则授权名称","启用状态"],"spc-scheme-insp":["SPC查询方案编码","SPC查询方案名称","启用状态"],"reagent":["试剂编码","试剂名称","试剂种类","启用状态","试剂规格","品牌"],"solution":["试液编码","试液名称","试液种类","启用状态","试液规格"],"ref-material":["标准物质编码","标准物质名称","标准物质种类","启用状态","标准物质规格"],"retain-sample":["留样编码","留样名称","留样种类","启用状态","留样规格"],"consumable":["耗材编码","耗材名称","耗材种类","启用状态","耗材规格"],"reagent-arch":["条码号","试剂编码","试剂名称","批号","试剂种类","供应商名称","生产日期","库存位置"],"solution-arch":["条码号","试液编码","试液名称","批号","试液种类","供应商名称","生产日期","库存位置"],"ref-material-arch":["条码号","标准物质编码","标准物质名称","批号","标准物质种类","供应商名称","生产日期","开封状态","库存位置"],"consumable-arch":["条码号","耗材编码","耗材名称","批号","耗材种类","供应商名称","生产日期","库存位置"],"retain-sample-arch":["条码号","留样编码","留样名称","批号","留样种类","供应商名称","留样日期","是否玻璃片"],"lab-io-form":["模板编码","模板名称","适用业务单据","启用状态","表单名称"],"opc-point":["同步状态","点位名称","采集平台","备注","启用状态"],"gather-item":["采集项编码","采集项名称","采集方式","启用状态"],"gather-scheme":["采集方案编码","采集方案名称","启用状态"],"np-0501-01":["采集状态","过程监测编码","过程监测名称"],"np-0502-01":["监测结论","过程监测名称","采集项名称","偏差结论","创建方式"],"np-0601-01":["事件类型","来源批号","产出批号","来源物料名称","创建方式"],"tag-data-source":["字段名","字段描述"],"tag-config":["启用状态"],"print-task":["任务ID","模板名称","打印状态"],"form-data-source":["字段名","字段描述"],"form-setting":["表单编码","表单名称"],"np-0201-01":["单据状态","放行单号","报检单类型","报检单号","物料编码","物料名称"],"np-0201-02":["单据状态","委托单号","报检单类型","报检单号","样品编号","委托组织"],"insp-order":["单据状态","复核结论","报检单号","报检部门","报检时间"],"add-sample":["报检单类型","报检单号","物料编码","物料名称"],"wait-samp":["报检单号","采样点","报检批号"],"np-0201-11":["样品编号","报检单号","报检类型","样品状态","母样编号","样品来源","物料信息","报检批号","取样时间"],"np-0201-12":["样品编号","母样编号","报检单号","报检类型","样品状态","当前位置","物料信息","报检批号","取样时间","处置方式","处置时间","变更类型","新位置","操作人","操作时间"],"ledger":["样品状态","检验结论","样品编号","报检单号","取样时间"],"entry-sample":["样品编号","报检单号","采样点","检验方案"],"entry-category":["样品编号","报检单号","采样点","仪器信息"],"my-task":["报检单类型","样品编号","报检单号","采样点","委托单号","仪器信息"],"recheck":["报检单号","物料编码","采样点","研发项目号","来样单位"],"spectrogram":["文件编号","文件名称","样本流水号","样本编号"],"spec-recog":["文件编号","文件名称","类型","上传人"],"unqual-pi":["处置单号","检验结论","MRB状态","处置方式"],"unqual-pp":["处置单号","检验结论","MRB状态","处置方式"],"unqual-pm":["处置单号","检验结论","MRB状态","处置方式"],"mrb-review":["MRB单号","来源处置类型","物料编码","来源处置单号","处置方式"],"dev-pi":["偏差结论","处置单号","物料编码"],"dev-pp":["偏差结论","处置单号","物料编码"],"dev-pm":["偏差结论","处置单号","物料编码"],"np-0212-02":["客诉单号"],"np-0212-03":["退货单号"],"capa-internal":["整改单号","整改状态","事件类型","物料编码","来源单号","计划整改完成日期","创建时间"],"capa-handle":["整改单号","事件类型","来源单号","物料编码","物料名称","物料种类","客户编码","客户名称","批号","问题大类","问题小类","计划整改完成日期","创建时间"],"spc-report-ledger":["报告名称","供应商信息","客户信息"],"qr-datasource":["字段名","字段描述"],"qr-special":["字段名称","字段类型"],"qr-template":["文件类型"],"qr-config":["报告模板名称","模板文件名称","启用状态","创建时间"],"qr-issue":["开具单号","来源单号","客户名称","物料名称","创建时间"],"cl-change":["变更单号","检验方案名称","计算指标","创建人","创建时间"],"cl-record":["记录编号","业务类型","检验方案","检验项","创建人","物料信息","采样点","供应商信息","客户信息","来源","方案编码","创建时间","单位"]};
+    const GENERIC_QUERY_ALIAS = { '仪器信息': ['检验仪器', '分析仪器', '仪器名称', '仪器编码'] };
     function genericQueryKey(list, name){
-      const cands = [name, name+'名称', name.replace(/(编码|名称)$/, '信息'), name.replace(/信息$/, '名称'), name.replace(/信息$/, '编码')];
+      const cands = [name, name+'名称', name.replace(/(编码|名称)$/, '信息'), name.replace(/信息$/, '名称'), name.replace(/信息$/, '编码'), ...((GENERIC_QUERY_ALIAS[name])||[])];
       return cands.find(k=> list.some(r=> r && Object.prototype.hasOwnProperty.call(r, k))) || '';
     }
     function applyGenericQuery(list){
@@ -29493,6 +29589,7 @@ function nextWjNo(){
       }
       if(csPage() && csPage().onRowOp(op, row)) return;
       if(pageId.value===FLOW_WAIT && op.name==='结束取样'){ flowEndSampling([row]); return; }
+      if(pageId.value===FLOW_WAIT && op.name==='取样人员'){ wsPickOpen(row); return; }
       if(pageId.value===FLOW_ENTRY && op.name==='结束录入'){ flowEndEntry([row]); return; }
       if(pageId.value===FLOW_MY_TASK && op.name==='反馈时间'){ openFbTime(row); return; }
       if(isEntryByCat(pageId.value) && op.name==='直接提交'){ flowSubmitCat(row); return; }
@@ -37405,6 +37502,9 @@ function nextWjNo(){
         const sch = labInspSchemeRows().find(r=> r['巡检方案名称']===formModel['巡检方案名称']);
         formModel['内容描述'] = sch ? (sch['内容描述']||'') : '';
         formModel['表单名称'] = sch ? (sch['表单名称']||'') : '';
+        formModel['事业部'] = sch ? (sch['事业部']||'') : '';
+        formModel['车间'] = sch ? (sch['车间']||'') : '';
+        formModel['生产班组'] = sch ? (sch['生产班组']||'') : '';
         if(sch){
           const q = parseQtyUnit(sch['标准作业时长'], '小时');
           formModel['标准作业时长'] = q.n;
@@ -39596,6 +39696,8 @@ function nextWjNo(){
       batchLock(){ schedLockBatch(true); },
       batchUnlock(){ schedLockBatch(false); },
       pick(t){ this.detail.task = t; this.detail.visible = true; },
+      canMove(t){ return !schedMoveBlockReason(t); },
+      moveBlockReason(t){ return schedMoveBlockReason(t); },
       drop(t, instName, s, e){ schedDropPlan(t, instName, s, e); },
       dlgCalcEnd(){
         const f = this.dlg.form; const st = schedParse(f.开始);
@@ -39729,7 +39831,7 @@ function nextWjNo(){
     }
     function schedOpenDlg(t, mode){
       const plan = schedPlans().find(p=> p._key===t._key);
-      if(mode==='adjust' && plan && plan['锁定']==='是'){ ElMessage.warning('该排程已锁定，请先解锁'); return; }
+      if(mode==='adjust' && plan){ const why = schedMoveBlockReason(t); if(why){ ElMessage.warning(why); return; } }
       const pool = (t._cands && t._cands.length) ? t._cands : schedInstPool(t.仪器类型);
       sb.dlg.mode = mode || 'sched';
       sb.dlg.task = t;
@@ -39842,12 +39944,24 @@ function nextWjNo(){
         ElMessage.success('已取消 '+rows.length+' 个任务的排程');
       }).catch(()=>{});
     }
+    /** 任务不可调整的原因：''=可调整。锁定、当前时间之前的已完成/检验中、当前进行中的检验中不可动；未来时段的检验中/已完成仍可调整（提前检验/提前完成需手动更新甘特） */
+    function schedMoveBlockReason(t){
+      if(!t) return '任务不存在';
+      if(t['排程状态']==='待排程') return '该任务尚未排程';
+      if(t['锁定']==='是') return '该排程已锁定，请先解锁';
+      const now = schedParse(schedNow());
+      const s = schedParse(t['计划开始']), e = schedParse(t['计划结束']);
+      if(t['排程状态']==='检验中' && s && s<=now) return '该任务已在检验中，不可调整';
+      if(t['排程状态']==='已完成' && e && e<=now) return '该任务已完成，不可调整';
+      return '';
+    }
     /** 甘特拖动落位：instName=目标仪器名，s/e=毫秒时间戳；时长不变平移，可换候选仪器；重叠仅提示不拦截 */
     function schedDropPlan(t, instName, sMs, eMs){
       const inst = ((MOCK.instrument||{}).main||[]).find(r=> r['仪器名称']===instName);
       const exist = schedPlans().find(p=> p._key===t._key);
       if(!inst || !exist) return;
-      if(exist['锁定']==='是'){ ElMessage.warning('该排程已锁定，请先解锁'); return; }
+      const blockWhy = schedMoveBlockReason(t);
+      if(blockWhy){ ElMessage.warning(blockWhy); return; }
       const st = new Date(sMs), en = new Date(eMs);
       const oldDesc = schedPlanDesc(exist);
       const team = t._team || t.检验班组;
@@ -40370,7 +40484,7 @@ function nextWjNo(){
       calibEntryVisible, calibEntryReadonly, calibEntryIdx, calibEntryTest, openCalibEntry, submitCalibEntry,
       labPrepExecVisible, labPrepExecReadonly, labPrepExecRow, labPrepExec, labPrepLineSel, labPrepReagentPick, labPrepEnvFields, labPrepDevFields, labPrepMethod, labPrepHeadCols, labPrepReagentOptions, labPrepEnumOpts, addLabPrepLine, removeLabPrepLines, saveLabPrepExec, submitLabPrepExec, downloadLabPrepPdf,
       tplTabs, tplCalc, tplRefParamOptions, onTplPubTimesChange, tplKind, isTplForm, tplFormTab, tplRows, tplSel, onTplFlagChange, addTplRow, removeTplRows, onTplAttrChange,
-      formVisible, formMode, formDialogTitle, formDialogWidth, formSwitch, formModel, formFieldTipOpen, setFormFieldTip, toggleFormFieldTip, isInspMethodForm, isInspSchemeForm, isQrConfigForm, isDriftRuleForm, isInspProjectCategoryForm, isSampSchemeForm, isFullscreenBizForm, isFullscreenDetail, detailHeaderTableFields, detailHeaderTableRows, isAutoSampForm, isSpcSchemeForm, isWideBizForm, isTreeTypeForm, isSchemeCylinder, sigmaConfigModel, onSigmaConfigConfirm, activeFormSections, isQmsFlowForm, entryCat, entryCats, entryCatRows, entryMethods, entryPickCat, entryStamp, entryResultText, entryFocusItem, entryCatSubmitted, entryMethodTab, entryDescOpen, entryMethodDetail, entryMethodVerOptions, entryOnVersion, entryMats, entryMatSelected, entryMatScan, entryMatScanRef, onEntryMatScan, removeEntryMats, entryExtraFiles, onEntryExtraFile, removeEntryExtraFile, entryInstruments, entryInstrumentOptions, entrySpectra, removeEntrySpectrum, openEntryInherit, entryInheritVisible, entryInheritPickVisible, entryInheritSampleNo, entryInheritPickNo, entryInheritSampleLabel, entryInheritCats, entryInheritMode, entryInheritQ, entryInheritQueryTick, entryInheritPickRows, openEntryInheritPick, confirmEntryInheritPick, clearEntryInheritSample, entryInheritApplySample, entryInheritSrcRow, entryInheritCatOpts, entryInheritPreviewRows, entryInheritAllChecked, entryInheritSomeChecked, entryInheritToggleCat, entryInheritToggleAll, confirmEntryInherit, openEntrySpecPick, entrySpecVisible, entrySpecQuery, entrySpecFiles, entrySpecChecked, entrySpecBatches, entrySpecCols, entrySpecDraft, entrySpecFillCol, entrySpecFillAll, entrySpecAutoFill, confirmEntrySpecPick, openEntryChromPick, entryChromVisible, entryChromFilters, entryChromKey, entryChromList, entryChromColumnOptions, entryChromFilterHint, entryChromRtCols, entryChromRtStructMap, entryChromPickCell, entryChromCellText, ENTRY_CHROM_STAT_FIELDS, entryChromParamNames, entryChromCols, entryChromDraft, entryChromChecked, entryChromAllChecked, entryChromIndeterminate, toggleEntryChromAll, setEntryChromChecked, entryChromAutoFill, entryChromFillByTime, entryChromClearGrid, confirmEntryChromPick, cancelEntryChromPick, entryPubParams, entryPubCols, entryPubCell, entrySetPubCell, entrySampParams, entrySampCols, entryCell, entrySetCell, entryLimitText, entryQuickExpandAll, entryQuickFilledCount, entryCategoryId, entryCategoryKw, filteredEntryCategories, spcProcessId, spcProcessKw, filteredSpcProcesses, activeChartTab, spcChartCards, envStat, costPivot, costFlowDlg, COST_DIMS, COST_MEASURES, inspRpt, inspDetailDlg, INSP_MEASURES, qr, QR_TABS, QR_TAG_FIELDS, qrDef, qrOptions, qrOpenPick, qrClearPick, qrApplyPick, qrQuery, qrReset, qrOnTab, qrCards, qrGroups, qrExport, util, utilPickerType, utilCards, utilDetail, utDefaultRange, utQuery, utReset, utOpenDetail, utExport, SPC_P_TYPES, spcP, spcPMatName, spcPRemoveMat, spcPQuery, spcPReset, spcPOpenSettings, spcPExport, spcPAnaCols, spcPAnaColWidth, spcPAnaRows, spcPOpenSamples, inspDimChoices, inspColChoices, openInspPick, inspClearPick, inspTypeOptions, inspKindOptions, inspItemOptions, inspResultText, inspDragStart, inspDragOver, inspDragDrop, inspDragEnd, inspRemoveDim, inspAddDim, inspRptQuery, inspRptReset, inspRptExport, inspOpenDetail, inspRptRowClass, costFlowOpts, costDragStart, costDragOver, costDragDrop, costDragEnd, costRemoveDim, costAddDim, costPivotReset, costPivotQuery, costPivotRowClass, costOpenFlow, costPivotExport, batchTrace, batchRelAddLine, batchRelCopyLine, batchRelDelLine, envStatNames, envStatItemOptions, envStatOnName, envStatQuery, envStatReset, envStatOpenSet, envStatSaveSet, envStatOpenSamples, envStatExport, treeListId, treeListKw, filteredTreeListNodes, onTreeListOp, waitSampInnerTab, waitSampSampleRows, waitSampSampleSelected, waitSampItemRows, waitSampItemSelected, waitSampSchemeItemCount, waitSampTempItemCount, waitSampItemSourceLabel, addWaitSampSample, refreshWaitSampCodes, removeWaitSampSamples, addWaitSampItem, removeWaitSampItems, recheckSampleRows, disposeDetailRows, disposeDetailSelected, initDisposeDetailRows, batchDisposeReceive, mrbWritebackVisible, saveMrbWriteback, mrbWriteback, disposeDetailVisible, disposeDetailViewRows, DRIFT_PAGE, DRIFT_TR_OPTS, DRIFT_INSP_OPTS, driftFormTab, driftImpurityRows, driftRrtRows, driftRrtSelected, driftNewUCL, driftNewLCL, driftFilterMin, driftFilterMax, driftMatRows, driftColRows, addDriftImpurity, removeDriftImpurity, addDriftRrtRule, removeDriftRrtRule, removeDriftRrtRules, addDriftMat, removeDriftMat, addDriftCol, removeDriftCol, driftMatOptions, onDriftMatPick, driftColTypeOptions, onDriftMainPeak, driftPointRows, schemeInnerTab, qrConfigInnerTab, qrFieldRows, qrFieldSelected, qrTemplateFileOptions, removeQrConfigFields, schemeQualRows, schemeQuantRows, schemeQualSelected, schemeQuantSelected, schemePointRows, schemeMatRows, schemeCustRows, schemeSuppRows, schemeMediaRows, schemeItemDrawerVisible, schemeItemDrawerKind, schemeItemDrawerQ, schemeItemDrawerTick, schemeItemDrawerRows, schemeItemDrawerSelected, openSchemeItemDrawer, confirmSchemeItemDrawer, removeSchemeRows, schemeRelDrawerVisible, schemeRelDrawerKind, schemeRelDrawerTitle, schemeRelDrawerRows, schemeRelDrawerColumns, schemeRelDrawerSelected, schemeRelDrawerTableRef, schemeRelDrawerRowKey, onSchemeRelDrawerSelect, clearSchemeRelDrawerSelect, openSchemeRelDrawer, confirmSchemeRelDrawer, resetSchemeRelDrawerQ, schemeRelDrawerQ, schemeRelDrawerTick, addSchemeMedium, schemeLimitOps, openSchemeUnitDrawer, openItemUomUnitDrawer, onSchemeFnChange, schemePointSelected, schemeMatSelected, schemeCustSelected, schemeSuppSelected, removeSchemeRelRows, schemeQualEnumDrawerVisible, schemeQualEnumDraft, schemeQualEnumSelected, schemeQualEnumEnableOther, openSchemeQualEnumDrawer, addSchemeQualEnumItem, removeSchemeQualEnumItems, confirmSchemeQualEnumDrawer, renumberSchemeQualEnum, sampInnerTab, sampInspectTypes, sampRuleRows, sampRuleSelected, sampMatRows, sampMatSelected, sampFormulaVisible, sampFormulaValue, onSampTypeChange, isSampRuleFirst, isSampRuleLast, normalizeSampRuleFixed, removeSampRuleRow, removeSampMatRows, openSampFormula, insertSampFormulaFn, confirmSampFormula, validateSampRules, addSampRuleRow, removeSampRuleRows, autoSampDetailRows, autoSampDetailSelected, autoSampPickVisible, autoSampPickKind, autoSampPickTitle, autoSampPickQ, autoSampPickTick, autoSampPickRows, autoSampPickColumns, autoSampPickMulti, autoSampPickCurrent, autoSampPickSelected, openAutoSampPick, resetAutoSampPickQ, confirmAutoSampPick, copyAutoSampDetail, validateAutoSampDetails, addAutoSampDetail, removeAutoSampDetails, inspMethodPublicParams, inspMethodSampleParams, inspMethodPublicSelected, inspMethodSampleSelected, inspMethodInnerTab, inspMethodMatRows, inspMethodMatSelected, inspMethodMatCatRows, inspMethodMatCatSelected, METHOD_MAT_SRCS, methodMatSrc, onMethodMatSrcTab, openMethodMatSupp, openMethodMatUnit, removeInspMethodMats, addInspMethodMatCat, copyInspMethodMatCat, removeInspMethodMatCats, openMethodMatCatMat, clearMethodMatCatMat, openMethodMatCatCat, clearMethodMatCatCat, methodVerVisible, methodVerTitle, methodVerRows, methodVerCount, openMethodVerDetail, onInspMethodFile, inspParamDrawerVisible, inspParamDrawerQ, inspParamDrawerTick, inspParamDrawerRows, inspParamDrawerSelected, openInspParamDrawer, resetInspParamDrawerQ, confirmInspParamDrawer, removeInspMethodParams, onInspMethodPublicToggle, onInspMethodPublicTimesChange, inspCatInstrumentTypeOptions, INSP_CAT_ATTRS, inspItemUnitDrawerVisible, inspItemUnitDrawerTitle, inspItemUnitDrawerQ, inspItemUnitDrawerTick, inspItemUnitDrawerRows, inspItemUnitDrawerCurrent, inspItemUnitDrawerSelectedKey, inspItemUnitTableRef, inspItemUnitRowKey, selectInspItemUnitRow, onInspItemUnitRowClick, onInspItemUnitCurrentChange, clearInspItemUnitDrawer, openInspItemUnitDrawer, confirmInspItemUnitDrawer, poMatPool, formLineSelected, dispatchAuditVisible, dispatchAuditRow, dispatchAuditForm, splitVisible, splitRow, splitForm, splitLines, splitLineSelected, splitNeedsOrder, splitShowPreDoc, splitShowSoShipPreDocs, splitShowSoPreoutPrepDoc, splitPreDocRequired, splitShowPo, onSplitOrderTypeChange, openSplitPicker, settleVisible, settleRows, settleForm, totalSettleQty, totalSettleFee, openSettleModal, onSettleOk, secondaryAssignVisible, secondaryAssignRow, secondaryAssignForm, resetSecondaryAssignForm, onSecondaryAssignOk, assignVisible, assignRow, assignForm, assignCarriers, assignVehicles, assignTrailers, activeFormFields, activeFormLineFields, formLineEmptyText, formLineRows, formCatRows, formCatSelected, onDispatchCatAction, formInstRows, formInstSelected, onDispatchInstAction, onGsDragStart, onGsDrop, onFormLineSelectChange,
+      formVisible, formMode, formDialogTitle, formDialogWidth, formSwitch, formModel, formFieldTipOpen, setFormFieldTip, toggleFormFieldTip, isInspMethodForm, isInspSchemeForm, isQrConfigForm, isDriftRuleForm, isInspProjectCategoryForm, isSampSchemeForm, isFullscreenBizForm, isFullscreenDetail, detailHeaderTableFields, detailHeaderTableRows, isAutoSampForm, isSpcSchemeForm, isWideBizForm, isTreeTypeForm, isSchemeCylinder, sigmaConfigModel, onSigmaConfigConfirm, activeFormSections, isQmsFlowForm, entryCat, entryCats, entryCatRows, entryMethods, entryPickCat, entryStamp, entryResultText, entryFocusItem, entryCatSubmitted, entryMethodTab, entryDescOpen, entryMethodDetail, entryMethodVerOptions, entryOnVersion, entryMats, entryMatSelected, entryMatScan, entryMatScanRef, onEntryMatScan, removeEntryMats, entryExtraFiles, onEntryExtraFile, removeEntryExtraFile, entryInstruments, entryInstrumentOptions, entrySpectra, removeEntrySpectrum, openEntryInherit, entryInheritVisible, entryInheritPickVisible, entryInheritSampleNo, entryInheritPickNo, entryInheritSampleLabel, entryInheritCats, entryInheritMode, entryInheritQ, entryInheritQueryTick, entryInheritPickRows, openEntryInheritPick, confirmEntryInheritPick, clearEntryInheritSample, entryInheritApplySample, entryInheritSrcRow, entryInheritCatOpts, entryInheritPreviewRows, entryInheritAllChecked, entryInheritSomeChecked, entryInheritToggleCat, entryInheritToggleAll, confirmEntryInherit, openEntrySpecPick, entrySpecVisible, entrySpecQuery, entrySpecFiles, entrySpecChecked, entrySpecBatches, entrySpecCols, entrySpecDraft, entrySpecFillCol, entrySpecFillAll, entrySpecAutoFill, confirmEntrySpecPick, openEntryChromPick, entryChromVisible, entryChromFilters, entryChromKey, entryChromList, entryChromColumnOptions, entryChromFilterHint, entryChromRtCols, entryChromRtStructMap, entryChromPickCell, entryChromCellText, ENTRY_CHROM_STAT_FIELDS, entryChromParamNames, entryChromCols, entryChromDraft, entryChromChecked, entryChromAllChecked, entryChromIndeterminate, toggleEntryChromAll, setEntryChromChecked, entryChromAutoFill, entryChromFillByTime, entryChromClearGrid, confirmEntryChromPick, cancelEntryChromPick, entryPubParams, entryPubCols, entryPubCell, entrySetPubCell, entrySampParams, entrySampCols, entryCell, entrySetCell, entryLimitText, entryQuickExpandAll, entryQuickFilledCount, entryCategoryId, entryCategoryKw, filteredEntryCategories, spcProcessId, spcProcessKw, filteredSpcProcesses, activeChartTab, spcChartCards, envStat, costPivot, costFlowDlg, COST_DIMS, COST_MEASURES, inspRpt, inspDetailDlg, INSP_MEASURES, qr, QR_TABS, QR_TAG_FIELDS, qrDef, qrOptions, qrOpenPick, qrClearPick, qrApplyPick, qrQuery, qrReset, qrOnTab, qrCards, qrGroups, qrExport, util, utilPickerType, utilCards, utilDetail, utDefaultRange, utQuery, utReset, utOpenDetail, utExport, SPC_P_TYPES, spcP, spcPMatName, spcPRemoveMat, spcPAddRow, spcPRemoveRow, spcPCopyRow, spcPQuery, wsPick, wsPickOpen, wsPickConfirm, spcPReset, spcPOpenSettings, spcPExport, spcPAnaCols, spcPAnaColWidth, spcPAnaRows, spcPOpenSamples, inspDimChoices, inspColChoices, openInspPick, inspClearPick, inspTypeOptions, inspKindOptions, inspItemOptions, inspResultText, inspDragStart, inspDragOver, inspDragDrop, inspDragEnd, inspRemoveDim, inspAddDim, inspRptQuery, inspRptReset, inspRptExport, inspOpenDetail, inspRptRowClass, costFlowOpts, costDragStart, costDragOver, costDragDrop, costDragEnd, costRemoveDim, costAddDim, costPivotReset, costPivotQuery, costPivotRowClass, costOpenFlow, costPivotExport, batchTrace, batchRelAddLine, batchRelCopyLine, batchRelDelLine, envStatNames, envStatItemOptions, envStatOnName, envStatQuery, envStatReset, envStatOpenSet, envStatSaveSet, envStatOpenSamples, envStatExport, treeListId, treeListKw, filteredTreeListNodes, onTreeListOp, waitSampInnerTab, waitSampSampleRows, waitSampSampleSelected, waitSampItemRows, waitSampItemSelected, waitSampSchemeItemCount, waitSampTempItemCount, waitSampItemSourceLabel, addWaitSampSample, refreshWaitSampCodes, removeWaitSampSamples, addWaitSampItem, removeWaitSampItems, recheckSampleRows, disposeDetailRows, disposeDetailSelected, initDisposeDetailRows, batchDisposeReceive, mrbWritebackVisible, saveMrbWriteback, mrbWriteback, disposeDetailVisible, disposeDetailViewRows, DRIFT_PAGE, DRIFT_TR_OPTS, DRIFT_INSP_OPTS, driftFormTab, driftImpurityRows, driftRrtRows, driftRrtSelected, driftNewUCL, driftNewLCL, driftFilterMin, driftFilterMax, driftMatRows, driftColRows, addDriftImpurity, removeDriftImpurity, addDriftRrtRule, removeDriftRrtRule, removeDriftRrtRules, addDriftMat, removeDriftMat, addDriftCol, removeDriftCol, driftMatOptions, onDriftMatPick, driftColTypeOptions, onDriftMainPeak, driftPointRows, schemeInnerTab, qrConfigInnerTab, qrFieldRows, qrFieldSelected, qrTemplateFileOptions, removeQrConfigFields, schemeQualRows, schemeQuantRows, schemeQualSelected, schemeQuantSelected, schemePointRows, schemeMatRows, schemeCustRows, schemeSuppRows, schemeMediaRows, schemeItemDrawerVisible, schemeItemDrawerKind, schemeItemDrawerQ, schemeItemDrawerTick, schemeItemDrawerRows, schemeItemDrawerSelected, openSchemeItemDrawer, confirmSchemeItemDrawer, removeSchemeRows, schemeRelDrawerVisible, schemeRelDrawerKind, schemeRelDrawerTitle, schemeRelDrawerRows, schemeRelDrawerColumns, schemeRelDrawerSelected, schemeRelDrawerTableRef, schemeRelDrawerRowKey, onSchemeRelDrawerSelect, clearSchemeRelDrawerSelect, openSchemeRelDrawer, confirmSchemeRelDrawer, resetSchemeRelDrawerQ, schemeRelDrawerQ, schemeRelDrawerTick, addSchemeMedium, schemeLimitOps, openSchemeUnitDrawer, openItemUomUnitDrawer, onSchemeFnChange, schemePointSelected, schemeMatSelected, schemeCustSelected, schemeSuppSelected, removeSchemeRelRows, schemeQualEnumDrawerVisible, schemeQualEnumDraft, schemeQualEnumSelected, schemeQualEnumEnableOther, openSchemeQualEnumDrawer, addSchemeQualEnumItem, removeSchemeQualEnumItems, confirmSchemeQualEnumDrawer, renumberSchemeQualEnum, sampInnerTab, sampInspectTypes, sampRuleRows, sampRuleSelected, sampMatRows, sampMatSelected, sampFormulaVisible, sampFormulaValue, onSampTypeChange, isSampRuleFirst, isSampRuleLast, normalizeSampRuleFixed, removeSampRuleRow, removeSampMatRows, openSampFormula, insertSampFormulaFn, confirmSampFormula, validateSampRules, addSampRuleRow, removeSampRuleRows, autoSampDetailRows, autoSampDetailSelected, autoSampPickVisible, autoSampPickKind, autoSampPickTitle, autoSampPickQ, autoSampPickTick, autoSampPickRows, autoSampPickColumns, autoSampPickMulti, autoSampPickCurrent, autoSampPickSelected, openAutoSampPick, resetAutoSampPickQ, confirmAutoSampPick, copyAutoSampDetail, validateAutoSampDetails, addAutoSampDetail, removeAutoSampDetails, inspMethodPublicParams, inspMethodSampleParams, inspMethodPublicSelected, inspMethodSampleSelected, inspMethodInnerTab, inspMethodMatRows, inspMethodMatSelected, inspMethodMatCatRows, inspMethodMatCatSelected, METHOD_MAT_SRCS, methodMatSrc, onMethodMatSrcTab, openMethodMatSupp, openMethodMatUnit, removeInspMethodMats, addInspMethodMatCat, copyInspMethodMatCat, removeInspMethodMatCats, openMethodMatCatMat, clearMethodMatCatMat, openMethodMatCatCat, clearMethodMatCatCat, methodVerVisible, methodVerTitle, methodVerRows, methodVerCount, openMethodVerDetail, onInspMethodFile, inspParamDrawerVisible, inspParamDrawerQ, inspParamDrawerTick, inspParamDrawerRows, inspParamDrawerSelected, openInspParamDrawer, resetInspParamDrawerQ, confirmInspParamDrawer, removeInspMethodParams, onInspMethodPublicToggle, onInspMethodPublicTimesChange, inspCatInstrumentTypeOptions, INSP_CAT_ATTRS, inspItemUnitDrawerVisible, inspItemUnitDrawerTitle, inspItemUnitDrawerQ, inspItemUnitDrawerTick, inspItemUnitDrawerRows, inspItemUnitDrawerCurrent, inspItemUnitDrawerSelectedKey, inspItemUnitTableRef, inspItemUnitRowKey, selectInspItemUnitRow, onInspItemUnitRowClick, onInspItemUnitCurrentChange, clearInspItemUnitDrawer, openInspItemUnitDrawer, confirmInspItemUnitDrawer, poMatPool, formLineSelected, dispatchAuditVisible, dispatchAuditRow, dispatchAuditForm, splitVisible, splitRow, splitForm, splitLines, splitLineSelected, splitNeedsOrder, splitShowPreDoc, splitShowSoShipPreDocs, splitShowSoPreoutPrepDoc, splitPreDocRequired, splitShowPo, onSplitOrderTypeChange, openSplitPicker, settleVisible, settleRows, settleForm, totalSettleQty, totalSettleFee, openSettleModal, onSettleOk, secondaryAssignVisible, secondaryAssignRow, secondaryAssignForm, resetSecondaryAssignForm, onSecondaryAssignOk, assignVisible, assignRow, assignForm, assignCarriers, assignVehicles, assignTrailers, activeFormFields, activeFormLineFields, formLineEmptyText, formLineRows, formCatRows, formCatSelected, onDispatchCatAction, formInstRows, formInstSelected, onDispatchInstAction, onGsDragStart, onGsDrop, onFormLineSelectChange,
       kpiCfgVisible, kpiGrades, kpiGradeSel, kpiProjects, kpiProjSel, kpiScoreVisible, kpiScoreReadonly, kpiScoreVendor, kpiScoreProjects, kpiScoreExplain, kpiScoreRemark, kpiScoreTotal, kpiScoreGrade, kpiVendorRows, kpiVendorCols, kpiVendorSel,
       kpiFlowVisible, kpiFlowRow, kpiFlowNodes, kpiFlowStamp, kpiFlowStampClass,
       qcInspectVisible, qcInspectRow, qcInspectForm,

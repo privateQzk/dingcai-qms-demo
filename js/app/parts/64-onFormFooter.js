@@ -179,6 +179,9 @@
         const sch = labInspSchemeRows().find(r=> r['巡检方案名称']===formModel['巡检方案名称']);
         formModel['内容描述'] = sch ? (sch['内容描述']||'') : '';
         formModel['表单名称'] = sch ? (sch['表单名称']||'') : '';
+        formModel['事业部'] = sch ? (sch['事业部']||'') : '';
+        formModel['车间'] = sch ? (sch['车间']||'') : '';
+        formModel['生产班组'] = sch ? (sch['生产班组']||'') : '';
         if(sch){
           const q = parseQtyUnit(sch['标准作业时长'], '小时');
           formModel['标准作业时长'] = q.n;

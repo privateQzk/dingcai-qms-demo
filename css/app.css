@@ -1109,7 +1109,18 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
 .spc-p-block__title{font-size:14px;font-weight:600;color:var(--color-text-main)}
 .spc-p-block__sel{font-size:12px;color:#1d7bff}
 .spc-p-block__body{padding:10px 12px 8px;border-top:1px solid #eef2f7}
-.spc-p-tags{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px}
+.spc-p-rowwrap{margin-bottom:2px}
+.spc-p-row{display:flex;align-items:center;gap:6px;flex-wrap:nowrap}
+.spc-p-lb{flex-shrink:0;font-size:12px;color:#606266;white-space:nowrap}
+.spc-p-lb i{color:#f56c6c;font-style:normal;margin-right:2px}
+.spc-p-cell{flex:1 1 0;min-width:0}
+.spc-p-cell--mat{flex:1.15 1 0}
+.spc-p-cell--dates{flex:1.4 1 0}
+.spc-p-cell--sm{flex:.8 1 0}
+.spc-p-row .el-date-editor{width:100%;--el-date-editor-daterange-width:100%}
+.spc-p-row__op{flex-shrink:0;margin-left:2px}
+.spc-p-addrow{padding:4px 0 2px}
+.spc-p-tags{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 6px 76px}
 .spc-p-actions{display:flex;align-items:center;gap:8px;padding:2px 0 4px}
 .spc-p-group{margin-top:4px}
 .spc-p-group__title{font-size:14px;font-weight:600;margin:0 0 8px;color:var(--color-text-main)}
@@ -1308,6 +1319,12 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
 .sb-legend__i{display:inline-block;width:14px;height:9px;border-radius:2px;margin-left:10px;margin-right:1px}
 .sb-legend__i--line{background:#fff;border:1.5px solid #DC2626}
 .sb-gantt{flex:1;min-height:420px;background:#fff;border:1px solid #E5EAF0;border-radius:8px}
+.sb-slider{position:relative;height:18px;flex-shrink:0;margin-top:4px;background:#EDF1F7;border:1px solid #D8E0EC;border-radius:4px;cursor:pointer;box-sizing:border-box}
+.sb-slider__win{position:absolute;top:-1px;bottom:-1px;min-width:8px;background:rgba(37,99,235,.16);border:1.5px solid #8FB0F7;border-radius:4px;box-sizing:border-box}
+.sb-slider__mid{position:absolute;left:6px;right:6px;top:0;bottom:0;cursor:grab}
+.sb-slider__edge{position:absolute;top:0;bottom:0;width:7px;cursor:ew-resize}
+.sb-slider__edge--l{left:0;border-radius:4px 0 0 4px}
+.sb-slider__edge--r{right:0;border-radius:0 4px 4px 0}
 .sb-board__tip{font-size:12px;color:#94A3B8;margin-top:6px}
 .sb-query{background:#fff;border:1px solid #E5EAF0;border-radius:8px;padding:12px 12px 0;margin-bottom:10px}
 .sb-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}

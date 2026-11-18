@@ -16,10 +16,10 @@
       sb: { type: Object, required: true },
       data: { type: Object, default: function () { return { tasks: [], logs: [], gantt: [], ganttInsts: [], shades: [], range: [0, 0], cards: [] }; } }
     },
-    data: function () { return { chart: null }; },
+    data: function () { return { chart: null, win: null }; },
     watch: {
       'data.gantt': { deep: true, handler: function () { this.$nextTick(this.renderChart); } },
-      'data.range': { handler: function () { this.$nextTick(this.renderChart); } },
+      'data.range': { handler: function () { this.win = this.data.range ? this.data.range.slice() : null; this.$nextTick(this.renderChart); } },
       'sb.view': { handler: function () { this.$nextTick(this.renderChart); } },
       'sb.tab': {
         handler: function (v) {
@@ -46,21 +46,23 @@
         });
         // 任务块拖动：DOM 捕获 mousedown + 纯几何命中/换算 + window 级 move/up
         // 不调 echarts convertToPixel/convertFromPixel（该图上调会炸）；
-        // 像素↔时间/行 全部按 grid 常量 + 当前 dataZoom 窗口手算
+        // 像素↔时间/行 全部按 grid 常量 + 当前 win 窗口手算
         var dom = this.$refs.gantt;
         var drag = null;
-        var panOff = function (off) { self.chart.setOption({ dataZoom: [{ moveOnMouseMove: !off }] }); };
-        var plot = function () { var h = dom.clientHeight; return { l: 190, r: dom.clientWidth - 30, t: 10, b: h - 46 }; };
-        var win = function () {
-          try {
-            var dz = self.chart.getOption().dataZoom, d = dz && dz[0], full = self.data.fullRange || self.data.range || [0, 0];
-            if (d) {
-              if (d.startValue != null) return [d.startValue, d.endValue];
-              if (d.start != null) return [full[0] + (full[1] - full[0]) * d.start / 100, full[0] + (full[1] - full[0]) * d.end / 100];
-            }
-          } catch (e) {}
-          return self.data.range || [0, 0];
+        var plot = function () { var h = dom.clientHeight; return { l: 190, r: dom.clientWidth - 30, t: 10, b: h - 26 }; };
+        var win = function () { return self.win || self.data.range || [0, 0]; };
+        // ECharts 自带 dataZoom 鼠标交互在本页环境下会崩（inside 平移/缩放与滑条均失效且抛内部异常），
+        // 改为自管窗口 win + xAxis.min/max（setOption 路径正常），缩放/平移/滑条全部手工实现
+        self._onWheel = function (ev) {
+          if (!self.chart || !dom.contains(ev.target)) return;
+          var r0 = dom.getBoundingClientRect(), px0 = ev.clientX - r0.left, g0 = plot();
+          if (px0 < g0.l || px0 > g0.r) return;
+          ev.preventDefault();
+          var w = win(), anchor = w[0] + (px0 - g0.l) / Math.max(1, g0.r - g0.l) * (w[1] - w[0]);
+          var k = ev.deltaY < 0 ? 0.8 : 1.25;
+          self.applyWin(anchor - (anchor - w[0]) * k, anchor + (w[1] - anchor) * k);
         };
+        dom.addEventListener('wheel', self._onWheel, { passive: false });
         var xToT = function (px) { var g = plot(), w = win(); return w[0] + (px - g.l) / Math.max(1, g.r - g.l) * (w[1] - w[0]); };
         var yToRow = function (py) { var g = plot(), n = Math.max(1, (self.data.ganttInsts || []).length); return (py - g.t) / ((g.b - g.t) / n); };
         var toVal = function (cx, cy) {
@@ -84,17 +86,24 @@
         var finish = function (commit) {
           if (!drag) return;
           var insts = self.data.ganttInsts || [];
-          if (commit && drag.moved && self.sb && self.sb.drop) {
+          if (!drag.pan && commit && drag.moved && self.sb && self.sb.drop) {
             self._suppressClick = true;
             self.sb.drop(drag.t, insts[drag.curRow], drag.curS, drag.curE);
           }
-          if (drag.moved) self.renderChart();
-          panOff(false);
+          if (!drag.pan && drag.moved) self.renderChart();
           drag = null;
         };
         self._dragMove = function (ev) {
           if (!drag) return;
           if (ev.buttons === 0) { finish(false); return; }
+          if (drag.pan) {
+            // 用抓取时窗口 win0 做映射（当前窗口随平移在动，复算会残差），保证抓取点始终贴手
+            var rc = dom.getBoundingClientRect(), gp = plot();
+            var pxt = drag.win0[0] + (ev.clientX - rc.left - gp.l) / Math.max(1, gp.r - gp.l) * (drag.win0[1] - drag.win0[0]);
+            if (!isFinite(pxt)) return;
+            self.applyWin(drag.win0[0] - (pxt - drag.grab), drag.win0[1] - (pxt - drag.grab));
+            return;
+          }
           var insts = self.data.ganttInsts || [];
           var pt = toVal(ev.clientX, ev.clientY);
           if (!isFinite(pt[0]) || !isFinite(pt[1])) return;
@@ -104,8 +113,8 @@
           if (drag.cands.length && insts[nr] && drag.cands.indexOf(insts[nr]) < 0) nr = drag.curRow;
           if (ns !== drag.curS || nr !== drag.curRow) {
             drag.curS = ns; drag.curE = ns + drag.dur; drag.curRow = nr; drag.moved = true;
-            var items = drag.base.map(function (it) { return { value: it.value.slice(), t: it.t }; });
-            items[drag.idx].value = [nr, ns, ns + drag.dur, 0, 1];
+            var items = drag.base.map(function (it) { return Object.assign({}, it, { value: it.value.slice() }); });
+            items[drag.gi].value = [nr, ns, ns + drag.dur, 0, 1];
             self.chart.setOption({ series: [{ data: items }] });
           }
         };
@@ -119,23 +128,76 @@
           var r = dom.getBoundingClientRect();
           var px = ev.clientX - r.left, py = ev.clientY - r.top;
           var idx = hitIdx(px, py);
-          if (idx < 0) return;
+          if (idx < 0) {
+            // 空白处：开平移（拖动时间窗）；滑条区/轴标签区不处理
+            var g0 = plot();
+            if (px >= g0.l && px <= g0.r && py >= g0.t && py <= g0.b) {
+              var p0 = toVal(ev.clientX, ev.clientY);
+              if (isFinite(p0[0])) { drag = { pan: true, grab: p0[0], win0: win().slice() }; ev.preventDefault(); ev.stopPropagation(); }
+            }
+            return;
+          }
           var item = (self.data.gantt || [])[idx], t = item && item.t;
-          if (!t || t['排程状态'] !== '已排程' || t['锁定'] === '是' || !self.sb || !self.sb.drop) return;
+          if (!t || !self.sb || !self.sb.drop) return;
+          // 不可调整的块：吞掉按下事件，不让 ECharts inside 平移接管（其内部换算在这条 category 轴上会抛 clampData）；点击仍走 chart click 开详情
+          if (!self.canMove(t)) { ev.stopPropagation(); return; }
           var pt = toVal(ev.clientX, ev.clientY);
           if (!isFinite(pt[0]) || !isFinite(pt[1])) return;
           drag = {
-            t: t, idx: idx, moved: false, curRow: item.value[0], grab: pt[0],
+            t: t, idx: idx, gi: idx + (self._shadeItems || []).length, moved: false, curRow: item.value[0], grab: pt[0],
             dur: item.value[2] - item.value[1], s0: item.value[1],
             curS: item.value[1], curE: item.value[2],
             cands: (t._cands || []).map(function (c) { return c['仪器名称']; }),
-            base: (self.data.gantt || []).map(function (it) { return { value: it.value.slice(), t: it.t }; })
+            // 系列数据 = 底纹项 + 任务块，ghost 快照须保持同一结构
+            base: (self._shadeItems || []).concat(self.data.gantt || []).map(function (it) { return Object.assign({}, it, { value: it.value.slice() }); })
           };
-          panOff(true);
           ev.preventDefault();
         };
         window.addEventListener('mousedown', self._dragDown, true);
         this.renderChart();
+      },
+      // 缩放/平移/滑条统一入口：窗口裁剪到 fullRange 并保证最小跨度，再落到 xAxis.min/max
+      applyWin: function (ns, ne) {
+        var full = this.data.fullRange || this.data.range || [0, 0];
+        var span = ne - ns, fspan = Math.max(full[1] - full[0], 1), minSpan = 30 * 60000;
+        if (span < minSpan) { var c = (ns + ne) / 2; ns = c - minSpan / 2; ne = c + minSpan / 2; }
+        if (ne - ns >= fspan) { ns = full[0]; ne = full[1]; }
+        else {
+          if (ns < full[0]) { ne += full[0] - ns; ns = full[0]; }
+          if (ne > full[1]) { ns -= ne - full[1]; ne = full[1]; }
+          if (ns < full[0]) ns = full[0];
+        }
+        this.win = [ns, ne];
+        if (this.chart) this.chart.setOption({ xAxis: { min: ns, max: ne } });
+      },
+      sliderWinStyle: function () {
+        var f = this.data.fullRange || this.data.range || [0, 1], w = this.win || f;
+        var span = Math.max(f[1] - f[0], 1);
+        var l = Math.min(100, Math.max(0, (w[0] - f[0]) / span * 100));
+        var r = Math.min(100, Math.max(0, (f[1] - w[1]) / span * 100));
+        return { left: l + '%', right: r + '%' };
+      },
+      sliderDown: function (ev, part) {
+        var tr = this.$refs.sliderTrack.getBoundingClientRect();
+        var f = this.data.fullRange || this.data.range || [0, 1], w0 = (this.win || f).slice(), self = this;
+        var mv = function (e) {
+          var dx = (e.clientX - ev.clientX) / Math.max(1, tr.width) * (f[1] - f[0]);
+          var ns = w0[0], ne = w0[1];
+          if (part === 'm') { ns += dx; ne += dx; }
+          else if (part === 'l') { ns += dx; if (ns > ne - 1800000) ns = ne - 1800000; }
+          else { ne += dx; if (ne < ns + 1800000) ne = ns + 1800000; }
+          self.applyWin(ns, ne);
+        };
+        var up = function () { window.removeEventListener('mousemove', mv, true); window.removeEventListener('mouseup', up, true); };
+        window.addEventListener('mousemove', mv, true); window.addEventListener('mouseup', up, true);
+        ev.preventDefault(); ev.stopPropagation();
+      },
+      // 点轨道空白：窗口中心跳到该位置
+      sliderTrackDown: function (ev) {
+        var tr = ev.currentTarget.getBoundingClientRect();
+        var f = this.data.fullRange || this.data.range || [0, 1], w = this.win || f, span = w[1] - w[0];
+        var c = f[0] + (ev.clientX - tr.left) / Math.max(1, tr.width) * (f[1] - f[0]);
+        this.applyWin(c - span / 2, c + span / 2);
       },
       statusColor: function (st) { return STATUS_COLORS[st] || '#94A3B8'; },
       renderChart: function () {
@@ -145,11 +207,18 @@
         var items = this.data.gantt || [];
         var shades = this.data.shades || [];
         var now = this.data.nowMs || 0;
-        var range = this.data.range || [0, 0];
-        var full = this.data.fullRange || range;
+        // 非工作底纹/当前线合并进同一条 custom 系列的数据项（shade/nowline 标志），放在任务块前先渲染垫底：
+        // markArea/markLine 与第二条 custom 系列在本图 dataZoom 交互重算时都会崩（clampData / coordSys 丢失），单系列自绘最稳
+        var shadeItems = shades.map(function (r) { return { value: [0, r[0], r[1]], shade: 1 }; });
+        if (now) shadeItems.push({ value: [1, now, now], nowline: 1 });
+        self._shadeItems = shadeItems;
+        var dataArr = shadeItems.concat(items);
+        if (!this.win) this.win = (this.data.range || [0, 0]).slice();
+        var win = this.win;
+        var full = this.data.fullRange || win;
         var option = {
           animation: false,
-          grid: { left: 190, right: 30, top: 10, bottom: 46 },
+          grid: { left: 190, right: 30, top: 10, bottom: 26 },
           tooltip: {
             trigger: 'item',
             formatter: function (p) {
@@ -167,13 +236,12 @@
             }
           },
           xAxis: {
-            type: 'time', min: full[0], max: full[1], splitNumber: 16,
+            type: 'time', min: win[0], max: win[1], splitNumber: 16,
             minorTick: { show: true, splitNumber: 4 },
             minorSplitLine: { show: true, lineStyle: { color: '#F5F8FC' } },
             axisLabel: { fontSize: 11, hideOverlap: true, formatter: function (v) {
               var d = new Date(v); var p = function (n) { return String(n).padStart(2, '0'); };
-              var span = range[1] - range[0];
-              try { var dz = self.chart && self.chart.getOption() && self.chart.getOption().dataZoom; if (dz && dz[0] && dz[0].startValue != null) span = dz[0].endValue - dz[0].startValue; } catch (e) {}
+              var span = win[1] - win[0];
               var md = (d.getMonth() + 1) + '-' + p(d.getDate());
               if (span > 72 * 3600000) return md + ' 周' + '日一二三四五六'[d.getDay()];
               if (d.getHours() === 0 && d.getMinutes() === 0) return md + ' 00:00';
@@ -194,15 +262,24 @@
             splitLine: { show: true, lineStyle: { color: '#E5EAF0' } },
             axisTick: { show: false }, axisLine: { show: false }
           },
-          dataZoom: [
-            { type: 'inside', xAxisIndex: 0, filterMode: 'none', startValue: range[0], endValue: range[1],
-              moveOnMouseMove: true, moveOnMouseWheel: false, zoomOnMouseWheel: true },
-            { type: 'slider', xAxisIndex: 0, height: 16, bottom: 6, filterMode: 'none', showDetail: false,
-              startValue: range[0], endValue: range[1], brushSelect: false }
-          ],
           series: [{
             type: 'custom',
             renderItem: function (params, api) {
+              var d = dataArr[params.dataIndex] || {};
+              if (d.shade || d.nowline) {
+                var n0 = insts.length || 1, bH0 = api.size([0, 1])[1];
+                var yT = api.coord([api.value(1), 0])[1] - bH0 / 2;
+                var yB = api.coord([api.value(1), n0 - 1])[1] + bH0 / 2;
+                var x0 = api.coord([api.value(1), 0])[0];
+                if (d.nowline) {
+                  return { type: 'group', children: [
+                    { type: 'line', shape: { x1: x0, y1: yT, x2: x0, y2: yB }, style: { stroke: '#EF4444', lineDash: [4, 4], lineWidth: 1.5 }, silent: true },
+                    { type: 'text', style: { x: x0 + 3, y: yT + 2, text: '当前', fill: '#EF4444', fontSize: 10 }, silent: true }
+                  ] };
+                }
+                var x1 = api.coord([api.value(2), 0])[0];
+                return { type: 'rect', shape: { x: x0, y: yT, width: Math.max(x1 - x0, 1), height: yB - yT }, style: { fill: 'rgba(148,163,184,0.14)' }, silent: true };
+              }
               var cat = api.value(0);
               var s = api.coord([api.value(1), cat]);
               var e = api.coord([api.value(2), cat]);
@@ -213,10 +290,10 @@
               var h = Math.max(7, Math.min(20, laneH - 4));
               var y = s[1] - innerH / 2 + lane * laneH + (laneH - h) / 2;
               var w = Math.max(e[0] - s[0], 5);
-              var t = (items[params.dataIndex] && items[params.dataIndex].t) || {};
+              var t = d.t || {};
               var alert = t['超期'] && t['超期'] !== '—';
               var fill = self.statusColor(t['排程状态']);
-              var draggable = t['排程状态'] === '已排程' && t['锁定'] !== '是';
+              var draggable = self.canMove(t);
               var pfx = 'blk-' + params.dataIndex;
               var kids = [{
                 type: 'rect',
@@ -251,18 +328,7 @@
               }
               return { type: 'group', children: kids };
             },
-            data: items,
-            markArea: {
-              silent: true,
-              itemStyle: { color: 'rgba(148,163,184,0.14)' },
-              data: shades.map(function (r) { return [{ xAxis: r[0] }, { xAxis: r[1] }]; })
-            },
-            markLine: now ? {
-              silent: true, symbol: 'none',
-              lineStyle: { color: '#EF4444', type: 'dashed', width: 1.5 },
-              label: { show: true, position: 'end', formatter: '当前', color: '#EF4444', fontSize: 10 },
-              data: [{ xAxis: now }]
-            } : undefined
+            data: dataArr
           }]
         };
         this.chart.setOption(option, true);
@@ -279,12 +345,20 @@
         if (v === '手动') return 'success';
         return 'info';
       },
+      /** 可否调整（拖动/调整弹窗共用判定，逻辑在 app 侧 sb.canMove） */
+      canMove: function (t) {
+        if (this.sb && this.sb.canMove) return !!this.sb.canMove(t);
+        return !!(t && t['排程状态'] === '已排程' && t['锁定'] !== '是');
+      },
       opBtns: function (row) {
         if (row['排程状态'] === '待排程') return [{ name: '排程', cmd: 'sched', type: 'primary' }];
         if (row['排程状态'] === '已排程') {
           if (row['锁定'] === '是') return [{ name: '解锁', cmd: 'unlock', type: 'warning' }];
           return [{ name: '调整', cmd: 'adjust', type: 'primary' }, { name: '取消', cmd: 'cancel', type: 'danger' }, { name: '锁定', cmd: 'lock', type: 'warning' }];
         }
+        // 检验中/已完成：未来时段仍可调整（提前检验/提前完成需手动更新甘特）
+        if (this.canMove(row)) return [{ name: '调整', cmd: 'adjust', type: 'primary' }];
+        if (row['锁定'] === '是') return [{ name: '解锁', cmd: 'unlock', type: 'warning' }];
         return [];
       }
     },
@@ -320,7 +394,14 @@
       '      <span class="sb-now">演示基准：{{ data.now }}</span>',
       '    </div>',
       '    <div ref="gantt" class="sb-gantt"></div>',
-      '    <div class="sb-board__tip">点击任务块查看详情；拖动「已排程」块左右改时间、上下换仪器（仅候选行可落，带锁图标=已锁定不可拖）；空白处拖拽平移、滚轮缩放；灰色底纹为非工作时段</div>',
+      '    <div ref="sliderTrack" class="sb-slider" @mousedown="sliderTrackDown">',
+      '      <div class="sb-slider__win" :style="sliderWinStyle()">',
+      '        <i class="sb-slider__edge sb-slider__edge--l" @mousedown.stop="sliderDown($event, \'l\')"></i>',
+      '        <div class="sb-slider__mid" @mousedown.stop="sliderDown($event, \'m\')"></div>',
+      '        <i class="sb-slider__edge sb-slider__edge--r" @mousedown.stop="sliderDown($event, \'r\')"></i>',
+      '      </div>',
+      '    </div>',
+      '    <div class="sb-board__tip">点击任务块查看详情；拖动任务块左右改时间、上下换仪器（仅候选行可落）；锁定、已过去的已完成/检验中及当前检验中的任务不可拖；空白处拖拽平移、滚轮缩放、下方滑条调窗口；灰色底纹为非工作时段</div>',
       '  </div>',
       // ===== 排程任务 =====
       '  <div v-show="sb.tab === \'tasks\'">',

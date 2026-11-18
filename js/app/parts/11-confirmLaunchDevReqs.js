@@ -380,6 +380,13 @@
       { page:'unqual-pm', type:'生产物料不合格' },
       { page:'unqual-rd', type:'研发不合格处置' }
     ];
+    const DEV_SUM_PAGE = 'dev-sum';
+    const DEV_SUM_SRC = [
+      { page:'dev-pi', type:'采购来料偏差' },
+      { page:'dev-pp', type:'生产过程偏差' },
+      { page:'dev-pm', type:'生产物料偏差' },
+      { page:'dev-rd', type:'研发偏差' }
+    ];
     function oqcTab(name){ const bag = (MOCK[OQC_PAGE] = MOCK[OQC_PAGE] || {}); return (bag[name] = bag[name] || []); }
     const oqcUploadVisible = ref(false);
     const oqcUploadRows = ref([]);

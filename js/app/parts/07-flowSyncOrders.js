@@ -40,6 +40,11 @@
     function flowFbStatusOf(s){
       return (s && flowHas(s['反馈状态']) && s['反馈状态']==='已填写') ? '已填写' : '未填写';
     }
+    /** 样品检验类的实际检验仪器：检验排程计划仪器 > 任务分派适用仪器 */
+    function entryInstOf(smp, cat){
+      const p = (schedPlans()||[]).find(x=> x._key === (smp+'|'+cat));
+      return p && flowHas(p['检验仪器']) ? p['检验仪器'] : '';
+    }
     /** 数据录入 = 待检验 / 检验中且完全分配的母样；子样不单独录入，状态随母样；按类型每个检验类一行，已提交的检验类不再显示 */
     function flowSyncEntry(){
       const bySample = {}, byCat = {};
@@ -57,7 +62,7 @@
         const fb = flowFbStatusOf(s);
         asg.lines.forEach(ln=>{
           if(done.includes(ln['检验类'])) return;
-          const row = flowPick(flowCols(FLOW_ENTRY_CAT, tab), srcs, { 检验类名称: ln['检验类'], 检验班组: ln['分配班组'] || '—', 分析仪器: ln['分析仪器'] || '—' });
+          const row = flowPick(flowCols(FLOW_ENTRY_CAT, tab), srcs, { 检验类名称: ln['检验类'], 检验班组: ln['分配班组'] || '—', 分析仪器: ln['分析仪器'] || '—', 检验仪器: entryInstOf(s['样品编号'], ln['检验类']) || ln['分析仪器'] || '—' });
           row['逾期状态'] = flowCalcOverdue(row['预计完成时间']);
           byCat[tab].push(Object.assign(row, { id: 'ec-'+s['样品编号']+'-'+ln['检验类'], _items: ln['检验项'], _fb: fb }));
         });
@@ -257,6 +262,23 @@
         bumpStore();
         ElMessage.success('已结束取样 '+rows.length+' 个报检单');
       }).catch(()=>{});
+    }
+    /** 待取样任务 · 取样人员：行内弹窗抽屉选人，反写上游报检单随行同步 */
+    const wsPick = reactive({ visible:false, row:null, person:'' });
+    function wsPickOpen(row){
+      wsPick.row = row;
+      const v = row['取样人员'];
+      wsPick.person = (v && v!=='—') ? v : '';
+      wsPick.visible = true;
+    }
+    function wsPickConfirm(){
+      if(!String(wsPick.person||'').trim()){ ElMessage.warning('请选择取样人员'); return; }
+      const f = wsPick.row && flowOrderOf(wsPick.row['报检单号']);
+      if(f) f.row['取样人员'] = wsPick.person;
+      if(wsPick.row) wsPick.row['取样人员'] = wsPick.person;
+      wsPick.visible = false;
+      bumpStore();
+      ElMessage.success('已设置取样人员');
     }
     /** 子样不进入样品检验台账，台账只记录母样 */
     function flowLedgerDropKids(){

@@ -116,6 +116,13 @@
         list = applyContainsExactQuery(list, query, ['处置单号','物料名称','物料编码','处置人','报检单号'], ['处置类型','MRB状态','处置方式']);
         return list.slice().sort(function(a,b){ return String(b['处置时间']||'').localeCompare(String(a['处置时间']||'')); });
       }
+      if(pageId.value===DEV_SUM_PAGE){
+        // 偏差处置汇总：实时合并四个来源页「已处理」Tab 的数据，字段取并集
+        list = devSumRows();
+        list = applyDateRangeQuery(list, query, '处置时间');
+        list = applyContainsExactQuery(list, query, ['处置单号','物料名称','物料编码','偏差结论','处置人','报检单号'], ['偏差类型']);
+        return list.slice().sort(function(a,b){ return String(b['处置时间']||'').localeCompare(String(a['处置时间']||'')); });
+      }
       if(pageId.value===COST_FLOW) list = costFlowRows().slice();
       if(isChromLedgerPage()){
         // 未选分类展示当前页签全部；选中分类按物料（及型号）过滤；批号模糊 + 是否存在新杂 / 杂质偏差结论精确
