@@ -209,6 +209,10 @@
         if(btn.name==='批量编辑'){ openCostFlowBatch(); return; }
         if(btn.name==='导出' || btn.name==='导出数据'){ exportVisible.value = true; return; }
       }
+      if(pageId.value===YL_PAGE && activeTab.value==='tab-2'){
+        if(btn.name==='新增'){ ylAddOpen(); return; }
+        if(btn.name==='批量删除'){ ylUsageDelete(); return; }
+      }
       if(pageId.value===DEV_PAGE && btn.name==='新增'){ openDevReq([]); return; }
       if(pageId.value===DEV_PAGE && btn.name==='发起需求'){ launchDevReqs(); return; }
       if(pageId.value===DEV_PAGE && btn.name==='批量删除'){ deleteDevReqs(); return; }

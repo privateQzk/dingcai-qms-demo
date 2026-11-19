@@ -169,34 +169,91 @@
       l = applyDateRangeQuery(l, query, '操作时间');
       return l.sort((a,b)=> String(b['操作时间']||'').localeCompare(String(a['操作时间']||'')));
     }
-    /** 仪器使用时长流水：数据录入选择仪器 + 开始时间并提交后，按所选仪器各生成一条 */
+    /** 仪器使用时长流水：开始时间=前一天点检计划的计划开始时间，结束时间=当天样品检测中最后一次使用该仪器的时间；
+     *  次日点检计划提交时汇总前一天数据，添加方式=自动；无点检计划的仪器可手动新增，添加方式=手动，仅手动数据可删 */
     function ylUsageBag(){
       const b = MOCK[YL_PAGE] = MOCK[YL_PAGE] || {};
       if(!Array.isArray(b['tab-2'])) b['tab-2'] = [];
       return b['tab-2'];
     }
-    function ylUsageAdd(s, cat, stamp){
+    /** 仪器使用痕迹：数据录入提交时记录每台仪器当天的最后使用时间（仪器编号|日期 → 时间） */
+    function ylMarkBag(){
+      const b = MOCK[YL_PAGE] = MOCK[YL_PAGE] || {};
+      if(!b.useMarks || typeof b.useMarks!=='object') b.useMarks = {};
+      return b.useMarks;
+    }
+    function ylUseMark(s, cat, stamp){
       const st = ((((s||{})._entry||{}).byCat)||{})[cat];
       const insts = (st && Array.isArray(st.instruments) ? st.instruments : []).filter(Boolean);
-      const start = st && st.startTime;
-      if(!insts.length || !start) return;
-      const bag = ylUsageBag();
-      const end = stamp || nowStamp();
-      const t0 = djParseTime(start), t1 = djParseTime(end);
-      const hrs = (t0 && t1) ? ((t1 - t0) / 3600000).toFixed(1) : '—';
+      if(!insts.length) return;
+      const marks = ylMarkBag(), ts = stamp || nowStamp(), day = ts.slice(0, 10);
       insts.forEach(name=>{
         const i = djInstruments().find(r=> r['仪器名称']===name) || {};
-        const rec = { 仪器编号: i['仪器编号'] || '—', 仪器名称: name, 仪器类型: i['仪器类型'] || '—',
-          样品编号: s['样品编号'], 报检单号: s['报检单号'] || '—', 报检单类型: s['报检类型'] || '—', 检验类: cat,
-          物料编码: s['物料编码'] || '—', 物料名称: s['物料名称'] || '—',
-          开始时间: start, 结束时间: end, 使用时长: hrs, _cat: cat };
-        const key = [rec.样品编号, cat, rec.仪器编号, rec.开始时间].join('|');
-        if(bag.some(r=> [r['样品编号'], r._cat || r['检验类'] || r['检验类型'], r['仪器编号'], r['开始时间']].join('|')===key)) return;
-        bag.unshift(Object.assign({ id: 'ylu-'+Date.now()+'-'+Math.random().toString(36).slice(2, 6) }, rec));
+        const key = (i['仪器编号'] || name)+'|'+day;
+        if(!marks[key] || marks[key] < ts) marks[key] = ts;
       });
     }
+    function ylDateShift(dstr, days){
+      const d = new Date(dstr+'T00:00:00');
+      if(isNaN(d)) return '';
+      d.setDate(d.getDate()+days);
+      return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    }
+    function ylHours(start, end){
+      const t0 = djParseTime(start), t1 = djParseTime(end);
+      return (t0 && t1) ? ((t1 - t0) / 3600000).toFixed(1) : '—';
+    }
+    /** 点检计划提交：汇总该仪器前一天的使用时长（前一天须有点检计划且当天有使用痕迹，每仪器每天一条） */
+    function ylAutoUsage(p){
+      if(!p) return;
+      const inst = djInstruments().find(r=> r.id===p._instId) || djInstruments().find(r=> r['仪器编号']===p['仪器编号']) || {};
+      const code = inst['仪器编号'] || p['仪器编号'] || '';
+      const prevDay = ylDateShift(String(p['计划开始时间']||'').slice(0,10), -1);
+      if(!code || !prevDay) return;
+      const pp = djPlanRows().find(r=> r!==p && (r._instId===p._instId || r['仪器编号']===code) && String(r['计划开始时间']||'').slice(0,10)===prevDay);
+      if(!pp) return;
+      const marks = ylMarkBag();
+      const end = Object.keys(marks).filter(k=> k.startsWith(code+'|'+prevDay)).map(k=> marks[k]).sort().pop();
+      if(!end) return;
+      if(ylUsageBag().some(r=> r['仪器编号']===code && String(r['开始时间']||'').slice(0,10)===prevDay)) return;
+      ylUsageBag().unshift(Object.assign({ id:'ylu-'+Date.now()+'-'+Math.random().toString(36).slice(2,6) },
+        bxInstSnap(inst), { 开始时间: pp['计划开始时间']||'', 结束时间: end, 使用时长: ylHours(pp['计划开始时间'], end), 添加方式:'自动' }));
+    }
+    /** 手动新增使用时长（面向无点检计划的仪器） */
+    const ylAdd = reactive({ visible:false, instId:'', start:'', end:'' });
+    const ylAddInstOptions = computed(()=> djInstruments().filter(i=> i['使用状态']!=='报废'));
+    function ylAddOpen(){
+      Object.assign(ylAdd, { instId:'', start:'', end:'' });
+      ylAdd.visible = true;
+    }
+    function ylAddConfirm(){
+      const inst = djInstruments().find(i=> i.id===ylAdd.instId);
+      if(!inst){ ElMessage.warning('请选择仪器'); return; }
+      if(!String(ylAdd.start||'').trim() || !String(ylAdd.end||'').trim()){ ElMessage.warning('请选择开始时间与结束时间'); return; }
+      const t0 = djParseTime(ylAdd.start), t1 = djParseTime(ylAdd.end);
+      if(t0 && t1 && t1 <= t0){ ElMessage.warning('结束时间须晚于开始时间'); return; }
+      ylUsageBag().unshift(Object.assign({ id:'ylu-'+Date.now()+'-'+Math.random().toString(36).slice(2,6) },
+        bxInstSnap(inst), { 开始时间: ylAdd.start, 结束时间: ylAdd.end, 使用时长: ylHours(ylAdd.start, ylAdd.end), 添加方式:'手动' }));
+      ylAdd.visible = false;
+      bumpStore();
+      ElMessage.success('已新增使用时长流水');
+    }
+    function ylUsageDelete(){
+      const ids = new Set(selectedIds.value||[]);
+      if(!ids.size){ ElMessage.warning('请先勾选数据'); return; }
+      const rows = ylUsageBag().filter(r=> ids.has(r.id));
+      const manual = rows.filter(r=> r['添加方式']==='手动');
+      if(!manual.length){ ElMessage.warning('仅支持删除手动添加的数据'); return; }
+      const skip = rows.length - manual.length;
+      ElementPlus.ElMessageBox.confirm('确认删除所选 '+manual.length+' 条手动添加的数据？'+(skip>0?'自动生成的数据不可删除，已跳过 '+skip+' 条。':''), '批量删除', { type:'warning', confirmButtonText:'删除', cancelButtonText:'取消' }).then(()=>{
+        MOCK[YL_PAGE]['tab-2'] = ylUsageBag().filter(r=> !manual.some(m=> m.id===r.id));
+        selectedIds.value = [];
+        bumpStore();
+        ElMessage.success('已删除 '+manual.length+' 条');
+      }).catch(()=>{});
+    }
     function ylUsageQueryRows(){
-      let l = applyContainsExactQuery(ylUsageBag().slice(), query, ['仪器编号','仪器名称','报检单号','物料名称','样品编号'], ['仪器类型','报检单类型','检验类']);
+      let l = applyContainsExactQuery(ylUsageBag().slice(), query, ['仪器编号','仪器名称','仪器条码','存放位置','责任部门','责任人'], ['仪器类型','添加方式']);
       l = applyDateRangeQuery(l, query, '开始时间');
       return l.sort((a,b)=> String(b['结束时间']||'').localeCompare(String(a['结束时间']||'')));
     }

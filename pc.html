@@ -2422,11 +2422,6 @@
                         <b v-if="!entrySpectra.length">—</b>
                       </div>
                     </div>
-                    <div class="entry-filters entry-filters--tab">
-                      <div class="entry-field"><label><span v-if="entryInstruments.length" style="color:#f56c6c">* </span>开始时间</label>
-                        <el-date-picker v-model="formModel['开始时间']" type="datetime" format="YYYY-MM-DD HH:mm" value-format="YYYY-MM-DD HH:mm" placeholder="请选择" style="width:200px"></el-date-picker>
-                      </div>
-                    </div>
                     <div v-if="entryPubParams.length" class="entry-matrix" style="margin:0 0 12px">
                       <div class="entry-matrix__hd">公用参数 · {{ entryPubParams.length }}项</div>
                       <div v-if="!entryPubCols" style="color:#8c8c8c">请选择公共测试次数</div>
@@ -4148,6 +4143,28 @@
     </template>
   </el-dialog>
 
+  <el-dialog v-model="ylAdd.visible" class="demo-dialog--biz" title="新增使用时长" width="520px" destroy-on-close append-to-body :close-on-click-modal="false">
+    <el-form label-width="120px" class="demo-form">
+      <el-form-item label="仪器信息" required>
+        <el-select v-model="ylAdd.instId" filterable placeholder="请选择仪器（无点检计划的设备可手动添加）" style="width:100%">
+          <el-option v-for="i in ylAddInstOptions" :key="i.id" :label="i['仪器编号']+' / '+i['仪器名称']" :value="i.id"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="开始时间" required>
+        <el-date-picker v-model="ylAdd.start" type="datetime" format="YYYY-MM-DD HH:mm" value-format="YYYY-MM-DD HH:mm" placeholder="请选择" style="width:100%"></el-date-picker>
+      </el-form-item>
+      <el-form-item label="结束时间" required>
+        <el-date-picker v-model="ylAdd.end" type="datetime" format="YYYY-MM-DD HH:mm" value-format="YYYY-MM-DD HH:mm" placeholder="请选择" style="width:100%"></el-date-picker>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <div style="display:flex;justify-content:flex-end;gap:8px">
+        <el-button @click="ylAdd.visible=false">取消</el-button>
+        <el-button type="primary" @click="ylAddConfirm">确定</el-button>
+      </div>
+    </template>
+  </el-dialog>
+
   <el-dialog v-model="fbTimeVisible" class="demo-dialog--biz" title="反馈时间" width="480px" destroy-on-close append-to-body :close-on-click-modal="false">
     <el-form label-width="120px" class="demo-form">
       <el-form-item label="预计完成时间" required>
@@ -4991,7 +5008,7 @@
           </div>
           <div v-if="!ledgerInspRaw.length" class="demo-readonly" style="padding:24px 0;text-align:center">暂无原始记录</div>
           <div v-for="g in ledgerInspRaw" :key="g.检验类" class="ledger-insp-raw__cat">
-            <div class="ledger-insp-raw__cat-hd">检验类：{{ g.检验类 }}<span style="margin-left:32px;font-weight:400">开始时间：{{ g.开始时间 || '—' }}</span></div>
+            <div class="ledger-insp-raw__cat-hd">检验类：{{ g.检验类 }}</div>
             <article v-for="(it, idx) in g.items" :key="g.检验类+'-'+idx" class="ledger-insp-raw__card">
               <div class="ledger-insp-raw__card-hd">
                 <span class="ledger-insp-raw__badge">{{ it['检验项类型'] || '定量' }}</span>
@@ -8940,8 +8957,8 @@
 <script src="https://cdn.jsdelivr.net/npm/vxe-table@4/lib/index.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
 <script src="./js/demo-announcements.js?v=1.4.24"></script>
-<script src="./js/page-configs.js?v=1.4.593"></script>
-<script src="./js/mock-rows.js?v=1.4.356"></script>
+<script src="./js/page-configs.js?v=1.4.594"></script>
+<script src="./js/mock-rows.js?v=1.4.357"></script>
 <script src="./js/dict-catalog.js?v=1.1.16"></script>
 <script src="./js/page-prd-notes.js?v=2.4.550"></script>
 <script src="./js/remarks-markdown.js?v=1.1.0"></script>
@@ -8968,6 +8985,6 @@
 <script src="./js/components/layouts/env-stat.js?v=1.0.0"></script>
 <script src="./js/components/layouts/batch-trace.js?v=1.0.0"></script>
 <script src="./js/components/layouts/sched-board.js?v=1.0.14"></script>
-<script src="./js/app.js?v=1.0.19"></script>
+<script src="./js/app.js?v=1.0.21"></script>
 </body>
 </html>

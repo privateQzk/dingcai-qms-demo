@@ -251,9 +251,6 @@
       }else if(!catRows.some(filled)){
         ElMessage.warning('请至少录入一个检验项的检验结果或检验结论'); return;
       }
-      if(!stay && (entryInstruments.value||[]).length && !String(formModel['开始时间']||'').trim()){
-        ElMessage.warning('已选择分析仪器，请填写开始时间'); return;
-      }
       const e = (s._entry = s._entry || {});
       e.items = e.items || {};
       e.done = e.done || [];
@@ -268,7 +265,7 @@
       lines.forEach(r=>{
         e.items[r['检验项']] = { 实测值: r['实测值']||'', 结论: r['结论']||'', 偏差结论: r['偏差结论']||'', 指标: r['指标']||'', 特殊公式: r['特殊公式']||'', 备注: r['备注']||'', 检验项类型: r['检验项类型']||'', 所属检验类: r['所属检验类']||'', 检验项单位: r['检验项单位']||'', 样本值: r._cells || {} };
       });
-      if(!stay && cat && !e.done.includes(cat)){ e.done.push(cat); ylUsageAdd(s, cat, nowStamp()); }
+      if(!stay && cat && !e.done.includes(cat)){ e.done.push(cat); ylUseMark(s, cat, nowStamp()); }
       entryDone.value = e.done.slice();
       flowStartSample(s);
       if(isLedgerModify){
@@ -321,7 +318,7 @@
       ElementPlus.ElMessageBox.confirm('确认提交样品 '+s['样品编号']+' 的「'+cat+'」检验数据？提交后该检验类不再出现在按类型录入列表。', '直接提交', { type: 'warning' }).then(()=>{
         const e = (s._entry = s._entry || {});
         e.done = e.done || [];
-        if(!e.done.includes(cat)){ e.done.push(cat); ylUsageAdd(s, cat, nowStamp()); }
+        if(!e.done.includes(cat)){ e.done.push(cat); ylUseMark(s, cat, nowStamp()); }
         flowStartSample(s);
         const all = ((flowAsgOf(s)||{}).lines || []).every(l=> e.done.includes(l['检验类']));
         if(all) flowFinishSample(s, nowStamp());

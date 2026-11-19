@@ -362,7 +362,6 @@
         files: (entryExtraFiles.value||[]).map(f=>({ name: f.name })),
         instruments: (entryInstruments.value||[]).slice(),
         spectra: (entrySpectra.value||[]).map(f=>({ id: f.id, name: f.name })),
-        startTime: formModel['开始时间'] || '',
         pubValues: JSON.parse(JSON.stringify(entryPubCells.value || {}))
       };
     }
@@ -386,7 +385,6 @@
       entryExtraFiles.value = ((st && st.files) || []).map(f=>({ name: f.name || '' })).filter(f=> f.name);
       entryInstruments.value = ((st && st.instruments) || []).slice();
       entrySpectra.value = ((st && st.spectra) || []).map(f=>({ id: f.id, name: f.name || '' })).filter(f=> f.name);
-      formModel['开始时间'] = (st && st.startTime) || '';
       entryMethodTab.value = '项目';
       entryMatSelected.value = [];
       entryMatScan.value = '';

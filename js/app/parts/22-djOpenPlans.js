@@ -390,6 +390,7 @@
         计划状态: '已完成', 操作时间: nowStamp(), 操作人: CI_OPERATOR,
         检查结果: djExecFields.value.some(f=> f.type==='judge' && data[f.label]==='不合格') ? '异常' : '正常'
       });
+      if(djKind().w==='点检') ylAutoUsage(p);
       const cycle = p['创建方式']==='自动' || String(p[LAB_INSP_AFFECT]||'').includes('循环');
       if(cycle) djSchemeWriteBack(p, 'done');
       const inst = djInstruments().find(r=> r.id===p._instId);
