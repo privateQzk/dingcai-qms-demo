@@ -357,6 +357,7 @@
         return;
       }
       formMode.value = mode || 'add';
+      if(pageId.value===HM_IMP_PAGE) hmEditBOnly.value = false;
       clearFormFieldTips();
       formSwitch['启用状态']=true;
       Object.keys(formModel).forEach(k=> delete formModel[k]);

@@ -2,7 +2,7 @@
      * 排程单元=任务分派 np-0201-13 中「行状态=已分配」的检验类行；排程状态独立存 MOCK[np-0201-18].main
      * （_lines 会被 taskSyncAll 重建，不能把排程字段放上去）。甘特行=在用仪器。
      * 约束来源：班组适用班次(15) × 检验日历(16) 判时间窗；计划工时=成本方案(14)标准系数。 */
-    const SCHED_PAGE = 'np-0201-18';
+    // SCHED_PAGE dideklarasikan di parts/06 (dipakai sebelum bagian ini saat watcher immediate)
     function schedBag(name){ const b = (MOCK[SCHED_PAGE] = MOCK[SCHED_PAGE] || {}); return (b[name] = b[name] || []); }
     function schedPlans(){ return schedBag('main'); }
     function schedLogs(){ return schedBag('log'); }
@@ -243,6 +243,7 @@
       canMove(t){ return !schedMoveBlockReason(t); },
       moveBlockReason(t){ return schedMoveBlockReason(t); },
       drop(t, instName, s, e){ schedDropPlan(t, instName, s, e); },
+      dropMulti(entries){ schedDropMulti(entries); },
       dlgCalcEnd(){
         const f = this.dlg.form; const st = schedParse(f.开始);
         f.结束 = (st && +f.工时>0) ? schedFmt(new Date(st.getTime()+ (+f.工时)*3600000)) : '';
@@ -523,6 +524,39 @@
       bumpStore();
       if(clash) ElMessage.warning('已调整；与 '+(ct ? ct['样品编号']+'-'+ct['检验类'] : '其他任务')+' 时段重叠，已标冲突');
       else ElMessage.success('已调整排程');
+    }
+    /** 甘特框选组拖落位：entries=[{t,instName,s,e}]，同 schedDropPlan 但批量写、一次提示；说明记「甘特批量拖动」 */
+    function schedDropMulti(entries){
+      const insts = ((MOCK.instrument||{}).main||[]);
+      const stamp = nowStamp();
+      let moved = 0, skipped = 0;
+      const clashSet = new Set();
+      (entries||[]).forEach(en=>{
+        const inst = insts.find(r=> r['仪器名称']===en.instName);
+        const exist = schedPlans().find(p=> p._key===en.t._key);
+        if(!inst || !exist){ skipped++; return; }
+        if(schedMoveBlockReason(en.t)){ skipped++; return; }
+        const st = new Date(en.s), e2 = new Date(en.e);
+        const oldDesc = schedPlanDesc(exist);
+        const team = en.t._team || en.t.检验班组;
+        Object.assign(exist, {
+          检验仪器: en.instName, 仪器编码: inst['仪器编号'],
+          计划开始: schedFmt(st), 计划结束: schedFmt(e2),
+          排程方式: '手动', 排程人: '管理员', 排程时间: stamp,
+          班次: schedShiftOf(team).name,
+          检验日历: (schedCalOf(team, schedFmtD(st))||{})['日历名称'] || '—'
+        });
+        schedPlans().forEach(p=>{
+          if(p['仪器编码']===inst['仪器编号'] && p._key!==en.t._key
+            && schedParse(p['计划开始'])<e2 && schedParse(p['计划结束'])>st) clashSet.add(p._key);
+        });
+        schedLog(en.t, '调整排程', oldDesc, schedPlanDesc(exist), '甘特批量拖动', '管理员', stamp);
+        moved++;
+      });
+      if(!moved){ if(skipped) ElMessage.warning('所选任务均不可调整'); return; }
+      bumpStore();
+      if(clashSet.size) ElMessage.warning('已批量调整 '+moved+' 个排程；其中 '+clashSet.size+' 个与其他任务时段重叠，已标冲突');
+      else ElMessage.success('已批量调整 '+moved+' 个排程');
     }
     /** 锁定/解锁排程：锁定后禁止拖动、调整、取消 */
     function schedToggleLock(t, lock){

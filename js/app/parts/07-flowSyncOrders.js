@@ -37,9 +37,6 @@
       if(isNaN(t)) return '正常';
       return Date.now() > t ? '逾期' : '正常';
     }
-    function flowFbStatusOf(s){
-      return (s && flowHas(s['反馈状态']) && s['反馈状态']==='已填写') ? '已填写' : '未填写';
-    }
     /** 样品检验类的实际检验仪器：检验排程计划仪器 > 任务分派适用仪器 */
     function entryInstOf(smp, cat){
       const p = (schedPlans()||[]).find(x=> x._key === (smp+'|'+cat));
@@ -59,12 +56,15 @@
         sampleRow['逾期状态'] = flowCalcOverdue(sampleRow['预计完成时间']);
         bySample[tab].push(sampleRow);
         const done = ((s._entry||{}).done) || [];
-        const fb = flowFbStatusOf(s);
+        const tfRow = timeFbTab('tab-1').find(o=> o['样品编号']===s['样品编号']);
         asg.lines.forEach(ln=>{
           if(done.includes(ln['检验类'])) return;
           const row = flowPick(flowCols(FLOW_ENTRY_CAT, tab), srcs, { 检验类名称: ln['检验类'], 检验班组: ln['分配班组'] || '—', 分析仪器: ln['分析仪器'] || '—', 检验仪器: entryInstOf(s['样品编号'], ln['检验类']) || ln['分析仪器'] || '—' });
-          row['逾期状态'] = flowCalcOverdue(row['预计完成时间']);
-          byCat[tab].push(Object.assign(row, { id: 'ec-'+s['样品编号']+'-'+ln['检验类'], _items: ln['检验项'], _fb: fb }));
+          const tfl = tfRow && (tfRow._lines||[]).find(l=> l['检验类']===ln['检验类']);
+          const lineEta = tfl ? timeFbNormEta(tfl['预计完成时间']) : '';
+          row['预计完成时间'] = lineEta || '—';
+          row['逾期状态'] = flowCalcOverdue(lineEta);
+          byCat[tab].push(Object.assign(row, { id: 'ec-'+s['样品编号']+'-'+ln['检验类'], _items: ln['检验项'], _fb: lineEta ? '已填写' : '未填写' }));
         });
       });
       FLOW_TABS.forEach(({ name })=>{
@@ -112,12 +112,24 @@
         }
       }
     }
+    /** 数据录入-我的：反馈时间只写本行（样品×检验类），样品级预计完成时间取各行最晚 */
+    function applyFbLineEta(row, eta){
+      const tf = timeFbTab('tab-1').find(o=> o['样品编号']===row['样品编号']);
+      const cat = row['检验类名称'];
+      const ln = tf && (tf._lines||[]).find(l=> l['检验类']===cat && l['行状态']!=='无需分配');
+      if(ln){
+        ln['预计完成时间'] = eta;
+        tf['时间同步状态'] = '未同步';
+        timeFbRecalc(tf);
+        applyFbEta(row, tf['预计完成时间'], { keepLines: true });
+      } else {
+        applyFbEta(row, eta, { keepLines: true });
+      }
+    }
     function openFbTime(row){
       fbTimeRow.value = row;
       const cur = row && flowHas(row['预计完成时间']) ? row['预计完成时间'] : '';
-      const s = row ? flowSplitRow(row['样品编号']) : null;
-      const fromS = s && flowHas(s['预计完成时间']) ? s['预计完成时间'] : '';
-      fbTimeForm.预计完成时间 = cur && cur!=='—' ? cur : (fromS || '');
+      fbTimeForm.预计完成时间 = cur && cur!=='—' ? cur : '';
       fbTimeVisible.value = true;
     }
     function confirmFbTime(){
@@ -125,7 +137,7 @@
       if(!eta){ ElMessage.warning('请选择预计完成时间'); return; }
       const row = fbTimeRow.value;
       if(!row){ fbTimeVisible.value = false; return; }
-      applyFbEta(row, eta);
+      applyFbLineEta(row, eta);
       fbTimeVisible.value = false;
       flowSyncEntry();
       bumpStore();
@@ -137,8 +149,6 @@
       fbBatchFill.value = '';
       fbBatchRows.value = rows.map(r=>{
         const cur = flowHas(r['预计完成时间']) ? r['预计完成时间'] : '';
-        const s = flowSplitRow(r['样品编号']);
-        const fromS = s && flowHas(s['预计完成时间']) ? s['预计完成时间'] : '';
         return {
           id: r.id,
           报检单号: r['报检单号'] || '—',
@@ -149,7 +159,7 @@
           物料名称: r['物料名称'] || '—',
           物料规格: r['物料规格'] || '—',
           物料种类: r['物料种类'] || '—',
-          预计完成时间: (cur && cur!=='—') ? cur : (fromS || '')
+          预计完成时间: (cur && cur!=='—') ? cur : ''
         };
       });
       fbBatchVisible.value = true;
@@ -167,7 +177,7 @@
         ElMessage.warning('请为所有行填写预计完成时间');
         return;
       }
-      rows.forEach(r=> applyFbEta(r, String(r.预计完成时间).trim()));
+      rows.forEach(r=> applyFbLineEta(r, String(r.预计完成时间).trim()));
       fbBatchVisible.value = false;
       selectedIds.value = [];
       flowSyncEntry();

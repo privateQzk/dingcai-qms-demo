@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vxe-pc-ui@4/lib/style.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vxe-table@4/lib/style.css" />
-<link rel="stylesheet" href="./css/app.css?v=1.0.7" />
+<link rel="stylesheet" href="./css/app.css?v=1.0.8" />
 </head>
 <body>
 <div id="app" v-cloak>
@@ -2764,7 +2764,7 @@
       <section class="demo-form-section" v-else>
         <h4 v-if="!page.hideFormSectionTitle && !isTreeTypeForm" class="demo-form-section__title"><span>{{ page.formSectionTitle || (pageId==='dict' ? '字典项信息' : (page.formFlat ? '表单信息' : '头信息')) }}</span></h4>
         <el-alert v-if="(page.formTips||[]).length" :type="page.formTipsType || 'warning'" :show-icon="!!page.formTipsType" :closable="false" style="margin-bottom:12px" :title="(page.formTips||[])[0]"></el-alert>
-        <div class="demo-form-grid" :class="{ 'demo-form-grid--cols-1': isTreeTypeForm || (page.formGridCols||2)===1, 'demo-form-grid--cols-3': !isTreeTypeForm && page.formGridCols===3, 'demo-form-grid--cols-4': !isTreeTypeForm && page.formGridCols===4, 'demo-form-grid--cols-5': !isTreeTypeForm && page.formGridCols===5 }" v-if="activeFormFields.length">
+        <div class="demo-form-grid" :inert="pageId==='np-0215-05' && hmEditBOnly ? true : undefined" :class="{ 'scheme-readonly': pageId==='np-0215-05' && hmEditBOnly, 'demo-form-grid--cols-1': isTreeTypeForm || (page.formGridCols||2)===1, 'demo-form-grid--cols-3': !isTreeTypeForm && page.formGridCols===3, 'demo-form-grid--cols-4': !isTreeTypeForm && page.formGridCols===4, 'demo-form-grid--cols-5': !isTreeTypeForm && page.formGridCols===5 }" v-if="activeFormFields.length">
           <el-form-item v-for="f in activeFormFields.filter(isFormFieldVisible)" :key="f.name" :label-width="f.labelWidth || undefined" :required="isFormFieldRequired(f)" :class="{ 'demo-form-label-red': f.labelRed, 'span-2': (f.type==='textarea' || f.type==='radio' || f.fullRow) && !f.halfRow && pageId!=='item-uom', 'span-2cols': f.span===2 && !f.fullRow }">
             <template #label>
               <span class="demo-form-label-tip">
@@ -2931,17 +2931,17 @@
               <div class="insp-method-param-block__tools" style="margin-right:auto">
                 <el-button size="small" type="primary" @click="hmImpCompareEntry">数据比对</el-button>
               </div>
-              <div class="insp-method-param-block__tools">
+              <div class="insp-method-param-block__tools" v-if="!hmEditBOnly">
                 <el-button size="small" type="primary" @click="hmImpAddEntryRows">添加一行</el-button>
                 <el-button size="small" type="danger" :disabled="!(hmImpEntrySel&&hmImpEntrySel.length)" @click="hmImpDelEntryRows">批量删除</el-button>
               </div>
             </div>
             <el-table class="demo-data-table demo-data-table--striped" :data="hmImpEntryRows" border stripe max-height="420" empty-text="暂无数据" @selection-change="rows => hmImpEntrySel = rows" style="width:100%">
-              <el-table-column v-if="formMode!=='detail'" type="selection" width="48"></el-table-column>
+              <el-table-column v-if="formMode!=='detail' && !hmEditBOnly" type="selection" width="48"></el-table-column>
               <el-table-column type="index" label="序号" width="64"></el-table-column>
               <el-table-column label="标准编号" min-width="160">
                 <template #default="{ row }">
-                  <el-input :model-value="row['标准编号']||''" readonly class="demo-picker-input" :placeholder="formMode==='detail' ? '' : '点击选择'" :disabled="formMode==='detail'" @click="formMode!=='detail' && openHmImpStdPick(row)"></el-input>
+                  <el-input :model-value="row['标准编号']||''" readonly class="demo-picker-input" :placeholder="(formMode==='detail' || hmEditBOnly) ? '' : '点击选择'" :disabled="formMode==='detail' || hmEditBOnly" @click="formMode!=='detail' && !hmEditBOnly && openHmImpStdPick(row)"></el-input>
                 </template>
               </el-table-column>
               <el-table-column prop="标准名称" label="标准名称" min-width="180" show-overflow-tooltip>
@@ -8970,8 +8970,8 @@
 <script src="https://cdn.jsdelivr.net/npm/vxe-table@4/lib/index.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
 <script src="./js/demo-announcements.js?v=1.4.24"></script>
-<script src="./js/page-configs.js?v=1.4.604"></script>
-<script src="./js/mock-rows.js?v=1.4.357"></script>
+<script src="./js/page-configs.js?v=1.4.606"></script>
+<script src="./js/mock-rows.js?v=1.4.358"></script>
 <script src="./js/dict-catalog.js?v=1.1.16"></script>
 <script src="./js/page-prd-notes.js?v=2.4.554"></script>
 <script src="./js/remarks-markdown.js?v=1.1.0"></script>
@@ -8998,7 +8998,7 @@
 <script src="./js/components/layouts/spc-process.js?v=1.0.2"></script>
 <script src="./js/components/layouts/env-stat.js?v=1.0.0"></script>
 <script src="./js/components/layouts/batch-trace.js?v=1.0.0"></script>
-<script src="./js/components/layouts/sched-board.js?v=1.0.15"></script>
-<script src="./js/app.js?v=1.0.33"></script>
+<script src="./js/components/layouts/sched-board.js?v=1.0.16"></script>
+<script src="./js/app.js?v=1.0.40"></script>
 </body>
 </html>

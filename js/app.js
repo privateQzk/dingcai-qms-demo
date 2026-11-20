@@ -3382,6 +3382,7 @@ const app = createApp({
     function openSlocLog(row){ slocLogNo.value = row['样品编号']; slocLogVisible.value = true; }
     const TASK_PAGE = 'np-0201-13';
     const TIME_FB_PAGE = 'np-0201-05';
+    const SCHED_PAGE = 'np-0201-18';
     const DISPATCH_PAGE = 'np-0103-12';
     const SHIFT_PAGE = 'np-0103-15';
     const CAL_PAGE = 'np-0103-16';
@@ -3525,6 +3526,7 @@ const app = createApp({
         const prev = old.get(s['样品编号']);
         const o = prev || { id: 'ta-'+s['样品编号'], 样品编号: s['样品编号'], 最近分配人: '—', 最近分配时间: '—', 预计完成时间: '—' };
         TASK_SAMPLE_KEYS.forEach(k=>{ o[k] = s[k] || '—'; });
+        o['优先级'] = ((flowOrderOf(s['报检单号'])||{}).row||{})['优先级'] || '—';
         delete o['样品类型']; delete o['母样编号'];
         o._grpTime = s['取样时间'] || '';
         const kept = new Map((o._lines||[]).map(l=> [l['检验类'], l]));
@@ -3723,9 +3725,6 @@ const app = createApp({
       if(isNaN(t)) return '正常';
       return Date.now() > t ? '逾期' : '正常';
     }
-    function flowFbStatusOf(s){
-      return (s && flowHas(s['反馈状态']) && s['反馈状态']==='已填写') ? '已填写' : '未填写';
-    }
     /** 样品检验类的实际检验仪器：检验排程计划仪器 > 任务分派适用仪器 */
     function entryInstOf(smp, cat){
       const p = (schedPlans()||[]).find(x=> x._key === (smp+'|'+cat));
@@ -3745,12 +3744,15 @@ const app = createApp({
         sampleRow['逾期状态'] = flowCalcOverdue(sampleRow['预计完成时间']);
         bySample[tab].push(sampleRow);
         const done = ((s._entry||{}).done) || [];
-        const fb = flowFbStatusOf(s);
+        const tfRow = timeFbTab('tab-1').find(o=> o['样品编号']===s['样品编号']);
         asg.lines.forEach(ln=>{
           if(done.includes(ln['检验类'])) return;
           const row = flowPick(flowCols(FLOW_ENTRY_CAT, tab), srcs, { 检验类名称: ln['检验类'], 检验班组: ln['分配班组'] || '—', 分析仪器: ln['分析仪器'] || '—', 检验仪器: entryInstOf(s['样品编号'], ln['检验类']) || ln['分析仪器'] || '—' });
-          row['逾期状态'] = flowCalcOverdue(row['预计完成时间']);
-          byCat[tab].push(Object.assign(row, { id: 'ec-'+s['样品编号']+'-'+ln['检验类'], _items: ln['检验项'], _fb: fb }));
+          const tfl = tfRow && (tfRow._lines||[]).find(l=> l['检验类']===ln['检验类']);
+          const lineEta = tfl ? timeFbNormEta(tfl['预计完成时间']) : '';
+          row['预计完成时间'] = lineEta || '—';
+          row['逾期状态'] = flowCalcOverdue(lineEta);
+          byCat[tab].push(Object.assign(row, { id: 'ec-'+s['样品编号']+'-'+ln['检验类'], _items: ln['检验项'], _fb: lineEta ? '已填写' : '未填写' }));
         });
       });
       FLOW_TABS.forEach(({ name })=>{
@@ -3798,12 +3800,24 @@ const app = createApp({
         }
       }
     }
+    /** 数据录入-我的：反馈时间只写本行（样品×检验类），样品级预计完成时间取各行最晚 */
+    function applyFbLineEta(row, eta){
+      const tf = timeFbTab('tab-1').find(o=> o['样品编号']===row['样品编号']);
+      const cat = row['检验类名称'];
+      const ln = tf && (tf._lines||[]).find(l=> l['检验类']===cat && l['行状态']!=='无需分配');
+      if(ln){
+        ln['预计完成时间'] = eta;
+        tf['时间同步状态'] = '未同步';
+        timeFbRecalc(tf);
+        applyFbEta(row, tf['预计完成时间'], { keepLines: true });
+      } else {
+        applyFbEta(row, eta, { keepLines: true });
+      }
+    }
     function openFbTime(row){
       fbTimeRow.value = row;
       const cur = row && flowHas(row['预计完成时间']) ? row['预计完成时间'] : '';
-      const s = row ? flowSplitRow(row['样品编号']) : null;
-      const fromS = s && flowHas(s['预计完成时间']) ? s['预计完成时间'] : '';
-      fbTimeForm.预计完成时间 = cur && cur!=='—' ? cur : (fromS || '');
+      fbTimeForm.预计完成时间 = cur && cur!=='—' ? cur : '';
       fbTimeVisible.value = true;
     }
     function confirmFbTime(){
@@ -3811,7 +3825,7 @@ const app = createApp({
       if(!eta){ ElMessage.warning('请选择预计完成时间'); return; }
       const row = fbTimeRow.value;
       if(!row){ fbTimeVisible.value = false; return; }
-      applyFbEta(row, eta);
+      applyFbLineEta(row, eta);
       fbTimeVisible.value = false;
       flowSyncEntry();
       bumpStore();
@@ -3823,8 +3837,6 @@ const app = createApp({
       fbBatchFill.value = '';
       fbBatchRows.value = rows.map(r=>{
         const cur = flowHas(r['预计完成时间']) ? r['预计完成时间'] : '';
-        const s = flowSplitRow(r['样品编号']);
-        const fromS = s && flowHas(s['预计完成时间']) ? s['预计完成时间'] : '';
         return {
           id: r.id,
           报检单号: r['报检单号'] || '—',
@@ -3835,7 +3847,7 @@ const app = createApp({
           物料名称: r['物料名称'] || '—',
           物料规格: r['物料规格'] || '—',
           物料种类: r['物料种类'] || '—',
-          预计完成时间: (cur && cur!=='—') ? cur : (fromS || '')
+          预计完成时间: (cur && cur!=='—') ? cur : ''
         };
       });
       fbBatchVisible.value = true;
@@ -3853,7 +3865,7 @@ const app = createApp({
         ElMessage.warning('请为所有行填写预计完成时间');
         return;
       }
-      rows.forEach(r=> applyFbEta(r, String(r.预计完成时间).trim()));
+      rows.forEach(r=> applyFbLineEta(r, String(r.预计完成时间).trim()));
       fbBatchVisible.value = false;
       selectedIds.value = [];
       flowSyncEntry();
@@ -17012,6 +17024,7 @@ function nextWjNo(){
       }
       if(pageId.value===HM_IMP_PAGE){
         if(['编辑','确认导入'].includes(op.name) && !hmOpenRow(row)) return hmImpTip()+op.name;
+        if(op.name==='修改数据B' && !hmDone(row)) return '仅导入状态为「已导入」的导入单可修改数据';
       }
       if(pageId.value===HM_VOID_PAGE){
         if(['编辑','确认作废'].includes(op.name) && !hmOpenRow(row)) return hmVoidTip()+op.name;
@@ -24230,6 +24243,8 @@ function nextWjNo(){
     const hmImpEntryTab = ref('entry');
     const hmImpEntryRows = ref([]);
     const hmImpEntrySel = ref([]);
+    /** 「修改数据B」模式：全屏页仅数据录入「测试值」可改，其余组件禁用；仅已导入行可用 */
+    const hmEditBOnly = ref(false);
     const hmImpEntryTarget = ref(null);
     function hmImpResetEntry(){
       hmImpEntryRows.value = [];
@@ -25193,6 +25208,28 @@ function nextWjNo(){
       }).catch(()=>{});
     }
     function hmSaveForm(){
+      if(hmEditBOnly.value){
+        // 修改数据B：仅已导入单、仅回写数据录入行（测试值 + 重算比对结果），头信息不校验不改写
+        const cur = hmImpRows().find(r=> r.id===formModel._editId);
+        if(!cur){ ElMessage.warning('未找到待编辑数据'); return; }
+        if(!hmDone(cur)){ ElMessage.warning('仅导入状态为「已导入」的导入单可修改数据'); return; }
+        hmImpEntryRows.value.forEach(r=>{
+          r['比对结果'] = String(r['测试值']||'').trim() ? hmImpCompareOne(r) : '';
+        });
+        cur._entryLines = (hmImpEntryRows.value||[]).map(r=> ({
+          id: r.id,
+          标准编号: r['标准编号']||'',
+          标准名称: r['标准名称']||'',
+          测试值: r['测试值']||'',
+          单位: r['单位']||'',
+          比对结果: r['比对结果']||'',
+          _archId: r._archId || ''
+        }));
+        formVisible.value = false;
+        bumpStore();
+        ElMessage.success('保存成功');
+        return;
+      }
       refreshHmExpire();
       const fields = (activeFormFields.value||[]).filter(f=> f && f.name);
       if(!qcCheckRequired(fields)) return;
@@ -26714,6 +26751,7 @@ function nextWjNo(){
         return;
       }
       formMode.value = mode || 'add';
+      if(pageId.value===HM_IMP_PAGE) hmEditBOnly.value = false;
       clearFormFieldTips();
       formSwitch['启用状态']=true;
       Object.keys(formModel).forEach(k=> delete formModel[k]);
@@ -29865,11 +29903,12 @@ function nextWjNo(){
       if(pageId.value===SPI_PAGE && op.name==='重新识别'){ reRecognizeSpi(row); return; }
       if(pageId.value===SPI_PAGE && op.name==='删除'){ deleteSpiRows([row]); return; }
       if(pageId.value===COST_FLOW && op.name==='编辑'){ openCostFlowEdit(row); return; }
-      if(op.name==='编辑' || op.name==='复制' || op.name==='版本查看' || (op.name==='详情' && (pageId.value==='insp-scheme' || pageId.value==='insp-method' || pageId.value===HM_IMP_PAGE))){
+      if(op.name==='编辑' || op.name==='复制' || op.name==='版本查看' || (op.name==='修改数据B' && pageId.value===HM_IMP_PAGE) || (op.name==='详情' && (pageId.value==='insp-scheme' || pageId.value==='insp-method' || pageId.value===HM_IMP_PAGE))){
         if(pageId.value==='np-0501-01' && op.name==='编辑' && (row||{})['采集状态']==='开启'){
           ElMessage.warning('开启状态不可编辑'); return;
         }
         openForm((op.name==='详情' || op.name==='版本查看') ? 'detail' : (op.name==='复制' ? 'copy' : 'edit'));
+        if(pageId.value===HM_IMP_PAGE) hmEditBOnly.value = (op.name==='修改数据B');
         if(pageId.value==='np-0501-01') formModel['采集方案编码'] = row['采集方案编码'] || '';
         formSwitch['启用状态'] = row['启用状态']!=='禁用';
         (activeFormFields.value||[]).forEach(f=>{
@@ -39615,7 +39654,7 @@ function nextWjNo(){
      * 排程单元=任务分派 np-0201-13 中「行状态=已分配」的检验类行；排程状态独立存 MOCK[np-0201-18].main
      * （_lines 会被 taskSyncAll 重建，不能把排程字段放上去）。甘特行=在用仪器。
      * 约束来源：班组适用班次(15) × 检验日历(16) 判时间窗；计划工时=成本方案(14)标准系数。 */
-    const SCHED_PAGE = 'np-0201-18';
+    // SCHED_PAGE dideklarasikan di parts/06 (dipakai sebelum bagian ini saat watcher immediate)
     function schedBag(name){ const b = (MOCK[SCHED_PAGE] = MOCK[SCHED_PAGE] || {}); return (b[name] = b[name] || []); }
     function schedPlans(){ return schedBag('main'); }
     function schedLogs(){ return schedBag('log'); }
@@ -39856,6 +39895,7 @@ function nextWjNo(){
       canMove(t){ return !schedMoveBlockReason(t); },
       moveBlockReason(t){ return schedMoveBlockReason(t); },
       drop(t, instName, s, e){ schedDropPlan(t, instName, s, e); },
+      dropMulti(entries){ schedDropMulti(entries); },
       dlgCalcEnd(){
         const f = this.dlg.form; const st = schedParse(f.开始);
         f.结束 = (st && +f.工时>0) ? schedFmt(new Date(st.getTime()+ (+f.工时)*3600000)) : '';
@@ -40136,6 +40176,39 @@ function nextWjNo(){
       bumpStore();
       if(clash) ElMessage.warning('已调整；与 '+(ct ? ct['样品编号']+'-'+ct['检验类'] : '其他任务')+' 时段重叠，已标冲突');
       else ElMessage.success('已调整排程');
+    }
+    /** 甘特框选组拖落位：entries=[{t,instName,s,e}]，同 schedDropPlan 但批量写、一次提示；说明记「甘特批量拖动」 */
+    function schedDropMulti(entries){
+      const insts = ((MOCK.instrument||{}).main||[]);
+      const stamp = nowStamp();
+      let moved = 0, skipped = 0;
+      const clashSet = new Set();
+      (entries||[]).forEach(en=>{
+        const inst = insts.find(r=> r['仪器名称']===en.instName);
+        const exist = schedPlans().find(p=> p._key===en.t._key);
+        if(!inst || !exist){ skipped++; return; }
+        if(schedMoveBlockReason(en.t)){ skipped++; return; }
+        const st = new Date(en.s), e2 = new Date(en.e);
+        const oldDesc = schedPlanDesc(exist);
+        const team = en.t._team || en.t.检验班组;
+        Object.assign(exist, {
+          检验仪器: en.instName, 仪器编码: inst['仪器编号'],
+          计划开始: schedFmt(st), 计划结束: schedFmt(e2),
+          排程方式: '手动', 排程人: '管理员', 排程时间: stamp,
+          班次: schedShiftOf(team).name,
+          检验日历: (schedCalOf(team, schedFmtD(st))||{})['日历名称'] || '—'
+        });
+        schedPlans().forEach(p=>{
+          if(p['仪器编码']===inst['仪器编号'] && p._key!==en.t._key
+            && schedParse(p['计划开始'])<e2 && schedParse(p['计划结束'])>st) clashSet.add(p._key);
+        });
+        schedLog(en.t, '调整排程', oldDesc, schedPlanDesc(exist), '甘特批量拖动', '管理员', stamp);
+        moved++;
+      });
+      if(!moved){ if(skipped) ElMessage.warning('所选任务均不可调整'); return; }
+      bumpStore();
+      if(clashSet.size) ElMessage.warning('已批量调整 '+moved+' 个排程；其中 '+clashSet.size+' 个与其他任务时段重叠，已标冲突');
+      else ElMessage.success('已批量调整 '+moved+' 个排程');
     }
     /** 锁定/解锁排程：锁定后禁止拖动、调整、取消 */
     function schedToggleLock(t, lock){
@@ -40458,6 +40531,10 @@ function nextWjNo(){
           '样品入库':'tag-g','领用检验':'tag-o','样品处置':'tag-gr' };
         if(m[v]) return m[v];
       }
+      if(pageId.value===FLOW_MY_TASK){
+        const m = { '已填写':'tag-g','未填写':'tag-o','正常':'tag-g','逾期':'tag-r' };
+        if(m[v]) return m[v];
+      }
       if(pageId.value===TASK_PAGE || pageId.value===TIME_FB_PAGE || pageId.value===DISPATCH_PAGE || pageId.value==='insp-team'){
         const m = { '未分配':'tag-o','部分分配':'tag-b','完全分配':'tag-g','待分配':'tag-o','已分配':'tag-g','无需分配':'tag-gr',
           '自动分配':'tag-b','手动分配':'tag-p','调整分配':'tag-o',
@@ -40664,7 +40741,7 @@ function nextWjNo(){
       batchVisible, batchTitle, batchForm, batchLines, batchSelected, batchFieldSource, batchCtx, isBatchFieldLocked, batchLockedDisplay, batchSelectOptions, resetBatchCtx, onDetailLineRowAction,
       craftVisible, craftProcVisible, craftProcForm, craftTitle, craftKw, craftZoom, craftLocked, craftNodes, filteredCraftProcs, craftEdgeLines,
       openCraftProc, onCraftProcOk,
-      MSA_TIPS, MSA_STD_KEYS, msaFormVisible, msaFormMode, msaTab, msaForm, msaInsts, msaInstSel, msaStds, msaStdSel, msaItems, msaItemSel, msaSpecOf, onMsaAction, msaRemoveItems, msaItemHead, saveMsaForm, msaDtVisible, msaDtKeys, msaDtPlan, msaDtGroups, msaEntryDisabled, onMsaEntryOp, msaEn, msaEnStd, msaEnItems, msaEnRows, msaEnCalc, msaImport, saveMsaEntry, msaPrec, msaFmt, msaPv, stbFormVisible, stbFormMode, stbTab, stbForm, stbInsts, stbInstSel, stbStds, stbStdSel, stbItems, stbItemSel, onStbAction, stbRemoveItems, saveStbForm, stbDtVisible, stbDtPlan, stbMeasures, stbMeasureSel, stbDtStd, stbFinishTip, stbAddMeasure, stbDelMeasures, stbFinish, stbEntryDisabled, onStbEntryOp, stbEn, stbEnStd, stbEnItems, stbImport, saveStbEntry, stbPv, biasFormVisible, biasFormMode, biasForm, biasInstOptions, biasPeople, biasTypes, onBiasInst, refreshBiasNo, saveBiasForm, biasDtVisible, biasDt, biasDtKeys, biasAn, biasAnStats, biasCell, biasFmtNum, saveBiasEntry, biasDownloadTpl, biasImport, biasFilesVisible, biasFileNo, openBiasFiles, openBiasPreview, biasPv, qcDownload, ElMessage, tagClass, srShare, saveSrShare, copySrShare, srFill, submitSrFill, srReview, openSrReview, submitSrReview, srExt, srExtLogin, srExtKeys, srExtVal, openSrFill, refreshHmExpire, hmHist, openHmHistDetail, hmCmp, hmArchLineTab, hmArchPlant, hmArchCust, hmArchLaw, hmArchPlantSel, hmArchCustSel, hmArchLawSel, hmImpEntryTab, hmImpEntryRows, hmImpEntrySel, hmImpAddEntryRows, openHmImpStdPick, hmImpDelEntryRows, hmImpCompareEntry, hmArchAddLine, hmArchDelLines, hmCmpPassCount, hmCmpFailCount, hmCmpSkipCount, hmCmpRowClass, hmCmpValStyle, confirmHmCompare, hmFilePick, hmVoidPickRows, hmFilePickRows, confirmHmFilePick, refreshHmChgExpire, designVisible, designTitle, designBasic, designAdvanced, designCanvas, designFormName, designFormTitle, designActive, designActiveField, designDragType, formPreviewVisible, djExecVisible, djExecReadonly, djExecRow, djExecData, djExecFields, djExecHead, djExecFormName, djSign, saveDjExec, labInspExecVisible, labInspExecReadonly, labInspExecRow, labInspExecData, labInspExecFields, labInspExecFormName, labInspExecHead, openLabInspExec, labInspSign, saveLabInspExec, tyK, instDictOpts, tyDetailVisible, tyDetail, tyDetailKeys, tyDetailLines, TY_NOTICE_KEYS, TY_NOTICE_REQ, AP_TYPES, AP_LEADERS, AP_WAYS, AP_REMIND, AP_UNITS, tyTypes, tyFormVisible, tyFormMode, tyFormLines, tyFormSel, tyForm, onTyLineAction, saveTyForm, tyApVisible, tyApBatch, tyApRows, tyApSel, tyAp, tyApFlows, tyApLocked, tyApUsers, loadTyFlow, addTyNode, copyTyNode, removeTyNodes, onTyApType, onTyApField, submitTyAp, tyAuditVisible, tyAuditForm, tyAuditNode, submitTyAudit, sgVisible, sgMode, sgTab, sgForm, sgTitle, sgSchemeText, SG_ZERO, SG_ROUND, SG_TAKE, sgLineSel, openSgPick, removeSgSchemes, saveSg, sgPickVisible, sgPickCode, sgPickName, sgPickQuery, sgPickRows, sgPickSel, confirmSgPick, srVisible, srMode, srForm, srTitle, srPartyLabel, srMonthOpts, SR_DIMS, SR_WEEK, srSchemeOpts, srItemOpts, srFillItems, openSrPick, srOnDim, srOnTarget, saveSr, deleteSr, srSpcVisible, srSpcMenu, srSpcKey, srSpc, srRuleNames, srToggleAll, srToggleOne, srRestore, saveSrSpc, openChartSpcSettings, SR_FILTER_ROWS, SR_ZERO, SR_ROUND, SR_TAKE, SR_GROUP_SECS, SR_CHART_TYPES, SR_TIP_FIELDS, SR_DASH, srClearFilter, srRestoreGroup, srRestoreLimit, srRestoreView, srOnTake, srEnsureTips, srToggleLimit, srToggleTipAll, srToggleTipOne, acVisible, acRuleVisible, acRuleMenu, acRule, AC_RULE_FILTER, AC_RULE_ZERO, AC_RULE_ROUND, AC_RULE_TAKE, AC_RULE_SECS, AC_RULE_FILTER_NOTES, AC_RULE_TOP_NOTES, AC_RULE_GROUP_NOTES, openAcRule, saveAcRule, acRuleClear, acRuleRestore, acMode, acForm, acTitle, acPartyLabel, AC_METRICS, acSchemeOpts, openAcPick, acOnTarget, saveAc, deleteAc, MY_WX_PAGE, WO_LINK_PAGES, YS_SECS, woFixTab, woParts, woPartSel, removeWoParts, roundWoPart, ysDlgVisible, ysDlgBatch, ysDlgRows, ysForm, saveYsDlg, WO_PAGE, CL_REPAIR, WO_FIX_SECS, bxFormKind, bxFaultLocked, saveWoForm, bxExpTip, woFixVisible, woFixRow, woFix, openWoExp, saveWoFix, CL_WAYS, clDlgVisible, clDlgBatch, clDlgRows, clForm, clNeedRepair, clFaultTypes, saveClDraft, submitClDlg, maintTeamNames, bxDetailSecs, BX_INST_KEYS, BX_DETAIL, BX_FILE_KEYS, BX_TAG_KEYS, bxFormVisible, bxFormMode, bxFormTitle, bxFormLines, bxFormSel, bxForm, bxLineTypes, bxFaultTypes, onBxLineAction, saveBxForm, bxExpVisible, bxExpPick, bxExpRows, openBxExp, confirmBxExp, bxLinkVisible, bxLinkNos, bxLinkRows, goBxLink, bxDetailVisible, bxDetailRow, bxDetailTab, bxFlowNodes, openBxFlowNo, wjExecVisible, wjExecRow, wjExecLines, wjExecSel, onWjLineAction, onWjLineChange, openWjLineSupplier, saveWjExec, INST_PAGE, INST_BASE_FIELDS, INST_BASE_REQ, INST_CYCLE_UNITS, INST_DEPT_TREE, INST_DICTS, instTypeId, instTypeKw, instTypeList, instAllTypes, instCfgFieldList, onInstTypeQuery, selectInstType, onInstTypeOp, instTypeVisible, instTypeTitle, instTypeForm, openInstType, saveInstType, instCfgVisible, instCfgRows, instCfgSel, openInstCfg, addInstCfgRow, onInstCfgAttr, delInstCfgRows, saveInstCfg, instImageUrl, previewInstImage, instFormVisible, instFormMode, instFormTitle, instFormBase, instFormCfg, instFormOther, INST_PLAN_FIELDS, fillInstPlan, instUsers, onInstCodeInput, calcInstNext, onInstCycleInput, pickInstSupplier, saveInstForm, instLinkVisible, instLinkNos, instLinkRows, goInstLink, instIoTip, djMyUser, djMyUsers, isDjMyPage, isDjPlanPage,
+      MSA_TIPS, MSA_STD_KEYS, msaFormVisible, msaFormMode, msaTab, msaForm, msaInsts, msaInstSel, msaStds, msaStdSel, msaItems, msaItemSel, msaSpecOf, onMsaAction, msaRemoveItems, msaItemHead, saveMsaForm, msaDtVisible, msaDtKeys, msaDtPlan, msaDtGroups, msaEntryDisabled, onMsaEntryOp, msaEn, msaEnStd, msaEnItems, msaEnRows, msaEnCalc, msaImport, saveMsaEntry, msaPrec, msaFmt, msaPv, stbFormVisible, stbFormMode, stbTab, stbForm, stbInsts, stbInstSel, stbStds, stbStdSel, stbItems, stbItemSel, onStbAction, stbRemoveItems, saveStbForm, stbDtVisible, stbDtPlan, stbMeasures, stbMeasureSel, stbDtStd, stbFinishTip, stbAddMeasure, stbDelMeasures, stbFinish, stbEntryDisabled, onStbEntryOp, stbEn, stbEnStd, stbEnItems, stbImport, saveStbEntry, stbPv, biasFormVisible, biasFormMode, biasForm, biasInstOptions, biasPeople, biasTypes, onBiasInst, refreshBiasNo, saveBiasForm, biasDtVisible, biasDt, biasDtKeys, biasAn, biasAnStats, biasCell, biasFmtNum, saveBiasEntry, biasDownloadTpl, biasImport, biasFilesVisible, biasFileNo, openBiasFiles, openBiasPreview, biasPv, qcDownload, ElMessage, tagClass, srShare, saveSrShare, copySrShare, srFill, submitSrFill, srReview, openSrReview, submitSrReview, srExt, srExtLogin, srExtKeys, srExtVal, openSrFill, refreshHmExpire, hmHist, openHmHistDetail, hmCmp, hmArchLineTab, hmArchPlant, hmArchCust, hmArchLaw, hmArchPlantSel, hmArchCustSel, hmArchLawSel, hmImpEntryTab, hmImpEntryRows, hmImpEntrySel, hmEditBOnly, hmImpAddEntryRows, openHmImpStdPick, hmImpDelEntryRows, hmImpCompareEntry, hmArchAddLine, hmArchDelLines, hmCmpPassCount, hmCmpFailCount, hmCmpSkipCount, hmCmpRowClass, hmCmpValStyle, confirmHmCompare, hmFilePick, hmVoidPickRows, hmFilePickRows, confirmHmFilePick, refreshHmChgExpire, designVisible, designTitle, designBasic, designAdvanced, designCanvas, designFormName, designFormTitle, designActive, designActiveField, designDragType, formPreviewVisible, djExecVisible, djExecReadonly, djExecRow, djExecData, djExecFields, djExecHead, djExecFormName, djSign, saveDjExec, labInspExecVisible, labInspExecReadonly, labInspExecRow, labInspExecData, labInspExecFields, labInspExecFormName, labInspExecHead, openLabInspExec, labInspSign, saveLabInspExec, tyK, instDictOpts, tyDetailVisible, tyDetail, tyDetailKeys, tyDetailLines, TY_NOTICE_KEYS, TY_NOTICE_REQ, AP_TYPES, AP_LEADERS, AP_WAYS, AP_REMIND, AP_UNITS, tyTypes, tyFormVisible, tyFormMode, tyFormLines, tyFormSel, tyForm, onTyLineAction, saveTyForm, tyApVisible, tyApBatch, tyApRows, tyApSel, tyAp, tyApFlows, tyApLocked, tyApUsers, loadTyFlow, addTyNode, copyTyNode, removeTyNodes, onTyApType, onTyApField, submitTyAp, tyAuditVisible, tyAuditForm, tyAuditNode, submitTyAudit, sgVisible, sgMode, sgTab, sgForm, sgTitle, sgSchemeText, SG_ZERO, SG_ROUND, SG_TAKE, sgLineSel, openSgPick, removeSgSchemes, saveSg, sgPickVisible, sgPickCode, sgPickName, sgPickQuery, sgPickRows, sgPickSel, confirmSgPick, srVisible, srMode, srForm, srTitle, srPartyLabel, srMonthOpts, SR_DIMS, SR_WEEK, srSchemeOpts, srItemOpts, srFillItems, openSrPick, srOnDim, srOnTarget, saveSr, deleteSr, srSpcVisible, srSpcMenu, srSpcKey, srSpc, srRuleNames, srToggleAll, srToggleOne, srRestore, saveSrSpc, openChartSpcSettings, SR_FILTER_ROWS, SR_ZERO, SR_ROUND, SR_TAKE, SR_GROUP_SECS, SR_CHART_TYPES, SR_TIP_FIELDS, SR_DASH, srClearFilter, srRestoreGroup, srRestoreLimit, srRestoreView, srOnTake, srEnsureTips, srToggleLimit, srToggleTipAll, srToggleTipOne, acVisible, acRuleVisible, acRuleMenu, acRule, AC_RULE_FILTER, AC_RULE_ZERO, AC_RULE_ROUND, AC_RULE_TAKE, AC_RULE_SECS, AC_RULE_FILTER_NOTES, AC_RULE_TOP_NOTES, AC_RULE_GROUP_NOTES, openAcRule, saveAcRule, acRuleClear, acRuleRestore, acMode, acForm, acTitle, acPartyLabel, AC_METRICS, acSchemeOpts, openAcPick, acOnTarget, saveAc, deleteAc, MY_WX_PAGE, WO_LINK_PAGES, YS_SECS, woFixTab, woParts, woPartSel, removeWoParts, roundWoPart, ysDlgVisible, ysDlgBatch, ysDlgRows, ysForm, saveYsDlg, WO_PAGE, CL_REPAIR, WO_FIX_SECS, bxFormKind, bxFaultLocked, saveWoForm, bxExpTip, woFixVisible, woFixRow, woFix, openWoExp, saveWoFix, CL_WAYS, clDlgVisible, clDlgBatch, clDlgRows, clForm, clNeedRepair, clFaultTypes, saveClDraft, submitClDlg, maintTeamNames, bxDetailSecs, BX_INST_KEYS, BX_DETAIL, BX_FILE_KEYS, BX_TAG_KEYS, bxFormVisible, bxFormMode, bxFormTitle, bxFormLines, bxFormSel, bxForm, bxLineTypes, bxFaultTypes, onBxLineAction, saveBxForm, bxExpVisible, bxExpPick, bxExpRows, openBxExp, confirmBxExp, bxLinkVisible, bxLinkNos, bxLinkRows, goBxLink, bxDetailVisible, bxDetailRow, bxDetailTab, bxFlowNodes, openBxFlowNo, wjExecVisible, wjExecRow, wjExecLines, wjExecSel, onWjLineAction, onWjLineChange, openWjLineSupplier, saveWjExec, INST_PAGE, INST_BASE_FIELDS, INST_BASE_REQ, INST_CYCLE_UNITS, INST_DEPT_TREE, INST_DICTS, instTypeId, instTypeKw, instTypeList, instAllTypes, instCfgFieldList, onInstTypeQuery, selectInstType, onInstTypeOp, instTypeVisible, instTypeTitle, instTypeForm, openInstType, saveInstType, instCfgVisible, instCfgRows, instCfgSel, openInstCfg, addInstCfgRow, onInstCfgAttr, delInstCfgRows, saveInstCfg, instImageUrl, previewInstImage, instFormVisible, instFormMode, instFormTitle, instFormBase, instFormCfg, instFormOther, INST_PLAN_FIELDS, fillInstPlan, instUsers, onInstCodeInput, calcInstNext, onInstCycleInput, pickInstSupplier, saveInstForm, instLinkVisible, instLinkNos, instLinkRows, goInstLink, instIoTip, djMyUser, djMyUsers, isDjMyPage, isDjPlanPage,
       importVisible, exportVisible, hiddenOrderDlg, hiddenOrderRows, hiddenOrderCols, hiddenOrderSel, openHiddenOrders, hideInspOrders, restoreHiddenOrders, hidRowsDlg, hidRowsList, hidRowsCols, hidRowsSel, openHiddenRowsList, hideTableRows, restoreHiddenRows, opcRel, printVisible, printCodes, printTpl, printPrinter, openPrintLabel, qcView, clDevVisible, clDevForm, clDevOpts, clDevRule, confirmClDev, clSampleVisible, clSampleQuery, clSampleRows, clSampleCols, clSampleExpanded, consignPrintVisible, consignPrint,
       pickerVisible, pickerTitle, pickerDialogTitle, pickerKw, pickerPrepQ, pickerPrepFilterTick, pickerPrepSelQty, pickerPrepNeedQty, resetPickerPrepQ, pickerRows, pickerColumns, pickerDialogWidth, pickerMultiSelect, pickerCurrent, pickerSelected, pickerMode,
       mergeVisible, mergeForm, onMergeShipOk, onFormSelectChange, onFormTextInput,

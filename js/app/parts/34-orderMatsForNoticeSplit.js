@@ -401,6 +401,7 @@
       }
       if(pageId.value===HM_IMP_PAGE){
         if(['编辑','确认导入'].includes(op.name) && !hmOpenRow(row)) return hmImpTip()+op.name;
+        if(op.name==='修改数据B' && !hmDone(row)) return '仅导入状态为「已导入」的导入单可修改数据';
       }
       if(pageId.value===HM_VOID_PAGE){
         if(['编辑','确认作废'].includes(op.name) && !hmOpenRow(row)) return hmVoidTip()+op.name;

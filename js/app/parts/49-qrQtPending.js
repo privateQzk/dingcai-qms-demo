@@ -242,6 +242,8 @@
     const hmImpEntryTab = ref('entry');
     const hmImpEntryRows = ref([]);
     const hmImpEntrySel = ref([]);
+    /** 「修改数据B」模式：全屏页仅数据录入「测试值」可改，其余组件禁用；仅已导入行可用 */
+    const hmEditBOnly = ref(false);
     const hmImpEntryTarget = ref(null);
     function hmImpResetEntry(){
       hmImpEntryRows.value = [];

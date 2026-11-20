@@ -152,6 +152,7 @@
     function openSlocLog(row){ slocLogNo.value = row['样品编号']; slocLogVisible.value = true; }
     const TASK_PAGE = 'np-0201-13';
     const TIME_FB_PAGE = 'np-0201-05';
+    const SCHED_PAGE = 'np-0201-18';
     const DISPATCH_PAGE = 'np-0103-12';
     const SHIFT_PAGE = 'np-0103-15';
     const CAL_PAGE = 'np-0103-16';
@@ -295,6 +296,7 @@
         const prev = old.get(s['样品编号']);
         const o = prev || { id: 'ta-'+s['样品编号'], 样品编号: s['样品编号'], 最近分配人: '—', 最近分配时间: '—', 预计完成时间: '—' };
         TASK_SAMPLE_KEYS.forEach(k=>{ o[k] = s[k] || '—'; });
+        o['优先级'] = ((flowOrderOf(s['报检单号'])||{}).row||{})['优先级'] || '—';
         delete o['样品类型']; delete o['母样编号'];
         o._grpTime = s['取样时间'] || '';
         const kept = new Map((o._lines||[]).map(l=> [l['检验类'], l]));

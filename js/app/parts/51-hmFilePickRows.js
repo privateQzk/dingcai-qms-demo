@@ -274,6 +274,28 @@
       }).catch(()=>{});
     }
     function hmSaveForm(){
+      if(hmEditBOnly.value){
+        // 修改数据B：仅已导入单、仅回写数据录入行（测试值 + 重算比对结果），头信息不校验不改写
+        const cur = hmImpRows().find(r=> r.id===formModel._editId);
+        if(!cur){ ElMessage.warning('未找到待编辑数据'); return; }
+        if(!hmDone(cur)){ ElMessage.warning('仅导入状态为「已导入」的导入单可修改数据'); return; }
+        hmImpEntryRows.value.forEach(r=>{
+          r['比对结果'] = String(r['测试值']||'').trim() ? hmImpCompareOne(r) : '';
+        });
+        cur._entryLines = (hmImpEntryRows.value||[]).map(r=> ({
+          id: r.id,
+          标准编号: r['标准编号']||'',
+          标准名称: r['标准名称']||'',
+          测试值: r['测试值']||'',
+          单位: r['单位']||'',
+          比对结果: r['比对结果']||'',
+          _archId: r._archId || ''
+        }));
+        formVisible.value = false;
+        bumpStore();
+        ElMessage.success('保存成功');
+        return;
+      }
       refreshHmExpire();
       const fields = (activeFormFields.value||[]).filter(f=> f && f.name);
       if(!qcCheckRequired(fields)) return;

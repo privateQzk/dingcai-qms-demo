@@ -19830,6 +19830,12 @@ window.WMS_PAGE_CONFIGS = {
               "title": "分配方式",
               "width": 100
             },
+                        {
+              "field": "优先级",
+              "title": "优先级",
+              "width": 80,
+              "slot": "tag"
+            },
             {
               "field": "报检类型",
               "title": "报检类型",
@@ -63052,6 +63058,7 @@ window.WMS_PAGE_CONFIGS = {
             {
               "name": "编辑"
             },
+            { "name": "修改数据B" },
             {
               "name": "详情"
             }
@@ -106469,6 +106476,12 @@ window.WMS_PAGE_CONFIGS = {
               "title": "分配方式",
               "width": 100
             },
+                        {
+              "field": "优先级",
+              "title": "优先级",
+              "width": 80,
+              "slot": "tag"
+            },
             {
               "field": "报检类型",
               "title": "报检类型",
@@ -148965,6 +148978,7 @@ window.WMS_PAGE_CONFIGS = {
             {
               "name": "编辑"
             },
+            { "name": "修改数据B" },
             {
               "name": "详情"
             }
@@ -192452,6 +192466,12 @@ window.WMS_PAGE_CONFIGS = {
               "title": "分配方式",
               "width": 100
             },
+                        {
+              "field": "优先级",
+              "title": "优先级",
+              "width": 80,
+              "slot": "tag"
+            },
             {
               "field": "报检类型",
               "title": "报检类型",
@@ -234950,6 +234970,7 @@ window.WMS_PAGE_CONFIGS = {
             {
               "name": "编辑"
             },
+            { "name": "修改数据B" },
             {
               "name": "详情"
             }

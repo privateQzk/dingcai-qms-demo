@@ -294,11 +294,12 @@
       if(pageId.value===SPI_PAGE && op.name==='重新识别'){ reRecognizeSpi(row); return; }
       if(pageId.value===SPI_PAGE && op.name==='删除'){ deleteSpiRows([row]); return; }
       if(pageId.value===COST_FLOW && op.name==='编辑'){ openCostFlowEdit(row); return; }
-      if(op.name==='编辑' || op.name==='复制' || op.name==='版本查看' || (op.name==='详情' && (pageId.value==='insp-scheme' || pageId.value==='insp-method' || pageId.value===HM_IMP_PAGE))){
+      if(op.name==='编辑' || op.name==='复制' || op.name==='版本查看' || (op.name==='修改数据B' && pageId.value===HM_IMP_PAGE) || (op.name==='详情' && (pageId.value==='insp-scheme' || pageId.value==='insp-method' || pageId.value===HM_IMP_PAGE))){
         if(pageId.value==='np-0501-01' && op.name==='编辑' && (row||{})['采集状态']==='开启'){
           ElMessage.warning('开启状态不可编辑'); return;
         }
         openForm((op.name==='详情' || op.name==='版本查看') ? 'detail' : (op.name==='复制' ? 'copy' : 'edit'));
+        if(pageId.value===HM_IMP_PAGE) hmEditBOnly.value = (op.name==='修改数据B');
         if(pageId.value==='np-0501-01') formModel['采集方案编码'] = row['采集方案编码'] || '';
         formSwitch['启用状态'] = row['启用状态']!=='禁用';
         (activeFormFields.value||[]).forEach(f=>{

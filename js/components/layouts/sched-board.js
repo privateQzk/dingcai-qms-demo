@@ -16,7 +16,7 @@
       sb: { type: Object, required: true },
       data: { type: Object, default: function () { return { tasks: [], logs: [], gantt: [], ganttInsts: [], shades: [], range: [0, 0], cards: [] }; } }
     },
-    data: function () { return { chart: null, win: null }; },
+    data: function () { return { chart: null, win: null, selKeys: {}, boxSel: false, marquee: null }; },
     watch: {
       'data.gantt': { deep: true, handler: function () { this.$nextTick(this.renderChart); } },
       // range 每次重算都是新数组——只有「日/周切换、翻页、回到今天」真正改变区间值时才重置视野；
@@ -71,23 +71,57 @@
           var r = dom.getBoundingClientRect();
           return [xToT(cx - r.left), yToRow(cy - r.top)];
         };
+        // 任务块的像素矩形（命中/框选相交共用）
+        var rectOf = function (v) {
+          var insts = self.data.ganttInsts || [];
+          var g = plot(), n = Math.max(1, insts.length), bandH = (g.b - g.t) / n, w = win();
+          var tx = function (t) { return g.l + (t - w[0]) / (w[1] - w[0]) * (g.r - g.l); };
+          var inner = bandH * 0.8, lh = inner / (v[4] || 1);
+          var cy = g.t + (v[0] + 0.5) * bandH - inner / 2 + (v[3] || 0) * lh + lh / 2;
+          var x1 = tx(v[1]), x2 = tx(v[2]);
+          return { x1: Math.min(x1, x2), x2: Math.max(x1, x2), y1: cy - lh / 2, y2: cy + lh / 2 };
+        };
         var hitIdx = function (px, py) {
           var items = self.data.gantt || [], insts = self.data.ganttInsts || [];
           if (!insts.length) return -1;
-          var g = plot(), n = insts.length, bandH = (g.b - g.t) / n, w = win();
-          var tx = function (t) { return g.l + (t - w[0]) / (w[1] - w[0]) * (g.r - g.l); };
           for (var i = items.length - 1; i >= 0; i--) {
-            var v = items[i].value;
-            var x1 = tx(v[1]), x2 = tx(v[2]);
-            var inner = bandH * 0.8, lh = inner / (v[4] || 1);
-            var cy = g.t + (v[0] + 0.5) * bandH - inner / 2 + (v[3] || 0) * lh + lh / 2;
-            if (px >= Math.min(x1, x2) - 2 && px <= Math.max(x1, x2) + 2 && Math.abs(py - cy) <= lh / 2 + 2) return i;
+            var rc = rectOf(items[i].value);
+            if (px >= rc.x1 - 2 && px <= rc.x2 + 2 && py >= rc.y1 - 2 && py <= rc.y2 + 2) return i;
           }
           return -1;
         };
         var finish = function (commit) {
           if (!drag) return;
           var insts = self.data.ganttInsts || [];
+          if (drag.marquee) {
+            // 框选：位移<4px 当空白单击（非 Shift 则清空选择）；否则按矩形相交选中任务块
+            if (drag.marquee.moved) {
+              var it2 = self.data.gantt || [], add = drag.marquee.add, picked = {};
+              it2.forEach(function (it) {
+                if (!it.t || !it.t._key) return;
+                var rc = rectOf(it.value), r = drag.marquee;
+                var l = Math.min(r.x0, r.x1), rt = Math.max(r.x0, r.x1), tp = Math.min(r.y0, r.y1), bt = Math.max(r.y0, r.y1);
+                if (rc.x1 <= rt && rc.x2 >= l && rc.y1 <= bt && rc.y2 >= tp) picked[it.t._key] = 1;
+              });
+              self.selKeys = add ? Object.assign({}, self.selKeys, picked) : picked;
+              self.renderChart();
+            } else if (!drag.marquee.add) { self.selKeys = {}; self.renderChart(); }
+            self.marquee = null;
+            self._suppressClick = true;
+            drag = null;
+            return;
+          }
+          if (drag.group) {
+            if (commit && drag.moved && drag.curDelta) {
+              self._suppressClick = true;
+              var entries = drag.group.map(function (m) { return { t: m.t, instName: insts[m.row], s: m.curS, e: m.curE }; });
+              if (self.sb && self.sb.dropMulti) self.sb.dropMulti(entries);
+              else if (self.sb && self.sb.drop) entries.forEach(function (en) { self.sb.drop(en.t, en.instName, en.s, en.e); });
+            }
+            if (drag.moved) self.renderChart();
+            drag = null;
+            return;
+          }
           if (!drag.pan && commit && drag.moved && self.sb && self.sb.drop) {
             self._suppressClick = true;
             self.sb.drop(drag.t, insts[drag.curRow], drag.curS, drag.curE);
@@ -98,6 +132,29 @@
         self._dragMove = function (ev) {
           if (!drag) return;
           if (ev.buttons === 0) { finish(false); return; }
+          if (drag.marquee) {
+            var rcq = dom.getBoundingClientRect();
+            drag.marquee.x1 = ev.clientX - rcq.left;
+            drag.marquee.y1 = ev.clientY - rcq.top;
+            if (Math.abs(drag.marquee.x1 - drag.marquee.x0) + Math.abs(drag.marquee.y1 - drag.marquee.y0) > 4) drag.marquee.moved = true;
+            var m = drag.marquee;
+            self.marquee = { x: Math.min(m.x0, m.x1), y: Math.min(m.y0, m.y1), w: Math.abs(m.x1 - m.x0), h: Math.abs(m.y1 - m.y0) };
+            return;
+          }
+          if (drag.group) {
+            var ptg = toVal(ev.clientX, ev.clientY);
+            if (!isFinite(ptg[0])) return;
+            var delta = Math.round((ptg[0] - drag.grab) / 300000) * 300000;
+            if (delta === drag.curDelta) return;
+            drag.curDelta = delta; drag.moved = true;
+            var items2 = drag.base.map(function (it) { return Object.assign({}, it, { value: it.value.slice() }); });
+            drag.group.forEach(function (mm) {
+              mm.curS = mm.s0 + delta; mm.curE = mm.s0 + delta + mm.dur;
+              items2[mm.gi].value = [mm.row, mm.curS, mm.curE, mm.lane, mm.lanes];
+            });
+            self.chart.setOption({ series: [{ data: items2 }] });
+            return;
+          }
           if (drag.pan) {
             // 用抓取时窗口 win0 做映射（当前窗口随平移在动，复算会残差），保证抓取点始终贴手
             var rc = dom.getBoundingClientRect(), gp = plot();
@@ -131,11 +188,16 @@
           var px = ev.clientX - r.left, py = ev.clientY - r.top;
           var idx = hitIdx(px, py);
           if (idx < 0) {
-            // 空白处：开平移（拖动时间窗）；滑条区/轴标签区不处理
             var g0 = plot();
             if (px >= g0.l && px <= g0.r && py >= g0.t && py <= g0.b) {
-              var p0 = toVal(ev.clientX, ev.clientY);
-              if (isFinite(p0[0])) { drag = { pan: true, grab: p0[0], win0: win().slice() }; ev.preventDefault(); ev.stopPropagation(); }
+              // Shift+拖拽 或「框选」开关开启：拉框多选；否则空白拖拽平移
+              if (ev.shiftKey || self.boxSel) {
+                drag = { marquee: { x0: px, y0: py, x1: px, y1: py, moved: false, add: ev.shiftKey } };
+              } else {
+                var p0 = toVal(ev.clientX, ev.clientY);
+                if (isFinite(p0[0])) drag = { pan: true, grab: p0[0], win0: win().slice() };
+              }
+              if (drag) { ev.preventDefault(); ev.stopPropagation(); }
             }
             return;
           }
@@ -143,6 +205,28 @@
           if (!t || !self.sb || !self.sb.drop) return;
           // 不可调整的块：吞掉按下事件，不让 ECharts inside 平移接管（其内部换算在这条 category 轴上会抛 clampData）；点击仍走 chart click 开详情
           if (!self.canMove(t)) { ev.stopPropagation(); return; }
+          // 命中已选中的块：整组水平平移（各块行/仪器不变，只同步时间位移）
+          var key = t._key;
+          if (key && self.selKeys[key] && Object.keys(self.selKeys).length > 1) {
+            var ptG = toVal(ev.clientX, ev.clientY);
+            if (!isFinite(ptG[0])) return;
+            var items0 = self.data.gantt || [], group = [];
+            items0.forEach(function (it, gi2) {
+              var it2 = it.t;
+              if (!it2 || !self.selKeys[it2._key] || !self.canMove(it2)) return;
+              group.push({ t: it2, gi: gi2 + (self._shadeItems || []).length, row: it.value[0], lane: it.value[3], lanes: it.value[4], s0: it.value[1], dur: it.value[2] - it.value[1], curS: it.value[1], curE: it.value[2] });
+            });
+            if (group.length) {
+              drag = {
+                group: group, moved: false, grab: ptG[0], curDelta: 0,
+                base: (self._shadeItems || []).concat(items0).map(function (it) { return Object.assign({}, it, { value: it.value.slice() }); })
+              };
+              ev.preventDefault();
+            }
+            return;
+          }
+          // 按下未选中的块：清空框选集合（Shift 点按保留集合用于累加语义在框选侧处理）
+          if (Object.keys(self.selKeys).length) { self.selKeys = {}; self.renderChart(); }
           var pt = toVal(ev.clientX, ev.clientY);
           if (!isFinite(pt[0]) || !isFinite(pt[1])) return;
           drag = {
@@ -307,14 +391,20 @@
               var alert = t['超期'] && t['超期'] !== '—';
               var fill = self.statusColor(t['排程状态']);
               var draggable = self.canMove(t);
+              var picked = !!(t._key && self.selKeys[t._key]);
               var pfx = 'blk-' + params.dataIndex;
               var kids = [{
                 type: 'rect',
                 shape: { x: s[0], y: y, width: w, height: h, r: 3 },
-                style: { fill: fill, stroke: alert ? '#DC2626' : 'transparent', lineWidth: alert ? 2 : 0 },
+                style: picked
+                  ? { fill: fill, stroke: '#1D4ED8', lineWidth: 2, shadowBlur: 6, shadowColor: 'rgba(37,99,235,0.55)' }
+                  : { fill: fill, stroke: alert ? '#DC2626' : 'transparent', lineWidth: alert ? 2 : 0 },
                 name: pfx, x: 0, y: 0,
                 cursor: draggable ? 'grab' : 'pointer'
               }];
+              if (picked && w > 16) {
+                kids.push({ type: 'rect', name: pfx + '-s', x: 0, y: 0, shape: { x: s[0] + 1.5, y: y + 1.5, width: w - 3, height: h - 3, r: 2 }, style: { stroke: 'rgba(255,255,255,0.85)', lineWidth: 1, fill: 'none' }, silent: true });
+              }
               if (t['优先级'] === '高') {
                 kids.push({ type: 'rect', name: pfx + '-a', x: 0, y: 0, shape: { x: s[0], y: y, width: 4, height: h, r: [3, 0, 0, 3] }, style: { fill: '#F97316' }, silent: true });
               }
@@ -345,6 +435,7 @@
           }]
         };
         this.chart.setOption(option, true);
+        try { this.chart.getZr().setCursorStyle(this.boxSel ? 'crosshair' : 'default'); } catch (e) { /* zrender 兜底 */ }
       },
       tagType: function (v) {
         if (v === '待排程') return 'info';
@@ -357,6 +448,24 @@
         if (v === '自动') return 'primary';
         if (v === '手动') return 'success';
         return 'info';
+      },
+      /** 框选集合：_key→1 的对象，选中块高亮并可整组平移/批量操作 */
+      selCount: function () { return Object.keys(this.selKeys).length; },
+      selMovableCount: function () {
+        var self = this, n = 0;
+        (this.data.gantt || []).forEach(function (it) { if (it.t && self.selKeys[it.t._key] && self.canMove(it.t)) n++; });
+        return n;
+      },
+      clearSel: function () { this.selKeys = {}; this.renderChart(); },
+      toggleBoxSel: function () { this.boxSel = !this.boxSel; this.renderChart(); },
+      /** 浮动条批量操作：把选中 _key 交给 app 侧复用任务表的批量逻辑 */
+      selBatch: function (act) {
+        var keys = Object.keys(this.selKeys);
+        if (!keys.length || !this.sb) return;
+        this.sb.sel = keys;
+        if (act === 'lock' && this.sb.batchLock) this.sb.batchLock();
+        else if (act === 'unlock' && this.sb.batchUnlock) this.sb.batchUnlock();
+        else if (act === 'cancel' && this.sb.batchCancel) this.sb.batchCancel();
       },
       /** 可否调整（拖动/调整弹窗共用判定，逻辑在 app 侧 sb.canMove） */
       canMove: function (t) {
@@ -397,6 +506,7 @@
       '      <el-button size="small" @click="sb.today()">今天</el-button>',
       '      <el-button size="small" @click="sb.nav(1)">›</el-button>',
       '      <span class="sb-range">{{ data.rangeText }}</span>',
+      '      <el-button size="small" :type="boxSel ? \'primary\' : \'default\'" @click="toggleBoxSel()">框选</el-button>',
       '      <span class="sb-legend">',
       '        <i class="sb-legend__i" style="background:#3B82F6"></i>已排程',
       '        <i class="sb-legend__i" style="background:#F59E0B"></i>检验中',
@@ -406,7 +516,17 @@
       '      </span>',
       '      <span class="sb-now">演示基准：{{ data.now }}</span>',
       '    </div>',
-      '    <div ref="gantt" class="sb-gantt"></div>',
+      '    <div class="sb-gantt__wrap">',
+      '      <div ref="gantt" class="sb-gantt"></div>',
+      '      <div v-show="marquee" class="sb-marquee" :style="marquee ? { left: marquee.x + \'px\', top: marquee.y + \'px\', width: marquee.w + \'px\', height: marquee.h + \'px\' } : {}"></div>',
+      '      <div v-show="selCount()" class="sb-selbar">',
+      '        <span>已选 {{ selCount() }} 个任务（可移动 {{ selMovableCount() }}）</span>',
+      '        <el-button size="small" type="warning" @click="selBatch(\'lock\')">锁定</el-button>',
+      '        <el-button size="small" @click="selBatch(\'unlock\')">解锁</el-button>',
+      '        <el-button size="small" type="danger" @click="selBatch(\'cancel\')">取消排程</el-button>',
+      '        <el-button size="small" link @click="clearSel()">清除选择</el-button>',
+      '      </div>',
+      '    </div>',
       '    <div ref="sliderTrack" class="sb-slider" @mousedown="sliderTrackDown">',
       '      <div class="sb-slider__win" :style="sliderWinStyle()">',
       '        <i class="sb-slider__edge sb-slider__edge--l" @mousedown.stop="sliderDown($event, \'l\')"></i>',
@@ -414,7 +534,7 @@
       '        <i class="sb-slider__edge sb-slider__edge--r" @mousedown.stop="sliderDown($event, \'r\')"></i>',
       '      </div>',
       '    </div>',
-      '    <div class="sb-board__tip">点击任务块查看详情；拖动任务块左右改时间、上下换仪器（仅候选行可落）；锁定、已过去的已完成/检验中及当前检验中的任务不可拖；空白处拖拽平移、滚轮缩放、下方滑条调窗口；灰色底纹为非工作时段</div>',
+      '    <div class="sb-board__tip">点击任务块查看详情；拖动任务块左右改时间、上下换仪器（仅候选行可落）；锁定、已过去的已完成/检验中及当前检验中的任务不可拖；Shift+空白拖拽或开启「框选」后拖拽可拉框多选，选中后拖动任一块整组平移，浮动条可批量锁定/解锁/取消；空白处拖拽平移、滚轮缩放、下方滑条调窗口；灰色底纹为非工作时段</div>',
       '  </div>',
       // ===== 排程任务 =====
       '  <div v-show="sb.tab === \'tasks\'">',
