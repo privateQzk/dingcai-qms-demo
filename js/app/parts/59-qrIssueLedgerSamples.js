@@ -154,6 +154,69 @@
       bumpStore();
       ElMessage.success('已恢复显示 '+sel.length+' 条报检单');
     }
+    /* 通用单据 隐藏/显示：隐藏行存 MOCK['row-hidden'].main（page|id），HIDE_PAGES 内页面按行 id 过滤；恢复弹窗按当前页签列出 */
+    const HIDE_PAGES = new Set(['mrb-review','np-0210-01','unqual-pi','unqual-pp','unqual-pm','unqual-rd','dev-pi','dev-pp','dev-pm','dev-rd','np-0213-01','np-0213-02']);
+    // 级联隐藏：隐藏某页单据时，同步隐藏下游关联单据（供应商事件→供应商整改）
+    const HIDE_LINKS = {
+      'np-0213-01': { page:'np-0213-02', linked:(src, dst)=> String(dst['来源单号']||'')===String(src['事件单号']||'') },
+    };
+    function hideLinkedRows(pid, srcRows, restore){
+      const link = HIDE_LINKS[pid];
+      if(!link) return 0;
+      const bag = hiddenRowBag();
+      let n = 0;
+      Object.values(MOCK[link.page]||{}).forEach(bucket=> (bucket||[]).forEach(r=>{
+        if(!srcRows.some(s=> link.linked(s, r))) return;
+        const k = hiddenKey(link.page, r.id);
+        const at = bag.indexOf(k);
+        if(!restore && at<0){ bag.push(k); n++; }
+        else if(restore && at>=0){ bag.splice(at,1); n++; }
+      }));
+      return n;
+    }
+    const hidRowsDlg = ref(false);
+    const hidRowsSel = ref([]);
+    const hiddenRowIds = ref(new Set());
+    function hiddenRowBag(){ const bag = MOCK['row-hidden'] = MOCK['row-hidden'] || {}; return (bag.main = bag.main || []); }
+    function hiddenKey(pid, id){ return pid + '|' + id; }
+    function syncHiddenRowIds(){ hiddenRowIds.value = new Set(hiddenRowBag().map(String)); }
+    syncHiddenRowIds();
+    function hideTableRows(){
+      const picked = (tableData.value||[]).filter(r=> selectedIds.value.includes(r.id));
+      if(!picked.length){ ElMessage.warning('请先勾选要隐藏的单据'); return; }
+      ElementPlus.ElMessageBox.confirm('确认隐藏所选 '+picked.length+' 条单据？','隐藏单据',{ type:'warning', confirmButtonText:'隐藏', cancelButtonText:'取消' }).then(()=>{
+        const bag = hiddenRowBag(), pid = pageId.value;
+        picked.forEach(r=>{ const k = hiddenKey(pid, r.id); if(!bag.includes(k)) bag.push(k); });
+        const linkedN = hideLinkedRows(pid, picked, false);
+        syncHiddenRowIds();
+        selectedIds.value = [];
+        bumpStore();
+        ElMessage.success('已隐藏 '+picked.length+' 条单据' + (linkedN ? '，含下游关联单据 '+linkedN+' 条' : ''));
+      }).catch(()=>{});
+    }
+    const hidRowsCols = computed(()=> (tabView.value.columns||[]).filter(c=> c.field && c.field!=='_actions' && c.title!=='操作'));
+    const hidRowsList = computed(()=>{
+      storeTick.value;
+      const ids = hiddenRowIds.value, pid = pageId.value;
+      if(!ids.size || !HIDE_PAGES.has(pid)) return [];
+      return (((MOCK[pid]||{})[activeTab.value])||[]).filter(r=> ids.has(hiddenKey(pid, r.id)));
+    });
+    function openHiddenRowsList(){
+      if(!hidRowsList.value.length){ ElMessage.info('当前页签暂无已隐藏的单据'); return; }
+      hidRowsSel.value = [];
+      hidRowsDlg.value = true;
+    }
+    function restoreHiddenRows(){
+      const sel = hidRowsSel.value || [];
+      if(!sel.length){ ElMessage.warning('请先勾选要恢复显示的单据'); return; }
+      const pid = pageId.value, keys = new Set(sel.map(r=> hiddenKey(pid, r.id)));
+      MOCK['row-hidden'].main = hiddenRowBag().filter(k=> !keys.has(String(k)));
+      const linkedN = hideLinkedRows(pid, sel, true);
+      syncHiddenRowIds();
+      hidRowsDlg.value = false;
+      bumpStore();
+      ElMessage.success('已恢复显示 '+sel.length+' 条单据' + (linkedN ? '，含下游关联单据 '+linkedN+' 条' : ''));
+    }
     function oeSaveOrderTab(){
       const fields = activeFormFields.value || [];
       if(!qcCheckRequired(fields)) return;

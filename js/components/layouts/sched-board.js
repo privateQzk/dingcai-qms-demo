@@ -19,7 +19,9 @@
     data: function () { return { chart: null, win: null }; },
     watch: {
       'data.gantt': { deep: true, handler: function () { this.$nextTick(this.renderChart); } },
-      'data.range': { handler: function () { this.win = this.data.range ? this.data.range.slice() : null; this.$nextTick(this.renderChart); } },
+      // range 每次重算都是新数组——只有「日/周切换、翻页、回到今天」真正改变区间值时才重置视野；
+      // 拖动/排程/数据刷新引起的重算保持用户当前窗口，不再弹回锚点
+      'data.range': { handler: function (v, ov) { if (v && ov && (v[0] !== ov[0] || v[1] !== ov[1])) this.win = v.slice(); this.$nextTick(this.renderChart); } },
       'sb.view': { handler: function () { this.$nextTick(this.renderChart); } },
       'sb.tab': {
         handler: function (v) {
@@ -192,6 +194,17 @@
         window.addEventListener('mousemove', mv, true); window.addEventListener('mouseup', up, true);
         ev.preventDefault(); ev.stopPropagation();
       },
+      // 首次进入：视野直接定位到排程块——全部块跨度≤14天则整段纳入，否则按当前日/周窗口居中到块群中间
+      initWin: function () {
+        var r = this.data.range || [0, 0], items = this.data.gantt || [];
+        if (!items.length) return r.slice();
+        var mn = Infinity, mx = -Infinity;
+        items.forEach(function (it) { if (it.value[1] < mn) mn = it.value[1]; if (it.value[2] > mx) mx = it.value[2]; });
+        var pad = 6 * 3600000;
+        if (mx - mn + 2 * pad <= 14 * 86400000) return [mn - pad, mx + pad];
+        var w = r[1] - r[0], c = (mn + mx) / 2;
+        return [c - w / 2, c + w / 2];
+      },
       // 点轨道空白：窗口中心跳到该位置
       sliderTrackDown: function (ev) {
         var tr = ev.currentTarget.getBoundingClientRect();
@@ -213,7 +226,7 @@
         if (now) shadeItems.push({ value: [1, now, now], nowline: 1 });
         self._shadeItems = shadeItems;
         var dataArr = shadeItems.concat(items);
-        if (!this.win) this.win = (this.data.range || [0, 0]).slice();
+        if (!this.win) this.win = this.initWin();
         var win = this.win;
         var full = this.data.fullRange || win;
         var option = {

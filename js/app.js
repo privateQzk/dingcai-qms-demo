@@ -23783,11 +23783,13 @@ function nextWjNo(){
       return ['tab-1','tab-2'].flatMap(t=> (((MOCK[CT_PAGE] || {})[t]) || []).map(r=> Object.assign({}, r)));
     }
     function uqSumRows(){
-      return UQ_SUM_SRC.flatMap(s=> (((MOCK[s.page] || {})['tab-done']) || []).map(r=>
+      return UQ_SUM_SRC.flatMap(s=> ((((MOCK[s.page] || {})['tab-done']) || [])
+        .filter(r=> !hiddenRowIds.value.has(s.page+'|'+r.id))).map(r=>
         Object.assign({}, r, { 处置类型: s.type, SAP生产订单号: r['SAP生产订单号'] || r['生产订单号'] || '', _srcPage: s.page })));
     }
     function devSumRows(){
-      return DEV_SUM_SRC.flatMap(s=> (((MOCK[s.page] || {})['tab-done']) || []).map(r=>
+      return DEV_SUM_SRC.flatMap(s=> ((((MOCK[s.page] || {})['tab-done']) || [])
+        .filter(r=> !hiddenRowIds.value.has(s.page+'|'+r.id))).map(r=>
         Object.assign({}, r, { 偏差类型: s.type, _srcPage: s.page })));
     }
     const QR_TABS = [
@@ -25495,6 +25497,11 @@ function nextWjNo(){
       storeTick.value;
       const rows = (MOCK[pageId.value]||{})[tabView.value.name] || [];
       let list = pageId.value==='lg-waybill-carrier' ? (((MOCK['lg-waybill']||{}).main)||[]).slice() : rows;
+      // 通用隐藏过滤：HIDE_PAGES 内页面按「页面id|行id」剔除隐藏行（放最前，自定义查询分支也生效）
+      if(HIDE_PAGES.has(pageId.value) && hiddenRowIds.value.size){
+        const _pid = pageId.value;
+        list = list.filter(r=> !hiddenRowIds.value.has(_pid+'|'+r.id));
+      }
       if(pageId.value===UQ_SUM_PAGE){
         // 不合格处置汇总：实时合并四个来源页「已处理」Tab 的数据，字段取并集
         list = uqSumRows();
@@ -28446,6 +28453,8 @@ function nextWjNo(){
       if(csPage() && csPage().onToolbar(btn)) return;
       if(pageId.value==='insp-order' && btn.name==='隐藏'){ hideInspOrders(); return; }
       if(pageId.value==='insp-order' && btn.name==='显示'){ openHiddenOrders(); return; }
+      if(HIDE_PAGES.has(pageId.value) && btn.name==='隐藏'){ hideTableRows(); return; }
+      if(HIDE_PAGES.has(pageId.value) && btn.name==='显示'){ openHiddenRowsList(); return; }
       if(pageId.value===COL_PAGE && onColToolbar(btn)) return;
       if(pageId.value===INST_PAGE && onInstToolbar(btn)) return;
       if(btn.name==='新增' && pageId.value===SPLIT_PAGE){ openForm('add'); return; }
@@ -31622,6 +31631,69 @@ function nextWjNo(){
       hiddenOrderDlg.value = false;
       bumpStore();
       ElMessage.success('已恢复显示 '+sel.length+' 条报检单');
+    }
+    /* 通用单据 隐藏/显示：隐藏行存 MOCK['row-hidden'].main（page|id），HIDE_PAGES 内页面按行 id 过滤；恢复弹窗按当前页签列出 */
+    const HIDE_PAGES = new Set(['mrb-review','np-0210-01','unqual-pi','unqual-pp','unqual-pm','unqual-rd','dev-pi','dev-pp','dev-pm','dev-rd','np-0213-01','np-0213-02']);
+    // 级联隐藏：隐藏某页单据时，同步隐藏下游关联单据（供应商事件→供应商整改）
+    const HIDE_LINKS = {
+      'np-0213-01': { page:'np-0213-02', linked:(src, dst)=> String(dst['来源单号']||'')===String(src['事件单号']||'') },
+    };
+    function hideLinkedRows(pid, srcRows, restore){
+      const link = HIDE_LINKS[pid];
+      if(!link) return 0;
+      const bag = hiddenRowBag();
+      let n = 0;
+      Object.values(MOCK[link.page]||{}).forEach(bucket=> (bucket||[]).forEach(r=>{
+        if(!srcRows.some(s=> link.linked(s, r))) return;
+        const k = hiddenKey(link.page, r.id);
+        const at = bag.indexOf(k);
+        if(!restore && at<0){ bag.push(k); n++; }
+        else if(restore && at>=0){ bag.splice(at,1); n++; }
+      }));
+      return n;
+    }
+    const hidRowsDlg = ref(false);
+    const hidRowsSel = ref([]);
+    const hiddenRowIds = ref(new Set());
+    function hiddenRowBag(){ const bag = MOCK['row-hidden'] = MOCK['row-hidden'] || {}; return (bag.main = bag.main || []); }
+    function hiddenKey(pid, id){ return pid + '|' + id; }
+    function syncHiddenRowIds(){ hiddenRowIds.value = new Set(hiddenRowBag().map(String)); }
+    syncHiddenRowIds();
+    function hideTableRows(){
+      const picked = (tableData.value||[]).filter(r=> selectedIds.value.includes(r.id));
+      if(!picked.length){ ElMessage.warning('请先勾选要隐藏的单据'); return; }
+      ElementPlus.ElMessageBox.confirm('确认隐藏所选 '+picked.length+' 条单据？','隐藏单据',{ type:'warning', confirmButtonText:'隐藏', cancelButtonText:'取消' }).then(()=>{
+        const bag = hiddenRowBag(), pid = pageId.value;
+        picked.forEach(r=>{ const k = hiddenKey(pid, r.id); if(!bag.includes(k)) bag.push(k); });
+        const linkedN = hideLinkedRows(pid, picked, false);
+        syncHiddenRowIds();
+        selectedIds.value = [];
+        bumpStore();
+        ElMessage.success('已隐藏 '+picked.length+' 条单据' + (linkedN ? '，含下游关联单据 '+linkedN+' 条' : ''));
+      }).catch(()=>{});
+    }
+    const hidRowsCols = computed(()=> (tabView.value.columns||[]).filter(c=> c.field && c.field!=='_actions' && c.title!=='操作'));
+    const hidRowsList = computed(()=>{
+      storeTick.value;
+      const ids = hiddenRowIds.value, pid = pageId.value;
+      if(!ids.size || !HIDE_PAGES.has(pid)) return [];
+      return (((MOCK[pid]||{})[activeTab.value])||[]).filter(r=> ids.has(hiddenKey(pid, r.id)));
+    });
+    function openHiddenRowsList(){
+      if(!hidRowsList.value.length){ ElMessage.info('当前页签暂无已隐藏的单据'); return; }
+      hidRowsSel.value = [];
+      hidRowsDlg.value = true;
+    }
+    function restoreHiddenRows(){
+      const sel = hidRowsSel.value || [];
+      if(!sel.length){ ElMessage.warning('请先勾选要恢复显示的单据'); return; }
+      const pid = pageId.value, keys = new Set(sel.map(r=> hiddenKey(pid, r.id)));
+      MOCK['row-hidden'].main = hiddenRowBag().filter(k=> !keys.has(String(k)));
+      const linkedN = hideLinkedRows(pid, sel, true);
+      syncHiddenRowIds();
+      hidRowsDlg.value = false;
+      bumpStore();
+      ElMessage.success('已恢复显示 '+sel.length+' 条单据' + (linkedN ? '，含下游关联单据 '+linkedN+' 条' : ''));
     }
     function oeSaveOrderTab(){
       const fields = activeFormFields.value || [];
@@ -40541,6 +40613,20 @@ function nextWjNo(){
       document.body.classList.remove('remarks-open');
     });
 
+    /** 报检单顺序图：采购来料检 / 生产过程检 / 生产物料检三组，组内按报检时间倒序（最新报检在上） */
+    const INSP_SEQ_DEFS = [
+      { key: 'tab-pi', label: '采购来料检', party: '供应商名称' },
+      { key: 'tab-pp', label: '生产过程检', party: '客户名称' },
+      { key: 'tab-pm', label: '生产物料检', party: '客户名称' }
+    ];
+    const inspSeqGroups = computed(()=>{
+      const bag = MOCK['insp-order'] || {};
+      return INSP_SEQ_DEFS.map(d=> ({
+        key: d.key, label: d.label, party: d.party,
+        rows: (Array.isArray(bag[d.key]) ? bag[d.key] : []).slice()
+          .sort((a, b)=> String(b['报检时间'] || '').localeCompare(String(a['报检时间'] || '')))
+      }));
+    });
     return {
       labArchVisible, labArchForm, labArchLines, labArchSelected, labArchPage, labArchPageSize, labArchCfg, labArchKind, labArchDateKey,
       labArchSrcRows, labArchSupplierOpts, RETAIN_WH_OPTS, labArchLocOpts, onLabArchLocChange, openRetainLocPick, labArchLineCols, labArchPagedLines, isLabArchEditable, labArchColWidth,
@@ -40579,7 +40665,7 @@ function nextWjNo(){
       craftVisible, craftProcVisible, craftProcForm, craftTitle, craftKw, craftZoom, craftLocked, craftNodes, filteredCraftProcs, craftEdgeLines,
       openCraftProc, onCraftProcOk,
       MSA_TIPS, MSA_STD_KEYS, msaFormVisible, msaFormMode, msaTab, msaForm, msaInsts, msaInstSel, msaStds, msaStdSel, msaItems, msaItemSel, msaSpecOf, onMsaAction, msaRemoveItems, msaItemHead, saveMsaForm, msaDtVisible, msaDtKeys, msaDtPlan, msaDtGroups, msaEntryDisabled, onMsaEntryOp, msaEn, msaEnStd, msaEnItems, msaEnRows, msaEnCalc, msaImport, saveMsaEntry, msaPrec, msaFmt, msaPv, stbFormVisible, stbFormMode, stbTab, stbForm, stbInsts, stbInstSel, stbStds, stbStdSel, stbItems, stbItemSel, onStbAction, stbRemoveItems, saveStbForm, stbDtVisible, stbDtPlan, stbMeasures, stbMeasureSel, stbDtStd, stbFinishTip, stbAddMeasure, stbDelMeasures, stbFinish, stbEntryDisabled, onStbEntryOp, stbEn, stbEnStd, stbEnItems, stbImport, saveStbEntry, stbPv, biasFormVisible, biasFormMode, biasForm, biasInstOptions, biasPeople, biasTypes, onBiasInst, refreshBiasNo, saveBiasForm, biasDtVisible, biasDt, biasDtKeys, biasAn, biasAnStats, biasCell, biasFmtNum, saveBiasEntry, biasDownloadTpl, biasImport, biasFilesVisible, biasFileNo, openBiasFiles, openBiasPreview, biasPv, qcDownload, ElMessage, tagClass, srShare, saveSrShare, copySrShare, srFill, submitSrFill, srReview, openSrReview, submitSrReview, srExt, srExtLogin, srExtKeys, srExtVal, openSrFill, refreshHmExpire, hmHist, openHmHistDetail, hmCmp, hmArchLineTab, hmArchPlant, hmArchCust, hmArchLaw, hmArchPlantSel, hmArchCustSel, hmArchLawSel, hmImpEntryTab, hmImpEntryRows, hmImpEntrySel, hmImpAddEntryRows, openHmImpStdPick, hmImpDelEntryRows, hmImpCompareEntry, hmArchAddLine, hmArchDelLines, hmCmpPassCount, hmCmpFailCount, hmCmpSkipCount, hmCmpRowClass, hmCmpValStyle, confirmHmCompare, hmFilePick, hmVoidPickRows, hmFilePickRows, confirmHmFilePick, refreshHmChgExpire, designVisible, designTitle, designBasic, designAdvanced, designCanvas, designFormName, designFormTitle, designActive, designActiveField, designDragType, formPreviewVisible, djExecVisible, djExecReadonly, djExecRow, djExecData, djExecFields, djExecHead, djExecFormName, djSign, saveDjExec, labInspExecVisible, labInspExecReadonly, labInspExecRow, labInspExecData, labInspExecFields, labInspExecFormName, labInspExecHead, openLabInspExec, labInspSign, saveLabInspExec, tyK, instDictOpts, tyDetailVisible, tyDetail, tyDetailKeys, tyDetailLines, TY_NOTICE_KEYS, TY_NOTICE_REQ, AP_TYPES, AP_LEADERS, AP_WAYS, AP_REMIND, AP_UNITS, tyTypes, tyFormVisible, tyFormMode, tyFormLines, tyFormSel, tyForm, onTyLineAction, saveTyForm, tyApVisible, tyApBatch, tyApRows, tyApSel, tyAp, tyApFlows, tyApLocked, tyApUsers, loadTyFlow, addTyNode, copyTyNode, removeTyNodes, onTyApType, onTyApField, submitTyAp, tyAuditVisible, tyAuditForm, tyAuditNode, submitTyAudit, sgVisible, sgMode, sgTab, sgForm, sgTitle, sgSchemeText, SG_ZERO, SG_ROUND, SG_TAKE, sgLineSel, openSgPick, removeSgSchemes, saveSg, sgPickVisible, sgPickCode, sgPickName, sgPickQuery, sgPickRows, sgPickSel, confirmSgPick, srVisible, srMode, srForm, srTitle, srPartyLabel, srMonthOpts, SR_DIMS, SR_WEEK, srSchemeOpts, srItemOpts, srFillItems, openSrPick, srOnDim, srOnTarget, saveSr, deleteSr, srSpcVisible, srSpcMenu, srSpcKey, srSpc, srRuleNames, srToggleAll, srToggleOne, srRestore, saveSrSpc, openChartSpcSettings, SR_FILTER_ROWS, SR_ZERO, SR_ROUND, SR_TAKE, SR_GROUP_SECS, SR_CHART_TYPES, SR_TIP_FIELDS, SR_DASH, srClearFilter, srRestoreGroup, srRestoreLimit, srRestoreView, srOnTake, srEnsureTips, srToggleLimit, srToggleTipAll, srToggleTipOne, acVisible, acRuleVisible, acRuleMenu, acRule, AC_RULE_FILTER, AC_RULE_ZERO, AC_RULE_ROUND, AC_RULE_TAKE, AC_RULE_SECS, AC_RULE_FILTER_NOTES, AC_RULE_TOP_NOTES, AC_RULE_GROUP_NOTES, openAcRule, saveAcRule, acRuleClear, acRuleRestore, acMode, acForm, acTitle, acPartyLabel, AC_METRICS, acSchemeOpts, openAcPick, acOnTarget, saveAc, deleteAc, MY_WX_PAGE, WO_LINK_PAGES, YS_SECS, woFixTab, woParts, woPartSel, removeWoParts, roundWoPart, ysDlgVisible, ysDlgBatch, ysDlgRows, ysForm, saveYsDlg, WO_PAGE, CL_REPAIR, WO_FIX_SECS, bxFormKind, bxFaultLocked, saveWoForm, bxExpTip, woFixVisible, woFixRow, woFix, openWoExp, saveWoFix, CL_WAYS, clDlgVisible, clDlgBatch, clDlgRows, clForm, clNeedRepair, clFaultTypes, saveClDraft, submitClDlg, maintTeamNames, bxDetailSecs, BX_INST_KEYS, BX_DETAIL, BX_FILE_KEYS, BX_TAG_KEYS, bxFormVisible, bxFormMode, bxFormTitle, bxFormLines, bxFormSel, bxForm, bxLineTypes, bxFaultTypes, onBxLineAction, saveBxForm, bxExpVisible, bxExpPick, bxExpRows, openBxExp, confirmBxExp, bxLinkVisible, bxLinkNos, bxLinkRows, goBxLink, bxDetailVisible, bxDetailRow, bxDetailTab, bxFlowNodes, openBxFlowNo, wjExecVisible, wjExecRow, wjExecLines, wjExecSel, onWjLineAction, onWjLineChange, openWjLineSupplier, saveWjExec, INST_PAGE, INST_BASE_FIELDS, INST_BASE_REQ, INST_CYCLE_UNITS, INST_DEPT_TREE, INST_DICTS, instTypeId, instTypeKw, instTypeList, instAllTypes, instCfgFieldList, onInstTypeQuery, selectInstType, onInstTypeOp, instTypeVisible, instTypeTitle, instTypeForm, openInstType, saveInstType, instCfgVisible, instCfgRows, instCfgSel, openInstCfg, addInstCfgRow, onInstCfgAttr, delInstCfgRows, saveInstCfg, instImageUrl, previewInstImage, instFormVisible, instFormMode, instFormTitle, instFormBase, instFormCfg, instFormOther, INST_PLAN_FIELDS, fillInstPlan, instUsers, onInstCodeInput, calcInstNext, onInstCycleInput, pickInstSupplier, saveInstForm, instLinkVisible, instLinkNos, instLinkRows, goInstLink, instIoTip, djMyUser, djMyUsers, isDjMyPage, isDjPlanPage,
-      importVisible, exportVisible, hiddenOrderDlg, hiddenOrderRows, hiddenOrderCols, hiddenOrderSel, openHiddenOrders, hideInspOrders, restoreHiddenOrders, opcRel, printVisible, printCodes, printTpl, printPrinter, openPrintLabel, qcView, clDevVisible, clDevForm, clDevOpts, clDevRule, confirmClDev, clSampleVisible, clSampleQuery, clSampleRows, clSampleCols, clSampleExpanded, consignPrintVisible, consignPrint,
+      importVisible, exportVisible, hiddenOrderDlg, hiddenOrderRows, hiddenOrderCols, hiddenOrderSel, openHiddenOrders, hideInspOrders, restoreHiddenOrders, hidRowsDlg, hidRowsList, hidRowsCols, hidRowsSel, openHiddenRowsList, hideTableRows, restoreHiddenRows, opcRel, printVisible, printCodes, printTpl, printPrinter, openPrintLabel, qcView, clDevVisible, clDevForm, clDevOpts, clDevRule, confirmClDev, clSampleVisible, clSampleQuery, clSampleRows, clSampleCols, clSampleExpanded, consignPrintVisible, consignPrint,
       pickerVisible, pickerTitle, pickerDialogTitle, pickerKw, pickerPrepQ, pickerPrepFilterTick, pickerPrepSelQty, pickerPrepNeedQty, resetPickerPrepQ, pickerRows, pickerColumns, pickerDialogWidth, pickerMultiSelect, pickerCurrent, pickerSelected, pickerMode,
       mergeVisible, mergeForm, onMergeShipOk, onFormSelectChange, onFormTextInput,
       soPrepPushVisible, soPrepPushForm, soPrepDocTypeOptions, onSoPrepPushOk,
@@ -40594,7 +40680,7 @@ function nextWjNo(){
       openPicker, onPickerOk, onGenerateBatch, onBatchDeleteLines, onBatchOk, refreshSerialExpire,
       onCraftDragStart, addCraftNode, onCraftDrop, onCraftOk, openCraftProc, onCraftProcOk, removeCraftNode, addDesignField, onDesignDrop, selectDesignField, moveDesignField, copyDesignField, removeDesignField, removeDesignChild, openFormPreview, onDesignCancel, onDesignOk, onDetailLineAction, removeDetailPickLine, syncPrepPickQty, onSplitLineSelection, addSplitMaterialLine, addSplitBatchLineForMat, addSplitBatchLine, removeSplitSelectedBatchLines, removeSplitBatchLine, splitSpanMethod, isSplitMatHeadRow,
       addKpiGrade, delKpiGrades, addKpiProject, delKpiProjects, addKpiIndicator, delKpiIndicators, moveKpiProject, moveKpiIndicator, onKpiCfgOk, openKpiScore, onKpiScoreOk, kpiProjectScore, onKpiVendorDelete,
-      sb, schedData,
+      sb, schedData, inspSeqGroups,
     };
   }
 }).use(ElementPlus, { locale: ElementPlusLocaleZhCn });

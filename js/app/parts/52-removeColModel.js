@@ -109,6 +109,11 @@
       storeTick.value;
       const rows = (MOCK[pageId.value]||{})[tabView.value.name] || [];
       let list = pageId.value==='lg-waybill-carrier' ? (((MOCK['lg-waybill']||{}).main)||[]).slice() : rows;
+      // 通用隐藏过滤：HIDE_PAGES 内页面按「页面id|行id」剔除隐藏行（放最前，自定义查询分支也生效）
+      if(HIDE_PAGES.has(pageId.value) && hiddenRowIds.value.size){
+        const _pid = pageId.value;
+        list = list.filter(r=> !hiddenRowIds.value.has(_pid+'|'+r.id));
+      }
       if(pageId.value===UQ_SUM_PAGE){
         // 不合格处置汇总：实时合并四个来源页「已处理」Tab 的数据，字段取并集
         list = uqSumRows();

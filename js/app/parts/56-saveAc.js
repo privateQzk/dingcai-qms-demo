@@ -195,6 +195,8 @@
       if(csPage() && csPage().onToolbar(btn)) return;
       if(pageId.value==='insp-order' && btn.name==='隐藏'){ hideInspOrders(); return; }
       if(pageId.value==='insp-order' && btn.name==='显示'){ openHiddenOrders(); return; }
+      if(HIDE_PAGES.has(pageId.value) && btn.name==='隐藏'){ hideTableRows(); return; }
+      if(HIDE_PAGES.has(pageId.value) && btn.name==='显示'){ openHiddenRowsList(); return; }
       if(pageId.value===COL_PAGE && onColToolbar(btn)) return;
       if(pageId.value===INST_PAGE && onInstToolbar(btn)) return;
       if(btn.name==='新增' && pageId.value===SPLIT_PAGE){ openForm('add'); return; }

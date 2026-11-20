@@ -1333,3 +1333,27 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
 .sb-head th{background:#F8FAFC;border:1px solid #E5EAF0;padding:6px 10px;color:#64748B;font-weight:500;width:90px;text-align:left}
 .sb-head td{border:1px solid #E5EAF0;padding:6px 10px;color:#334155}
 .sb-unit{margin-left:10px;font-size:12px;color:#94A3B8}
+
+/* ===== 报检单顺序图 ===== */
+.insp-seq { flex: 1; min-height: 0; overflow: hidden; padding: 16px 20px; display: flex; flex-direction: row; gap: 18px; }
+.insp-seq__group { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; min-height: 0; border: 1px solid #e4e7ed; border-radius: 8px; background: #fff; }
+.insp-seq__hd { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px solid #ebeef5; background: #f8fafc; border-radius: 8px 8px 0 0; }
+.insp-seq__title { font-size: 14px; font-weight: 600; color: #303133; }
+.insp-seq__hint { margin-left: auto; font-size: 12px; color: #909399; }
+.insp-seq__chain { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; padding: 12px 16px 14px; }
+.insp-seq__empty { padding: 24px; color: #909399; font-size: 13px; }
+.insp-seq__item { display: flex; align-items: stretch; }
+.insp-seq__rail { flex: 0 0 26px; display: flex; flex-direction: column; align-items: center; }
+.insp-seq__no { flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%; background: #409eff; color: #fff; font-size: 12px; display: flex; align-items: center; justify-content: center; margin-top: 7px; }
+.insp-seq__line { flex: 1; width: 2px; min-height: 8px; background: #dcdfe6; margin: 2px 0; }
+.insp-seq__card { flex: 1; min-width: 0; margin: 4px 0 4px 10px; border: 1px solid #dcdfe6; border-radius: 6px; padding: 8px 12px; background: #fff; }
+.insp-seq__card:hover { border-color: #409eff; box-shadow: 0 2px 8px rgba(64,158,255,.15); }
+.insp-seq__card-top { display: flex; align-items: center; gap: 8px; }
+.insp-seq__bill { font-size: 13px; font-weight: 600; color: #303133; }
+.insp-seq__time { margin-left: auto; font-size: 12px; color: #909399; font-variant-numeric: tabular-nums; }
+.insp-seq__meta { display: flex; flex-wrap: wrap; gap: 4px 18px; margin-top: 5px; font-size: 12px; color: #606266; }
+.insp-seq__cell { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.insp-seq__cell label { color: #909399; margin-right: 4px; }
+.insp-seq__cell i { font-style: normal; color: #909399; }
+.insp-seq__prog { margin-top: 6px; display: flex; align-items: center; gap: 10px; font-size: 12px; color: #909399; }
+.insp-seq__prog .el-progress { flex: 1; max-width: 180px; }

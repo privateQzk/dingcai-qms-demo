@@ -354,6 +354,12 @@ window.WMS_PAGE_CONFIGS = {
               "titleRed": true
             },
             {
+              "title": "报检单顺序图",
+              "index": "insp-seq",
+              "pageId": "insp-seq",
+              "titleRed": true
+            },
+            {
               "title": "加样申请",
               "index": "add-sample",
               "pageId": "add-sample",
@@ -5347,6 +5353,14 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
+            {
               "name": "关联查询",
               "type": "default"
             },
@@ -5561,6 +5575,14 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "关联查询",
               "type": "default"
@@ -13752,6 +13774,40 @@ window.WMS_PAGE_CONFIGS = {
        "formLineActions": [],
        "formDialogWidth": "min(1100px, 96vw)"
      },
+    "insp-seq": {
+      "id": "insp-seq",
+      "title": "报检单顺序图",
+      "groups": [
+        "质量管理",
+        "检验管理"
+      ],
+      "breadcrumb": [
+        "质量管理",
+        "检验管理",
+        "报检单顺序图"
+      ],
+      "layout": "insp-sequence",
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [],
+          "queryDefault": [],
+          "queryMore": [],
+          "toolbar": [],
+          "columns": [],
+          "rowOps": []
+        }
+      ],
+      "formFields": [],
+      "formSections": [],
+      "detailFields": [],
+      "hasEdit": false,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true
+    },
     "wait-samp": {
        "id": "wait-samp",
        "title": "待取样任务",
@@ -24762,6 +24818,14 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
+            {
               "name": "关联查询",
               "type": "default"
             },
@@ -24996,6 +25060,14 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "关联查询",
               "type": "default"
@@ -25385,6 +25457,14 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
+            {
               "name": "关联查询",
               "type": "default"
             },
@@ -25620,6 +25700,14 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "关联查询",
               "type": "default"
@@ -26005,6 +26093,14 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
+            {
               "name": "关联查询",
               "type": "default"
             },
@@ -26226,6 +26322,14 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "关联查询",
               "type": "default"
@@ -26645,6 +26749,14 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
+            {
               "name": "新增",
               "type": "primary"
             },
@@ -26895,6 +27007,14 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "关联查询",
               "type": "default"
@@ -27172,6 +27292,14 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
+            {
               "name": "关联查询",
               "type": "default"
             },
@@ -27368,6 +27496,14 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "关联查询",
               "type": "default"
@@ -27666,6 +27802,14 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
+            {
               "name": "关联查询",
               "type": "default"
             },
@@ -27874,6 +28018,14 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "关联查询",
               "type": "default"
@@ -28172,6 +28324,14 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
+            {
               "name": "关联查询",
               "type": "default"
             },
@@ -28380,6 +28540,14 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "关联查询",
               "type": "default"
@@ -28664,6 +28832,14 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
+            {
               "name": "关联查询",
               "type": "default"
             },
@@ -28858,6 +29034,14 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "关联查询",
               "type": "default"
@@ -57535,6 +57719,14 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
+            {
               "name": "新增",
               "type": "primary"
             },
@@ -57756,6 +57948,14 @@ window.WMS_PAGE_CONFIGS = {
             "变更处理提交时间"
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "导出数据",
               "type": "default"
@@ -60058,6 +60258,14 @@ window.WMS_PAGE_CONFIGS = {
             "制单时间"
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "新增",
               "type": "primary"
@@ -91776,6 +91984,14 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
+            {
               "name": "关联查询",
               "type": "default"
             },
@@ -91990,6 +92206,14 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "关联查询",
               "type": "default"
@@ -100185,6 +100409,40 @@ window.WMS_PAGE_CONFIGS = {
        "formLineActions": [],
        "formDialogWidth": "min(1100px, 96vw)"
      },
+    {
+      "id": "insp-seq",
+      "title": "报检单顺序图",
+      "groups": [
+        "质量管理",
+        "检验管理"
+      ],
+      "breadcrumb": [
+        "质量管理",
+        "检验管理",
+        "报检单顺序图"
+      ],
+      "layout": "insp-sequence",
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [],
+          "queryDefault": [],
+          "queryMore": [],
+          "toolbar": [],
+          "columns": [],
+          "rowOps": []
+        }
+      ],
+      "formFields": [],
+      "formSections": [],
+      "detailFields": [],
+      "hasEdit": false,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true
+    },
 
     {
        "id": "wait-samp",
@@ -111210,6 +111468,14 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
+            {
               "name": "关联查询",
               "type": "default"
             },
@@ -111444,6 +111710,14 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "关联查询",
               "type": "default"
@@ -111834,6 +112108,14 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
+            {
               "name": "关联查询",
               "type": "default"
             },
@@ -112069,6 +112351,14 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "关联查询",
               "type": "default"
@@ -112455,6 +112745,14 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
+            {
               "name": "关联查询",
               "type": "default"
             },
@@ -112676,6 +112974,14 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "关联查询",
               "type": "default"
@@ -113096,6 +113402,14 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
+            {
               "name": "新增",
               "type": "primary"
             },
@@ -113346,6 +113660,14 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "关联查询",
               "type": "default"
@@ -113624,6 +113946,14 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
+            {
               "name": "关联查询",
               "type": "default"
             },
@@ -113820,6 +114150,14 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "关联查询",
               "type": "default"
@@ -114119,6 +114457,14 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
+            {
               "name": "关联查询",
               "type": "default"
             },
@@ -114327,6 +114673,14 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "关联查询",
               "type": "default"
@@ -114626,6 +114980,14 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
+            {
               "name": "关联查询",
               "type": "default"
             },
@@ -114834,6 +115196,14 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "关联查询",
               "type": "default"
@@ -115119,6 +115489,14 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
+            {
               "name": "关联查询",
               "type": "default"
             },
@@ -115313,6 +115691,14 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "关联查询",
               "type": "default"
@@ -143234,6 +143620,14 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
+            {
               "name": "新增",
               "type": "primary"
             },
@@ -143455,6 +143849,14 @@ window.WMS_PAGE_CONFIGS = {
             "变更处理提交时间"
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "导出数据",
               "type": "default"
@@ -145762,6 +146164,14 @@ window.WMS_PAGE_CONFIGS = {
             "制单时间"
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "新增",
               "type": "primary"
@@ -177557,6 +177967,14 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
+            {
               "name": "关联查询",
               "type": "default"
             },
@@ -177771,6 +178189,14 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "关联查询",
               "type": "default"
@@ -185966,6 +186392,40 @@ window.WMS_PAGE_CONFIGS = {
        "formLineActions": [],
        "formDialogWidth": "min(1100px, 96vw)"
      },
+    {
+      "id": "insp-seq",
+      "title": "报检单顺序图",
+      "groups": [
+        "质量管理",
+        "检验管理"
+      ],
+      "breadcrumb": [
+        "质量管理",
+        "检验管理",
+        "报检单顺序图"
+      ],
+      "layout": "insp-sequence",
+      "tabs": [],
+      "tabViews": [
+        {
+          "name": "main",
+          "label": "",
+          "queryFields": [],
+          "queryDefault": [],
+          "queryMore": [],
+          "toolbar": [],
+          "columns": [],
+          "rowOps": []
+        }
+      ],
+      "formFields": [],
+      "formSections": [],
+      "detailFields": [],
+      "hasEdit": false,
+      "hasDetail": false,
+      "stub": false,
+      "formFlat": true
+    },
 
     {
        "id": "wait-samp",
@@ -196991,6 +197451,14 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
+            {
               "name": "关联查询",
               "type": "default"
             },
@@ -197225,6 +197693,14 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "关联查询",
               "type": "default"
@@ -197615,6 +198091,14 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
+            {
               "name": "关联查询",
               "type": "default"
             },
@@ -197850,6 +198334,14 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "关联查询",
               "type": "default"
@@ -198236,6 +198728,14 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
+            {
               "name": "关联查询",
               "type": "default"
             },
@@ -198457,6 +198957,14 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "关联查询",
               "type": "default"
@@ -198877,6 +199385,14 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
+            {
               "name": "新增",
               "type": "primary"
             },
@@ -199127,6 +199643,14 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "关联查询",
               "type": "default"
@@ -199405,6 +199929,14 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
+            {
               "name": "关联查询",
               "type": "default"
             },
@@ -199601,6 +200133,14 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "关联查询",
               "type": "default"
@@ -199900,6 +200440,14 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
+            {
               "name": "关联查询",
               "type": "default"
             },
@@ -200108,6 +200656,14 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "关联查询",
               "type": "default"
@@ -200407,6 +200963,14 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
+            {
               "name": "关联查询",
               "type": "default"
             },
@@ -200615,6 +201179,14 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "关联查询",
               "type": "default"
@@ -200900,6 +201472,14 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
+            {
               "name": "关联查询",
               "type": "default"
             },
@@ -201094,6 +201674,14 @@ window.WMS_PAGE_CONFIGS = {
             }
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "关联查询",
               "type": "default"
@@ -229017,6 +229605,14 @@ window.WMS_PAGE_CONFIGS = {
           ],
           "toolbar": [
             {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
+            {
               "name": "新增",
               "type": "primary"
             },
@@ -229238,6 +229834,14 @@ window.WMS_PAGE_CONFIGS = {
             "变更处理提交时间"
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "导出数据",
               "type": "default"
@@ -231545,6 +232149,14 @@ window.WMS_PAGE_CONFIGS = {
             "制单时间"
           ],
           "toolbar": [
+            {
+              "name": "隐藏",
+              "type": "warning"
+            },
+            {
+              "name": "显示",
+              "type": "warning"
+            },
             {
               "name": "新增",
               "type": "primary"
