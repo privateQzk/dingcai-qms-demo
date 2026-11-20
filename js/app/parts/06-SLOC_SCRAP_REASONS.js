@@ -41,6 +41,16 @@
         ElMessage.warning(mode==='in' ? '请先勾选要入库的样品' : mode==='take' ? '请先勾选要领用的样品' : '请先勾选要处置的样品');
         return;
       }
+      // 当前位置为空的样品不可领用 / 处置：全部为空直接拦截，部分为空提示后排除
+      if(mode==='take' || mode==='disp'){
+        const bad = rows.filter(r=> !flowHas(r['当前位置']));
+        if(bad.length){
+          const names = bad.slice(0,3).map(r=> r['样品编号']||'—').join('、') + (bad.length>3 ? ' 等 '+bad.length+' 个' : '');
+          rows = rows.filter(r=> flowHas(r['当前位置']));
+          ElMessage.warning('样品 '+names+' 当前位置为空，不可'+(mode==='take'?'领用':'处置')+(rows.length ? '，已从本次操作中排除' : ''));
+          if(!rows.length) return;
+        }
+      }
       slocDispMode.value = mode;
       slocDispSelected.value = [];
       const use = slocTab('tab-1');
