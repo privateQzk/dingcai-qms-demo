@@ -139,43 +139,53 @@
       bumpStore();
       ElMessage.success(isAdd ? '已新增检验班组 '+name : '保存成功');
     }
-    function shiftSpanMin(s, e){
-      if(!s || !e) return null;
-      const a = String(s).split(':').map(Number), b = String(e).split(':').map(Number);
+    function shiftSegMin(s, e){
+      const a = s.split(':').map(Number), b = e.split(':').map(Number);
       if(a.length<2 || b.length<2 || isNaN(a[0]) || isNaN(b[0])) return null;
-      let d = (b[0]*60 + (b[1]||0)) - (a[0]*60 + (a[1]||0));
-      if(d < 0) d += 1440;
-      return d;
-    }
-    function shiftWorkHours(s, e, rest){
-      const d = shiftSpanMin(s, e);
-      if(d == null) return '';
-      const r = Math.max(0, parseInt(rest, 10) || 0);
-      return ((d - r) / 60).toFixed(1);
+      let st = a[0]*60 + (a[1]||0), en = b[0]*60 + (b[1]||0);
+      if(en<=st) en += 1440;
+      return { st, en };
     }
     function saveShiftForm(){
       const txt = k=> String(formModel[k]||'').trim();
       const isAdd = formMode.value==='add' || formMode.value==='copy';
-      const name = txt('班次名称'), st = txt('开始时间'), et = txt('结束时间');
+      const name = txt('班次名称');
       if(!name){ ElMessage.warning('请输入班次名称'); return; }
-      if(!st){ ElMessage.warning('请选择开始时间'); return; }
-      if(!et){ ElMessage.warning('请选择结束时间'); return; }
-      if(st===et){ ElMessage.warning('开始时间与结束时间不能相同'); return; }
-      const restIn = parseInt(formModel['休息时长'], 10);
-      const rest = Number.isFinite(restIn) ? Math.max(0, Math.min(480, restIn)) : 60;
-      const span = shiftSpanMin(st, et);
-      if(span != null && rest >= span){ ElMessage.warning('休息时长不能超过班次跨度'); return; }
+      const n = parseInt(formModel['段数'], 10);
+      if(!n || n<1 || n>6){ ElMessage.warning('段数须为 1~6'); return; }
+      const segs = [];
+      for(let i=1;i<=n;i++){
+        const s = txt('段'+i+'开始'), e = txt('段'+i+'结束'), t = txt('段'+i+'类型');
+        if(!s){ ElMessage.warning('请选择段'+i+'开始'); return; }
+        if(!e){ ElMessage.warning('请选择段'+i+'结束'); return; }
+        if(s===e){ ElMessage.warning('段'+i+'开始与结束不能相同'); return; }
+        if(!t){ ElMessage.warning('请选择段'+i+'类型'); return; }
+        const r = shiftSegMin(s, e);
+        if(!r){ ElMessage.warning('段'+i+'时间格式不正确'); return; }
+        segs.push({ s, e, t, st:r.st, en:r.en });
+      }
+      const overlap = (x,y)=> x.st<y.en && y.st<x.en;
+      for(let i=0;i<segs.length;i++){
+        for(let j=i+1;j<segs.length;j++){
+          const a = segs[i], b = segs[j];
+          const hit = overlap(a,b) || overlap(a,{st:b.st+1440,en:b.en+1440}) || overlap(a,{st:b.st-1440,en:b.en-1440});
+          if(hit){ ElMessage.warning('段'+(i+1)+' 与段'+(j+1)+' 时段重叠'); return; }
+        }
+      }
+      const restMin = segs.filter(x=> x.t==='休息').reduce((m,x)=> m + (x.en-x.st), 0);
+      const workMin = segs.filter(x=> x.t!=='休息').reduce((m,x)=> m + (x.en-x.st), 0);
       const list = (MOCK[SHIFT_PAGE] = MOCK[SHIFT_PAGE] || { main: [] }).main || (MOCK[SHIFT_PAGE].main = []);
       const others = list.filter(r=> isAdd || r.id!==formModel._editId);
       if(others.some(r=> r['班次名称']===name)){ ElMessage.warning('班次名称已存在'); return; }
       const teams = splitDun(formModel['适用班组']);
       const payload = {
-        班次名称: name, 开始时间: st, 结束时间: et,
-        跨天: et<=st ? '是' : '否', 休息时长: String(rest), 工作时长: shiftWorkHours(st, et, rest),
-        班次颜色: txt('班次颜色') || '#3B82F6',
+        班次名称: name, 开始时间: segs[0].s, 结束时间: segs[segs.length-1].e,
+        段数: String(n), 休息时长: String(restMin), 工作时长: (workMin/60).toFixed(1),
         适用班组: teams.join('、') || '通用', 备注: txt('备注'),
         启用状态: formSwitch['启用状态']===false ? '禁用' : '启用'
       };
+      segs.forEach((x,idx)=>{ const i=idx+1; payload['段'+i+'开始']=x.s; payload['段'+i+'结束']=x.e; payload['段'+i+'类型']=x.t; });
+      for(let i=n+1;i<=6;i++){ ['开始','结束','类型'].forEach(k=> delete payload['段'+i+k]); }
       if(isAdd){
         const max = list.reduce((m, r)=> Math.max(m, parseInt(String(r['班次编码']||'').replace(/\D/g, ''), 10) || 0), 0);
         const saved = Object.assign({ id: 'bc-'+Date.now(), 班次编码: 'BC'+String(max + 1).padStart(3, '0') }, payload, { 创建人:'管理员', 创建时间: nowStamp() });
@@ -186,6 +196,8 @@
       } else {
         const saved = list.find(r=> r.id===formModel._editId);
         if(!saved){ ElMessage.warning('未找到待编辑数据'); return; }
+        for(let i=n+1;i<=6;i++){ ['开始','结束','类型'].forEach(k=> delete saved['段'+i+k]); }
+        delete saved['跨天']; delete saved['班次颜色'];
         Object.assign(saved, payload);
         formVisible.value = false;
         bumpStore();

@@ -14,7 +14,9 @@
     name: 'QmsSchedBoard',
     props: {
       sb: { type: Object, required: true },
-      data: { type: Object, default: function () { return { tasks: [], logs: [], gantt: [], ganttInsts: [], shades: [], range: [0, 0], cards: [] }; } }
+      data: { type: Object, default: function () { return { tasks: [], logs: [], gantt: [], ganttInsts: [], shades: [], range: [0, 0], cards: [] }; } },
+      /* page=排程页整页；split=「我的任务」排程弹窗（上甘特+下我的任务表） */
+      mode: { type: String, default: 'page' }
     },
     data: function () { return { chart: null, win: null, selKeys: {}, boxSel: false, marquee: null, cursorX: -1, cursorText: '', dragTip: null }; },
     watch: {
@@ -276,6 +278,13 @@
         };
         window.addEventListener('mousedown', self._dragDown, true);
         this.renderChart();
+        // split 模式默认给出一周窗口，便于总览；页面模式沿用锚点日
+        if (this.mode === 'split') {
+          var r0 = this.data.range || [Date.now(), Date.now() + 86400000];
+          this.applyWin(r0[0], r0[0] + 7 * 86400000);
+          // 全屏弹窗动画期间 init 可能量到 0 宽，延迟 resize + 重绘兜底
+          setTimeout(function () { if (self.chart) { self.chart.resize(); self.renderChart(); } }, 350);
+        }
       },
       // 缩放/平移/滑条统一入口：窗口裁剪到 fullRange 并保证最小跨度，再落到 xAxis.min/max
       applyWin: function (ns, ne) {
@@ -346,6 +355,36 @@
         var w = this.win || this.data.range || [0, 0], p = function (x) { return String(x).padStart(2, '0'); };
         var f = function (t) { var d = new Date(t); return p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes()); };
         return f(w[0]) + ' ~ ' + f(w[1]);
+      },
+      /* ---- split 模式：甘特顶部日期轴（按日分格，与绘图区像素对齐） ---- */
+      axisDays: function () {
+        var w = this.win || this.data.range || [0, 0], span = Math.max(1, w[1] - w[0]);
+        var WD = ['日', '一', '二', '三', '四', '五', '六'], out = [], lastM = '';
+        var d = new Date(w[0]); d.setHours(0, 0, 0, 0);
+        if (d.getTime() + 86400000 <= w[0]) d = new Date(d.getTime() + 86400000);
+        for (; d.getTime() < w[1]; d = new Date(d.getTime() + 86400000)) {
+          var s = Math.max(d.getTime(), w[0]), e = Math.min(d.getTime() + 86400000, w[1]);
+          if (e <= s) continue;
+          var mk = d.getFullYear() + '-' + d.getMonth();
+          out.push({
+            l: (s - w[0]) / span * 100, w: (e - s) / span * 100,
+            dd: d.getDate(), wd: '周' + WD[d.getDay()],
+            md: (d.getMonth() + 1) + '-' + String(d.getDate()).padStart(2, '0'),
+            mm: mk !== lastM ? d.getFullYear() + '年' + (d.getMonth() + 1) + '月' : '',
+            rest: d.getDay() === 0 || d.getDay() === 6
+          });
+          lastM = mk;
+        }
+        return out;
+      },
+      axisRangeText: function () {
+        var f = this.data.fullRange || this.data.range || [0, 0], p = function (x) { return String(x).padStart(2, '0'); };
+        var fmt = function (t) { var d = new Date(t); return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()); };
+        return fmt(f[0]) + ' ~ ' + fmt(f[1]);
+      },
+      splitGoToday: function () {
+        var r = this.data.range || [Date.now(), Date.now() + 86400000];
+        this.applyWin(r[0], r[0] + 86400000);
       },
       sliderDown: function (ev, part) {
         var tr = this.$refs.sliderTrack.getBoundingClientRect();
@@ -427,12 +466,16 @@
           yAxis: {
             type: 'category', data: insts, inverse: true,
             axisLabel: {
-              fontSize: 12, width: 170, overflow: 'truncate',
+              fontSize: 12, width: 170, overflow: 'truncate', lineHeight: 15,
+              interval: 0, hideOverlap: false, margin: 12,
               formatter: function (v) {
                 var meta = (self.data.instMeta || {})[v] || {};
-                return '{code|' + (meta.code || '') + '} {name|' + v + '}';
+                return '{name|' + v + '}\n{code|' + (meta.code || '') + '}';
               },
-              rich: { code: { color: '#94A3B8', fontSize: 10, align: 'right', width: 66 }, name: { color: '#334155', fontSize: 12, width: 98, overflow: 'truncate' } }
+              rich: {
+                name: { color: '#1D2129', fontSize: 12, width: 170, overflow: 'truncate', align: 'left', lineHeight: 16 },
+                code: { color: '#86909C', fontSize: 10, width: 170, overflow: 'truncate', align: 'left', lineHeight: 14 }
+              }
             },
             splitLine: { show: true, lineStyle: { color: '#E5EAF0' } },
             axisTick: { show: false }, axisLine: { show: false }
@@ -461,9 +504,11 @@
                 var yB = api.coord([api.value(1), n0 - 1])[1] + bH0 / 2;
                 var x0 = api.coord([api.value(1), 0])[0];
                 if (d.nowline) {
+                  var nd = new Date(api.value(1)), np = function (n) { return String(n).padStart(2, '0'); };
+                  var nowTxt = nd.getFullYear() + '-' + np(nd.getMonth() + 1) + '-' + np(nd.getDate()) + ' ' + np(nd.getHours()) + ':' + np(nd.getMinutes());
                   return { type: 'group', children: [
                     { type: 'line', shape: { x1: x0, y1: yT, x2: x0, y2: yB }, style: { stroke: '#EF4444', lineDash: [4, 4], lineWidth: 1.5 }, silent: true },
-                    { type: 'text', style: { x: x0 + 3, y: yT + 2, text: '当前', fill: '#EF4444', fontSize: 10 }, silent: true }
+                    { type: 'text', style: { x: x0 + 3, y: yT + 2, text: nowTxt, fill: '#EF4444', fontSize: 10 }, silent: true }
                   ] };
                 }
                 var x1 = api.coord([api.value(2), 0])[0];
@@ -505,12 +550,13 @@
                 kids.push({ type: 'circle', name: pfx + '-b', x: 0, y: 0, shape: { cx: lx + 4.5, cy: ly - 4, r: 2.5 }, style: { stroke: '#fff', fill: 'none', lineWidth: 1.6 }, silent: true });
                 kids.push({ type: 'rect', name: pfx + '-c', x: 0, y: 0, shape: { x: lx, y: ly - 2, width: 9, height: 6, r: 1 }, style: { fill: '#fff' }, silent: true });
               }
-              // 任务信息始终展示：块宽放得下→块内白字，放不下→块右侧深色字
+              // 任务信息始终展示：块宽放得下→块内白字，放不下→块右侧深色字；标签=排程单号·检验类
+              var blkTxt = (t['排程单号'] ? t['排程单号'] + '·' : '') + t['检验类'];
               if (w > 34) {
                 kids.push({
                   type: 'text', silent: true, name: pfx + '-d', x: 0, y: 0,
                   style: {
-                    x: s[0] + 7, y: y + h / 2, text: t['样品编号'] + '·' + t['检验类'],
+                    x: s[0] + 7, y: y + h / 2, text: blkTxt,
                     fill: '#fff', fontSize: 11, align: 'left', verticalAlign: 'middle',
                     width: w - 10, overflow: 'truncate'
                   }
@@ -519,7 +565,7 @@
                 kids.push({
                   type: 'text', silent: true, name: pfx + '-d', x: 0, y: 0,
                   style: {
-                    x: s[0] + w + 4, y: y + h / 2, text: t['样品编号'] + '·' + t['检验类'],
+                    x: s[0] + w + 4, y: y + h / 2, text: blkTxt,
                     fill: '#475569', fontSize: 10, align: 'left', verticalAlign: 'middle'
                   }
                 });
@@ -587,6 +633,7 @@
     },
     template: [
       '<section class="sched-board">',
+      '  <template v-if="mode!==\'split\'">',
       '  <div class="sb-tabs">',
       '    <button v-for="t in [[\'board\',\'排程看板\'],[\'tasks\',\'排程任务\'],[\'log\',\'排程流水\']]" :key="t[0]"',
       '      class="sb-tab" :class="{ \'sb-tab--on\': sb.tab === t[0] }" @click="sb.setTab(t[0])">{{ t[1] }}</button>',
@@ -725,6 +772,85 @@
       '      <el-table-column prop="操作时间" label="操作时间" width="150"></el-table-column>',
       '    </el-table>',
       '  </div>',
+      '  </template>',
+      // ===== split：排程弹窗（上甘特 + 下我的任务） =====
+      '  <template v-else>',
+      '    <div class="sb-split">',
+      '      <div class="sb-board__bar">',
+      '        <span class="sb-split__title">甘特图<b class="sb-split__cnt">{{ (data.gantt||[]).length }} 条</b><em>每条任务=一个待排任务，生成排程输出后锁定</em></span>',
+      '        <span class="sb-legend">',
+      '          <i class="sb-legend__i" style="background:#93C5FD"></i>待排程',
+      '          <i class="sb-legend__i" style="background:#3B82F6"></i>已排程',
+      '          <i class="sb-legend__i" style="background:#F59E0B"></i>检验中',
+      '          <i class="sb-legend__i" style="background:#22C55E"></i>已完成',
+      '          <i class="sb-legend__i sb-legend__i--line"></i>冲突/逾期',
+      '          <i class="sb-legend__i sb-legend__i--shade"></i>非工作/休息',
+      '          <i class="sb-legend__i sb-legend__i--now"></i>当前时刻',
+      '        </span>',
+      '        <el-button size="small" :type="boxSel ? \'primary\' : \'default\'" @click="toggleBoxSel()">框选</el-button>',
+      '        <span class="sb-now">演示基准：{{ data.now }}</span>',
+      '      </div>',
+      '      <div class="sb-axiswrap">',
+      '        <div class="sb-axis__corner">仪器</div>',
+      '        <div class="sb-axis">',
+      '          <div v-for="(d, i) in axisDays()" :key="i" class="sb-axis__day" :class="{ \'sb-axis__day--rest\': d.rest }" :style="{ left: d.l + \'%\', width: d.w + \'%\' }">',
+      '            <div class="sb-axis__mm" v-if="d.mm">{{ d.mm }}</div>',
+      '            <div class="sb-axis__dd">{{ d.dd }} {{ d.wd }}</div>',
+      '            <div class="sb-axis__md">{{ d.md }}</div>',
+      '          </div>',
+      '        </div>',
+      '        <div class="sb-gantt__wrap sb-gantt__wrap--split">',
+      '          <div ref="gantt" class="sb-gantt sb-gantt--split"></div>',
+      '          <div v-show="cursorX >= 0" class="sb-gantt__cursor" :style="{ left: cursorX + \'px\' }"><div class="sb-gantt__cursor-lab" :style="cursorLabStyle()">{{ cursorText }}</div></div>',
+      '          <div v-show="dragTip" class="sb-gantt__dragtip" :style="dragTip ? { left: dragTip.x + \'px\', top: dragTip.y + \'px\' } : {}">{{ dragTip && dragTip.text }}</div>',
+      '          <div v-show="marquee" class="sb-marquee" :style="marquee ? { left: marquee.x + \'px\', top: marquee.y + \'px\', width: marquee.w + \'px\', height: marquee.h + \'px\' } : {}"></div>',
+      '          <div v-show="selCount()" class="sb-selbar">',
+      '            <span>已选 {{ selCount() }} 个任务（可移动 {{ selMovableCount() }}）</span>',
+      '            <el-button size="small" type="warning" @click="selBatch(\'lock\')">锁定</el-button>',
+      '            <el-button size="small" @click="selBatch(\'unlock\')">解锁</el-button>',
+      '            <el-button size="small" type="danger" @click="selBatch(\'cancel\')">取消排程</el-button>',
+      '            <el-button size="small" link @click="clearSel()">清除选择</el-button>',
+      '          </div>',
+      '        </div>',
+      '      </div>',
+      '      <div class="sb-split__slider">',
+      '        <div class="sb-slider">',
+      '          <div ref="sliderTrack" class="sb-slider__track" @mousedown="sliderTrackDown">',
+      '            <div v-for="tk in sliderTicks()" :key="tk.t" class="sb-slider__tick" :style="{ left: tk.x + \'%\' }"><span>{{ tk.txt }}</span></div>',
+      '            <div v-if="sliderNowPct() >= 0" class="sb-slider__now" :style="{ left: sliderNowPct() + \'%\' }"></div>',
+      '            <div class="sb-slider__win" :style="sliderWinStyle()" @mousedown.stop="sliderDown($event, \'m\')"><span class="sb-slider__win-t" v-if="sliderWinPx() > 120">{{ sliderWinText() }}</span></div>',
+      '          </div>',
+      '        </div>',
+      '        <el-button size="small" @click="splitGoToday()">定位当前</el-button>',
+      '        <span class="sb-split__range">{{ axisRangeText() }}</span>',
+      '      </div>',
+      '      <div class="sb-split__tasks">',
+      '        <div class="sb-toolbar">',
+      '          <span class="sb-toolbar__t">我的任务 · 共 {{ (data.myTasks || []).length }} 条</span>',
+      '          <el-input v-model="sb.splitKw" size="small" clearable placeholder="按样品编号过滤" style="width:170px"></el-input>',
+      '        </div>',
+      '        <el-table class="demo-data-table" :data="data.myTasks" border stripe max-height="300" empty-text="暂无数据" size="small">',
+      '          <el-table-column type="index" label="序号" width="56"></el-table-column>',
+      '          <el-table-column prop="报检单类型" label="报检单类型" width="110"></el-table-column>',
+      '          <el-table-column prop="样品编号" label="样品编号" width="130"></el-table-column>',
+      '          <el-table-column prop="样品来源" label="样品来源" width="96"></el-table-column>',
+      '          <el-table-column prop="检验类名称" label="检验类名称" width="110"></el-table-column>',
+      '          <el-table-column prop="检验班组" label="检验班组" width="120" show-overflow-tooltip></el-table-column>',
+      '          <el-table-column prop="分析仪器" label="分析仪器" width="140" show-overflow-tooltip></el-table-column>',
+      '          <el-table-column label="优先级" width="76"><template #default="{ row }"><el-tag v-if="row[\'优先级\'] && row[\'优先级\'] !== \'—\'" :type="tagType(row[\'优先级\'])" size="small">{{ row[\'优先级\'] }}</el-tag><span v-else class="demo-readonly">—</span></template></el-table-column>',
+      '          <el-table-column label="反馈状态" width="90"><template #default="{ row }"><el-tag :type="row[\'反馈状态\'] === \'已填写\' ? \'success\' : \'warning\'" size="small">{{ row[\'反馈状态\'] || \'—\' }}</el-tag></template></el-table-column>',
+      '          <el-table-column prop="预计完成时间" label="预计完成时间" width="140"></el-table-column>',
+      '          <el-table-column label="排程状态" width="92"><template #default="{ row }"><el-tag v-if="row[\'排程状态\'] !== \'—\'" :type="tagType(row[\'排程状态\'])" size="small">{{ row[\'排程状态\'] }}</el-tag><span v-else class="demo-readonly">—</span></template></el-table-column>',
+      '          <el-table-column prop="计划开始" label="计划开始" width="140"></el-table-column>',
+      '          <el-table-column prop="计划结束" label="计划结束" width="140"></el-table-column>',
+      '          <el-table-column label="操作" width="180" fixed="right"><template #default="{ row }">',
+      '            <template v-if="row._task"><el-button v-for="b in opBtns(row._task)" :key="b.cmd" link :type="b.type" @click="sb.myOp(b.cmd, row)">{{ b.name }}</el-button></template>',
+      '            <el-button v-else link type="primary" @click="sb.myOp(\'sched\', row)">排程</el-button>',
+      '          </template></el-table-column>',
+      '        </el-table>',
+      '      </div>',
+      '    </div>',
+      '  </template>',
       // ===== 排程 / 调整弹窗 =====
       '  <el-dialog v-model="sb.dlg.visible" :title="sb.dlg.title" width="680px" append-to-body :close-on-click-modal="false">',
       '    <table class="sb-head"><tr><th>样品编号</th><td>{{ sb.dlg.head.样品编号 }}</td><th>报检单号</th><td>{{ sb.dlg.head.报检单号 }}</td><th>检验类</th><td>{{ sb.dlg.head.检验类 }}</td></tr>',

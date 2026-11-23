@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vxe-pc-ui@4/lib/style.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vxe-table@4/lib/style.css" />
-<link rel="stylesheet" href="./css/app.css?v=1.0.17" />
+<link rel="stylesheet" href="./css/app.css?v=1.0.21" />
 </head>
 <body>
 <div id="app" v-cloak>
@@ -4208,6 +4208,11 @@
         <el-button type="primary" @click="confirmFbBatch">确定</el-button>
       </div>
     </template>
+  </el-dialog>
+
+  <!-- 数据录入-我的 · 排程（全屏：上甘特 + 下我的任务） -->
+  <el-dialog v-model="schedSplitVisible" class="demo-dialog--biz sched-split-dlg" title="排程" fullscreen destroy-on-close append-to-body :close-on-click-modal="false">
+    <qms-sched-board v-if="schedSplitVisible" mode="split" :sb="sb" :data="schedData"></qms-sched-board>
   </el-dialog>
 
   <el-dialog v-model="costFlowBatch.visible" class="demo-dialog--biz" :title="costFlowBatch.mode==='edit' ? '编辑' : '批量编辑'" width="min(980px, 96vw)" top="6vh" destroy-on-close append-to-body :close-on-click-modal="false">
@@ -8970,8 +8975,8 @@
 <script src="https://cdn.jsdelivr.net/npm/vxe-table@4/lib/index.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
 <script src="./js/demo-announcements.js?v=1.4.24"></script>
-<script src="./js/page-configs.js?v=1.4.606"></script>
-<script src="./js/mock-rows.js?v=1.4.358"></script>
+<script src="./js/page-configs.js?v=1.4.610"></script>
+<script src="./js/mock-rows.js?v=1.4.360"></script>
 <script src="./js/dict-catalog.js?v=1.1.16"></script>
 <script src="./js/page-prd-notes.js?v=2.4.554"></script>
 <script src="./js/remarks-markdown.js?v=1.1.0"></script>
@@ -8998,7 +9003,7 @@
 <script src="./js/components/layouts/spc-process.js?v=1.0.2"></script>
 <script src="./js/components/layouts/env-stat.js?v=1.0.0"></script>
 <script src="./js/components/layouts/batch-trace.js?v=1.0.0"></script>
-<script src="./js/components/layouts/sched-board.js?v=1.0.35"></script>
-<script src="./js/app.js?v=1.0.52"></script>
+<script src="./js/components/layouts/sched-board.js?v=1.0.40"></script>
+<script src="./js/app.js?v=1.0.59"></script>
 </body>
 </html>

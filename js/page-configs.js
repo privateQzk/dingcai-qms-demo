@@ -68,7 +68,8 @@ window.WMS_PAGE_CONFIGS = {
             {
               "title": "检验日历",
               "index": "np-0103-16",
-              "pageId": "np-0103-16"
+              "pageId": "np-0103-16",
+              "hidden": true
             },
             {
               "title": "检验班组",
@@ -3095,14 +3096,6 @@ window.WMS_PAGE_CONFIGS = {
                               "type": "input"
                         },
                         {
-                              "name": "跨天",
-                              "type": "select",
-                              "options": [
-                                    "是",
-                                    "否"
-                              ]
-                        },
-                        {
                               "name": "适用班组",
                               "type": "select"
                         },
@@ -3117,8 +3110,7 @@ window.WMS_PAGE_CONFIGS = {
                   ],
                   "queryDefault": [
                         "班次编码",
-                        "班次名称",
-                        "跨天"
+                        "班次名称"
                   ],
                   "queryMore": [
                         "适用班组",
@@ -3159,6 +3151,12 @@ window.WMS_PAGE_CONFIGS = {
                               "width": 120
                         },
                         {
+                              "field": "段数",
+                              "title": "段数",
+                              "width": 70,
+                              "align": "center"
+                        },
+                        {
                               "field": "开始时间",
                               "title": "开始时间",
                               "width": 90,
@@ -3169,12 +3167,6 @@ window.WMS_PAGE_CONFIGS = {
                               "title": "结束时间",
                               "width": 90,
                               "align": "center"
-                        },
-                        {
-                              "field": "跨天",
-                              "title": "跨天",
-                              "width": 80,
-                              "slot": "tag"
                         },
                         {
                               "field": "休息时长",
@@ -3192,12 +3184,6 @@ window.WMS_PAGE_CONFIGS = {
                               "field": "适用班组",
                               "title": "适用班组",
                               "width": 280
-                        },
-                        {
-                              "field": "班次颜色",
-                              "title": "班次颜色",
-                              "width": 110,
-                              "slot": "shift_color"
                         },
                         {
                               "field": "备注",
@@ -3254,42 +3240,157 @@ window.WMS_PAGE_CONFIGS = {
                   "ctrl": "input"
             },
             {
-                  "name": "开始时间",
-                  "type": "time",
-                  "required": true,
-                  "placeholder": "请选择"
-            },
-            {
-                  "name": "结束时间",
-                  "type": "time",
-                  "required": true,
-                  "placeholder": "请选择"
-            },
-            {
-                  "name": "跨天",
-                  "type": "readonly",
-                  "required": false,
-                  "placeholder": "按起止时间自动判断"
-            },
-            {
-                  "name": "休息时长",
+                  "name": "段数",
                   "type": "number",
-                  "required": false,
-                  "min": 0,
-                  "max": 480,
+                  "required": true,
+                  "min": 1,
+                  "max": 6,
                   "precision": 0,
-                  "placeholder": "分钟"
+                  "placeholder": "1-6，结束早于开始视为跨夜"
             },
             {
-                  "name": "工作时长",
-                  "type": "readonly",
-                  "required": false,
-                  "placeholder": "起止跨度 − 休息时长"
+                  "name": "启用状态",
+                  "type": "switch",
+                  "required": true,
+                  "ctrl": "switch"
             },
             {
-                  "name": "班次颜色",
-                  "type": "color",
-                  "required": false
+                  "name": "段1开始",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段1结束",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段1类型",
+                  "type": "select",
+                  "required": true,
+                  "options": [
+                        "工作",
+                        "休息"
+                  ]
+            },
+            {
+                  "name": "段2开始",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段2结束",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段2类型",
+                  "type": "select",
+                  "required": true,
+                  "options": [
+                        "工作",
+                        "休息"
+                  ]
+            },
+            {
+                  "name": "段3开始",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段3结束",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段3类型",
+                  "type": "select",
+                  "required": true,
+                  "options": [
+                        "工作",
+                        "休息"
+                  ]
+            },
+            {
+                  "name": "段4开始",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段4结束",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段4类型",
+                  "type": "select",
+                  "required": true,
+                  "options": [
+                        "工作",
+                        "休息"
+                  ]
+            },
+            {
+                  "name": "段5开始",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段5结束",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段5类型",
+                  "type": "select",
+                  "required": true,
+                  "options": [
+                        "工作",
+                        "休息"
+                  ]
+            },
+            {
+                  "name": "段6开始",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段6结束",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段6类型",
+                  "type": "select",
+                  "required": true,
+                  "options": [
+                        "工作",
+                        "休息"
+                  ]
             },
             {
                   "name": "适用班组",
@@ -3304,12 +3405,6 @@ window.WMS_PAGE_CONFIGS = {
                   "type": "textarea",
                   "required": false,
                   "ctrl": "textarea"
-            },
-            {
-                  "name": "启用状态",
-                  "type": "switch",
-                  "required": true,
-                  "ctrl": "switch"
             }
       ],
       "detailFields": [],
@@ -21716,12 +21811,6 @@ window.WMS_PAGE_CONFIGS = {
                "width": 160
              },
              {
-               "title": "检验仪器",
-               "field": "检验仪器",
-               "name": "检验仪器",
-               "width": 160
-             },
-             {
                "title": "检验方案",
                "field": "检验方案",
                "name": "检验方案",
@@ -21980,12 +22069,6 @@ window.WMS_PAGE_CONFIGS = {
                "title": "分析仪器",
                "field": "分析仪器",
                "name": "分析仪器",
-               "width": 160
-             },
-             {
-               "title": "检验仪器",
-               "field": "检验仪器",
-               "name": "检验仪器",
                "width": 160
              },
              {
@@ -22274,12 +22357,6 @@ window.WMS_PAGE_CONFIGS = {
                "width": 160
              },
              {
-               "title": "检验仪器",
-               "field": "检验仪器",
-               "name": "检验仪器",
-               "width": 160
-             },
-             {
                "title": "检验方案",
                "field": "检验方案",
                "name": "检验方案",
@@ -22478,12 +22555,6 @@ window.WMS_PAGE_CONFIGS = {
                "title": "分析仪器",
                "field": "分析仪器",
                "name": "分析仪器",
-               "width": 160
-             },
-             {
-               "title": "检验仪器",
-               "field": "检验仪器",
-               "name": "检验仪器",
                "width": 160
              },
              {
@@ -22688,12 +22759,6 @@ window.WMS_PAGE_CONFIGS = {
                "width": 160
              },
              {
-               "title": "检验仪器",
-               "field": "检验仪器",
-               "name": "检验仪器",
-               "width": 160
-             },
-             {
                "title": "检验方案",
                "field": "检验方案",
                "name": "检验方案",
@@ -22886,12 +22951,6 @@ window.WMS_PAGE_CONFIGS = {
                "title": "分析仪器",
                "field": "分析仪器",
                "name": "分析仪器",
-               "width": 160
-             },
-             {
-               "title": "检验仪器",
-               "field": "检验仪器",
-               "name": "检验仪器",
                "width": 160
              },
              {
@@ -23102,12 +23161,6 @@ window.WMS_PAGE_CONFIGS = {
                "width": 160
              },
              {
-               "title": "检验仪器",
-               "field": "检验仪器",
-               "name": "检验仪器",
-               "width": 160
-             },
-             {
                "title": "检验方案",
                "field": "检验方案",
                "name": "检验方案",
@@ -23312,12 +23365,6 @@ window.WMS_PAGE_CONFIGS = {
                "title": "分析仪器",
                "field": "分析仪器",
                "name": "分析仪器",
-               "width": 160
-             },
-             {
-               "title": "检验仪器",
-               "field": "检验仪器",
-               "name": "检验仪器",
                "width": 160
              },
              {
@@ -23555,12 +23602,6 @@ window.WMS_PAGE_CONFIGS = {
                "title": "分析仪器",
                "field": "分析仪器",
                "name": "分析仪器",
-               "width": 160
-             },
-             {
-               "title": "检验仪器",
-               "field": "检验仪器",
-               "name": "检验仪器",
                "width": 160
              },
              {
@@ -23937,12 +23978,6 @@ window.WMS_PAGE_CONFIGS = {
                "width": 160
              },
              {
-               "title": "检验仪器",
-               "field": "检验仪器",
-               "name": "检验仪器",
-               "width": 160
-             },
-             {
                "title": "检验方案",
                "field": "检验方案",
                "name": "检验方案",
@@ -24157,6 +24192,11 @@ window.WMS_PAGE_CONFIGS = {
              }
            ],
            "toolbar": [
+             {
+               "name": "排程",
+               "type": "primary",
+               "desc": "跳转「检验排程」页；勾选行时按样品编号过滤排程任务"
+             },
              {
                "name": "批量反馈时间",
                "type": "primary",
@@ -89726,14 +89766,6 @@ window.WMS_PAGE_CONFIGS = {
                               "type": "input"
                         },
                         {
-                              "name": "跨天",
-                              "type": "select",
-                              "options": [
-                                    "是",
-                                    "否"
-                              ]
-                        },
-                        {
                               "name": "适用班组",
                               "type": "select"
                         },
@@ -89748,8 +89780,7 @@ window.WMS_PAGE_CONFIGS = {
                   ],
                   "queryDefault": [
                         "班次编码",
-                        "班次名称",
-                        "跨天"
+                        "班次名称"
                   ],
                   "queryMore": [
                         "适用班组",
@@ -89790,6 +89821,12 @@ window.WMS_PAGE_CONFIGS = {
                               "width": 120
                         },
                         {
+                              "field": "段数",
+                              "title": "段数",
+                              "width": 70,
+                              "align": "center"
+                        },
+                        {
                               "field": "开始时间",
                               "title": "开始时间",
                               "width": 90,
@@ -89800,12 +89837,6 @@ window.WMS_PAGE_CONFIGS = {
                               "title": "结束时间",
                               "width": 90,
                               "align": "center"
-                        },
-                        {
-                              "field": "跨天",
-                              "title": "跨天",
-                              "width": 80,
-                              "slot": "tag"
                         },
                         {
                               "field": "休息时长",
@@ -89823,12 +89854,6 @@ window.WMS_PAGE_CONFIGS = {
                               "field": "适用班组",
                               "title": "适用班组",
                               "width": 280
-                        },
-                        {
-                              "field": "班次颜色",
-                              "title": "班次颜色",
-                              "width": 110,
-                              "slot": "shift_color"
                         },
                         {
                               "field": "备注",
@@ -89885,42 +89910,157 @@ window.WMS_PAGE_CONFIGS = {
                   "ctrl": "input"
             },
             {
-                  "name": "开始时间",
-                  "type": "time",
-                  "required": true,
-                  "placeholder": "请选择"
-            },
-            {
-                  "name": "结束时间",
-                  "type": "time",
-                  "required": true,
-                  "placeholder": "请选择"
-            },
-            {
-                  "name": "跨天",
-                  "type": "readonly",
-                  "required": false,
-                  "placeholder": "按起止时间自动判断"
-            },
-            {
-                  "name": "休息时长",
+                  "name": "段数",
                   "type": "number",
-                  "required": false,
-                  "min": 0,
-                  "max": 480,
+                  "required": true,
+                  "min": 1,
+                  "max": 6,
                   "precision": 0,
-                  "placeholder": "分钟"
+                  "placeholder": "1-6，结束早于开始视为跨夜"
             },
             {
-                  "name": "工作时长",
-                  "type": "readonly",
-                  "required": false,
-                  "placeholder": "起止跨度 − 休息时长"
+                  "name": "启用状态",
+                  "type": "switch",
+                  "required": true,
+                  "ctrl": "switch"
             },
             {
-                  "name": "班次颜色",
-                  "type": "color",
-                  "required": false
+                  "name": "段1开始",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段1结束",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段1类型",
+                  "type": "select",
+                  "required": true,
+                  "options": [
+                        "工作",
+                        "休息"
+                  ]
+            },
+            {
+                  "name": "段2开始",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段2结束",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段2类型",
+                  "type": "select",
+                  "required": true,
+                  "options": [
+                        "工作",
+                        "休息"
+                  ]
+            },
+            {
+                  "name": "段3开始",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段3结束",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段3类型",
+                  "type": "select",
+                  "required": true,
+                  "options": [
+                        "工作",
+                        "休息"
+                  ]
+            },
+            {
+                  "name": "段4开始",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段4结束",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段4类型",
+                  "type": "select",
+                  "required": true,
+                  "options": [
+                        "工作",
+                        "休息"
+                  ]
+            },
+            {
+                  "name": "段5开始",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段5结束",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段5类型",
+                  "type": "select",
+                  "required": true,
+                  "options": [
+                        "工作",
+                        "休息"
+                  ]
+            },
+            {
+                  "name": "段6开始",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段6结束",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段6类型",
+                  "type": "select",
+                  "required": true,
+                  "options": [
+                        "工作",
+                        "休息"
+                  ]
             },
             {
                   "name": "适用班组",
@@ -89935,12 +90075,6 @@ window.WMS_PAGE_CONFIGS = {
                   "type": "textarea",
                   "required": false,
                   "ctrl": "textarea"
-            },
-            {
-                  "name": "启用状态",
-                  "type": "switch",
-                  "required": true,
-                  "ctrl": "switch"
             }
       ],
       "detailFields": [],
@@ -108370,12 +108504,6 @@ window.WMS_PAGE_CONFIGS = {
                "width": 160
              },
              {
-               "title": "检验仪器",
-               "field": "检验仪器",
-               "name": "检验仪器",
-               "width": 160
-             },
-             {
                "title": "检验方案",
                "field": "检验方案",
                "name": "检验方案",
@@ -108634,12 +108762,6 @@ window.WMS_PAGE_CONFIGS = {
                "title": "分析仪器",
                "field": "分析仪器",
                "name": "分析仪器",
-               "width": 160
-             },
-             {
-               "title": "检验仪器",
-               "field": "检验仪器",
-               "name": "检验仪器",
                "width": 160
              },
              {
@@ -108928,12 +109050,6 @@ window.WMS_PAGE_CONFIGS = {
                "width": 160
              },
              {
-               "title": "检验仪器",
-               "field": "检验仪器",
-               "name": "检验仪器",
-               "width": 160
-             },
-             {
                "title": "检验方案",
                "field": "检验方案",
                "name": "检验方案",
@@ -109132,12 +109248,6 @@ window.WMS_PAGE_CONFIGS = {
                "title": "分析仪器",
                "field": "分析仪器",
                "name": "分析仪器",
-               "width": 160
-             },
-             {
-               "title": "检验仪器",
-               "field": "检验仪器",
-               "name": "检验仪器",
                "width": 160
              },
              {
@@ -109342,12 +109452,6 @@ window.WMS_PAGE_CONFIGS = {
                "width": 160
              },
              {
-               "title": "检验仪器",
-               "field": "检验仪器",
-               "name": "检验仪器",
-               "width": 160
-             },
-             {
                "title": "检验方案",
                "field": "检验方案",
                "name": "检验方案",
@@ -109540,12 +109644,6 @@ window.WMS_PAGE_CONFIGS = {
                "title": "分析仪器",
                "field": "分析仪器",
                "name": "分析仪器",
-               "width": 160
-             },
-             {
-               "title": "检验仪器",
-               "field": "检验仪器",
-               "name": "检验仪器",
                "width": 160
              },
              {
@@ -109756,12 +109854,6 @@ window.WMS_PAGE_CONFIGS = {
                "width": 160
              },
              {
-               "title": "检验仪器",
-               "field": "检验仪器",
-               "name": "检验仪器",
-               "width": 160
-             },
-             {
                "title": "检验方案",
                "field": "检验方案",
                "name": "检验方案",
@@ -109966,12 +110058,6 @@ window.WMS_PAGE_CONFIGS = {
                "title": "分析仪器",
                "field": "分析仪器",
                "name": "分析仪器",
-               "width": 160
-             },
-             {
-               "title": "检验仪器",
-               "field": "检验仪器",
-               "name": "检验仪器",
                "width": 160
              },
              {
@@ -110209,12 +110295,6 @@ window.WMS_PAGE_CONFIGS = {
                "title": "分析仪器",
                "field": "分析仪器",
                "name": "分析仪器",
-               "width": 160
-             },
-             {
-               "title": "检验仪器",
-               "field": "检验仪器",
-               "name": "检验仪器",
                "width": 160
              },
              {
@@ -110592,12 +110672,6 @@ window.WMS_PAGE_CONFIGS = {
                "width": 160
              },
              {
-               "title": "检验仪器",
-               "field": "检验仪器",
-               "name": "检验仪器",
-               "width": 160
-             },
-             {
                "title": "检验方案",
                "field": "检验方案",
                "name": "检验方案",
@@ -110812,6 +110886,11 @@ window.WMS_PAGE_CONFIGS = {
              }
            ],
            "toolbar": [
+             {
+               "name": "排程",
+               "type": "primary",
+               "desc": "跳转「检验排程」页；勾选行时按样品编号过滤排程任务"
+             },
              {
                "name": "批量反馈时间",
                "type": "primary",
@@ -175716,14 +175795,6 @@ window.WMS_PAGE_CONFIGS = {
                               "type": "input"
                         },
                         {
-                              "name": "跨天",
-                              "type": "select",
-                              "options": [
-                                    "是",
-                                    "否"
-                              ]
-                        },
-                        {
                               "name": "适用班组",
                               "type": "select"
                         },
@@ -175738,8 +175809,7 @@ window.WMS_PAGE_CONFIGS = {
                   ],
                   "queryDefault": [
                         "班次编码",
-                        "班次名称",
-                        "跨天"
+                        "班次名称"
                   ],
                   "queryMore": [
                         "适用班组",
@@ -175780,6 +175850,12 @@ window.WMS_PAGE_CONFIGS = {
                               "width": 120
                         },
                         {
+                              "field": "段数",
+                              "title": "段数",
+                              "width": 70,
+                              "align": "center"
+                        },
+                        {
                               "field": "开始时间",
                               "title": "开始时间",
                               "width": 90,
@@ -175790,12 +175866,6 @@ window.WMS_PAGE_CONFIGS = {
                               "title": "结束时间",
                               "width": 90,
                               "align": "center"
-                        },
-                        {
-                              "field": "跨天",
-                              "title": "跨天",
-                              "width": 80,
-                              "slot": "tag"
                         },
                         {
                               "field": "休息时长",
@@ -175813,12 +175883,6 @@ window.WMS_PAGE_CONFIGS = {
                               "field": "适用班组",
                               "title": "适用班组",
                               "width": 280
-                        },
-                        {
-                              "field": "班次颜色",
-                              "title": "班次颜色",
-                              "width": 110,
-                              "slot": "shift_color"
                         },
                         {
                               "field": "备注",
@@ -175875,42 +175939,157 @@ window.WMS_PAGE_CONFIGS = {
                   "ctrl": "input"
             },
             {
-                  "name": "开始时间",
-                  "type": "time",
-                  "required": true,
-                  "placeholder": "请选择"
-            },
-            {
-                  "name": "结束时间",
-                  "type": "time",
-                  "required": true,
-                  "placeholder": "请选择"
-            },
-            {
-                  "name": "跨天",
-                  "type": "readonly",
-                  "required": false,
-                  "placeholder": "按起止时间自动判断"
-            },
-            {
-                  "name": "休息时长",
+                  "name": "段数",
                   "type": "number",
-                  "required": false,
-                  "min": 0,
-                  "max": 480,
+                  "required": true,
+                  "min": 1,
+                  "max": 6,
                   "precision": 0,
-                  "placeholder": "分钟"
+                  "placeholder": "1-6，结束早于开始视为跨夜"
             },
             {
-                  "name": "工作时长",
-                  "type": "readonly",
-                  "required": false,
-                  "placeholder": "起止跨度 − 休息时长"
+                  "name": "启用状态",
+                  "type": "switch",
+                  "required": true,
+                  "ctrl": "switch"
             },
             {
-                  "name": "班次颜色",
-                  "type": "color",
-                  "required": false
+                  "name": "段1开始",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段1结束",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段1类型",
+                  "type": "select",
+                  "required": true,
+                  "options": [
+                        "工作",
+                        "休息"
+                  ]
+            },
+            {
+                  "name": "段2开始",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段2结束",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段2类型",
+                  "type": "select",
+                  "required": true,
+                  "options": [
+                        "工作",
+                        "休息"
+                  ]
+            },
+            {
+                  "name": "段3开始",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段3结束",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段3类型",
+                  "type": "select",
+                  "required": true,
+                  "options": [
+                        "工作",
+                        "休息"
+                  ]
+            },
+            {
+                  "name": "段4开始",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段4结束",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段4类型",
+                  "type": "select",
+                  "required": true,
+                  "options": [
+                        "工作",
+                        "休息"
+                  ]
+            },
+            {
+                  "name": "段5开始",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段5结束",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段5类型",
+                  "type": "select",
+                  "required": true,
+                  "options": [
+                        "工作",
+                        "休息"
+                  ]
+            },
+            {
+                  "name": "段6开始",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段6结束",
+                  "type": "time",
+                  "required": true,
+                  "step": "00:15",
+                  "placeholder": "请选择"
+            },
+            {
+                  "name": "段6类型",
+                  "type": "select",
+                  "required": true,
+                  "options": [
+                        "工作",
+                        "休息"
+                  ]
             },
             {
                   "name": "适用班组",
@@ -175925,12 +176104,6 @@ window.WMS_PAGE_CONFIGS = {
                   "type": "textarea",
                   "required": false,
                   "ctrl": "textarea"
-            },
-            {
-                  "name": "启用状态",
-                  "type": "switch",
-                  "required": true,
-                  "ctrl": "switch"
             }
       ],
       "detailFields": [],
@@ -194360,12 +194533,6 @@ window.WMS_PAGE_CONFIGS = {
                "width": 160
              },
              {
-               "title": "检验仪器",
-               "field": "检验仪器",
-               "name": "检验仪器",
-               "width": 160
-             },
-             {
                "title": "检验方案",
                "field": "检验方案",
                "name": "检验方案",
@@ -194624,12 +194791,6 @@ window.WMS_PAGE_CONFIGS = {
                "title": "分析仪器",
                "field": "分析仪器",
                "name": "分析仪器",
-               "width": 160
-             },
-             {
-               "title": "检验仪器",
-               "field": "检验仪器",
-               "name": "检验仪器",
                "width": 160
              },
              {
@@ -194918,12 +195079,6 @@ window.WMS_PAGE_CONFIGS = {
                "width": 160
              },
              {
-               "title": "检验仪器",
-               "field": "检验仪器",
-               "name": "检验仪器",
-               "width": 160
-             },
-             {
                "title": "检验方案",
                "field": "检验方案",
                "name": "检验方案",
@@ -195122,12 +195277,6 @@ window.WMS_PAGE_CONFIGS = {
                "title": "分析仪器",
                "field": "分析仪器",
                "name": "分析仪器",
-               "width": 160
-             },
-             {
-               "title": "检验仪器",
-               "field": "检验仪器",
-               "name": "检验仪器",
                "width": 160
              },
              {
@@ -195332,12 +195481,6 @@ window.WMS_PAGE_CONFIGS = {
                "width": 160
              },
              {
-               "title": "检验仪器",
-               "field": "检验仪器",
-               "name": "检验仪器",
-               "width": 160
-             },
-             {
                "title": "检验方案",
                "field": "检验方案",
                "name": "检验方案",
@@ -195530,12 +195673,6 @@ window.WMS_PAGE_CONFIGS = {
                "title": "分析仪器",
                "field": "分析仪器",
                "name": "分析仪器",
-               "width": 160
-             },
-             {
-               "title": "检验仪器",
-               "field": "检验仪器",
-               "name": "检验仪器",
                "width": 160
              },
              {
@@ -195746,12 +195883,6 @@ window.WMS_PAGE_CONFIGS = {
                "width": 160
              },
              {
-               "title": "检验仪器",
-               "field": "检验仪器",
-               "name": "检验仪器",
-               "width": 160
-             },
-             {
                "title": "检验方案",
                "field": "检验方案",
                "name": "检验方案",
@@ -195956,12 +196087,6 @@ window.WMS_PAGE_CONFIGS = {
                "title": "分析仪器",
                "field": "分析仪器",
                "name": "分析仪器",
-               "width": 160
-             },
-             {
-               "title": "检验仪器",
-               "field": "检验仪器",
-               "name": "检验仪器",
                "width": 160
              },
              {
@@ -196199,12 +196324,6 @@ window.WMS_PAGE_CONFIGS = {
                "title": "分析仪器",
                "field": "分析仪器",
                "name": "分析仪器",
-               "width": 160
-             },
-             {
-               "title": "检验仪器",
-               "field": "检验仪器",
-               "name": "检验仪器",
                "width": 160
              },
              {
@@ -196582,12 +196701,6 @@ window.WMS_PAGE_CONFIGS = {
                "width": 160
              },
              {
-               "title": "检验仪器",
-               "field": "检验仪器",
-               "name": "检验仪器",
-               "width": 160
-             },
-             {
                "title": "检验方案",
                "field": "检验方案",
                "name": "检验方案",
@@ -196802,6 +196915,11 @@ window.WMS_PAGE_CONFIGS = {
              }
            ],
            "toolbar": [
+             {
+               "name": "排程",
+               "type": "primary",
+               "desc": "跳转「检验排程」页；勾选行时按样品编号过滤排程任务"
+             },
              {
                "name": "批量反馈时间",
                "type": "primary",

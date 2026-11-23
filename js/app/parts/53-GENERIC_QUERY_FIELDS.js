@@ -366,8 +366,8 @@
         if(activeTab.value==='tab-pi') formModel['原料类型'] = '其他';
       }
       if((mode||'add')==='add' && pageId.value===SHIFT_PAGE){
-        formModel['休息时长'] = '60';
-        formModel['班次颜色'] = '#3B82F6';
+        formModel['段数'] = '1';
+        formModel['段1类型'] = '工作';
       }
       if((mode||'add')==='add' && pageId.value==='np-0417-03'){ formModel['异常单号'] = nextAbnNo(); }
       poMatPool.value = [];

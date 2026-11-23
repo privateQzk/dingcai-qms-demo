@@ -823,7 +823,7 @@
         list = sortByCreateTimeDesc(applyContainsExactQuery(list, query, ['班组编码','班组名称'], ['启用状态']));
       }
       if(pageId.value===SHIFT_PAGE){
-        list = applyContainsExactQuery(list, query, ['班次编码','班次名称'], ['跨天','启用状态']);
+        list = applyContainsExactQuery(list, query, ['班次编码','班次名称'], ['启用状态']);
         if(query['适用班组']) list = list.filter(r=> String(r['适用班组']||'')==='通用' || splitDun(r['适用班组']).includes(query['适用班组']));
         list = list.slice().sort((a, b)=> String(a['班次编码']||'').localeCompare(String(b['班次编码']||'')));
       }

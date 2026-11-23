@@ -440,6 +440,10 @@
     }
     function isFormFieldVisible(f){
       if(!f) return false;
+      if(pageId.value===SHIFT_PAGE){
+        const sm = /^段(\d+)(开始|结束|类型)$/.exec(f.name||'');
+        if(sm) return (+sm[1]) <= (parseInt(formModel['段数'], 10) || 0);
+      }
       if(f.showWhen && f.showWhen.field){
         const cur = formModel[f.showWhen.field];
         const eq = f.showWhen.eq;

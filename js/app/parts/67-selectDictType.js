@@ -502,5 +502,5 @@
       openPicker, onPickerOk, onGenerateBatch, onBatchDeleteLines, onBatchOk, refreshSerialExpire,
       onCraftDragStart, addCraftNode, onCraftDrop, onCraftOk, openCraftProc, onCraftProcOk, removeCraftNode, addDesignField, onDesignDrop, selectDesignField, moveDesignField, copyDesignField, removeDesignField, removeDesignChild, openFormPreview, onDesignCancel, onDesignOk, onDetailLineAction, removeDetailPickLine, syncPrepPickQty, onSplitLineSelection, addSplitMaterialLine, addSplitBatchLineForMat, addSplitBatchLine, removeSplitSelectedBatchLines, removeSplitBatchLine, splitSpanMethod, isSplitMatHeadRow,
       addKpiGrade, delKpiGrades, addKpiProject, delKpiProjects, addKpiIndicator, delKpiIndicators, moveKpiProject, moveKpiIndicator, onKpiCfgOk, openKpiScore, onKpiScoreOk, kpiProjectScore, onKpiVendorDelete,
-      sb, schedData, inspSeqGroups,
+      sb, schedData, schedSplitVisible, inspSeqGroups,
     };

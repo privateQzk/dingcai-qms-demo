@@ -206,6 +206,12 @@
         if(btn.name==='入位'){ openSlocLoc('in', picked); return; }
         if(btn.name==='领用'){ openSlocLoc('take', picked); return; }
       }
+      if(pageId.value===FLOW_MY_TASK && btn.name==='排程'){
+        const picked = (tableData.value||[]).filter(r=> selectedIds.value.includes(r.id));
+        sb.splitKw = picked.length ? String(picked[0]['样品编号']||'') : '';
+        schedSplitVisible.value = true;
+        return;
+      }
       if(pageId.value===FLOW_MY_TASK && btn.name==='批量反馈时间'){ openFbBatch(); return; }
       if(pageId.value===COST_FLOW){
         if(btn.name==='批量编辑'){ openCostFlowBatch(); return; }

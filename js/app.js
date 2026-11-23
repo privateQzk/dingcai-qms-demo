@@ -3741,6 +3741,17 @@ const app = createApp({
       const p = (schedPlans()||[]).find(x=> x._key === (smp+'|'+cat));
       return p && flowHas(p['检验仪器']) ? p['检验仪器'] : '';
     }
+    /** 仪器名称 → 「仪器编号/仪器名称」展示文本；多值（、/,;； 分隔）逐个转换 */
+    function instDisp(v){
+      const list = ((MOCK.instrument||{}).main)||[];
+      return String(v||'').split(/([、,，;；])/).map(part=>{
+        if(/^[、,，;；]$/.test(part)) return part;
+        const n = part.trim();
+        if(!n || n==='—') return n || '—';
+        const inst = list.find(r=> r['仪器名称']===n);
+        return inst && inst['仪器编号'] ? inst['仪器编号'] + '/' + n : n;
+      }).join('');
+    }
     /** 数据录入 = 待检验 / 检验中且完全分配的母样；子样不单独录入，状态随母样；按类型每个检验类一行，已提交的检验类不再显示 */
     function flowSyncEntry(){
       const bySample = {}, byCat = {};
@@ -3758,7 +3769,7 @@ const app = createApp({
         const tfRow = timeFbTab('tab-1').find(o=> o['样品编号']===s['样品编号']);
         asg.lines.forEach(ln=>{
           if(done.includes(ln['检验类'])) return;
-          const row = flowPick(flowCols(FLOW_ENTRY_CAT, tab), srcs, { 检验类名称: ln['检验类'], 检验班组: ln['分配班组'] || '—', 分析仪器: ln['分析仪器'] || '—', 检验仪器: entryInstOf(s['样品编号'], ln['检验类']) || ln['分析仪器'] || '—' });
+          const row = flowPick(flowCols(FLOW_ENTRY_CAT, tab), srcs, { 检验类名称: ln['检验类'], 检验班组: ln['分配班组'] || '—', 分析仪器: instDisp(entryInstOf(s['样品编号'], ln['检验类']) || ln['分析仪器']) });
           const tfl = tfRow && (tfRow._lines||[]).find(l=> l['检验类']===ln['检验类']);
           const lineEta = tfl ? timeFbNormEta(tfl['预计完成时间']) : '';
           row['预计完成时间'] = lineEta || '—';
@@ -6180,43 +6191,53 @@ const app = createApp({
       bumpStore();
       ElMessage.success(isAdd ? '已新增检验班组 '+name : '保存成功');
     }
-    function shiftSpanMin(s, e){
-      if(!s || !e) return null;
-      const a = String(s).split(':').map(Number), b = String(e).split(':').map(Number);
+    function shiftSegMin(s, e){
+      const a = s.split(':').map(Number), b = e.split(':').map(Number);
       if(a.length<2 || b.length<2 || isNaN(a[0]) || isNaN(b[0])) return null;
-      let d = (b[0]*60 + (b[1]||0)) - (a[0]*60 + (a[1]||0));
-      if(d < 0) d += 1440;
-      return d;
-    }
-    function shiftWorkHours(s, e, rest){
-      const d = shiftSpanMin(s, e);
-      if(d == null) return '';
-      const r = Math.max(0, parseInt(rest, 10) || 0);
-      return ((d - r) / 60).toFixed(1);
+      let st = a[0]*60 + (a[1]||0), en = b[0]*60 + (b[1]||0);
+      if(en<=st) en += 1440;
+      return { st, en };
     }
     function saveShiftForm(){
       const txt = k=> String(formModel[k]||'').trim();
       const isAdd = formMode.value==='add' || formMode.value==='copy';
-      const name = txt('班次名称'), st = txt('开始时间'), et = txt('结束时间');
+      const name = txt('班次名称');
       if(!name){ ElMessage.warning('请输入班次名称'); return; }
-      if(!st){ ElMessage.warning('请选择开始时间'); return; }
-      if(!et){ ElMessage.warning('请选择结束时间'); return; }
-      if(st===et){ ElMessage.warning('开始时间与结束时间不能相同'); return; }
-      const restIn = parseInt(formModel['休息时长'], 10);
-      const rest = Number.isFinite(restIn) ? Math.max(0, Math.min(480, restIn)) : 60;
-      const span = shiftSpanMin(st, et);
-      if(span != null && rest >= span){ ElMessage.warning('休息时长不能超过班次跨度'); return; }
+      const n = parseInt(formModel['段数'], 10);
+      if(!n || n<1 || n>6){ ElMessage.warning('段数须为 1~6'); return; }
+      const segs = [];
+      for(let i=1;i<=n;i++){
+        const s = txt('段'+i+'开始'), e = txt('段'+i+'结束'), t = txt('段'+i+'类型');
+        if(!s){ ElMessage.warning('请选择段'+i+'开始'); return; }
+        if(!e){ ElMessage.warning('请选择段'+i+'结束'); return; }
+        if(s===e){ ElMessage.warning('段'+i+'开始与结束不能相同'); return; }
+        if(!t){ ElMessage.warning('请选择段'+i+'类型'); return; }
+        const r = shiftSegMin(s, e);
+        if(!r){ ElMessage.warning('段'+i+'时间格式不正确'); return; }
+        segs.push({ s, e, t, st:r.st, en:r.en });
+      }
+      const overlap = (x,y)=> x.st<y.en && y.st<x.en;
+      for(let i=0;i<segs.length;i++){
+        for(let j=i+1;j<segs.length;j++){
+          const a = segs[i], b = segs[j];
+          const hit = overlap(a,b) || overlap(a,{st:b.st+1440,en:b.en+1440}) || overlap(a,{st:b.st-1440,en:b.en-1440});
+          if(hit){ ElMessage.warning('段'+(i+1)+' 与段'+(j+1)+' 时段重叠'); return; }
+        }
+      }
+      const restMin = segs.filter(x=> x.t==='休息').reduce((m,x)=> m + (x.en-x.st), 0);
+      const workMin = segs.filter(x=> x.t!=='休息').reduce((m,x)=> m + (x.en-x.st), 0);
       const list = (MOCK[SHIFT_PAGE] = MOCK[SHIFT_PAGE] || { main: [] }).main || (MOCK[SHIFT_PAGE].main = []);
       const others = list.filter(r=> isAdd || r.id!==formModel._editId);
       if(others.some(r=> r['班次名称']===name)){ ElMessage.warning('班次名称已存在'); return; }
       const teams = splitDun(formModel['适用班组']);
       const payload = {
-        班次名称: name, 开始时间: st, 结束时间: et,
-        跨天: et<=st ? '是' : '否', 休息时长: String(rest), 工作时长: shiftWorkHours(st, et, rest),
-        班次颜色: txt('班次颜色') || '#3B82F6',
+        班次名称: name, 开始时间: segs[0].s, 结束时间: segs[segs.length-1].e,
+        段数: String(n), 休息时长: String(restMin), 工作时长: (workMin/60).toFixed(1),
         适用班组: teams.join('、') || '通用', 备注: txt('备注'),
         启用状态: formSwitch['启用状态']===false ? '禁用' : '启用'
       };
+      segs.forEach((x,idx)=>{ const i=idx+1; payload['段'+i+'开始']=x.s; payload['段'+i+'结束']=x.e; payload['段'+i+'类型']=x.t; });
+      for(let i=n+1;i<=6;i++){ ['开始','结束','类型'].forEach(k=> delete payload['段'+i+k]); }
       if(isAdd){
         const max = list.reduce((m, r)=> Math.max(m, parseInt(String(r['班次编码']||'').replace(/\D/g, ''), 10) || 0), 0);
         const saved = Object.assign({ id: 'bc-'+Date.now(), 班次编码: 'BC'+String(max + 1).padStart(3, '0') }, payload, { 创建人:'管理员', 创建时间: nowStamp() });
@@ -6227,6 +6248,8 @@ const app = createApp({
       } else {
         const saved = list.find(r=> r.id===formModel._editId);
         if(!saved){ ElMessage.warning('未找到待编辑数据'); return; }
+        for(let i=n+1;i<=6;i++){ ['开始','结束','类型'].forEach(k=> delete saved['段'+i+k]); }
+        delete saved['跨天']; delete saved['班次颜色'];
         Object.assign(saved, payload);
         formVisible.value = false;
         bumpStore();
@@ -13359,12 +13382,6 @@ function nextWjNo(){
       const n = splitDun(v).length;
       formModel['分配方式'] = n ? (n > 1 ? '手动分配（多个候选班组）' : '自动分配') : '';
     }, { deep:true });
-    watch(()=> [formModel['开始时间'], formModel['结束时间'], formModel['休息时长']], ()=>{
-      if(pageId.value!==SHIFT_PAGE) return;
-      const st = String(formModel['开始时间']||'').trim(), et = String(formModel['结束时间']||'').trim();
-      formModel['跨天'] = st && et ? (et<=st ? '是' : '否') : '';
-      formModel['工作时长'] = shiftWorkHours(st, et, formModel['休息时长']);
-    });
     watch(()=> formModel['来样类型'], (nv, ov)=>{
       if(pageId.value!=='insp-order' || nv===ov || !ov) return;
       formModel['来样单位'] = '';
@@ -14983,6 +15000,10 @@ function nextWjNo(){
     }
     function isFormFieldVisible(f){
       if(!f) return false;
+      if(pageId.value===SHIFT_PAGE){
+        const sm = /^段(\d+)(开始|结束|类型)$/.exec(f.name||'');
+        if(sm) return (+sm[1]) <= (parseInt(formModel['段数'], 10) || 0);
+      }
       if(f.showWhen && f.showWhen.field){
         const cur = formModel[f.showWhen.field];
         const eq = f.showWhen.eq;
@@ -26259,7 +26280,7 @@ function nextWjNo(){
         list = sortByCreateTimeDesc(applyContainsExactQuery(list, query, ['班组编码','班组名称'], ['启用状态']));
       }
       if(pageId.value===SHIFT_PAGE){
-        list = applyContainsExactQuery(list, query, ['班次编码','班次名称'], ['跨天','启用状态']);
+        list = applyContainsExactQuery(list, query, ['班次编码','班次名称'], ['启用状态']);
         if(query['适用班组']) list = list.filter(r=> String(r['适用班组']||'')==='通用' || splitDun(r['适用班组']).includes(query['适用班组']));
         list = list.slice().sort((a, b)=> String(a['班次编码']||'').localeCompare(String(b['班次编码']||'')));
       }
@@ -26771,8 +26792,8 @@ function nextWjNo(){
         if(activeTab.value==='tab-pi') formModel['原料类型'] = '其他';
       }
       if((mode||'add')==='add' && pageId.value===SHIFT_PAGE){
-        formModel['休息时长'] = '60';
-        formModel['班次颜色'] = '#3B82F6';
+        formModel['段数'] = '1';
+        formModel['段1类型'] = '工作';
       }
       if((mode||'add')==='add' && pageId.value==='np-0417-03'){ formModel['异常单号'] = nextAbnNo(); }
       poMatPool.value = [];
@@ -28513,6 +28534,12 @@ function nextWjNo(){
         if(btn.name==='入位'){ openSlocLoc('in', picked); return; }
         if(btn.name==='领用'){ openSlocLoc('take', picked); return; }
       }
+      if(pageId.value===FLOW_MY_TASK && btn.name==='排程'){
+        const picked = (tableData.value||[]).filter(r=> selectedIds.value.includes(r.id));
+        sb.splitKw = picked.length ? String(picked[0]['样品编号']||'') : '';
+        schedSplitVisible.value = true;
+        return;
+      }
       if(pageId.value===FLOW_MY_TASK && btn.name==='批量反馈时间'){ openFbBatch(); return; }
       if(pageId.value===COST_FLOW){
         if(btn.name==='批量编辑'){ openCostFlowBatch(); return; }
@@ -29960,6 +29987,12 @@ function nextWjNo(){
           }
         });
         formModel._editId = row.id;
+        if(pageId.value===SHIFT_PAGE && !formModel['段数']){
+          formModel['段数'] = '1';
+          formModel['段1开始'] = String(row['开始时间']||'').trim();
+          formModel['段1结束'] = String(row['结束时间']||'').trim();
+          formModel['段1类型'] = '工作';
+        }
         if(pageId.value==='ledger' && op.name==='编辑'){
           loadLedgerEditItems(row);
         }
@@ -39667,7 +39700,12 @@ function nextWjNo(){
      * 约束来源：班组适用班次(15) × 检验日历(16) 判时间窗；计划工时=成本方案(14)标准系数。 */
     // SCHED_PAGE dideklarasikan di parts/06 (dipakai sebelum bagian ini saat watcher immediate)
     function schedBag(name){ const b = (MOCK[SCHED_PAGE] = MOCK[SCHED_PAGE] || {}); return (b[name] = b[name] || []); }
-    function schedPlans(){ return schedBag('main'); }
+    function schedPlans(){ const arr = schedBag('main'); arr.forEach(p=>{ if(p && !p['排程单号']) p['排程单号'] = schedNextNo(); }); return arr; }
+    /** 排程单号：SCH-三位顺序号，按计划表现有最大号递增 */
+    function schedNextNo(){
+      const ns = schedBag('main').map(p=> parseInt(String(p['排程单号']||'').replace(/\D/g,''),10) || 0);
+      return 'SCH-' + String(Math.max(0, ...ns) + 1).padStart(3,'0');
+    }
     function schedLogs(){ return schedBag('log'); }
     function schedParse(s){
       const m = String(s==null?'':s).match(/(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}):(\d{2})(?::(\d{2}))?)?/);
@@ -39691,7 +39729,8 @@ function nextWjNo(){
       const spec = rows.filter(r=>{ const v=String(r['适用班组']||'').trim(); return v && v!=='通用' && splitDun(v).includes(team); }).sort(byCode);
       const gen  = rows.filter(r=>{ const v=String(r['适用班组']||'').trim(); return !v || v==='通用'; }).sort(byCode);
       const s = spec[0] || gen[0];
-      return s ? { code:s['班次编码'], name:s['班次名称'], start:String(s['开始时间']||'09:00'), end:String(s['结束时间']||'18:00'), cross:String(s['跨天'])==='是' }
+      const st = String(s ? s['开始时间'] : '') || '09:00', et = String(s ? s['结束时间'] : '') || '18:00';
+      return s ? { code:s['班次编码'], name:s['班次名称'], start:st, end:et, cross:et<=st }
                : { code:'', name:'—', start:'09:00', end:'18:00', cross:false };
     }
     /* ---- 日历：班组指定 > 通用 > 默认周一至五；须落在生效~结束区间内 ---- */
@@ -39805,6 +39844,7 @@ function nextWjNo(){
             _hours: schedHoursOf(o['物料编码'], ln['检验类'])
           };
           if(plan) Object.assign(t, {
+            排程单号: plan['排程单号'],
             检验仪器: plan['检验仪器'], 仪器编码: plan['仪器编码'], 计划开始: plan['计划开始'], 计划结束: plan['计划结束'],
             计划工时: plan['计划工时'], 排程方式: plan['排程方式'], 排程人: plan['排程人'], 排程时间: plan['排程时间'],
             班次: plan['班次']||'—', 检验日历: plan['检验日历']||'—', 锁定: plan['锁定']||'否'
@@ -39878,8 +39918,10 @@ function nextWjNo(){
       return best;
     }
     /* ---- sb 状态 + data 派生 ---- */
+    const schedSplitVisible = ref(false);
     const sb = reactive({
       tab: 'board', view: 'day', anchor: schedAnchorDate(), qMore: false,
+      splitKw: '',
       q: { 样品编号:'', 检验仪器:'', 排程状态:'', 检验类:'', 检验班组:'', 优先级:'', 报检单号:'', 需求范围:null, 计划范围:null },
       logQ: { 样品编号:'', 操作类型:'', 检验仪器:'', 报检单号:'', 操作人:'', 时间范围:null },
       sel: [],
@@ -39898,6 +39940,12 @@ function nextWjNo(){
         else if(cmd==='cancel') schedCancelRow(row);
         else if(cmd==='lock') schedToggleLock(row, true);
         else if(cmd==='unlock') schedToggleLock(row, false);
+      },
+      /* 排程弹窗·我的任务：行映射不到排程任务（检验类未分配班组）时提示 */
+      myOp(cmd, row){
+        const t = row._task;
+        if(!t){ ElMessage.warning('该检验类尚未分配班组，请先在「任务分派」中分配'); return; }
+        this.op(cmd, t);
       },
       auto(){ schedAutoRun(false); },
       batchCancel(){ schedCancelBatch(); },
@@ -39996,9 +40044,19 @@ function nextWjNo(){
       const instOpts = insts.map(r=> r['仪器名称']);
       const teamOpts = teamNames();
       const catOpts = inspCatNames();
+      // 排程弹窗·我的任务：数据录入-我的行 × 排程任务（样品编号|检验类 关联），splitKw 按样品编号过滤
+      const kw = String(sb.splitKw||'').trim();
+      const myTasks = (((MOCK[FLOW_MY_TASK]||{}).main)||[]).filter(r=>
+        !kw || String(r['样品编号']||'').includes(kw)
+      ).map(r=>{
+        const t = all.find(x=> x._key === String(r['样品编号']||'')+'|'+String(r['检验类名称']||'')) || null;
+        return Object.assign({}, r, { _task: t,
+          排程状态: t ? t.排程状态 : '—',
+          计划开始: t ? t.计划开始 : '—', 计划结束: t ? t.计划结束 : '—' });
+      });
       return { cards, tasks, logs, gantt, ganttInsts: insts.map(r=>r['仪器名称']), instMeta, shades,
                range:[rStart,rEnd], fullRange:[dMin,dMax], rangeText, now, nowMs:(schedParse(now)||{}).getTime?schedParse(now).getTime():0,
-               instOpts, teamOpts, catOpts };
+               instOpts, teamOpts, catOpts, myTasks };
     });
     /* ---- 操作 ---- */
     function schedAutoRun(){
@@ -40018,6 +40076,7 @@ function nextWjNo(){
         const team = t._team || t.检验班组;
         const plan = {
           id: 'sp-'+Date.now()+'-'+Math.random().toString(36).slice(2,6), _key: t._key,
+          排程单号: schedNextNo(),
           检验仪器: slot.inst['仪器名称'], 仪器编码: slot.inst['仪器编号'],
           计划开始: schedFmt(slot.st), 计划结束: schedFmt(slot.en),
           计划工时: (+t._hours).toFixed(1), 排程方式:'自动', 排程人:'系统', 排程时间: stamp,
@@ -40070,6 +40129,7 @@ function nextWjNo(){
       const plan = exist || { id:'sp-'+Date.now()+'-'+Math.random().toString(36).slice(2,6), _key:t._key };
       const team = t._team || t.检验班组;
       Object.assign(plan, {
+        排程单号: plan['排程单号'] || schedNextNo(),
         检验仪器: f.仪器, 仪器编码: code, 计划开始: schedFmt(st), 计划结束: schedFmt(en),
         计划工时: (+f.工时).toFixed(1), 排程方式: '手动', 排程人: '管理员', 排程时间: nowStamp(),
         班次: schedShiftOf(team).name,
@@ -40764,7 +40824,7 @@ function nextWjNo(){
       openPicker, onPickerOk, onGenerateBatch, onBatchDeleteLines, onBatchOk, refreshSerialExpire,
       onCraftDragStart, addCraftNode, onCraftDrop, onCraftOk, openCraftProc, onCraftProcOk, removeCraftNode, addDesignField, onDesignDrop, selectDesignField, moveDesignField, copyDesignField, removeDesignField, removeDesignChild, openFormPreview, onDesignCancel, onDesignOk, onDetailLineAction, removeDetailPickLine, syncPrepPickQty, onSplitLineSelection, addSplitMaterialLine, addSplitBatchLineForMat, addSplitBatchLine, removeSplitSelectedBatchLines, removeSplitBatchLine, splitSpanMethod, isSplitMatHeadRow,
       addKpiGrade, delKpiGrades, addKpiProject, delKpiProjects, addKpiIndicator, delKpiIndicators, moveKpiProject, moveKpiIndicator, onKpiCfgOk, openKpiScore, onKpiScoreOk, kpiProjectScore, onKpiVendorDelete,
-      sb, schedData, inspSeqGroups,
+      sb, schedData, schedSplitVisible, inspSeqGroups,
     };
   }
 }).use(ElementPlus, { locale: ElementPlusLocaleZhCn });

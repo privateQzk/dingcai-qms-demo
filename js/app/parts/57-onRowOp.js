@@ -340,6 +340,12 @@
           }
         });
         formModel._editId = row.id;
+        if(pageId.value===SHIFT_PAGE && !formModel['段数']){
+          formModel['段数'] = '1';
+          formModel['段1开始'] = String(row['开始时间']||'').trim();
+          formModel['段1结束'] = String(row['结束时间']||'').trim();
+          formModel['段1类型'] = '工作';
+        }
         if(pageId.value==='ledger' && op.name==='编辑'){
           loadLedgerEditItems(row);
         }

@@ -42,6 +42,17 @@
       const p = (schedPlans()||[]).find(x=> x._key === (smp+'|'+cat));
       return p && flowHas(p['检验仪器']) ? p['检验仪器'] : '';
     }
+    /** 仪器名称 → 「仪器编号/仪器名称」展示文本；多值（、/,;； 分隔）逐个转换 */
+    function instDisp(v){
+      const list = ((MOCK.instrument||{}).main)||[];
+      return String(v||'').split(/([、,，;；])/).map(part=>{
+        if(/^[、,，;；]$/.test(part)) return part;
+        const n = part.trim();
+        if(!n || n==='—') return n || '—';
+        const inst = list.find(r=> r['仪器名称']===n);
+        return inst && inst['仪器编号'] ? inst['仪器编号'] + '/' + n : n;
+      }).join('');
+    }
     /** 数据录入 = 待检验 / 检验中且完全分配的母样；子样不单独录入，状态随母样；按类型每个检验类一行，已提交的检验类不再显示 */
     function flowSyncEntry(){
       const bySample = {}, byCat = {};
@@ -59,7 +70,7 @@
         const tfRow = timeFbTab('tab-1').find(o=> o['样品编号']===s['样品编号']);
         asg.lines.forEach(ln=>{
           if(done.includes(ln['检验类'])) return;
-          const row = flowPick(flowCols(FLOW_ENTRY_CAT, tab), srcs, { 检验类名称: ln['检验类'], 检验班组: ln['分配班组'] || '—', 分析仪器: ln['分析仪器'] || '—', 检验仪器: entryInstOf(s['样品编号'], ln['检验类']) || ln['分析仪器'] || '—' });
+          const row = flowPick(flowCols(FLOW_ENTRY_CAT, tab), srcs, { 检验类名称: ln['检验类'], 检验班组: ln['分配班组'] || '—', 分析仪器: instDisp(entryInstOf(s['样品编号'], ln['检验类']) || ln['分析仪器']) });
           const tfl = tfRow && (tfRow._lines||[]).find(l=> l['检验类']===ln['检验类']);
           const lineEta = tfl ? timeFbNormEta(tfl['预计完成时间']) : '';
           row['预计完成时间'] = lineEta || '—';
