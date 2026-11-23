@@ -13,7 +13,13 @@ body{background:#eef2f7;color:#1e293b;font-family:'Microsoft YaHei','PingFang SC
 .header::after{content:'';position:absolute;bottom:0;left:5%;right:5%;height:1px;background:linear-gradient(90deg,transparent,rgba(37,99,235,.45),rgba(124,58,237,.35),rgba(37,99,235,.45),transparent)}
 .header h1{font-size:22px;font-weight:900;letter-spacing:6px;background:linear-gradient(90deg,#2563eb,#0891b2,#7c3aed,#0891b2,#2563eb);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .header .sub{position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:11px;color:#64748b;letter-spacing:2px}
-.header .time{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:12px;color:#2563eb;letter-spacing:1px}
+.header .hd-right{position:absolute;right:8px;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:6px}
+.header .time{font-size:12px;color:#2563eb;letter-spacing:1px}
+.hd-sel{height:24px;font-size:11px;border:1px solid #cbd5e1;border-radius:6px;padding:0 6px;background:#fff;color:#334155;outline:none;cursor:pointer}
+.hd-sel:focus{border-color:#93c5fd}
+.hd-date{height:24px;font-size:11px;border:1px solid #cbd5e1;border-radius:6px;padding:0 4px;background:#fff;color:#334155;outline:none;width:118px;font-family:inherit}
+.hd-date:focus{border-color:#93c5fd}
+.hd-sep{font-size:11px;color:#94a3b8}
 .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;flex-shrink:0}
 .kpi{position:relative;background:#fff;border:1px solid #e2e8f0;border-top:3px solid #cbd5e1;border-radius:8px;padding:8px 10px;cursor:pointer;box-shadow:0 1px 3px rgba(15,23,42,.05)}
 .kpi:hover{border-color:#93c5fd;box-shadow:0 4px 14px rgba(37,99,235,.12)}
@@ -138,7 +144,13 @@ body{background:#eef2f7;color:#1e293b;font-family:'Microsoft YaHei','PingFang SC
   <div class="header">
     <div class="sub">报检取样 · 检验项完成监控</div>
     <h1>检验数字驾驶舱</h1>
-    <div class="time" id="clock"></div>
+    <div class="hd-right">
+      <input type="date" id="hd-start" class="hd-date" title="开始日期">
+      <span class="hd-sep">~</span>
+      <input type="date" id="hd-end" class="hd-date" title="结束日期">
+      <select id="hd-type" class="hd-sel" title="检验类型"></select>
+      <span class="time" id="clock"></span>
+    </div>
   </div>
   <div class="kpi-row" id="kpi-row"></div>
   <div class="main">
@@ -154,7 +166,7 @@ body{background:#eef2f7;color:#1e293b;font-family:'Microsoft YaHei','PingFang SC
         <div class="panel-title"><span class="t-left">样品检验项完成看板</span><span style="font-size:10px;color:#94a3b8;font-weight:400">每个样品多检验项 · 点击查看明细</span></div>
         <div class="panel-body">
           <div class="kb-chips" id="kb-chips"></div>
-          <div class="kb-filters"><input id="kb-mat" class="kb-inp" placeholder="物料编码"><select id="kb-kind" class="kb-inp"></select><select id="kb-type" class="kb-inp"></select></div>
+          <div class="kb-filters"><input id="kb-mat" class="kb-inp" placeholder="物料编码"><select id="kb-kind" class="kb-inp"></select></div>
           <div class="kb-scroll"><div class="kb-track" id="kb-track"></div></div>
         </div>
       </div>
@@ -224,20 +236,33 @@ const samples = TABS.flatMap(([name,label]) => ((ledger[name])||[]).map(r => {
   const run  = items.filter(it => itemState(r,it)==='run').length;
   const eta = ts(r['预计完成时间']);
   const active = r['样品状态']==='待检验' || r['样品状态']==='检验中';
-  const overdue = active && eta && NOW > eta;
+  const overdue = !!(eta && NOW > eta);
   return Object.assign({}, r, { 报检类型:label, _items:items, _total:total, _done:done, _bad:bad, _run:run, _eta:eta, _active:active, _overdue:overdue });
 }));
+
+/* ---------- 页头全局筛选：时间范围（起止日期，默认当天~当天，按取样时间）+ 检验类型（默认所有） ---------- */
+const FLT = { start:TODAY_S, end:TODAY_S, type:'' };
+function fltPool(){
+  return samples.filter(s=>{
+    if(FLT.type && s['报检类型']!==FLT.type) return false;
+    const d = dayOf(s['取样时间']);
+    if(FLT.start && (!d || d<FLT.start)) return false;
+    if(FLT.end && (!d || d>FLT.end)) return false;
+    return true;
+  });
+}
 
 /* ---------- 样品状态 KPI ---------- */
 const KPIS = [
   { key:'wait',  label:'待检样品',   cls:'c-blue',   hit:s=> s['样品状态']==='待检验', chip:'待检' },
   { key:'run',   label:'检验中样品', cls:'c-cyan',   hit:s=> s['样品状态']==='检验中', chip:'检验中' },
-  { key:'today', label:'今日完成样品',cls:'c-green', hit:s=> s['样品状态']==='已完成' && dayOf(s['检验完成时间'])===TODAY_S, chip:'已完成' },
+  { key:'done',  label:'已完成样品', cls:'c-green',  hit:s=> s['样品状态']==='已完成', chip:'已完成' },
   { key:'late',  label:'逾期样品',   cls:'c-red',    hit:s=> s._overdue, chip:'逾期' }
 ];
 function renderKpis(){
+  const pool = fltPool();
   $('kpi-row').innerHTML = KPIS.map(k=>{
-    const rows = samples.filter(k.hit);
+    const rows = pool.filter(k.hit);
     const subs = TABS.map(([,label])=>{
       const n = rows.filter(s=> s['报检类型']===label).length;
       return n ? `<span>${label}<b>${n}</b></span>` : '';
@@ -248,34 +273,35 @@ function renderKpis(){
 }
 
 /* ---------- 检验项 KPI + 进度 ---------- */
-const itemTotal = samples.reduce((s,r)=> s+r._total, 0);
-const itemDone  = samples.reduce((s,r)=> s+r._done, 0);
-const itemRun   = samples.reduce((s,r)=> s+r._run, 0);
-const itemBad   = samples.reduce((s,r)=> s+r._bad, 0);
 function renderItemKpis(){
+  const pool = fltPool();
+  const itemTotal = pool.reduce((s,r)=> s+r._total, 0);
+  const itemDone  = pool.reduce((s,r)=> s+r._done, 0);
+  const itemRun   = pool.reduce((s,r)=> s+r._run, 0);
+  const itemBad   = pool.reduce((s,r)=> s+r._bad, 0);
   const rate = itemTotal ? (itemDone/itemTotal*100).toFixed(1)+'%' : '—';
   $('item-kpis').innerHTML =
     `<div class="item-kpi ik-blue"><div class="ik-label">检验项任务</div><div class="ik-num">${itemTotal}<span style="font-size:11px;opacity:.55"> 项</span></div><div class="ik-sub">口径：在制样品项次合计</div></div>`+
     `<div class="item-kpi ik-cyan"><div class="ik-label">检验项完成率</div><div class="ik-num">${rate}</div><div class="ik-sub">完成 ${itemDone} · 进行 ${itemRun} / 任务 ${itemTotal}</div></div>`+
     `<div class="item-kpi ik-red"><div class="ik-label">不合格项</div><div class="ik-num">${itemBad}<span style="font-size:11px;opacity:.55"> 项</span></div><div class="ik-sub">触发：判定不合格</div></div>`;
 }
-/* 检验项完成进度：按检验项名称聚合（非报检类型） */
-const itemStats = {};
-samples.forEach(s=> (s._items||[]).forEach(it=>{
-  const n = it['检验项名称'] || '未命名检验项';
-  const st = itemStats[n] || (itemStats[n] = { name:n, cls:it['所属检验类']||'', total:0, done:0, run:0, bad:0 });
-  st.total++;
-  const k = itemState(s, it);
-  if(k==='done') st.done++;
-  else if(k==='bad'){ st.done++; st.bad++; }
-  else if(k==='run') st.run++;
-}));
-const itemStatList = Object.values(itemStats).sort((a,b)=> b.total-a.total || b.done-a.done);
-/* 面板只展示「未完成样品（待检验+检验中）」里出现的检验项并集；进度数字仍按全部样品统计 */
-const pendingItemNames = new Set();
-samples.filter(s=> s['样品状态']!=='已完成').forEach(s=> (s._items||[]).forEach(it=> pendingItemNames.add(it['检验项名称']||'未命名检验项')));
-const progList = itemStatList.filter(st=> pendingItemNames.has(st.name));
+/* 检验项完成进度：按检验项名称聚合（非报检类型）；面板只展示「未完成样品（待检验+检验中）」里出现的检验项并集，进度数字仍按筛选内全部样品统计 */
+let progList = [];
 function renderProg(){
+  const pool = fltPool();
+  const itemStats = {};
+  pool.forEach(s=> (s._items||[]).forEach(it=>{
+    const n = it['检验项名称'] || '未命名检验项';
+    const st = itemStats[n] || (itemStats[n] = { name:n, cls:it['所属检验类']||'', total:0, done:0, run:0, bad:0 });
+    st.total++;
+    const k = itemState(s, it);
+    if(k==='done') st.done++;
+    else if(k==='bad'){ st.done++; st.bad++; }
+    else if(k==='run') st.run++;
+  }));
+  const pendingItemNames = new Set();
+  pool.filter(s=> s['样品状态']!=='已完成').forEach(s=> (s._items||[]).forEach(it=> pendingItemNames.add(it['检验项名称']||'未命名检验项')));
+  progList = Object.values(itemStats).sort((a,b)=> b.total-a.total || b.done-a.done).filter(st=> pendingItemNames.has(st.name));
   $('prog-list').innerHTML = progList.map(st=>{
     const pct = st.total ? Math.round(st.done/st.total*100) : 0;
     const parts = [`任务 ${st.total}`, `完成 ${st.done}`];
@@ -300,8 +326,7 @@ function statusTag(s){ return s['样品状态']==='已完成' ? 'tag-done' : (s[
 function kbFiltered(chip){
   const mq = (($('kb-mat')||{}).value||'').trim();
   const kq = (($('kb-kind')||{}).value||'');
-  const tq = (($('kb-type')||{}).value||'');
-  return samples.filter(s=> chipHit(s,chip) && (!mq || String(s['物料编码']||'').includes(mq)) && (!kq || s['物料种类']===kq) && (!tq || s['报检类型']===tq));
+  return fltPool().filter(s=> chipHit(s,chip) && (!mq || String(s['物料编码']||'').includes(mq)) && (!kq || s['物料种类']===kq));
 }
 function renderKb(){
   $('kb-chips').innerHTML = KB_CHIPS.map(c=>{
@@ -318,7 +343,7 @@ function renderKb(){
   }
   const cards = rows.map(s=>{
     const pct = s._total ? Math.round(s._done/s._total*100) : 0;
-    const odTag = s._active ? (s._overdue ? '<span class="tag tag-fail">逾期</span>' : '<span class="tag tag-done">正常</span>') : '';
+    const odTag = s._eta ? (s._overdue ? '<span class="tag tag-fail">逾期</span>' : '<span class="tag tag-done">正常</span>') : '';
     const tag = `<span class="tag ${statusTag(s)}">${esc(s['样品状态'])}</span>${odTag}`;
     const chips = (s._items||[]).map(it=> `<span class="kc-chip-i ci-${itemState(s,it)}">${esc(it['检验项名称']||'—')}</span>`).join('');
     return `<div class="kb-card" data-id="${esc(s.id)}"><div class="kc-no"><span>${esc(s['样品编号'])}</span>${tag}</div>`+
@@ -352,12 +377,13 @@ function mkChart(id, opt){
   charts[id].setOption(Object.assign({grid:{left:40,right:16,top:28,bottom:26},textStyle:{color:'#475569'}}, opt));
 }
 function weekRows(dateKey){
-  const days = [...new Set(samples.map(s=> dayOf(s[dateKey])).filter(Boolean))].sort();
+  const pool = fltPool();
+  const days = [...new Set(pool.map(s=> dayOf(s[dateKey])).filter(Boolean))].sort();
   const base = days.length ? days[days.length-1] : TODAY_S;
   const arr = [];
   for(let i=6;i>=0;i--){
     const d = addDays(base,-i);
-    arr.push({ day:d.slice(5), n: samples.filter(s=> dayOf(s[dateKey])===d && (dateKey!=='检验完成时间' || s['样品状态']==='已完成')).length });
+    arr.push({ day:d.slice(5), n: pool.filter(s=> dayOf(s[dateKey])===d && (dateKey!=='检验完成时间' || s['样品状态']==='已完成')).length });
   }
   return arr;
 }
@@ -389,10 +415,12 @@ function renderLoc(){
   const bag = MOCK['np-0201-12'] || {};
   const groups = {未入库:[], 样品货架:[], 样品筐:[], 领用中:[], 留样:[], 已报废:[]};
   (bag['tab-1']||[]).forEach(r=>{
+    if(FLT.type && r['报检类型']!==FLT.type) return;
     const key = slocBucket(r, false);
     groups[key].push({cat:key, no:r['样品编号'], io:r['报检单号'], mat:r['物料名称'], pos:(!r['当前位置']||r['当前位置']==='—')?'未入库':r['当前位置'], type:r['报检类型'], person:r['最近变更人'], time:r['最近变更时间']});
   });
   (bag['tab-2']||[]).forEach(r=>{
+    if(FLT.type && r['报检类型']!==FLT.type) return;
     const key = slocBucket(r, true);
     groups[key].push({cat:key, no:r['样品编号'], io:r['报检单号'], mat:r['物料名称'], pos:key==='留样'?'留样':'已报废', type:r['报检类型'], person:r['最近变更人']||r['处置人'], time:r['最近变更时间']||r['处置时间']});
   });
@@ -428,7 +456,7 @@ function openSample(id){
   const items = s._items || [];
   const opUser = s['检验人'] && s['检验人']!=='—' ? s['检验人'] : '管理员';
   const pct = s._total ? (s._done/s._total*100).toFixed(1)+'%' : '—';
-  const odVal = !s._active ? '—' : (s._overdue ? '逾期' : '正常');
+  const odVal = !s._eta ? '—' : (s._overdue ? '逾期' : '正常');
   const cards = [
     ['报检单号', esc(s['报检单号']||'—'), 'c-cyan'],
     ['报检类型', esc(s['报检类型']||'—'), ''],
@@ -463,31 +491,35 @@ $('prog-all').onclick = ()=>{
 const IST_TXT = { done:'合格', bad:'不合格', run:'进行中', wait:'未检' };
 const IST_CLS = { done:'tag-pass', bad:'tag-fail', run:'tag-run', wait:'tag-gray' };
 function openItemSamples(name){
-  const rows = samples.filter(s=> (s._items||[]).some(it=> (it['检验项名称']||'未命名检验项')===name));
+  const rows = fltPool().filter(s=> (s._items||[]).some(it=> (it['检验项名称']||'未命名检验项')===name));
   rows.sort((a,b)=> (a['样品状态']==='已完成'?1:0)-(b['样品状态']==='已完成'?1:0));
   const body = rows.map(s=>{
     const it = s._items.find(x=> (x['检验项名称']||'未命名检验项')===name);
     const st = itemState(s, it);
-    const odTxt = !s._active ? '—' : (s._overdue ? '<span class="tag tag-fail">逾期</span>' : '<span class="tag tag-done">正常</span>');
-    return `<tr><td>${esc(s['样品编号'])}</td><td>${esc(s['物料名称']||'—')}</td><td>${esc(s['报检类型'])}</td><td><span class="tag ${statusTag(s)}">${esc(s['样品状态'])}</span></td><td>${odTxt}</td><td><span class="tag ${IST_CLS[st]}">${IST_TXT[st]}</span></td><td>${s._done}/${s._total}</td><td>${esc(s['需求完成时间']||'—')}</td></tr>`;
-  }).join('') || '<tr><td colspan="8" style="text-align:center;color:#94a3b8">暂无样品</td></tr>';
+    const odTxt = !s._eta ? '—' : (s._overdue ? '<span class="tag tag-fail">逾期</span>' : '<span class="tag tag-done">正常</span>');
+    return `<tr><td>${esc(s['样品编号'])}</td><td>${esc(s['物料名称']||'—')}</td><td>${esc(s['报检类型'])}</td><td><span class="tag ${statusTag(s)}">${esc(s['样品状态'])}</span></td><td>${odTxt}</td><td><span class="tag ${IST_CLS[st]}">${IST_TXT[st]}</span></td><td>${esc(s['需求完成时间']||'—')}</td></tr>`;
+  }).join('') || '<tr><td colspan="7" style="text-align:center;color:#94a3b8">暂无样品</td></tr>';
   openDlg(`检验项「${name}」· 涉及样品 ${rows.length} 个`,
-    `<table class="dlg-table"><thead><tr><th>样品编号</th><th>物料名称</th><th>报检类型</th><th>样品状态</th><th>逾期状态</th><th>该项状态</th><th>样品进度</th><th>需求完成时间</th></tr></thead><tbody>${body}</tbody></table>`);
+    `<table class="dlg-table"><thead><tr><th>样品编号</th><th>物料名称</th><th>报检类型</th><th>样品状态</th><th>逾期状态</th><th>该项状态</th><th>需求完成时间</th></tr></thead><tbody>${body}</tbody></table>`);
 }
 
 /* ---------- 时钟 & 初始化 ---------- */
 function tickClock(){ const d = new Date(); $('clock').textContent = `${d.getFullYear()}-${p2(d.getMonth()+1)}-${p2(d.getDate())} ${p2(d.getHours())}:${p2(d.getMinutes())}:${p2(d.getSeconds())}`; }
 tickClock(); setInterval(tickClock, 1000);
+function renderAll(){ renderKpis(); renderItemKpis(); renderProg(); renderKb(); renderCharts(); renderLoc(); }
 (function initKbFilters(){
   const kinds = [...new Set(samples.map(s=> s['物料种类']).filter(v=> v && v!=='—'))];
-  const types = [...new Set(samples.map(s=> s['报检类型']).filter(Boolean))];
   $('kb-kind').innerHTML = '<option value="">物料种类（全部）</option>' + kinds.map(t=> `<option value="${esc(t)}">${esc(t)}</option>`).join('');
-  $('kb-type').innerHTML = '<option value="">报检类型（全部）</option>' + types.map(t=> `<option value="${esc(t)}">${esc(t)}</option>`).join('');
   $('kb-kind').addEventListener('change', renderKb);
-  $('kb-type').addEventListener('change', renderKb);
   $('kb-mat').addEventListener('input', renderKb);
+  $('hd-type').innerHTML = '<option value="">检验类型（所有）</option>' + TABS.map(([,t])=> `<option value="${esc(t)}">${esc(t)}</option>`).join('');
+  $('hd-type').addEventListener('change', e=>{ FLT.type = e.target.value; renderAll(); });
+  $('hd-start').value = TODAY_S;
+  $('hd-end').value = TODAY_S;
+  $('hd-start').addEventListener('change', e=>{ FLT.start = e.target.value; if(FLT.end && FLT.start && FLT.start>FLT.end){ FLT.end = FLT.start; $('hd-end').value = FLT.end; } renderAll(); });
+  $('hd-end').addEventListener('change', e=>{ FLT.end = e.target.value; if(FLT.start && FLT.end && FLT.end<FLT.start){ FLT.start = FLT.end; $('hd-start').value = FLT.start; } renderAll(); });
 })();
-renderKpis(); renderItemKpis(); renderProg(); renderKb(); renderCharts(); renderLoc();
+renderAll();
 window.addEventListener('resize', ()=> Object.values(charts).forEach(c=> c && c.resize()));
 </script>
 </body>

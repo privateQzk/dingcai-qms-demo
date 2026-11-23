@@ -135,7 +135,9 @@
             检验类: ln['检验类']||'—', 检验项: ln['检验项']||'—', 仪器类型: ln['仪器类型']||'—',
             检验班组: ln['分配班组']||'—', _team: splitDun(ln['分配班组'])[0]||'',
             适用仪器: ln['适用仪器'] && ln['适用仪器']!=='—' ? ln['适用仪器'] : '—',
-            _cands: cand.list, _instSrc: cand.src, 取样时间: o['取样时间']||'—',
+            _cands: cand.list, _instSrc: cand.src,
+            _sameType: schedInstPool(ln['仪器类型']).map(r=> r['仪器名称']),
+            取样时间: o['取样时间']||'—',
             优先级: ord['优先级']||'—', 需求完成时间: ord['需求完成时间']||'—',
             _hours: schedHoursOf(o['物料编码'], ln['检验类'])
           };
@@ -222,8 +224,7 @@
              form:{ 仪器:'', 开始:'', 工时:2, 结束:'', 原因:'' } },
       detail: { visible:false, task:null },
       setTab(t){ this.tab = t; },
-      setView(v){ this.view = v; },
-      nav(dir){ const d = schedParse(this.anchor+' 00:00'); d.setDate(d.getDate() + (this.view==='week'?7:1)*dir); this.anchor = schedFmtD(d); },
+      nav(dir){ const d = schedParse(this.anchor+' 00:00'); d.setDate(d.getDate() + dir); this.anchor = schedFmtD(d); },
       today(){ this.anchor = schedAnchorDate(); },
       qQuery(){}, qReset(){ Object.assign(this.q,{ 样品编号:'', 检验仪器:'', 排程状态:'', 检验类:'', 检验班组:'', 优先级:'', 报检单号:'', 需求范围:null, 计划范围:null }); },
       logQuery(){}, logReset(){ Object.assign(this.logQ,{ 样品编号:'', 操作类型:'', 检验仪器:'', 报检单号:'', 操作人:'', 时间范围:null }); },
@@ -309,14 +310,8 @@
       // 时间范围
       const anchorD = schedParse(sb.anchor+' 00:00') || new Date();
       let rStart, rEnd, rangeText;
-      if(sb.view==='week'){
-        const mon = new Date(anchorD); mon.setDate(mon.getDate() - ((mon.getDay()+6)%7));
-        rStart = mon.getTime(); rEnd = rStart + 7*86400000;
-        rangeText = schedFmtD(new Date(rStart))+' ~ '+schedFmtD(new Date(rEnd-86400000));
-      } else {
-        rStart = anchorD.getTime(); rEnd = rStart + 86400000;
-        rangeText = sb.anchor+' 周'+'日一二三四五六'[anchorD.getDay()];
-      }
+      rStart = anchorD.getTime(); rEnd = rStart + 86400000;
+      rangeText = sb.anchor+' 周'+'日一二三四五六'[anchorD.getDay()];
       // 轴域：全部已排任务时间跨度 ∪ 可视窗口，两端各留半天余量（时间轴连续可拖）
       let dMin = Infinity, dMax = -Infinity;
       sched.forEach(t=>{
@@ -324,8 +319,9 @@
         if(s<dMin) dMin = s; if(e>dMax) dMax = e;
       });
       if(!isFinite(dMin)){ dMin = rStart; dMax = rEnd; }
-      dMin = Math.min(dMin, rStart) - 12*3600000;
-      dMax = Math.max(dMax, rEnd) + 12*3600000;
+      // 轴域对齐整日边界（底纹分段对齐 00:00/09:00/18:00）
+      dMin = schedParse(schedFmtD(new Date(Math.min(dMin, rStart))) + ' 00:00').getTime();
+      dMax = schedParse(schedFmtD(new Date(Math.max(dMax, rEnd))) + ' 00:00').getTime() + 86400000;
       // 非工作时段底纹：通用日历 + 常白班 09:00-18:00，覆盖整个轴域
       const shades = [];
       for(let d=new Date(dMin); d.getTime()<dMax; d=new Date(d.getTime()+86400000)){

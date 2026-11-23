@@ -22,7 +22,7 @@
       // range 每次重算都是新数组——只有「日/周切换、翻页、回到今天」真正改变区间值时才重置视野；
       // 拖动/排程/数据刷新引起的重算保持用户当前窗口，不再弹回锚点
       'data.range': { handler: function (v, ov) { if (v && ov && (v[0] !== ov[0] || v[1] !== ov[1])) this.win = v.slice(); this.$nextTick(this.renderChart); } },
-      'sb.view': { handler: function () { this.$nextTick(this.renderChart); } },
+
       'sb.tab': {
         handler: function (v) {
           if (v === 'board') this.$nextTick(this.renderChart);
@@ -144,7 +144,7 @@
           if (drag.group) {
             var ptg = toVal(ev.clientX, ev.clientY);
             if (!isFinite(ptg[0])) return;
-            var delta = Math.round((ptg[0] - drag.grab) / 300000) * 300000;
+            var delta = Math.round((ptg[0] - drag.grab) / 900000) * 900000;
             if (delta === drag.curDelta) return;
             drag.curDelta = delta; drag.moved = true;
             var items2 = drag.base.map(function (it) { return Object.assign({}, it, { value: it.value.slice() }); });
@@ -166,10 +166,10 @@
           var insts = self.data.ganttInsts || [];
           var pt = toVal(ev.clientX, ev.clientY);
           if (!isFinite(pt[0]) || !isFinite(pt[1])) return;
-          var ns = Math.round((drag.s0 + (pt[0] - drag.grab)) / 300000) * 300000;
+          var ns = Math.round((drag.s0 + (pt[0] - drag.grab)) / 900000) * 900000;
           var nr = Math.round(pt[1]);
           if (nr < 0) nr = 0; if (nr > insts.length - 1) nr = insts.length - 1;
-          if (drag.cands.length && insts[nr] && drag.cands.indexOf(insts[nr]) < 0) nr = drag.curRow;
+          if (insts[nr] && drag.cands.indexOf(insts[nr]) < 0) nr = drag.curRow;
           if (ns !== drag.curS || nr !== drag.curRow) {
             drag.curS = ns; drag.curE = ns + drag.dur; drag.curRow = nr; drag.moved = true;
             var items = drag.base.map(function (it) { return Object.assign({}, it, { value: it.value.slice() }); });
@@ -233,7 +233,7 @@
             t: t, idx: idx, gi: idx + (self._shadeItems || []).length, moved: false, curRow: item.value[0], grab: pt[0],
             dur: item.value[2] - item.value[1], s0: item.value[1],
             curS: item.value[1], curE: item.value[2],
-            cands: (t._cands || []).map(function (c) { return c['仪器名称']; }),
+            cands: (t._sameType || []),
             // 系列数据 = 底纹项 + 任务块，ghost 快照须保持同一结构
             base: (self._shadeItems || []).concat(self.data.gantt || []).map(function (it) { return Object.assign({}, it, { value: it.value.slice() }); })
           };
@@ -269,25 +269,17 @@
         var mv = function (e) {
           var dx = (e.clientX - ev.clientX) / Math.max(1, tr.width) * (f[1] - f[0]);
           var ns = w0[0], ne = w0[1];
-          if (part === 'm') { ns += dx; ne += dx; }
-          else if (part === 'l') { ns += dx; if (ns > ne - 1800000) ns = ne - 1800000; }
-          else { ne += dx; if (ne < ns + 1800000) ne = ns + 1800000; }
+          ns += dx; ne += dx;
           self.applyWin(ns, ne);
         };
         var up = function () { window.removeEventListener('mousemove', mv, true); window.removeEventListener('mouseup', up, true); };
         window.addEventListener('mousemove', mv, true); window.addEventListener('mouseup', up, true);
         ev.preventDefault(); ev.stopPropagation();
       },
-      // 首次进入：视野直接定位到排程块——全部块跨度≤14天则整段纳入，否则按当前日/周窗口居中到块群中间
+      // 首次进入：窗口=当前日视图（00:00~24:00，96 个 15 分钟格），不随块群拉伸
       initWin: function () {
-        var r = this.data.range || [0, 0], items = this.data.gantt || [];
-        if (!items.length) return r.slice();
-        var mn = Infinity, mx = -Infinity;
-        items.forEach(function (it) { if (it.value[1] < mn) mn = it.value[1]; if (it.value[2] > mx) mx = it.value[2]; });
-        var pad = 6 * 3600000;
-        if (mx - mn + 2 * pad <= 14 * 86400000) return [mn - pad, mx + pad];
-        var w = r[1] - r[0], c = (mn + mx) / 2;
-        return [c - w / 2, c + w / 2];
+        var r = this.data.range || [0, 0];
+        return r.slice();
       },
       // 点轨道空白：窗口中心跳到该位置
       sliderTrackDown: function (ev) {
@@ -309,13 +301,20 @@
         var shadeItems = shades.map(function (r) { return { value: [0, r[0], r[1]], shade: 1 }; });
         if (now) shadeItems.push({ value: [1, now, now], nowline: 1 });
         self._shadeItems = shadeItems;
-        var dataArr = shadeItems.concat(items);
         if (!this.win) this.win = this.initWin();
         var win = this.win;
+        // 刻度文字自绘：time 轴原生 label 会抽稀且 interval:0 不生效；每 15 分钟一格（跨度过大时自适应加粗到 30/60 分钟）
+        var tickSpan = win[1] - win[0];
+        var tickStep = tickSpan <= 30 * 3600000 ? 900000 : (tickSpan <= 78 * 3600000 ? 1800000 : 3600000);
+        var tickItems = [];
+        for (var tt = Math.ceil(win[0] / tickStep) * tickStep; tt <= win[1]; tt += tickStep) {
+          tickItems.push({ value: [2, tt, tt], tick: 1 });
+        }
+        var dataArr = shadeItems.concat(tickItems, items);
         var full = this.data.fullRange || win;
         var option = {
           animation: false,
-          grid: { left: 190, right: 30, top: 10, bottom: 26 },
+          grid: { left: 190, right: 30, top: 10, bottom: 72 },
           tooltip: {
             trigger: 'item',
             formatter: function (p) {
@@ -333,18 +332,9 @@
             }
           },
           xAxis: {
-            type: 'time', min: win[0], max: win[1], splitNumber: 16,
-            minorTick: { show: true, splitNumber: 4 },
-            minorSplitLine: { show: true, lineStyle: { color: '#F5F8FC' } },
-            axisLabel: { fontSize: 11, hideOverlap: true, formatter: function (v) {
-              var d = new Date(v); var p = function (n) { return String(n).padStart(2, '0'); };
-              var span = win[1] - win[0];
-              var md = (d.getMonth() + 1) + '-' + p(d.getDate());
-              if (span > 72 * 3600000) return md + ' 周' + '日一二三四五六'[d.getDay()];
-              if (d.getHours() === 0 && d.getMinutes() === 0) return md + ' 00:00';
-              return p(d.getHours()) + ':' + p(d.getMinutes());
-            } },
-            splitLine: { show: true, lineStyle: { color: '#EEF2F7' } }
+            type: 'time', min: win[0], max: win[1], interval: 900000,
+            axisLabel: { show: false },
+            splitLine: { show: true, lineStyle: { color: '#D5DEE9' } }
           },
           yAxis: {
             type: 'category', data: insts, inverse: true,
@@ -360,9 +350,22 @@
             axisTick: { show: false }, axisLine: { show: false }
           },
           series: [{
-            type: 'custom',
+            type: 'custom', clip: false,
             renderItem: function (params, api) {
               var d = dataArr[params.dataIndex] || {};
+              if (d.tick) {
+                var tx = api.coord([api.value(1), 0])[0];
+                var nT = insts.length || 1, bHT = api.size([0, 1])[1];
+                var yBtm = api.coord([api.value(1), nT - 1])[1] + bHT / 2;
+                var dd = new Date(api.value(1)); var pp = function (n) { return String(n).padStart(2, '0'); };
+                var txt = (dd.getHours() === 0 && dd.getMinutes() === 0)
+                  ? (dd.getMonth() + 1) + '-' + pp(dd.getDate())
+                  : pp(dd.getHours()) + ':' + pp(dd.getMinutes());
+                return { type: 'group', silent: true,
+                  x: tx + 3, y: yBtm + 44, rotation: -Math.PI / 2,
+                  children: [{ type: 'text', silent: true,
+                    style: { x: 0, y: 0, text: txt, fill: '#64748B', fontSize: 10, align: 'left', verticalAlign: 'middle' } }] };
+              }
               if (d.shade || d.nowline) {
                 var n0 = insts.length || 1, bH0 = api.size([0, 1])[1];
                 var yT = api.coord([api.value(1), 0])[1] - bH0 / 2;
@@ -413,6 +416,7 @@
                 kids.push({ type: 'circle', name: pfx + '-b', x: 0, y: 0, shape: { cx: lx + 4.5, cy: ly - 4, r: 2.5 }, style: { stroke: '#fff', fill: 'none', lineWidth: 1.6 }, silent: true });
                 kids.push({ type: 'rect', name: pfx + '-c', x: 0, y: 0, shape: { x: lx, y: ly - 2, width: 9, height: 6, r: 1 }, style: { fill: '#fff' }, silent: true });
               }
+              // 任务信息始终展示：块宽放得下→块内白字，放不下→块右侧深色字
               if (w > 34) {
                 kids.push({
                   type: 'text', silent: true, name: pfx + '-d', x: 0, y: 0,
@@ -420,6 +424,14 @@
                     x: s[0] + 7, y: y + h / 2, text: t['样品编号'] + '·' + t['检验类'],
                     fill: '#fff', fontSize: 11, align: 'left', verticalAlign: 'middle',
                     width: w - 10, overflow: 'truncate'
+                  }
+                });
+              } else {
+                kids.push({
+                  type: 'text', silent: true, name: pfx + '-d', x: 0, y: 0,
+                  style: {
+                    x: s[0] + w + 4, y: y + h / 2, text: t['样品编号'] + '·' + t['检验类'],
+                    fill: '#475569', fontSize: 10, align: 'left', verticalAlign: 'middle'
                   }
                 });
               }
@@ -486,11 +498,6 @@
     },
     template: [
       '<section class="sched-board">',
-      '  <div class="sb-cards">',
-      '    <div v-for="c in data.cards" :key="c.label" class="sb-card" :class="\'sb-card--\' + (c.tone || \'blue\')">',
-      '      <div class="sb-card__v">{{ c.value }}</div><div class="sb-card__l">{{ c.label }}</div>',
-      '    </div>',
-      '  </div>',
       '  <div class="sb-tabs">',
       '    <button v-for="t in [[\'board\',\'排程看板\'],[\'tasks\',\'排程任务\'],[\'log\',\'排程流水\']]" :key="t[0]"',
       '      class="sb-tab" :class="{ \'sb-tab--on\': sb.tab === t[0] }" @click="sb.setTab(t[0])">{{ t[1] }}</button>',
@@ -498,10 +505,7 @@
       // ===== 排程看板 =====
       '  <div v-show="sb.tab === \'board\'" class="sb-board">',
       '    <div class="sb-board__bar">',
-      '      <el-radio-group :model-value="sb.view" size="small" @update:model-value="sb.setView($event)">',
-      '        <el-radio-button value="day">日视图</el-radio-button>',
-      '        <el-radio-button value="week">周视图</el-radio-button>',
-      '      </el-radio-group>',
+      '      <span class="sb-view">日视图</span>',
       '      <el-button size="small" @click="sb.nav(-1)">‹</el-button>',
       '      <el-button size="small" @click="sb.today()">今天</el-button>',
       '      <el-button size="small" @click="sb.nav(1)">›</el-button>',
@@ -528,13 +532,9 @@
       '      </div>',
       '    </div>',
       '    <div ref="sliderTrack" class="sb-slider" @mousedown="sliderTrackDown">',
-      '      <div class="sb-slider__win" :style="sliderWinStyle()">',
-      '        <i class="sb-slider__edge sb-slider__edge--l" @mousedown.stop="sliderDown($event, \'l\')"></i>',
-      '        <div class="sb-slider__mid" @mousedown.stop="sliderDown($event, \'m\')"></div>',
-      '        <i class="sb-slider__edge sb-slider__edge--r" @mousedown.stop="sliderDown($event, \'r\')"></i>',
-      '      </div>',
+      '      <div class="sb-slider__win" :style="sliderWinStyle()" @mousedown.stop="sliderDown($event, \'m\')"></div>',
       '    </div>',
-      '    <div class="sb-board__tip">点击任务块查看详情；拖动任务块左右改时间、上下换仪器（仅候选行可落）；锁定、已过去的已完成/检验中及当前检验中的任务不可拖；Shift+空白拖拽或开启「框选」后拖拽可拉框多选，选中后拖动任一块整组平移，浮动条可批量锁定/解锁/取消；空白处拖拽平移、滚轮缩放、下方滑条调窗口；灰色底纹为非工作时段</div>',
+      '    <div class="sb-board__tip">点击任务块查看详情；拖动任务块左右改时间、上下换仪器（仅同类型仪器行可落）；锁定、已过去的已完成/检验中及当前检验中的任务不可拖；Shift+空白拖拽或开启「框选」后拖拽可拉框多选，选中后拖动任一块整组平移，浮动条可批量锁定/解锁/取消；空白处拖拽平移、滚轮缩放、下方滑条拖动查看（窗口大小固定不可缩放）；灰色底纹为非工作时段</div>',
       '  </div>',
       // ===== 排程任务 =====
       '  <div v-show="sb.tab === \'tasks\'">',

@@ -304,7 +304,7 @@
 
     let cockpitMenuLive = false;
     function openQualityCockpit(){
-      const url = pageId.value==='np-0702-02' ? './insp-cockpit.html?v=21' : './quality-cockpit.html?v=20';
+      const url = pageId.value==='np-0702-02' ? './insp-cockpit.html?v=25' : './quality-cockpit.html?v=20';
       const win = window.open(url, 'qms-quality-cockpit');
       if(!win){
         ElMessage.warning('浏览器拦截了新窗口，请允许弹出后再打开');
