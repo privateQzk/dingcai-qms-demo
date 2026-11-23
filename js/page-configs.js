@@ -385,12 +385,6 @@ window.WMS_PAGE_CONFIGS = {
               "titleRed": true
             },
             {
-              "title": "检验排程",
-              "index": "np-0201-18",
-              "pageId": "np-0201-18",
-              "titleRed": true
-            },
-            {
               "title": "未检放行",
               "index": "np-0201-01",
               "pageId": "np-0201-01",
@@ -3256,14 +3250,14 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
                   "name": "段1开始",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
             },
             {
                   "name": "段1结束",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
@@ -3279,14 +3273,14 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
                   "name": "段2开始",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
             },
             {
                   "name": "段2结束",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
@@ -3302,14 +3296,14 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
                   "name": "段3开始",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
             },
             {
                   "name": "段3结束",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
@@ -3325,14 +3319,14 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
                   "name": "段4开始",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
             },
             {
                   "name": "段4结束",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
@@ -3348,14 +3342,14 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
                   "name": "段5开始",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
             },
             {
                   "name": "段5结束",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
@@ -3371,14 +3365,14 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
                   "name": "段6开始",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
             },
             {
                   "name": "段6结束",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
@@ -46782,6 +46776,16 @@ window.WMS_PAGE_CONFIGS = {
               "slot": "tag"
             },
             {
+              "field": "开始时间",
+              "title": "开始时间",
+              "width": 110
+            },
+            {
+              "field": "结束时间",
+              "title": "结束时间",
+              "width": 110
+            },
+            {
               "field": "备注",
               "title": "备注",
               "width": 200
@@ -46859,6 +46863,18 @@ window.WMS_PAGE_CONFIGS = {
           "multiple": true,
           "placeholder": "请点击选择，多选",
           "ctrl": "点击右侧抽屉弹出「仪器台账」，多选；取使用状态为在用的仪器；回填仪器名称，多个用「、」拼接；不选表示不限定仪器"
+        },
+        {
+          "name": "开始时间",
+          "type": "time-pick",
+          "required": true,
+          "placeholder": "请选择"
+        },
+        {
+          "name": "结束时间",
+          "type": "time-pick",
+          "required": true,
+          "placeholder": "请选择"
         },
         {
           "name": "备注",
@@ -89926,14 +89942,14 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
                   "name": "段1开始",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
             },
             {
                   "name": "段1结束",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
@@ -89949,14 +89965,14 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
                   "name": "段2开始",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
             },
             {
                   "name": "段2结束",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
@@ -89972,14 +89988,14 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
                   "name": "段3开始",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
             },
             {
                   "name": "段3结束",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
@@ -89995,14 +90011,14 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
                   "name": "段4开始",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
             },
             {
                   "name": "段4结束",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
@@ -90018,14 +90034,14 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
                   "name": "段5开始",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
             },
             {
                   "name": "段5结束",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
@@ -90041,14 +90057,14 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
                   "name": "段6开始",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
             },
             {
                   "name": "段6结束",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
@@ -133525,6 +133541,16 @@ window.WMS_PAGE_CONFIGS = {
               "slot": "tag"
             },
             {
+              "field": "开始时间",
+              "title": "开始时间",
+              "width": 110
+            },
+            {
+              "field": "结束时间",
+              "title": "结束时间",
+              "width": 110
+            },
+            {
               "field": "备注",
               "title": "备注",
               "width": 200
@@ -133602,6 +133628,18 @@ window.WMS_PAGE_CONFIGS = {
           "multiple": true,
           "placeholder": "请点击选择，多选",
           "ctrl": "点击右侧抽屉弹出「仪器台账」，多选；取使用状态为在用的仪器；回填仪器名称，多个用「、」拼接；不选表示不限定仪器"
+        },
+        {
+          "name": "开始时间",
+          "type": "time-pick",
+          "required": true,
+          "placeholder": "请选择"
+        },
+        {
+          "name": "结束时间",
+          "type": "time-pick",
+          "required": true,
+          "placeholder": "请选择"
         },
         {
           "name": "备注",
@@ -175955,14 +175993,14 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
                   "name": "段1开始",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
             },
             {
                   "name": "段1结束",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
@@ -175978,14 +176016,14 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
                   "name": "段2开始",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
             },
             {
                   "name": "段2结束",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
@@ -176001,14 +176039,14 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
                   "name": "段3开始",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
             },
             {
                   "name": "段3结束",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
@@ -176024,14 +176062,14 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
                   "name": "段4开始",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
             },
             {
                   "name": "段4结束",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
@@ -176047,14 +176085,14 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
                   "name": "段5开始",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
             },
             {
                   "name": "段5结束",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
@@ -176070,14 +176108,14 @@ window.WMS_PAGE_CONFIGS = {
             },
             {
                   "name": "段6开始",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
             },
             {
                   "name": "段6结束",
-                  "type": "time",
+                  "type": "time-pick",
                   "required": true,
                   "step": "00:15",
                   "placeholder": "请选择"
@@ -219554,6 +219592,16 @@ window.WMS_PAGE_CONFIGS = {
               "slot": "tag"
             },
             {
+              "field": "开始时间",
+              "title": "开始时间",
+              "width": 110
+            },
+            {
+              "field": "结束时间",
+              "title": "结束时间",
+              "width": 110
+            },
+            {
               "field": "备注",
               "title": "备注",
               "width": 200
@@ -219631,6 +219679,18 @@ window.WMS_PAGE_CONFIGS = {
           "multiple": true,
           "placeholder": "请点击选择，多选",
           "ctrl": "点击右侧抽屉弹出「仪器台账」，多选；取使用状态为在用的仪器；回填仪器名称，多个用「、」拼接；不选表示不限定仪器"
+        },
+        {
+          "name": "开始时间",
+          "type": "time-pick",
+          "required": true,
+          "placeholder": "请选择"
+        },
+        {
+          "name": "结束时间",
+          "type": "time-pick",
+          "required": true,
+          "placeholder": "请选择"
         },
         {
           "name": "备注",

@@ -80,8 +80,11 @@
       if(!codes.length){ ElMessage.warning('请选择适用物料'); return; }
       if(!cats.length){ ElMessage.warning('请选择适用检验类'); return; }
       if(!teams.length){ ElMessage.warning('请选择派单班组'); return; }
+      if(!txt('开始时间')){ ElMessage.warning('请选择开始时间'); return; }
+      if(!txt('结束时间')){ ElMessage.warning('请选择结束时间'); return; }
       const list = (MOCK[DISPATCH_PAGE] = MOCK[DISPATCH_PAGE] || { main: [] }).main || (MOCK[DISPATCH_PAGE].main = []);
       const enable = formSwitch['启用状态']===false ? '禁用' : '启用';
+      const ns = txt('开始时间'), ne = txt('结束时间');
       if(enable==='启用'){
         for(const r of list){
           if(r['启用状态']==='禁用' || (!isAdd && r.id===formModel._editId)) continue;
@@ -89,7 +92,11 @@
           if(!cat) continue;
           const rm = ruleMats(r);
           const mat = !codes.length ? (!rm.length ? '全部物料' : '') : codes.find(c=> rm.includes(c));
-          if(mat){ ElMessage.warning('适用检验类「'+cat+'」+ 物料「'+mat+'」已在启用方案 '+r['方案编码']+' 中配置，请修改或停用后再保存'); return; }
+          if(mat){
+            // 时间范围有交集才判重（HH:mm 字符串可直接比较）
+            const os = String(r['开始时间']||''), oe = String(r['结束时间']||'');
+            if(!os || !oe || (ns < oe && os < ne)){ ElMessage.warning('适用检验类「'+cat+'」+ 物料「'+mat+'」已在启用方案 '+r['方案编码']+' 中配置，请修改或停用后再保存'); return; }
+          }
         }
       }
       const payload = {
@@ -98,7 +105,8 @@
         _mats: mats.map(m=> ({ 物料编码: m.code, 物料名称: m.name, 物料规格: m.spec })),
         使用仪器: insts.map(i=> i['仪器名称']).filter(Boolean).join('、') || '—',
         _insts: insts,
-        派单班组: teams.join('、'), 分配方式: teams.length > 1 ? '手动分配' : '自动分配', 备注: txt('备注'), 启用状态: enable
+        派单班组: teams.join('、'), 分配方式: teams.length > 1 ? '手动分配' : '自动分配',
+        开始时间: txt('开始时间'), 结束时间: txt('结束时间'), 备注: txt('备注'), 启用状态: enable
       };
       let saved;
       if(isAdd){

@@ -190,6 +190,34 @@
       });
       return out;
     }
+    /** 我的任务行未进入任务分派时，按行信息合成排程任务（排程域=我的任务全集，不存在未分配） */
+    function schedSynthTask(row){
+      const pool = schedInstPool('');
+      return {
+        _key: String(row['样品编号']||'')+'|'+String(row['检验类名称']||''), _idx: 0, _synth: true,
+        样品编号: row['样品编号']||'—', 报检类型: row['报检单类型']||'—', 报检单号: row['报检单号']||'—',
+        物料编码: row['物料编码']||'—', 物料名称: row['物料名称']||'—', 物料规格: row['物料规格']||'—',
+        检验类: row['检验类名称']||'—', 检验项: row['检验项名称']||'—', 仪器类型: '—',
+        检验班组: '—', _team: '', 适用仪器: '—',
+        _cands: pool, _instSrc: '类型', _sameType: pool.map(r=> r['仪器名称']),
+        取样时间: row['取样时间']||'—', 优先级: row['优先级']||'—',
+        需求完成时间: row['预计完成时间']||'—',
+        _hours: schedHoursOf(row['物料编码'], row['检验类名称']),
+        检验仪器:'—', 仪器编码:'', 计划开始:'—', 计划结束:'—', 计划工时:'',
+        排程方式:'—', 排程人:'—', 排程时间:'—', 班次:'—', 检验日历:'—', 锁定:'否',
+        排程状态:'待排程', 超期:'—', 冲突:'—'
+      };
+    }
+    function schedSynthMergePlan(t, plan){
+      Object.assign(t, {
+        排程单号: plan['排程单号'], 检验仪器: plan['检验仪器'], 仪器编码: plan['仪器编码'],
+        计划开始: plan['计划开始'], 计划结束: plan['计划结束'], 计划工时: plan['计划工时'],
+        排程方式: plan['排程方式'], 排程人: plan['排程人'], 排程时间: plan['排程时间'],
+        班次: plan['班次']||'—', 检验日历: plan['检验日历']||'—', 锁定: plan['锁定']||'否',
+        排程状态: '已排程'
+      });
+      return t;
+    }
     const SCHED_STATUS_ORDER = { '待排程':0, '已排程':1, '检验中':2, '已完成':3 };
     const SCHED_PRIO = { '高':0, '中':1, '低':2 };
     function schedSortKey(a, b){
@@ -225,7 +253,8 @@
     const schedSplitVisible = ref(false);
     const sb = reactive({
       tab: 'board', view: 'day', anchor: schedAnchorDate(), qMore: false,
-      splitKw: '',
+      splitQ: { 样品编号:'', 检验类:'', 排程状态:'', 仪器:'', 报检单号:'' },
+      splitQA: { 样品编号:'', 检验类:'', 排程状态:'', 仪器:'', 报检单号:'' },
       q: { 样品编号:'', 检验仪器:'', 排程状态:'', 检验类:'', 检验班组:'', 优先级:'', 报检单号:'', 需求范围:null, 计划范围:null },
       logQ: { 样品编号:'', 操作类型:'', 检验仪器:'', 报检单号:'', 操作人:'', 时间范围:null },
       sel: [],
@@ -236,6 +265,8 @@
       nav(dir){ const d = schedParse(this.anchor+' 00:00'); d.setDate(d.getDate() + dir); this.anchor = schedFmtD(d); },
       today(){ this.anchor = schedAnchorDate(); },
       qQuery(){}, qReset(){ Object.assign(this.q,{ 样品编号:'', 检验仪器:'', 排程状态:'', 检验类:'', 检验班组:'', 优先级:'', 报检单号:'', 需求范围:null, 计划范围:null }); },
+      splitQuery(){ this.splitQA = Object.assign({}, this.splitQ); },
+      splitReset(){ Object.assign(this.splitQ, { 样品编号:'', 检验类:'', 排程状态:'', 仪器:'', 报检单号:'' }); this.splitQuery(); },
       logQuery(){}, logReset(){ Object.assign(this.logQ,{ 样品编号:'', 操作类型:'', 检验仪器:'', 报检单号:'', 操作人:'', 时间范围:null }); },
       selChange(rows){ this.sel = (rows||[]).map(r=> r._key); },
       op(cmd, row){
@@ -245,11 +276,47 @@
         else if(cmd==='lock') schedToggleLock(row, true);
         else if(cmd==='unlock') schedToggleLock(row, false);
       },
-      /* 排程弹窗·我的任务：行映射不到排程任务（检验类未分配班组）时提示 */
+      /* 排程弹窗·我的任务：行均为任务分配后数据；映射缺失时按行信息合成任务（操作仍可用）。
+         「调整」：有计划→调整弹窗；待排程（取消后）→排程弹窗（等同重新排程） */
       myOp(cmd, row){
-        const t = row._task;
-        if(!t){ ElMessage.warning('该检验类尚未分配班组，请先在「任务分派」中分配'); return; }
+        const t = row._task || schedSynthTask(row);
+        if(cmd==='adjust'){
+          const hasPlan = t['计划开始'] && t['计划开始']!=='—';
+          schedOpenDlg(t, hasPlan ? 'adjust' : 'sched');
+          return;
+        }
         this.op(cmd, t);
+      },
+      /* 排程弹窗·我的任务：批量确认排程 = 对所选「已排程且未锁定」任务执行锁定（状态→锁定） */
+      splitConfirm(rows){
+        const tasks = (rows||[]).map(r=> r._task).filter(t=> t && t.排程状态==='已排程' && t['锁定']!=='是');
+        if(!tasks.length){ ElMessage.warning('所选数据中没有可确认的排程（需已排程且未锁定）'); return; }
+        const stamp = nowStamp();
+        tasks.forEach(t=>{
+          const p = schedPlans().find(x=> x._key===t._key); if(!p) return;
+          p['锁定'] = '是';
+          schedLog(t, '锁定排程', schedPlanDesc(p), schedPlanDesc(p), '批量确认排程', '管理员', stamp);
+        });
+        bumpStore();
+        ElMessage.success('已确认并锁定 '+tasks.length+' 个排程');
+      },
+      /* 排程弹窗·我的任务：批量解锁 = 对所选「锁定」任务解除锁定（状态→已排程） */
+      splitUnlock(rows){
+        const plans = schedPlans();
+        const tasks = (rows||[]).map(r=> r._task).filter(t=>{
+          if(!t) return false;
+          const p = plans.find(x=> x._key===t._key);
+          return p && p['锁定']==='是';
+        });
+        if(!tasks.length){ ElMessage.warning('所选数据中没有已锁定的排程可解锁'); return; }
+        const stamp = nowStamp();
+        tasks.forEach(t=>{
+          const p = plans.find(x=> x._key===t._key);
+          p['锁定'] = '否';
+          schedLog(t, '解锁排程', schedPlanDesc(p), schedPlanDesc(p), '批量解锁排程', '管理员', stamp);
+        });
+        bumpStore();
+        ElMessage.success('已解锁 '+tasks.length+' 个排程');
       },
       auto(){ schedAutoRun(false); },
       batchCancel(){ schedCancelBatch(); },
@@ -271,6 +338,15 @@
     const schedData = computed(()=>{
       void storeTick.value;
       const all = schedTasks();
+      // 我的任务中未进入任务分派、但已有排程计划的行：合成任务纳入甘特/任务域
+      const _myRows = ((MOCK[FLOW_MY_TASK]||{}).main)||[];
+      const _haveKey = new Set(all.map(x=>x._key));
+      _myRows.forEach(r=>{
+        const key = String(r['样品编号']||'')+'|'+String(r['检验类名称']||'');
+        if(_haveKey.has(key)) return;
+        const plan = schedPlans().find(p=> p._key===key);
+        if(plan) all.push(schedSynthMergePlan(schedSynthTask(r), plan));
+      });
       const now = schedNow();
       // 卡片
       const cards = [
@@ -348,21 +424,103 @@
       const instOpts = insts.map(r=> r['仪器名称']);
       const teamOpts = teamNames();
       const catOpts = inspCatNames();
-      // 排程弹窗·我的任务：数据录入-我的行 × 排程任务（样品编号|检验类 关联），splitKw 按样品编号过滤
-      const kw = String(sb.splitKw||'').trim();
-      const myTasks = (((MOCK[FLOW_MY_TASK]||{}).main)||[]).filter(r=>
-        !kw || String(r['样品编号']||'').includes(kw)
-      ).map(r=>{
-        const t = all.find(x=> x._key === String(r['样品编号']||'')+'|'+String(r['检验类名称']||'')) || null;
-        return Object.assign({}, r, { _task: t,
-          排程状态: t ? t.排程状态 : '—',
-          计划开始: t ? t.计划开始 : '—', 计划结束: t ? t.计划结束 : '—' });
+      // 排程弹窗·查询栏：作用于甘特块与我的任务列表（勾选样品打开时由 parts/56 预填样品编号）
+      const fq = sb.splitQA || {};
+      const ganttF = gantt.filter(g=>{
+        const t = g.t;
+        return (!fq.样品编号 || String(t['样品编号']).includes(String(fq.样品编号).trim()))
+          && (!fq.检验类 || t['检验类']===fq.检验类)
+          && (!fq.仪器 || t['检验仪器']===fq.仪器)
+          && (!fq.报检单号 || String(t['报检单号']).includes(String(fq.报检单号).trim()))
+          && (!fq.排程状态 || (fq.排程状态==='锁定' ? t['锁定']==='是' : fq.排程状态==='已排程' ? t['锁定']!=='是' : false));
       });
-      return { cards, tasks, logs, gantt, ganttInsts: insts.map(r=>r['仪器名称']), instMeta, shades,
+      // 排程弹窗·我的任务：数据录入-我的行 × 排程任务（样品编号|检验类 关联）
+      const myTasks = (((MOCK[FLOW_MY_TASK]||{}).main)||[]).map(r=>{
+        const key = String(r['样品编号']||'')+'|'+String(r['检验类名称']||'');
+        let t = all.find(x=> x._key===key) || null;
+        if(!t){
+          const plan = schedPlans().find(p=> p._key===key);
+          t = plan ? schedSynthMergePlan(schedSynthTask(r), plan) : schedSynthTask(r);
+        }
+        const hasPlan = !!(t && t['计划开始'] && t['计划开始']!=='—');
+        return Object.assign({}, r, { _task: t,
+          排程状态: !hasPlan ? '待排程' : (t['锁定']==='是' ? '锁定' : '已排程'),
+          计划开始: hasPlan ? t.计划开始 : '—', 计划结束: hasPlan ? t.计划结束 : '—' });
+      }).filter(r=>
+        (!fq.样品编号 || String(r['样品编号']||'').includes(String(fq.样品编号).trim()))
+        && (!fq.检验类 || r['检验类名称']===fq.检验类)
+        && (!fq.排程状态 || r['排程状态']===fq.排程状态)
+        && (!fq.仪器 || String(r['分析仪器']||'').includes(fq.仪器))
+        && (!fq.报检单号 || String(r['报检单号']||'').includes(String(fq.报检单号).trim()))
+      );
+      // split 模式：仪器泳道=当前行数据的仪器并集（检验类/样品等过滤后剩余的仪器）；
+      // 全部条件 → 行数据所有仪器并集。独立排程页不受此过滤影响
+      let ganttInstsL = insts.map(r=>r['仪器名称']), instMetaL = instMeta, ganttFL = ganttF;
+      if(schedSplitVisible.value){
+        const used = new Set();
+        myTasks.forEach(r=>{
+          const c = (r._task && r._task['仪器编码']) || String(r['分析仪器']||'').split('/')[0].trim();
+          if(c && instIdx[c]!=null) used.add(c);
+        });
+        ganttF.forEach(g=> used.add(g.t['仪器编码']));
+        const laneInsts = insts.filter(i=> used.has(i['仪器编号']));
+        const laneIdx = {}; laneInsts.forEach((i,k)=> laneIdx[i['仪器编号']]=k);
+        ganttFL = ganttF.map(g=> ({ value: [ laneIdx[g.t['仪器编码']], g.value[1], g.value[2], g.value[3], g.value[4] ], t: g.t }));
+        ganttInstsL = laneInsts.map(r=>r['仪器名称']);
+        instMetaL = {}; laneInsts.forEach(i=> instMetaL[i['仪器名称']] = { code: i['仪器编号'], type: i['仪器类型'] });
+      }
+      return { cards, tasks, logs, gantt: ganttFL, ganttInsts: ganttInstsL, instMeta: instMetaL, shades,
                range:[rStart,rEnd], fullRange:[dMin,dMax], rangeText, now, nowMs:(schedParse(now)||{}).getTime?schedParse(now).getTime():0,
                instOpts, teamOpts, catOpts, myTasks };
     });
     /* ---- 操作 ---- */
+    /** 人工取消排程的任务 _key 集合（墓碑）：取消后不再被系统自动补排 */
+    function schedCancelledKeys(){ return schedBag('cancelled').map(r=> r._key); }
+    function schedMarkCancelled(key){
+      const bag = schedBag('cancelled');
+      if(!bag.some(r=> r._key===key)) bag.push({ _key: key });
+    }
+    function schedUnmarkCancelled(key){
+      const bag = schedBag('cancelled');
+      const i = bag.findIndex(r=> r._key===key);
+      if(i>=0) bag.splice(i,1);
+    }
+    /** 系统自动排：打开「排程」弹窗时，为我的任务中「待排程且未人工取消」的任务自动排位 */
+    function schedAutoFillMy(){
+      const cancelled = new Set(schedCancelledKeys());
+      const myRows = ((MOCK[FLOW_MY_TASK]||{}).main)||[];
+      const myKeys = new Set(myRows.map(r=> String(r['样品编号']||'')+'|'+String(r['检验类名称']||'')));
+      const stamp = nowStamp();
+      const mkPlan = t=>{
+        const slot = schedAutoSlot(t);
+        if(!slot) return false;
+        const team = t._team || t.检验班组;
+        const plan = {
+          id: 'sp-'+Date.now()+'-'+Math.random().toString(36).slice(2,6), _key: t._key,
+          排程单号: schedNextNo(),
+          检验仪器: slot.inst['仪器名称'], 仪器编码: slot.inst['仪器编号'],
+          计划开始: schedFmt(slot.st), 计划结束: schedFmt(slot.en),
+          计划工时: (+t._hours || 2).toFixed(1), 排程方式:'自动', 排程人:'系统', 排程时间: stamp,
+          班次: schedShiftOf(team).name,
+          检验日历: (schedCalOf(team, schedFmtD(slot.st))||{})['日历名称'] || '—'
+        };
+        schedPlans().push(plan);
+        schedLog(t, '自动排程', '—', schedPlanDesc(plan), '系统自动排程：'+plan['仪器编码'], '系统', stamp);
+        return true;
+      };
+      let n = 0;
+      const tasks = schedTasks();
+      tasks.filter(t=> myKeys.has(t._key) && t.排程状态==='待排程' && !cancelled.has(t._key)).forEach(t=>{ if(mkPlan(t)) n++; });
+      // 未进入任务分派的行同样自动排位（排程域=我的任务全集）
+      const haveKey = new Set(tasks.map(x=>x._key));
+      myRows.forEach(r=>{
+        const key = String(r['样品编号']||'')+'|'+String(r['检验类名称']||'');
+        if(haveKey.has(key) || cancelled.has(key)) return;
+        if(schedPlans().some(p=> p._key===key)) return;
+        if(mkPlan(schedSynthTask(r))) n++;
+      });
+      if(n) bumpStore();
+    }
     function schedAutoRun(){
       let pool = schedTasks().filter(t=> t.排程状态==='待排程');
       if(sb.sel.length){
@@ -440,6 +598,7 @@
         检验日历: (schedCalOf(team, schedFmtD(st))||{})['日历名称'] || '—'
       });
       if(!exist) schedPlans().push(plan);
+      schedUnmarkCancelled(t._key);
       schedLog(t, mode==='adjust' ? '调整排程' : '手动排程', oldDesc, schedPlanDesc(plan),
         mode==='adjust' ? (f.原因||'—') : '手动排程', '管理员', plan['排程时间']);
       bumpStore();
@@ -488,6 +647,7 @@
         const i = bag.findIndex(p=> p._key===t._key);
         const old = i>=0 ? bag[i] : null;
         if(i>=0) bag.splice(i,1);
+        schedMarkCancelled(t._key);
         schedLog(t, '取消排程', schedPlanDesc(old), '—', String(value||'').trim()||'—', '管理员', nowStamp());
         bumpStore();
         ElMessage.success('已取消排程');
@@ -505,6 +665,7 @@
           const i = bag.findIndex(p=> p._key===t._key);
           const old = i>=0 ? bag[i] : null;
           if(i>=0) bag.splice(i,1);
+          schedMarkCancelled(t._key);
           schedLog(t, '取消排程', schedPlanDesc(old), '—', String(value||'').trim()||'—', '管理员', stamp);
         });
         sb.sel = [];

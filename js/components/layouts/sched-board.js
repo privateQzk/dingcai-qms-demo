@@ -18,7 +18,11 @@
       /* page=排程页整页；split=「我的任务」排程弹窗（上甘特+下我的任务表） */
       mode: { type: String, default: 'page' }
     },
-    data: function () { return { chart: null, win: null, selKeys: {}, boxSel: false, marquee: null, cursorX: -1, cursorText: '', dragTip: null }; },
+    data: function () { return { chart: null, win: null, selKeys: {}, boxSel: false, marquee: null, cursorX: -1, cursorText: '', dragTip: null, splitSel: [], splitPage: { page: 1, size: 10 } }; },
+    watch: {
+      // 过滤条件变化（myTasks 数组重建）时回到第一页
+      'data.myTasks': function () { this.splitPage.page = 1; }
+    },
     watch: {
       'data.gantt': { deep: true, handler: function () { this.$nextTick(this.renderChart); } },
       // range 每次重算都是新数组——只有「日/周切换、翻页、回到今天」真正改变区间值时才重置视野；
@@ -43,8 +47,16 @@
       if (this.chart) { this.chart.dispose(); this.chart = null; }
     },
     methods: {
+      // split：泳道行高固定 40px，图表高度=顶部10+泳道*40+底部刻度区72，泳道数变化时重设高度并 resize
+      syncSplitH: function () {
+        if (this.mode !== 'split' || !this.$refs.gantt) return;
+        var n = Math.max(1, (this.data.ganttInsts || []).length);
+        this.$refs.gantt.style.height = (10 + n * 40 + 72) + 'px';
+        if (this.chart) this.chart.resize();
+      },
       initChart: function () {
         if (!window.echarts || !this.$refs.gantt) return;
+        this.syncSplitH();
         this.chart = window.echarts.init(this.$refs.gantt);
         var self = this;
         this.chart.on('click', function (params) {
@@ -278,10 +290,10 @@
         };
         window.addEventListener('mousedown', self._dragDown, true);
         this.renderChart();
-        // split 模式默认给出一周窗口，便于总览；页面模式沿用锚点日
+        // split 模式默认给出最小视野（当日 00:00~24:00），任务块放大到能看清样品信息；页面模式沿用锚点日
         if (this.mode === 'split') {
           var r0 = this.data.range || [Date.now(), Date.now() + 86400000];
-          this.applyWin(r0[0], r0[0] + 7 * 86400000);
+          this.applyWin(r0[0], r0[0] + 86400000);
           // 全屏弹窗动画期间 init 可能量到 0 宽，延迟 resize + 重绘兜底
           setTimeout(function () { if (self.chart) { self.chart.resize(); self.renderChart(); } }, 350);
         }
@@ -419,6 +431,7 @@
       },
       renderChart: function () {
         if (!this.chart) { this.initChart(); return; }
+        this.syncSplitH();
         var self = this;
         var insts = this.data.ganttInsts || [];
         var items = this.data.gantt || [];
@@ -466,6 +479,8 @@
           yAxis: {
             type: 'category', data: insts, inverse: true,
             axisLabel: {
+              // split 模式仪器列由左侧独立 DOM 组件渲染（.sb-lanes），画布内不再画 y 轴标签
+              show: self.mode !== 'split',
               fontSize: 12, width: 170, overflow: 'truncate', lineHeight: 15,
               interval: 0, hideOverlap: false, margin: 12,
               formatter: function (v) {
@@ -483,10 +498,12 @@
           series: [{
             type: 'custom', clip: false,
             renderItem: function (params, api) {
+              if (!api || typeof api.coord !== 'function') return { type: 'group', silent: true, children: [] };
               var d = (self._dataArr || [])[params.dataIndex] || {};
+              var lanePx = function () { return Math.abs(api.coord([api.value(1), 1])[1] - api.coord([api.value(1), 0])[1]) || 40; };
               if (d.tick) {
                 var tx = api.coord([api.value(1), 0])[0];
-                var nT = insts.length || 1, bHT = api.size([0, 1])[1];
+                var nT = insts.length || 1, bHT = lanePx();
                 var yT2 = api.coord([api.value(1), 0])[1] - bHT / 2;
                 var yBtm = api.coord([api.value(1), nT - 1])[1] + bHT / 2;
                 var dd = new Date(api.value(1)); var pp = function (n) { return String(n).padStart(2, '0'); };
@@ -499,7 +516,7 @@
                 ] };
               }
               if (d.shade || d.nowline) {
-                var n0 = insts.length || 1, bH0 = api.size([0, 1])[1];
+                var n0 = insts.length || 1, bH0 = lanePx();
                 var yT = api.coord([api.value(1), 0])[1] - bH0 / 2;
                 var yB = api.coord([api.value(1), n0 - 1])[1] + bH0 / 2;
                 var x0 = api.coord([api.value(1), 0])[0];
@@ -518,7 +535,7 @@
               var s = api.coord([api.value(1), cat]);
               var e = api.coord([api.value(2), cat]);
               var lane = api.value(3) || 0, lanes = api.value(4) || 1;
-              var bandH = api.size([0, 1])[1];
+              var bandH = lanePx();
               var innerH = bandH * 0.8;
               var laneH = innerH / lanes;
               var h = Math.max(7, Math.min(20, laneH - 4));
@@ -550,8 +567,11 @@
                 kids.push({ type: 'circle', name: pfx + '-b', x: 0, y: 0, shape: { cx: lx + 4.5, cy: ly - 4, r: 2.5 }, style: { stroke: '#fff', fill: 'none', lineWidth: 1.6 }, silent: true });
                 kids.push({ type: 'rect', name: pfx + '-c', x: 0, y: 0, shape: { x: lx, y: ly - 2, width: 9, height: 6, r: 1 }, style: { fill: '#fff' }, silent: true });
               }
-              // 任务信息始终展示：块宽放得下→块内白字，放不下→块右侧深色字；标签=排程单号·检验类
-              var blkTxt = (t['排程单号'] ? t['排程单号'] + '·' : '') + t['检验类'];
+              // 任务信息始终展示：块宽放得下→块内白字，放不下→块右侧深色字；
+              // 标签：split 弹窗看样品信息（样品编号·检验类），独立排程页沿用排程单号·检验类
+              var blkTxt = (self.mode === 'split'
+                ? (t['样品编号'] ? t['样品编号'] + '·' : '')
+                : (t['排程单号'] ? t['排程单号'] + '·' : '')) + t['检验类'];
               if (w > 34) {
                 kids.push({
                   type: 'text', silent: true, name: pfx + '-d', x: 0, y: 0,
@@ -629,6 +649,40 @@
         if (this.canMove(row)) return [{ name: '调整', cmd: 'adjust', type: 'primary' }];
         if (row['锁定'] === '是') return [{ name: '解锁', cmd: 'unlock', type: 'warning' }];
         return [];
+      },
+      /* split·我的任务：当前页数据（分页切片）与跨页序号 */
+      splitPageData: function () {
+        var all = this.data.myTasks || [], s = this.splitPage;
+        return all.slice((s.page - 1) * s.size, s.page * s.size);
+      },
+      splitRowIndex: function (i) { return (this.splitPage.page - 1) * this.splitPage.size + i + 1; },
+      /* split·我的任务：勾选集合与批量确认 */
+      onSplitSel: function (rows) { this.splitSel = rows || []; },
+      splitConfirm: function () {
+        if (this.sb && this.sb.splitConfirm) this.sb.splitConfirm(this.splitSel);
+        this.splitSel = [];
+        if (this.$refs.splitTable) this.$refs.splitTable.clearSelection();
+      },
+      splitUnlock: function () {
+        if (this.sb && this.sb.splitUnlock) this.sb.splitUnlock(this.splitSel);
+        this.splitSel = [];
+        if (this.$refs.splitTable) this.$refs.splitTable.clearSelection();
+      },
+      /* 行内操作可用性：按钮常显，仅按状态禁用（行默认已排程，无「排程」按钮）。
+         已排程：调整/取消排程/锁定可点；待排程（取消后）：仅调整可点=重新排程；锁定：仅解锁可点 */
+      myCan: function (row, cmd) {
+        var t = row && row._task;
+        var hasPlan = !!(t && t['计划开始'] && t['计划开始'] !== '—');
+        if (cmd === 'adjust') {
+          if (!hasPlan) return true;
+          return t['锁定'] !== '是' && this.canMove(t);
+        }
+        if (!t) return false;
+        var locked = t['锁定'] === '是';
+        if (cmd === 'unlock') return hasPlan && locked;
+        if (!hasPlan || locked) return false;
+        if (cmd === 'lock' || cmd === 'cancel') return t['排程状态'] === '已排程';
+        return false;
       }
     },
     template: [
@@ -776,18 +830,24 @@
       // ===== split：排程弹窗（上甘特 + 下我的任务） =====
       '  <template v-else>',
       '    <div class="sb-split">',
+      '      <div class="sb-split__query">',
+      '        <el-form inline size="small">',
+      '          <el-form-item label="样品编号"><el-input v-model="sb.splitQ.样品编号" clearable style="width:140px" @keyup.enter="sb.splitQuery()"></el-input></el-form-item>',
+      '          <el-form-item label="检验类"><el-select v-model="sb.splitQ.检验类" clearable filterable placeholder="全部" style="width:130px"><el-option v-for="o in data.catOpts" :key="o" :label="o" :value="o"></el-option></el-select></el-form-item>',
+      '          <el-form-item label="排程状态"><el-select v-model="sb.splitQ.排程状态" clearable placeholder="全部" style="width:110px"><el-option v-for="o in [\'锁定\',\'已排程\',\'待排程\']" :key="o" :label="o" :value="o"></el-option></el-select></el-form-item>',
+      '          <el-form-item label="分析仪器"><el-select v-model="sb.splitQ.仪器" clearable filterable placeholder="全部" style="width:180px"><el-option v-for="o in data.instOpts" :key="o" :label="o" :value="o"></el-option></el-select></el-form-item>',
+      '          <el-form-item label="报检单号"><el-input v-model="sb.splitQ.报检单号" clearable style="width:130px" @keyup.enter="sb.splitQuery()"></el-input></el-form-item>',
+      '          <el-form-item><el-button type="primary" @click="sb.splitQuery()">查询</el-button><el-button @click="sb.splitReset()">重置</el-button></el-form-item>',
+      '        </el-form>',
+      '      </div>',
       '      <div class="sb-board__bar">',
       '        <span class="sb-split__title">甘特图<b class="sb-split__cnt">{{ (data.gantt||[]).length }} 条</b><em>每条任务=一个待排任务，生成排程输出后锁定</em></span>',
       '        <span class="sb-legend">',
-      '          <i class="sb-legend__i" style="background:#93C5FD"></i>待排程',
       '          <i class="sb-legend__i" style="background:#3B82F6"></i>已排程',
-      '          <i class="sb-legend__i" style="background:#F59E0B"></i>检验中',
       '          <i class="sb-legend__i" style="background:#22C55E"></i>已完成',
       '          <i class="sb-legend__i sb-legend__i--line"></i>冲突/逾期',
-      '          <i class="sb-legend__i sb-legend__i--shade"></i>非工作/休息',
       '          <i class="sb-legend__i sb-legend__i--now"></i>当前时刻',
       '        </span>',
-      '        <el-button size="small" :type="boxSel ? \'primary\' : \'default\'" @click="toggleBoxSel()">框选</el-button>',
       '        <span class="sb-now">演示基准：{{ data.now }}</span>',
       '      </div>',
       '      <div class="sb-axiswrap">',
@@ -796,7 +856,12 @@
       '          <div v-for="(d, i) in axisDays()" :key="i" class="sb-axis__day" :class="{ \'sb-axis__day--rest\': d.rest }" :style="{ left: d.l + \'%\', width: d.w + \'%\' }">',
       '            <div class="sb-axis__mm" v-if="d.mm">{{ d.mm }}</div>',
       '            <div class="sb-axis__dd">{{ d.dd }} {{ d.wd }}</div>',
-      '            <div class="sb-axis__md">{{ d.md }}</div>',
+      '          </div>',
+      '        </div>',
+      '        <div class="sb-lanes">',
+      '          <div v-for="(n, i) in (data.ganttInsts || [])" :key="i" class="sb-lane">',
+      '            <div class="sb-lane__nm" :title="n">{{ n }}</div>',
+      '            <div class="sb-lane__cd">{{ ((data.instMeta || {})[n] || {}).code }}</div>',
       '          </div>',
       '        </div>',
       '        <div class="sb-gantt__wrap sb-gantt__wrap--split">',
@@ -816,38 +881,49 @@
       '      <div class="sb-split__slider">',
       '        <div class="sb-slider">',
       '          <div ref="sliderTrack" class="sb-slider__track" @mousedown="sliderTrackDown">',
-      '            <div v-for="tk in sliderTicks()" :key="tk.t" class="sb-slider__tick" :style="{ left: tk.x + \'%\' }"><span>{{ tk.txt }}</span></div>',
       '            <div v-if="sliderNowPct() >= 0" class="sb-slider__now" :style="{ left: sliderNowPct() + \'%\' }"></div>',
-      '            <div class="sb-slider__win" :style="sliderWinStyle()" @mousedown.stop="sliderDown($event, \'m\')"><span class="sb-slider__win-t" v-if="sliderWinPx() > 120">{{ sliderWinText() }}</span></div>',
+      '            <div class="sb-slider__win" :style="sliderWinStyle()" @mousedown.stop="sliderDown($event, \'m\')"></div>',
       '          </div>',
       '        </div>',
       '        <el-button size="small" @click="splitGoToday()">定位当前</el-button>',
-      '        <span class="sb-split__range">{{ axisRangeText() }}</span>',
       '      </div>',
       '      <div class="sb-split__tasks">',
       '        <div class="sb-toolbar">',
       '          <span class="sb-toolbar__t">我的任务 · 共 {{ (data.myTasks || []).length }} 条</span>',
-      '          <el-input v-model="sb.splitKw" size="small" clearable placeholder="按样品编号过滤" style="width:170px"></el-input>',
+      '          <span class="sb-toolbar__b">',
+      '            <el-button type="primary" size="small" :disabled="!splitSel.length" @click="splitConfirm()">批量确认排程</el-button>',
+      '            <el-button type="primary" size="small" :disabled="!splitSel.length" @click="splitUnlock()">批量解锁</el-button>',
+      '          </span>',
       '        </div>',
-      '        <el-table class="demo-data-table" :data="data.myTasks" border stripe max-height="300" empty-text="暂无数据" size="small">',
-      '          <el-table-column type="index" label="序号" width="56"></el-table-column>',
-      '          <el-table-column prop="报检单类型" label="报检单类型" width="110"></el-table-column>',
+      '        <el-table ref="splitTable" class="demo-data-table" :data="splitPageData()" border stripe max-height="300" empty-text="暂无数据" size="small" row-key="id" @selection-change="onSplitSel">',
+      '          <el-table-column type="selection" width="42" reserve-selection></el-table-column>',
+      '          <el-table-column type="index" label="序号" width="56" :index="splitRowIndex"></el-table-column>',
+      '          <el-table-column prop="报检单类型" label="报检单类型" width="100"></el-table-column>',
       '          <el-table-column prop="样品编号" label="样品编号" width="130"></el-table-column>',
-      '          <el-table-column prop="样品来源" label="样品来源" width="96"></el-table-column>',
+      '          <el-table-column prop="样品来源" label="样品来源" width="90"></el-table-column>',
       '          <el-table-column prop="检验类名称" label="检验类名称" width="110"></el-table-column>',
-      '          <el-table-column prop="检验班组" label="检验班组" width="120" show-overflow-tooltip></el-table-column>',
-      '          <el-table-column prop="分析仪器" label="分析仪器" width="140" show-overflow-tooltip></el-table-column>',
-      '          <el-table-column label="优先级" width="76"><template #default="{ row }"><el-tag v-if="row[\'优先级\'] && row[\'优先级\'] !== \'—\'" :type="tagType(row[\'优先级\'])" size="small">{{ row[\'优先级\'] }}</el-tag><span v-else class="demo-readonly">—</span></template></el-table-column>',
-      '          <el-table-column label="反馈状态" width="90"><template #default="{ row }"><el-tag :type="row[\'反馈状态\'] === \'已填写\' ? \'success\' : \'warning\'" size="small">{{ row[\'反馈状态\'] || \'—\' }}</el-tag></template></el-table-column>',
+      '          <el-table-column label="排程状态" width="92"><template #default="{ row }"><el-tag :type="row[\'排程状态\'] === \'锁定\' ? \'success\' : (row[\'排程状态\'] === \'已排程\' ? \'warning\' : \'info\')" size="small">{{ row[\'排程状态\'] }}</el-tag></template></el-table-column>',
       '          <el-table-column prop="预计完成时间" label="预计完成时间" width="140"></el-table-column>',
-      '          <el-table-column label="排程状态" width="92"><template #default="{ row }"><el-tag v-if="row[\'排程状态\'] !== \'—\'" :type="tagType(row[\'排程状态\'])" size="small">{{ row[\'排程状态\'] }}</el-tag><span v-else class="demo-readonly">—</span></template></el-table-column>',
-      '          <el-table-column prop="计划开始" label="计划开始" width="140"></el-table-column>',
-      '          <el-table-column prop="计划结束" label="计划结束" width="140"></el-table-column>',
-      '          <el-table-column label="操作" width="180" fixed="right"><template #default="{ row }">',
-      '            <template v-if="row._task"><el-button v-for="b in opBtns(row._task)" :key="b.cmd" link :type="b.type" @click="sb.myOp(b.cmd, row)">{{ b.name }}</el-button></template>',
-      '            <el-button v-else link type="primary" @click="sb.myOp(\'sched\', row)">排程</el-button>',
+      '          <el-table-column prop="逾期状态" label="逾期状态" width="90"></el-table-column>',
+      '          <el-table-column prop="物料编码" label="物料编码" width="120"></el-table-column>',
+      '          <el-table-column prop="物料名称" label="物料名称" width="140" show-overflow-tooltip></el-table-column>',
+      '          <el-table-column prop="物料规格" label="物料规格" width="130" show-overflow-tooltip></el-table-column>',
+      '          <el-table-column prop="物料种类" label="物料种类" width="100"></el-table-column>',
+      '          <el-table-column prop="分析仪器" label="分析仪器" width="160" show-overflow-tooltip></el-table-column>',
+      '          <el-table-column prop="报检单号" label="报检单号" width="130"></el-table-column>',
+      '          <el-table-column prop="报检时间" label="报检时间" width="140"></el-table-column>',
+      '          <el-table-column prop="计划开始" label="计划开始时间" width="140"></el-table-column>',
+      '          <el-table-column prop="计划结束" label="计划结束时间" width="140"></el-table-column>',
+      '          <el-table-column label="操作" width="240" fixed="right"><template #default="{ row }">',
+      '            <el-button link type="primary" :disabled="!myCan(row, \'adjust\')" @click="sb.myOp(\'adjust\', row)">调整</el-button>',
+      '            <el-button link type="primary" :disabled="!myCan(row, \'cancel\')" @click="sb.myOp(\'cancel\', row)">取消排程</el-button>',
+      '            <el-button link type="primary" :disabled="!myCan(row, \'lock\')" @click="sb.myOp(\'lock\', row)">锁定</el-button>',
+      '            <el-button link type="primary" :disabled="!myCan(row, \'unlock\')" @click="sb.myOp(\'unlock\', row)">解锁</el-button>',
       '          </template></el-table-column>',
       '        </el-table>',
+      '        <div class="sb-split__pager">',
+      '          <el-pagination background small layout="total, sizes, prev, pager, next" :total="(data.myTasks || []).length" :page-sizes="[10, 20, 50, 100]" v-model:current-page="splitPage.page" v-model:page-size="splitPage.size"></el-pagination>',
+      '        </div>',
       '      </div>',
       '    </div>',
       '  </template>',

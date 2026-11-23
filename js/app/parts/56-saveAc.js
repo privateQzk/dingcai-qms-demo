@@ -208,7 +208,11 @@
       }
       if(pageId.value===FLOW_MY_TASK && btn.name==='排程'){
         const picked = (tableData.value||[]).filter(r=> selectedIds.value.includes(r.id));
-        sb.splitKw = picked.length ? String(picked[0]['样品编号']||'') : '';
+        sb.splitReset();
+        if(entryCategoryId.value){ sb.splitQ.检验类 = entryCategoryId.value; }
+        if(picked.length){ sb.splitQ.样品编号 = String(picked[0]['样品编号']||''); }
+        sb.splitQuery();
+        schedAutoFillMy();
         schedSplitVisible.value = true;
         return;
       }

@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vxe-pc-ui@4/lib/style.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vxe-table@4/lib/style.css" />
-<link rel="stylesheet" href="./css/app.css?v=1.0.21" />
+<link rel="stylesheet" href="./css/app.css?v=1.0.24" />
 </head>
 <body>
 <div id="app" v-cloak>
@@ -2813,6 +2813,7 @@
                 <el-option v-for="opt in formSelectOptions(f)" :key="opt.value" :label="opt.label" :value="opt.value"></el-option>
               </el-select>
               <el-time-select v-else-if="f.type==='time'" v-model="formModel[f.name]" :start="f.minTime||'00:00'" :end="f.maxTime||'23:30'" :step="f.step||'00:30'" :placeholder="f.placeholder||'请选择'" style="width:100%"></el-time-select>
+              <el-time-picker v-else-if="f.type==='time-pick'" v-model="formModel[f.name]" format="HH:mm" value-format="HH:mm" :placeholder="f.placeholder||'请选择'" style="width:100%"></el-time-picker>
               <el-color-picker v-else-if="f.type==='color'" v-model="formModel[f.name]"></el-color-picker>
               <el-tree-select v-else-if="f.type==='menu-tree'" v-model="formModel[f.name]" :data="demoMenuTreeData()" :render-after-expand="false" check-strictly filterable clearable placeholder="请选择菜单" style="width:100%" @change="onTagMenuTreeChange(f)"></el-tree-select>
             <div v-else-if="f.type==='number-unit'" class="demo-number-unit">
@@ -8975,14 +8976,14 @@
 <script src="https://cdn.jsdelivr.net/npm/vxe-table@4/lib/index.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
 <script src="./js/demo-announcements.js?v=1.4.24"></script>
-<script src="./js/page-configs.js?v=1.4.610"></script>
-<script src="./js/mock-rows.js?v=1.4.360"></script>
+<script src="./js/page-configs.js?v=1.4.615"></script>
+<script src="./js/mock-rows.js?v=1.4.363"></script>
 <script src="./js/dict-catalog.js?v=1.1.16"></script>
 <script src="./js/page-prd-notes.js?v=2.4.554"></script>
 <script src="./js/remarks-markdown.js?v=1.1.0"></script>
 <script type="module" src="./js/remarks-mermaid-init.js"></script>
 <script src="./js/remarks-mermaid.js"></script>
-<script src="./js/demo-store.js?v=1.0.169"></script>
+<script src="./js/demo-store.js?v=1.0.170"></script>
 <script src="./js/ledger-insp.js?v=5"></script>
 <script src="./js/pages/index.js?v=1.0.0"></script>
 <script src="./js/pages/links.js?v=1.0.0"></script>
@@ -9003,7 +9004,7 @@
 <script src="./js/components/layouts/spc-process.js?v=1.0.2"></script>
 <script src="./js/components/layouts/env-stat.js?v=1.0.0"></script>
 <script src="./js/components/layouts/batch-trace.js?v=1.0.0"></script>
-<script src="./js/components/layouts/sched-board.js?v=1.0.40"></script>
-<script src="./js/app.js?v=1.0.59"></script>
+<script src="./js/components/layouts/sched-board.js?v=1.0.59"></script>
+<script src="./js/app.js?v=1.0.71"></script>
 </body>
 </html>

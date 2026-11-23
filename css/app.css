@@ -1368,6 +1368,9 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
 /* 排程弹窗（数据录入-我的「排程」按钮）：上甘特+日期轴+滑条，下我的任务 */
 .sched-split-dlg .el-dialog__body{padding:12px 18px;height:calc(100% - 54px);overflow:auto}
 .sb-split{display:flex;flex-direction:column;gap:8px}
+.sb-split__query{background:#F8FAFD;border:1px solid #E5EAF0;border-radius:6px;padding:8px 12px 0}
+.sb-split__query .el-form-item{margin-bottom:8px;margin-right:14px}
+.sb-split__query .el-form-item__label{font-weight:400;color:#475569}
 .sb-split__title{font-size:14px;font-weight:600;color:#1F2937}
 .sb-split__title em{font-style:normal;font-weight:400;font-size:12px;color:#94A3B8;margin-left:8px}
 .sb-axiswrap{display:flex;flex-direction:column;position:relative}
@@ -1381,9 +1384,14 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
 .sb-axis__mm{position:absolute;top:2px;left:4px;font-size:11px;font-weight:600;color:#475569;background:rgba(248,250,253,.9);padding:0 2px;line-height:14px}
 .sb-gantt__wrap--split{flex:none;min-height:0}
 .sb-gantt--split{flex:none;min-height:0;height:330px;border-radius:0 0 8px 8px}
+.sb-lanes{position:absolute;left:0;top:66px;width:190px;z-index:3;background:#fff;border-right:1px solid #E5EAF0;box-sizing:border-box}
+.sb-lane{height:40px;display:flex;flex-direction:column;justify-content:center;padding:0 10px;border-bottom:1px solid #F0F3F8;box-sizing:border-box}
+.sb-lane__nm{font-size:12px;color:#1D2129;line-height:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-lane__cd{font-size:10px;color:#86909C;line-height:14px}
 .sb-split__slider{display:flex;align-items:center;gap:10px}
 .sb-split__slider .sb-slider{flex:1;margin-top:0}
 .sb-split__range{font-size:12px;color:#64748B;white-space:nowrap}
 .sb-split__tasks{border-top:1px dashed #E5EAF0;padding-top:8px}
+.sb-split__pager{display:flex;justify-content:flex-end;padding-top:6px}
 .sb-legend__i--shade{background:repeating-linear-gradient(45deg,#CBD5E1 0 3px,#fff 3px 6px);border:1px solid #CBD5E1}
 .sb-legend__i--now{background:#fff;border-left:2px dashed #EF4444;width:10px}

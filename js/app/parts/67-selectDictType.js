@@ -446,6 +446,7 @@
       return INSP_SEQ_DEFS.map(d=> ({
         key: d.key, label: d.label, party: d.party,
         rows: (Array.isArray(bag[d.key]) ? bag[d.key] : []).slice()
+          .filter(r=> String(r['单据状态'] || '') !== '已完成')
           .sort((a, b)=> String(b['报检时间'] || '').localeCompare(String(a['报检时间'] || '')))
       }));
     });
