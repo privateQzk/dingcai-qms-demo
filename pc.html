@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vxe-pc-ui@4/lib/style.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vxe-table@4/lib/style.css" />
-<link rel="stylesheet" href="./css/app.css?v=1.0.13" />
+<link rel="stylesheet" href="./css/app.css?v=1.0.17" />
 </head>
 <body>
 <div id="app" v-cloak>
@@ -3918,9 +3918,9 @@
       <el-input v-model="sampSplitPickQ.报检单号" clearable placeholder="报检单号" style="width:160px"></el-input>
       <el-button @click="sampSplitPickQ.样品编号='';sampSplitPickQ.报检单号=''">重置</el-button>
     </div>
-    <p style="margin:0 0 8px;font-size:12px;color:#94a3b8">{{ reqPickFor==='dev' ? '数据来自「样品检验台账」；仅待检验 / 检验中的报检取样母样可选（报检类型见列表列）。单选' : (reqPickFor ? '数据来自「样品检验台账」；仅待检验 / 检验中的报检取样母样可选（报检类型见列表列）。可多选，确定后样品编号用英文逗号拼接' : '数据来自「样品检验台账」；列出全部待检验 / 检验中的样品。可多选，确定后样品编号用英文逗号拼接') }}</p>
-    <el-table ref="sampSplitPickTableRef" class="demo-data-table demo-data-table--striped" :data="sampSplitPickRows" border stripe max-height="520" :highlight-current-row="reqPickFor==='dev'" :row-key="r => r['样品编号']||r.id" @current-change="r => { if(reqPickFor==='dev') sampSplitPickSelected = r ? [r] : [] }" @selection-change="rows => { if(reqPickFor!=='dev') sampSplitPickSelected = rows }" @row-click="r => { if(reqPickFor==='dev'){ sampSplitPickSelected = r ? [r] : []; const t=sampSplitPickTableRef; if(t) t.setCurrentRow(r); } }" @row-dblclick="r => { if(reqPickFor==='dev'){ sampSplitPickSelected = r ? [r] : []; confirmSampSplitLedgerPick(); } }" style="width:100%">
-      <el-table-column v-if="reqPickFor!=='dev'" type="selection" width="50" align="center" fixed="left"></el-table-column>
+    <p style="margin:0 0 8px;font-size:12px;color:#94a3b8">{{ reqPickSingle ? '数据来自「样品检验台账」；仅待检验 / 检验中的报检取样母样可选（报检类型见列表列）。单选' : '数据来自「样品检验台账」；列出全部待检验 / 检验中的样品。可多选，确定后样品编号用英文逗号拼接' }}</p>
+    <el-table ref="sampSplitPickTableRef" class="demo-data-table demo-data-table--striped" :data="sampSplitPickRows" border stripe max-height="520" :highlight-current-row="reqPickSingle" :row-key="r => r['样品编号']||r.id" @current-change="r => { if(reqPickSingle) sampSplitPickSelected = r ? [r] : [] }" @selection-change="rows => { if(!reqPickSingle) sampSplitPickSelected = rows }" @row-click="r => { if(reqPickSingle){ sampSplitPickSelected = r ? [r] : []; const t=sampSplitPickTableRef; if(t) t.setCurrentRow(r); } }" @row-dblclick="r => { if(reqPickSingle){ sampSplitPickSelected = r ? [r] : []; confirmSampSplitLedgerPick(); } }" style="width:100%">
+      <el-table-column v-if="!reqPickSingle" type="selection" width="50" align="center" fixed="left"></el-table-column>
       <el-table-column v-else width="50" align="center" fixed="left">
         <template #default="{ row }">
           <el-radio :model-value="(sampSplitPickSelected[0]||{})['样品编号']" :value="row['样品编号']" @change="sampSplitPickSelected=[row]; sampSplitPickTableRef && sampSplitPickTableRef.setCurrentRow(row)">&nbsp;</el-radio>
@@ -8998,7 +8998,7 @@
 <script src="./js/components/layouts/spc-process.js?v=1.0.2"></script>
 <script src="./js/components/layouts/env-stat.js?v=1.0.0"></script>
 <script src="./js/components/layouts/batch-trace.js?v=1.0.0"></script>
-<script src="./js/components/layouts/sched-board.js?v=1.0.28"></script>
-<script src="./js/app.js?v=1.0.51"></script>
+<script src="./js/components/layouts/sched-board.js?v=1.0.35"></script>
+<script src="./js/app.js?v=1.0.52"></script>
 </body>
 </html>

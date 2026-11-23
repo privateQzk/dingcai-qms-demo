@@ -104,6 +104,7 @@
     }
     const sampSplitPickVisible = ref(false);
     const reqPickFor = ref('');
+    const reqPickSingle = computed(()=> reqPickFor.value==='dev' || reqPickFor.value==='plate');
     const sampSplitPickTableRef = ref(null);
     const sampSplitPickTab = ref('tab-pi');
     const sampSplitPickQ = reactive({ 样品编号:'', 报检单号:'' });
@@ -166,7 +167,7 @@
       nextTick(()=> setTimeout(()=>{
         const t = sampSplitPickTableRef.value;
         if(!t) return;
-        if(kind==='dev'){
+        if(kind==='dev' || kind==='plate'){
           const hit = sampSplitPickRows.value.find(r=> nos.has(r['样品编号']));
           if(hit){ t.setCurrentRow(hit); sampSplitPickSelected.value = [hit]; }
           return;
@@ -176,8 +177,8 @@
     }
     function confirmSampSplitLedgerPick(){
       let rows = sampSplitPickSelected.value || [];
-      if(reqPickFor.value==='dev') rows = rows.slice(0, 1);
-      if(!rows.length){ ElMessage.warning(reqPickFor.value==='dev' ? '请选择一条数据' : '请至少选择一条数据'); return; }
+      if(reqPickSingle.value) rows = rows.slice(0, 1);
+      if(!rows.length){ ElMessage.warning(reqPickSingle.value ? '请选择一条数据' : '请至少选择一条数据'); return; }
       const tab = sampSplitPickTab.value;
       const kind = reqPickFor.value;
       if(kind==='dev' || kind==='plate'){

@@ -16,7 +16,7 @@
       sb: { type: Object, required: true },
       data: { type: Object, default: function () { return { tasks: [], logs: [], gantt: [], ganttInsts: [], shades: [], range: [0, 0], cards: [] }; } }
     },
-    data: function () { return { chart: null, win: null, selKeys: {}, boxSel: false, marquee: null }; },
+    data: function () { return { chart: null, win: null, selKeys: {}, boxSel: false, marquee: null, cursorX: -1, cursorText: '', dragTip: null }; },
     watch: {
       'data.gantt': { deep: true, handler: function () { this.$nextTick(this.renderChart); } },
       // range 每次重算都是新数组——只有「日/周切换、翻页、回到今天」真正改变区间值时才重置视野；
@@ -34,6 +34,10 @@
       if (this._dragMove) window.removeEventListener('mousemove', this._dragMove, true);
       if (this._dragUp) window.removeEventListener('mouseup', this._dragUp, true);
       if (this._dragDown) window.removeEventListener('mousedown', this._dragDown, true);
+      if (this.$refs.gantt) {
+        if (this._hoverMove) this.$refs.gantt.removeEventListener('mousemove', this._hoverMove);
+        if (this._hoverOut) this.$refs.gantt.removeEventListener('mouseleave', this._hoverOut);
+      }
       if (this.chart) { this.chart.dispose(); this.chart = null; }
     },
     methods: {
@@ -66,7 +70,31 @@
         };
         dom.addEventListener('wheel', self._onWheel, { passive: false });
         var xToT = function (px) { var g = plot(), w = win(); return w[0] + (px - g.l) / Math.max(1, g.r - g.l) * (w[1] - w[0]); };
+        // 光标所处时间：吸附 15 分钟格的竖线 + 时间标签，仅在绘图区内显示
+        self._hoverMove = function (ev) {
+          var rc = dom.getBoundingClientRect(), px = ev.clientX - rc.left, py = ev.clientY - rc.top;
+          var g = plot(), w = win();
+          if (px < g.l || px > g.r || py < g.t || py > g.b || hitIdx(px, py) >= 0) { self.cursorX = -1; return; }
+          var t = Math.round(xToT(px) / 300000) * 300000;
+          self.cursorX = g.l + (t - w[0]) / Math.max(1, w[1] - w[0]) * (g.r - g.l);
+          var d = new Date(t), p = function (x) { return String(x).padStart(2, '0'); };
+          self.cursorText = p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+        };
+        self._hoverOut = function () { self.cursorX = -1; };
+        dom.addEventListener('mousemove', self._hoverMove);
+        dom.addEventListener('mouseleave', self._hoverOut);
         var yToRow = function (py) { var g = plot(), n = Math.max(1, (self.data.ganttInsts || []).length); return (py - g.t) / ((g.b - g.t) / n); };
+        // 拖动中的时间提示：块左缘上方浮层「MM-DD HH:mm~HH:mm」（跨天结束带日期）
+        var pad2 = function (x) { return String(x).padStart(2, '0'); };
+        var fmtT = function (t) { var d = new Date(t); return pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()); };
+        var fmtHM = function (t) { var d = new Date(t); return pad2(d.getHours()) + ':' + pad2(d.getMinutes()); };
+        var tipOf = function (s, e, row, insts) {
+          var g = plot(), w = win(), n = Math.max(1, insts.length);
+          var sameDay = new Date(s).toDateString() === new Date(e).toDateString();
+          return { x: g.l + (s - w[0]) / Math.max(1, w[1] - w[0]) * (g.r - g.l),
+                   y: g.t + (row + 0.5) * ((g.b - g.t) / n),
+                   text: fmtT(s) + '~' + (sameDay ? fmtHM(e) : fmtT(e)) };
+        };
         var toVal = function (cx, cy) {
           var r = dom.getBoundingClientRect();
           return [xToT(cx - r.left), yToRow(cy - r.top)];
@@ -93,6 +121,7 @@
         var finish = function (commit) {
           if (!drag) return;
           var insts = self.data.ganttInsts || [];
+          self.dragTip = null;
           if (drag.marquee) {
             // 框选：位移<4px 当空白单击（非 Shift 则清空选择）；否则按矩形相交选中任务块
             if (drag.marquee.moved) {
@@ -152,7 +181,11 @@
               mm.curS = mm.s0 + delta; mm.curE = mm.s0 + delta + mm.dur;
               items2[mm.gi].value = [mm.row, mm.curS, mm.curE, mm.lane, mm.lanes];
             });
+            self._dataArr = items2;
             self.chart.setOption({ series: [{ data: items2 }] });
+            var gm = null; drag.group.forEach(function (m2) { if (m2.grabbed) gm = m2; });
+            if (!gm) gm = drag.group[0];
+            if (gm) self.dragTip = tipOf(gm.curS, gm.curE, gm.row, self.data.ganttInsts || []);
             return;
           }
           if (drag.pan) {
@@ -174,7 +207,9 @@
             drag.curS = ns; drag.curE = ns + drag.dur; drag.curRow = nr; drag.moved = true;
             var items = drag.base.map(function (it) { return Object.assign({}, it, { value: it.value.slice() }); });
             items[drag.gi].value = [nr, ns, ns + drag.dur, 0, 1];
+            self._dataArr = items;
             self.chart.setOption({ series: [{ data: items }] });
+            self.dragTip = tipOf(drag.curS, drag.curE, drag.curRow, insts);
           }
         };
         self._dragUp = function () { finish(true); };
@@ -214,12 +249,12 @@
             items0.forEach(function (it, gi2) {
               var it2 = it.t;
               if (!it2 || !self.selKeys[it2._key] || !self.canMove(it2)) return;
-              group.push({ t: it2, gi: gi2 + (self._shadeItems || []).length, row: it.value[0], lane: it.value[3], lanes: it.value[4], s0: it.value[1], dur: it.value[2] - it.value[1], curS: it.value[1], curE: it.value[2] });
+              group.push({ t: it2, gi: gi2 + (self._shadeItems || []).length, row: it.value[0], lane: it.value[3], lanes: it.value[4], s0: it.value[1], dur: it.value[2] - it.value[1], curS: it.value[1], curE: it.value[2], grabbed: it2 === t });
             });
             if (group.length) {
               drag = {
                 group: group, moved: false, grab: ptG[0], curDelta: 0,
-                base: (self._shadeItems || []).concat(items0).map(function (it) { return Object.assign({}, it, { value: it.value.slice() }); })
+                base: (self._shadeItems || []).concat(items0, self._tickItems || []).map(function (it) { return Object.assign({}, it, { value: it.value.slice() }); })
               };
               ev.preventDefault();
             }
@@ -235,7 +270,7 @@
             curS: item.value[1], curE: item.value[2],
             cands: (t._sameType || []),
             // 系列数据 = 底纹项 + 任务块，ghost 快照须保持同一结构
-            base: (self._shadeItems || []).concat(self.data.gantt || []).map(function (it) { return Object.assign({}, it, { value: it.value.slice() }); })
+            base: (self._shadeItems || []).concat(self.data.gantt || [], self._tickItems || []).map(function (it) { return Object.assign({}, it, { value: it.value.slice() }); })
           };
           ev.preventDefault();
         };
@@ -254,14 +289,63 @@
           if (ns < full[0]) ns = full[0];
         }
         this.win = [ns, ne];
-        if (this.chart) this.chart.setOption({ xAxis: { min: ns, max: ne } });
+        if (this.chart) {
+          // 窗口变化后同步重建横坐标刻度（旧刻度留在原窗口点位上会导致新视野内无刻度）
+          var ispan = ne - ns;
+          this._tickItems = this.tickItemsFor(ns, ne);
+          var arr = (this._shadeItems || []).concat(this._tickItems, this.data.gantt || []);
+          this._dataArr = arr;
+          this.chart.setOption({ xAxis: { min: ns, max: ne, interval: ispan <= 36 * 3600000 ? 300000 : 3600000 }, series: [{ data: arr }] });
+        }
       },
       sliderWinStyle: function () {
         var f = this.data.fullRange || this.data.range || [0, 1], w = this.win || f;
         var span = Math.max(f[1] - f[0], 1);
         var l = Math.min(100, Math.max(0, (w[0] - f[0]) / span * 100));
         var r = Math.min(100, Math.max(0, (f[1] - w[1]) / span * 100));
+        if (l + r > 99) { l = 0; r = 0; }
         return { left: l + '%', right: r + '%' };
+      },
+      /* ---- 底部时间滑条：日期刻度 / 当前时刻标 / 窗口起止时间 ---- */
+      sliderTicks: function () {
+        var f = this.data.fullRange || this.data.range || [0, 1], span = Math.max(f[1] - f[0], 1);
+        var days = span / 86400000, step = days > 14 ? Math.ceil(days / 10) : 1;
+        var out = [], d = new Date(f[0]); d.setHours(0, 0, 0, 0);
+        if (d.getTime() <= f[0]) d = new Date(d.getTime() + 86400000);
+        for (var t = d.getTime(); t < f[1]; t += step * 86400000) {
+          var dt = new Date(t);
+          out.push({ t: t, x: (t - f[0]) / span * 100, txt: (dt.getMonth() + 1) + '-' + dt.getDate() });
+        }
+        return out;
+      },
+      sliderNowPct: function () {
+        var f = this.data.fullRange || [0, 0], n = this.data.nowMs || 0;
+        if (n < f[0] || n > f[1]) return -1;
+        return (n - f[0]) / Math.max(1, f[1] - f[0]) * 100;
+      },
+      sliderWinPx: function () {
+        var f = this.data.fullRange || this.data.range || [0, 1], w = this.win || f;
+        var tr = this.$refs.sliderTrack;
+        return tr ? Math.max(0, (w[1] - w[0]) / Math.max(1, f[1] - f[0])) * tr.getBoundingClientRect().width : 0;
+      },
+      /* ---- 横坐标刻度项：每小时一标（跨度过大抽稀），首个刻度及跨日处带日期；
+         窗口平移/缩放后由 applyWin 重新生成，保证整段视野内刻度连续 ---- */
+      tickItemsFor: function (w0, w1) {
+        var tickSpan = w1 - w0;
+        var tickStep = tickSpan <= 36 * 3600000 ? 3600000 : (tickSpan <= 96 * 3600000 ? 10800000 : 21600000);
+        var out = [], lastDay = '';
+        for (var tt = Math.ceil(w0 / tickStep) * tickStep; tt <= w1; tt += tickStep) {
+          var ttd = new Date(tt), dk = ttd.toDateString();
+          out.push({ value: [2, tt, tt], tick: 1,
+            dayTxt: dk !== lastDay ? (ttd.getMonth() + 1) + '-' + String(ttd.getDate()).padStart(2, '0') : '' });
+          lastDay = dk;
+        }
+        return out;
+      },
+      sliderWinText: function () {
+        var w = this.win || this.data.range || [0, 0], p = function (x) { return String(x).padStart(2, '0'); };
+        var f = function (t) { var d = new Date(t); return p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes()); };
+        return f(w[0]) + ' ~ ' + f(w[1]);
       },
       sliderDown: function (ev, part) {
         var tr = this.$refs.sliderTrack.getBoundingClientRect();
@@ -289,6 +373,11 @@
         this.applyWin(c - span / 2, c + span / 2);
       },
       statusColor: function (st) { return STATUS_COLORS[st] || '#94A3B8'; },
+      // 光标时间标签：贴近右缘时左翻，避免溢出图区
+      cursorLabStyle: function () {
+        var w = this.$refs.gantt ? this.$refs.gantt.clientWidth : 0;
+        return { transform: this.cursorX > w - 80 ? 'translateX(-105%)' : 'translateX(4px)' };
+      },
       renderChart: function () {
         if (!this.chart) { this.initChart(); return; }
         var self = this;
@@ -303,14 +392,13 @@
         self._shadeItems = shadeItems;
         if (!this.win) this.win = this.initWin();
         var win = this.win;
-        // 刻度文字自绘：time 轴原生 label 会抽稀且 interval:0 不生效；每 15 分钟一格（跨度过大时自适应加粗到 30/60 分钟）
+        // 刻度文字自绘：time 轴原生 label 会抽稀且 interval:0 不生效；每小时一标（跨度过大时自适应 3h/6h），
+        // 首个标签及跨日处带「M-D」日期行——窗口拖离当天后仍能读到日期；窗口变化时由 applyWin 重新生成
         var tickSpan = win[1] - win[0];
-        var tickStep = tickSpan <= 30 * 3600000 ? 900000 : (tickSpan <= 78 * 3600000 ? 1800000 : 3600000);
-        var tickItems = [];
-        for (var tt = Math.ceil(win[0] / tickStep) * tickStep; tt <= win[1]; tt += tickStep) {
-          tickItems.push({ value: [2, tt, tt], tick: 1 });
-        }
+        var tickItems = this.tickItemsFor(win[0], win[1]);
+        self._tickItems = tickItems;
         var dataArr = shadeItems.concat(tickItems, items);
+        self._dataArr = dataArr;
         var full = this.data.fullRange || win;
         var option = {
           animation: false,
@@ -332,9 +420,9 @@
             }
           },
           xAxis: {
-            type: 'time', min: win[0], max: win[1], interval: 900000,
+            type: 'time', min: win[0], max: win[1], interval: tickSpan <= 36 * 3600000 ? 300000 : 3600000,
             axisLabel: { show: false },
-            splitLine: { show: true, lineStyle: { color: '#D5DEE9' } }
+            splitLine: { show: true, lineStyle: { color: '#E7EDF4' } }
           },
           yAxis: {
             type: 'category', data: insts, inverse: true,
@@ -352,19 +440,20 @@
           series: [{
             type: 'custom', clip: false,
             renderItem: function (params, api) {
-              var d = dataArr[params.dataIndex] || {};
+              var d = (self._dataArr || [])[params.dataIndex] || {};
               if (d.tick) {
                 var tx = api.coord([api.value(1), 0])[0];
                 var nT = insts.length || 1, bHT = api.size([0, 1])[1];
+                var yT2 = api.coord([api.value(1), 0])[1] - bHT / 2;
                 var yBtm = api.coord([api.value(1), nT - 1])[1] + bHT / 2;
                 var dd = new Date(api.value(1)); var pp = function (n) { return String(n).padStart(2, '0'); };
-                var txt = (dd.getHours() === 0 && dd.getMinutes() === 0)
-                  ? (dd.getMonth() + 1) + '-' + pp(dd.getDate())
-                  : pp(dd.getHours()) + ':' + pp(dd.getMinutes());
-                return { type: 'group', silent: true,
-                  x: tx + 3, y: yBtm + 44, rotation: -Math.PI / 2,
-                  children: [{ type: 'text', silent: true,
-                    style: { x: 0, y: 0, text: txt, fill: '#64748B', fontSize: 10, align: 'left', verticalAlign: 'middle' } }] };
+                return { type: 'group', silent: true, children: [
+                  { type: 'line', shape: { x1: tx, y1: yT2, x2: tx, y2: yBtm }, style: { stroke: '#C9D3E0', lineWidth: 1 }, silent: true },
+                  { type: 'text', silent: true,
+                    style: { x: tx, y: yBtm + 5, text: pp(dd.getHours()) + ':' + pp(dd.getMinutes()), fill: '#64748B', fontSize: 10, align: 'center' } },
+                  { type: 'text', silent: true,
+                    style: { x: tx + 3, y: yBtm + 20, text: d.dayTxt || '', fill: '#475569', fontSize: 10, align: 'left', fontWeight: 600 } }
+                ] };
               }
               if (d.shade || d.nowline) {
                 var n0 = insts.length || 1, bH0 = api.size([0, 1])[1];
@@ -522,6 +611,8 @@
       '    </div>',
       '    <div class="sb-gantt__wrap">',
       '      <div ref="gantt" class="sb-gantt"></div>',
+      '      <div v-show="cursorX >= 0" class="sb-gantt__cursor" :style="{ left: cursorX + \'px\' }"><div class="sb-gantt__cursor-lab" :style="cursorLabStyle()">{{ cursorText }}</div></div>',
+      '      <div v-show="dragTip" class="sb-gantt__dragtip" :style="dragTip ? { left: dragTip.x + \'px\', top: dragTip.y + \'px\' } : {}">{{ dragTip && dragTip.text }}</div>',
       '      <div v-show="marquee" class="sb-marquee" :style="marquee ? { left: marquee.x + \'px\', top: marquee.y + \'px\', width: marquee.w + \'px\', height: marquee.h + \'px\' } : {}"></div>',
       '      <div v-show="selCount()" class="sb-selbar">',
       '        <span>已选 {{ selCount() }} 个任务（可移动 {{ selMovableCount() }}）</span>',
@@ -531,8 +622,12 @@
       '        <el-button size="small" link @click="clearSel()">清除选择</el-button>',
       '      </div>',
       '    </div>',
-      '    <div ref="sliderTrack" class="sb-slider" @mousedown="sliderTrackDown">',
-      '      <div class="sb-slider__win" :style="sliderWinStyle()" @mousedown.stop="sliderDown($event, \'m\')"></div>',
+      '    <div class="sb-slider">',
+      '      <div ref="sliderTrack" class="sb-slider__track" @mousedown="sliderTrackDown">',
+      '        <div v-for="tk in sliderTicks()" :key="tk.t" class="sb-slider__tick" :style="{ left: tk.x + \'%\' }"><span>{{ tk.txt }}</span></div>',
+      '        <div v-if="sliderNowPct() >= 0" class="sb-slider__now" :style="{ left: sliderNowPct() + \'%\' }"></div>',
+      '        <div class="sb-slider__win" :style="sliderWinStyle()" @mousedown.stop="sliderDown($event, \'m\')"><span class="sb-slider__win-t" v-if="sliderWinPx() > 120">{{ sliderWinText() }}</span></div>',
+      '      </div>',
       '    </div>',
       '    <div class="sb-board__tip">点击任务块查看详情；拖动任务块左右改时间、上下换仪器（仅同类型仪器行可落）；锁定、已过去的已完成/检验中及当前检验中的任务不可拖；Shift+空白拖拽或开启「框选」后拖拽可拉框多选，选中后拖动任一块整组平移，浮动条可批量锁定/解锁/取消；空白处拖拽平移、滚轮缩放、下方滑条拖动查看（窗口大小固定不可缩放）；灰色底纹为非工作时段</div>',
       '  </div>',

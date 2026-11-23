@@ -2884,6 +2884,7 @@ const app = createApp({
     }
     const sampSplitPickVisible = ref(false);
     const reqPickFor = ref('');
+    const reqPickSingle = computed(()=> reqPickFor.value==='dev' || reqPickFor.value==='plate');
     const sampSplitPickTableRef = ref(null);
     const sampSplitPickTab = ref('tab-pi');
     const sampSplitPickQ = reactive({ 样品编号:'', 报检单号:'' });
@@ -2946,7 +2947,7 @@ const app = createApp({
       nextTick(()=> setTimeout(()=>{
         const t = sampSplitPickTableRef.value;
         if(!t) return;
-        if(kind==='dev'){
+        if(kind==='dev' || kind==='plate'){
           const hit = sampSplitPickRows.value.find(r=> nos.has(r['样品编号']));
           if(hit){ t.setCurrentRow(hit); sampSplitPickSelected.value = [hit]; }
           return;
@@ -2956,8 +2957,8 @@ const app = createApp({
     }
     function confirmSampSplitLedgerPick(){
       let rows = sampSplitPickSelected.value || [];
-      if(reqPickFor.value==='dev') rows = rows.slice(0, 1);
-      if(!rows.length){ ElMessage.warning(reqPickFor.value==='dev' ? '请选择一条数据' : '请至少选择一条数据'); return; }
+      if(reqPickSingle.value) rows = rows.slice(0, 1);
+      if(!rows.length){ ElMessage.warning(reqPickSingle.value ? '请选择一条数据' : '请至少选择一条数据'); return; }
       const tab = sampSplitPickTab.value;
       const kind = reqPickFor.value;
       if(kind==='dev' || kind==='plate'){
@@ -40733,7 +40734,7 @@ function nextWjNo(){
       oqcUploadVisible, oqcUploadRows, oqcUploadFiles, oqcUploadRemark, oqcUploadResult, confirmOqcUpload,
       coaUploadVisible, coaUploadRow, coaUploadFiles, openCoaUpload, confirmCoaUpload,
       matrixWeightVisible, matrixWeightForm, saveMatrixWeight, qualityLevelText, qualityIconStyle,
-      ioPickVisible, ioPickMeta, ioPickQ, ioPickTick, ioPickRows, ioPickCurrent, ioPickMulti, ioPickSelected, ioPickTableRef, ioPickRowKey, onIoPickSelection, resetIoPickQ, confirmIoPick, SPLIT_TEAMS, sampSplitVisible, sampSplitForm, sampSplitRows, sampSplitSelected, sampSplitParents, canDeleteSampSplit, canDeleteEnvMon, FLOW_TABS, sampSplitPickVisible, sampSplitPickTableRef, sampSplitPickTab, sampSplitPickShowTabs, reqPickFor, sampSplitPickQ, sampSplitPickSelected, sampSplitPickRows, sampSplitPickCols, openSampSplitLedgerPick, confirmSampSplitLedgerPick, SLOC_DESTS, openIoPick, confirmPrintLabel, saveSlposForm, slocDispVisible, slocDispMode, slocDispTitle, slocDispRows, slocDispSelected, slocDispCols, slocDispForm, onSlocDispSelect, slocLocOpts, confirmSlocLoc, SLOC_SCRAP_REASONS, onSlocDispWay, onSlocDispLoc, openSlocDispSupplier, confirmSlocDisp, slocLogVisible, slocLogNo, slocLogRows, genSampSplitRows, removeSampSplitRow, confirmSampleSplit, sampSplitRecordVisible, sampSplitRecordParent, sampSplitRecordRows,
+      ioPickVisible, ioPickMeta, ioPickQ, ioPickTick, ioPickRows, ioPickCurrent, ioPickMulti, ioPickSelected, ioPickTableRef, ioPickRowKey, onIoPickSelection, resetIoPickQ, confirmIoPick, SPLIT_TEAMS, sampSplitVisible, sampSplitForm, sampSplitRows, sampSplitSelected, sampSplitParents, canDeleteSampSplit, canDeleteEnvMon, FLOW_TABS, sampSplitPickVisible, sampSplitPickTableRef, sampSplitPickTab, sampSplitPickShowTabs, reqPickFor, reqPickSingle, sampSplitPickQ, sampSplitPickSelected, sampSplitPickRows, sampSplitPickCols, openSampSplitLedgerPick, confirmSampSplitLedgerPick, SLOC_DESTS, openIoPick, confirmPrintLabel, saveSlposForm, slocDispVisible, slocDispMode, slocDispTitle, slocDispRows, slocDispSelected, slocDispCols, slocDispForm, onSlocDispSelect, slocLocOpts, confirmSlocLoc, SLOC_SCRAP_REASONS, onSlocDispWay, onSlocDispLoc, openSlocDispSupplier, confirmSlocDisp, slocLogVisible, slocLogNo, slocLogRows, genSampSplitRows, removeSampSplitRow, confirmSampleSplit, sampSplitRecordVisible, sampSplitRecordParent, sampSplitRecordRows,
       calibExecVisible, calibExecReadonly, calibExecRow, calibTests, calibTestSel, calibFinal, calibTpl, calibMethod, calibHeadCols, calibMultiStd, calibDoneTests, addCalibTest, removeCalibTests, calcCalibFinal, saveLabCalibExec, submitLabCalibExec, downloadLabCalibPdf,
       calibEntryVisible, calibEntryReadonly, calibEntryIdx, calibEntryTest, openCalibEntry, submitCalibEntry,
       labPrepExecVisible, labPrepExecReadonly, labPrepExecRow, labPrepExec, labPrepLineSel, labPrepReagentPick, labPrepEnvFields, labPrepDevFields, labPrepMethod, labPrepHeadCols, labPrepReagentOptions, labPrepEnumOpts, addLabPrepLine, removeLabPrepLines, saveLabPrepExec, submitLabPrepExec, downloadLabPrepPdf,
