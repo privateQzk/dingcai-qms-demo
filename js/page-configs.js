@@ -3151,28 +3151,9 @@ window.WMS_PAGE_CONFIGS = {
                               "align": "center"
                         },
                         {
-                              "field": "开始时间",
-                              "title": "开始时间",
-                              "width": 90,
-                              "align": "center"
-                        },
-                        {
-                              "field": "结束时间",
-                              "title": "结束时间",
-                              "width": 90,
-                              "align": "center"
-                        },
-                        {
-                              "field": "休息时长",
-                              "title": "休息时长",
-                              "width": 90,
-                              "align": "center"
-                        },
-                        {
-                              "field": "工作时长",
-                              "title": "工作时长",
-                              "width": 90,
-                              "align": "center"
+                              "field": "检验时段",
+                              "title": "检验时段",
+                              "width": 300
                         },
                         {
                               "field": "适用班组",
@@ -13881,8 +13862,31 @@ window.WMS_PAGE_CONFIGS = {
         {
           "name": "main",
           "label": "",
-          "queryFields": [],
-          "queryDefault": [],
+          "queryFields": [
+            {
+              "name": "报检时间",
+              "type": "daterange"
+            },
+            {
+              "name": "物料信息",
+              "type": "picker",
+              "ctrl": "点击右侧抽屉单选物料列表（仅启用），回填「物料编码 / 物料名称 / 物料规格」"
+            },
+            {
+              "name": "报检人",
+              "type": "input"
+            },
+            {
+              "name": "报检部门",
+              "type": "input"
+            }
+          ],
+          "queryDefault": [
+            "报检时间",
+            "物料信息",
+            "报检人",
+            "报检部门"
+          ],
           "queryMore": [],
           "toolbar": [],
           "columns": [],
@@ -23836,6 +23840,25 @@ window.WMS_PAGE_CONFIGS = {
                "field": "预计完成时间",
                "name": "预计完成时间",
                "width": 170
+             },
+             {
+               "title": "计划开始时间",
+               "field": "计划开始时间",
+               "name": "计划开始时间",
+               "width": 160
+             },
+             {
+               "title": "计划结束时间",
+               "field": "计划结束时间",
+               "name": "计划结束时间",
+               "width": 160
+             },
+             {
+               "title": "排程状态",
+               "field": "排程状态",
+               "name": "排程状态",
+               "width": 92,
+               "slot": "tag"
              },
              {
                "title": "逾期状态",
@@ -89843,28 +89866,9 @@ window.WMS_PAGE_CONFIGS = {
                               "align": "center"
                         },
                         {
-                              "field": "开始时间",
-                              "title": "开始时间",
-                              "width": 90,
-                              "align": "center"
-                        },
-                        {
-                              "field": "结束时间",
-                              "title": "结束时间",
-                              "width": 90,
-                              "align": "center"
-                        },
-                        {
-                              "field": "休息时长",
-                              "title": "休息时长",
-                              "width": 90,
-                              "align": "center"
-                        },
-                        {
-                              "field": "工作时长",
-                              "title": "工作时长",
-                              "width": 90,
-                              "align": "center"
+                              "field": "检验时段",
+                              "title": "检验时段",
+                              "width": 300
                         },
                         {
                               "field": "适用班组",
@@ -100584,8 +100588,31 @@ window.WMS_PAGE_CONFIGS = {
         {
           "name": "main",
           "label": "",
-          "queryFields": [],
-          "queryDefault": [],
+          "queryFields": [
+            {
+              "name": "报检时间",
+              "type": "daterange"
+            },
+            {
+              "name": "物料信息",
+              "type": "picker",
+              "ctrl": "点击右侧抽屉单选物料列表（仅启用），回填「物料编码 / 物料名称 / 物料规格」"
+            },
+            {
+              "name": "报检人",
+              "type": "input"
+            },
+            {
+              "name": "报检部门",
+              "type": "input"
+            }
+          ],
+          "queryDefault": [
+            "报检时间",
+            "物料信息",
+            "报检人",
+            "报检部门"
+          ],
           "queryMore": [],
           "toolbar": [],
           "columns": [],
@@ -110552,6 +110579,25 @@ window.WMS_PAGE_CONFIGS = {
                "field": "预计完成时间",
                "name": "预计完成时间",
                "width": 170
+             },
+             {
+               "title": "计划开始时间",
+               "field": "计划开始时间",
+               "name": "计划开始时间",
+               "width": 160
+             },
+             {
+               "title": "计划结束时间",
+               "field": "计划结束时间",
+               "name": "计划结束时间",
+               "width": 160
+             },
+             {
+               "title": "排程状态",
+               "field": "排程状态",
+               "name": "排程状态",
+               "width": 92,
+               "slot": "tag"
              },
              {
                "title": "逾期状态",
@@ -175894,28 +175940,9 @@ window.WMS_PAGE_CONFIGS = {
                               "align": "center"
                         },
                         {
-                              "field": "开始时间",
-                              "title": "开始时间",
-                              "width": 90,
-                              "align": "center"
-                        },
-                        {
-                              "field": "结束时间",
-                              "title": "结束时间",
-                              "width": 90,
-                              "align": "center"
-                        },
-                        {
-                              "field": "休息时长",
-                              "title": "休息时长",
-                              "width": 90,
-                              "align": "center"
-                        },
-                        {
-                              "field": "工作时长",
-                              "title": "工作时长",
-                              "width": 90,
-                              "align": "center"
+                              "field": "检验时段",
+                              "title": "检验时段",
+                              "width": 300
                         },
                         {
                               "field": "适用班组",
@@ -186635,8 +186662,31 @@ window.WMS_PAGE_CONFIGS = {
         {
           "name": "main",
           "label": "",
-          "queryFields": [],
-          "queryDefault": [],
+          "queryFields": [
+            {
+              "name": "报检时间",
+              "type": "daterange"
+            },
+            {
+              "name": "物料信息",
+              "type": "picker",
+              "ctrl": "点击右侧抽屉单选物料列表（仅启用），回填「物料编码 / 物料名称 / 物料规格」"
+            },
+            {
+              "name": "报检人",
+              "type": "input"
+            },
+            {
+              "name": "报检部门",
+              "type": "input"
+            }
+          ],
+          "queryDefault": [
+            "报检时间",
+            "物料信息",
+            "报检人",
+            "报检部门"
+          ],
           "queryMore": [],
           "toolbar": [],
           "columns": [],
@@ -196603,6 +196653,25 @@ window.WMS_PAGE_CONFIGS = {
                "field": "预计完成时间",
                "name": "预计完成时间",
                "width": 170
+             },
+             {
+               "title": "计划开始时间",
+               "field": "计划开始时间",
+               "name": "计划开始时间",
+               "width": 160
+             },
+             {
+               "title": "计划结束时间",
+               "field": "计划结束时间",
+               "name": "计划结束时间",
+               "width": 160
+             },
+             {
+               "title": "排程状态",
+               "field": "排程状态",
+               "name": "排程状态",
+               "width": 92,
+               "slot": "tag"
              },
              {
                "title": "逾期状态",

@@ -384,6 +384,7 @@
       }
       if(pageId.value===TASK_PAGE && op.name==='分配') return taskAssignBlock(row);
       if(pageId.value===TIME_FB_PAGE && op.name==='同步' && (row||{})['时间同步状态']==='已同步') return '已同步不可再次同步';
+      if(pageId.value===FLOW_MY_TASK && op.name==='反馈时间' && (row||{})['反馈状态']==='已填写') return '反馈状态已填写，不可再次反馈';
       if(pageId.value===DEV_PAGE) return devOpBlock(op.name, row);
       if(pageId.value===PLATE_PAGE) return plateOpBlock(op.name, row);
       if((isDjPlanPage() || isDjMyPage()) && (op.name==='作业执行' || op.name==='编辑') && !DJ_OPEN.includes((row||{})['计划状态'])) return '仅待执行、执行中的计划可操作';

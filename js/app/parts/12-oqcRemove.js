@@ -180,15 +180,13 @@
           if(hit){ ElMessage.warning('段'+(i+1)+' 与段'+(j+1)+' 时段重叠'); return; }
         }
       }
-      const restMin = segs.filter(x=> x.t==='休息').reduce((m,x)=> m + (x.en-x.st), 0);
-      const workMin = segs.filter(x=> x.t!=='休息').reduce((m,x)=> m + (x.en-x.st), 0);
       const list = (MOCK[SHIFT_PAGE] = MOCK[SHIFT_PAGE] || { main: [] }).main || (MOCK[SHIFT_PAGE].main = []);
       const others = list.filter(r=> isAdd || r.id!==formModel._editId);
       if(others.some(r=> r['班次名称']===name)){ ElMessage.warning('班次名称已存在'); return; }
       const teams = splitDun(formModel['适用班组']);
       const payload = {
         班次名称: name, 开始时间: segs[0].s, 结束时间: segs[segs.length-1].e,
-        段数: String(n), 休息时长: String(restMin), 工作时长: (workMin/60).toFixed(1),
+        段数: String(n), 检验时段: segs.map(x=> x.t + ' ' + x.s + '-' + x.e).join('；'),
         适用班组: teams.join('、') || '通用', 备注: txt('备注'),
         启用状态: formSwitch['启用状态']===false ? '禁用' : '启用'
       };

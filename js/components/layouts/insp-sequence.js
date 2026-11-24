@@ -21,7 +21,7 @@
       }
     },
     template: [
-      '<section class="insp-seq">',
+      '<section class="insp-seq" :class="{\'insp-seq--many\': groups.length > 4}">',
       '  <div v-for="g in groups" :key="g.key" class="insp-seq__group">',
       '    <div class="insp-seq__hd">',
       '      <span class="insp-seq__title">{{ g.label }}</span>',

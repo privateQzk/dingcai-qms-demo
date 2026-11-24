@@ -83,15 +83,26 @@
         const b = flowBag(FLOW_ENTRY_CAT, name); b.splice(0, b.length, ...byCat[name]);
       });
       const merged = [];
+      const planByKey = {};
+      (typeof schedPlans==='function' ? schedPlans() : []).forEach(p=>{ if(p && p._key) planByKey[p._key] = p; });
+      const fbOv = {};
+      ((((MOCK['my-task-schedfb']||{}).main)||[])).forEach(o=>{ if(o && o._key) fbOv[o._key] = o['预计完成时间']; });
       FLOW_TABS.forEach(({ name, label })=>{
         byCat[name].forEach(r=>{
-          const fb = r._fb || '未填写';
-          const eta = fb==='已填写' ? r['预计完成时间'] : '—';
+          const key = String(r['样品编号']||'')+'|'+String(r['检验类名称']||'');
+          const sp = planByKey[key] || null;
+          const locked = !!(sp && sp['锁定']==='是');
+          const ovEta = fbOv[key] || '';
+          const fb = (locked || ovEta) ? '已填写' : (r._fb || '未填写');
+          const eta = locked ? (sp['计划结束'] || '—') : (ovEta || (fb==='已填写' ? r['预计完成时间'] : '—'));
           merged.push(Object.assign({}, r, {
             id: String(r.id||'').replace(/^ec-/, 'mt-'),
             报检单类型: label,
             反馈状态: fb,
             预计完成时间: eta,
+            计划开始时间: sp && sp['计划开始'] ? sp['计划开始'] : '—',
+            计划结束时间: sp && sp['计划结束'] ? sp['计划结束'] : '—',
+            排程状态: sp ? (sp['锁定']==='是' ? '锁定' : '已排程') : '待排程',
             逾期状态: flowCalcOverdue(eta)
           }));
         });

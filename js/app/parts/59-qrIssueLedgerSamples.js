@@ -274,6 +274,53 @@
       formCatRows.value = formCatRows.value.filter(r=> !set.has(r));
       formCatSelected.value = [];
     }
+    /** 适用检验类行手动排序：把 from 行移动到 to 位 */
+    function moveFormCatRow(from, to){
+      const rows = formCatRows.value || [];
+      if(from<0 || to<0 || from>=rows.length || to>=rows.length || from===to) return;
+      const next = rows.slice();
+      next.splice(to, 0, next.splice(from, 1)[0]);
+      formCatRows.value = next;
+    }
+    /** 适用检验类表拖拽排序（原生 drag & drop，事件代理在外层容器） */
+    const catDragIdx = ref(-1);
+    function catDragRowIndex(e){
+      const tr = e.target && e.target.closest ? e.target.closest('.el-table__body .el-table__row') : null;
+      return tr ? [...tr.parentElement.children].indexOf(tr) : -1;
+    }
+    function clearCatDragMarks(){
+      document.querySelectorAll('.cat-row-dragging,.cat-drop-above,.cat-drop-below').forEach(el=> el.classList.remove('cat-row-dragging','cat-drop-above','cat-drop-below'));
+    }
+    function onCatDragStart(e){
+      if(pageId.value!=='np-0103-12' || !(e.target && e.target.closest && e.target.closest('.cat-drag-handle'))){ e.preventDefault(); return; }
+      const i = catDragRowIndex(e);
+      if(i<0){ e.preventDefault(); return; }
+      catDragIdx.value = i;
+      e.dataTransfer.effectAllowed = 'move';
+      const tr = e.target.closest('tr');
+      if(tr){ try{ e.dataTransfer.setDragImage(tr, 24, 14); }catch(_){/**/} tr.classList.add('cat-row-dragging'); }
+    }
+    function onCatDragOver(e){
+      if(pageId.value!=='np-0103-12' || catDragIdx.value<0) return;
+      const i = catDragRowIndex(e);
+      if(i<0) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      clearCatDragMarks();
+      const tr = e.target.closest('tr');
+      if(tr && i!==catDragIdx.value) tr.classList.add(i<catDragIdx.value ? 'cat-drop-above' : 'cat-drop-below');
+    }
+    function onCatDrop(e){
+      if(catDragIdx.value<0) return;
+      e.preventDefault();
+      const i = catDragRowIndex(e);
+      if(i>=0) moveFormCatRow(catDragIdx.value, i);
+      catDragIdx.value = -1; clearCatDragMarks();
+    }
+    function onCatDragEnd(){ catDragIdx.value = -1; clearCatDragMarks(); }
+    function onCatDragLeave(e){
+      if(!e.currentTarget.contains(e.relatedTarget)) clearCatDragMarks();
+    }
     function onDispatchInstAction(name){
       if(name==='添加'){ openIoPick('inst', 'dispatchInsts', '仪器名称', true); return; }
       const set = new Set(formInstSelected.value||[]);

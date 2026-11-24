@@ -259,7 +259,7 @@
       logQ: { 样品编号:'', 操作类型:'', 检验仪器:'', 报检单号:'', 操作人:'', 时间范围:null },
       sel: [],
       dlg: { visible:false, mode:'sched', title:'', head:{}, instOpts:[], task:null,
-             form:{ 仪器:'', 开始:'', 工时:2, 结束:'', 原因:'' } },
+             form:{ 仪器:'', 开始:'', 工时:2, 结束:'' } },
       detail: { visible:false, task:null },
       setTab(t){ this.tab = t; },
       nav(dir){ const d = schedParse(this.anchor+' 00:00'); d.setDate(d.getDate() + dir); this.anchor = schedFmtD(d); },
@@ -295,8 +295,10 @@
         tasks.forEach(t=>{
           const p = schedPlans().find(x=> x._key===t._key); if(!p) return;
           p['锁定'] = '是';
+          schedFbConfirm(t);
           schedLog(t, '锁定排程', schedPlanDesc(p), schedPlanDesc(p), '批量确认排程', '管理员', stamp);
         });
+        flowSyncEntry();
         bumpStore();
         ElMessage.success('已确认并锁定 '+tasks.length+' 个排程');
       },
@@ -315,6 +317,7 @@
           p['锁定'] = '否';
           schedLog(t, '解锁排程', schedPlanDesc(p), schedPlanDesc(p), '批量解锁排程', '管理员', stamp);
         });
+        flowSyncEntry();
         bumpStore();
         ElMessage.success('已解锁 '+tasks.length+' 个排程');
       },
@@ -519,7 +522,7 @@
         if(schedPlans().some(p=> p._key===key)) return;
         if(mkPlan(schedSynthTask(r))) n++;
       });
-      if(n) bumpStore();
+      if(n){ flowSyncEntry(); bumpStore(); }
     }
     function schedAutoRun(){
       let pool = schedTasks().filter(t=> t.排程状态==='待排程');
@@ -551,7 +554,8 @@
         if(t.需求完成时间!=='—' && plan['计划结束'] > t.需求完成时间) late++;
         n++;
       });
-      bumpStore();
+      flowSyncEntry();
+        bumpStore();
       ElMessage.success('已排程 '+n+' 个任务' + (late? '，'+late+' 个预计超出需求完成时间':'') + (noInst? '，'+noInst+' 个无可用仪器':''));
     }
     function schedOpenDlg(t, mode){
@@ -567,7 +571,7 @@
         需求完成时间: t['需求完成时间'], 取样时间: t['取样时间']
       };
       const defInst = plan ? plan['检验仪器'] : (pool[0] ? pool[0]['仪器名称'] : '');
-      sb.dlg.form = { 仪器: defInst, 开始: plan ? plan['计划开始'] : '', 工时: plan ? +plan['计划工时'] : +t._hours, 结束:'', 原因:'' };
+      sb.dlg.form = { 仪器: defInst, 开始: plan ? plan['计划开始'] : '', 工时: plan ? +plan['计划工时'] : +t._hours, 结束:'' };
       sb.dlg.title = (mode==='adjust' ? '调整' : '排程') + ' · ' + t['样品编号'] + '-' + t['检验类'];
       sb.dlg.visible = true;
       sb.dlgCalcEnd();
@@ -600,8 +604,9 @@
       if(!exist) schedPlans().push(plan);
       schedUnmarkCancelled(t._key);
       schedLog(t, mode==='adjust' ? '调整排程' : '手动排程', oldDesc, schedPlanDesc(plan),
-        mode==='adjust' ? (f.原因||'—') : '手动排程', '管理员', plan['排程时间']);
-      bumpStore();
+        mode==='adjust' ? '—' : '手动排程', '管理员', plan['排程时间']);
+      flowSyncEntry();
+        bumpStore();
       sb.dlg.visible = false;
       ElMessage.success(mode==='adjust' ? '已调整排程' : '排程成功');
     }
@@ -612,7 +617,7 @@
       if(!st){ ElMessage.warning('请选择计划开始时间'); return; }
       const h = +f.工时;
       if(!h || h<0.1 || h>24){ ElMessage.warning('请输入计划工时'); return; }
-      if(sb.dlg.mode==='adjust' && !String(f.原因||'').trim()){ ElMessage.warning('请填写调整原因'); return; }
+      // （调整弹窗不再收集调整原因，流水说明记「—」）
       const team = t._team || t.检验班组;
       if(!schedIsWorkday(team, st) || !schedInShiftWindow(st, team)){
         ElMessage.warning('计划开始须为工作日且在班次时段内'); return;
@@ -640,15 +645,16 @@
     function schedCancelRow(t){
       const lp = schedPlans().find(x=> x._key===t._key);
       if(lp && lp['锁定']==='是'){ ElMessage.warning('该排程已锁定，请先解锁'); return; }
-      ElementPlus.ElMessageBox.prompt('取消排程将清空计划起止与仪器，请填写取消原因：', '取消排程', {
-        inputPlaceholder: '取消原因', confirmButtonText: '确定', cancelButtonText: '关闭'
-      }).then(({ value })=>{
+      ElementPlus.ElMessageBox.confirm('取消排程将清空计划起止与仪器，确认取消？', '取消排程', {
+        type: 'warning', confirmButtonText: '确定', cancelButtonText: '关闭'
+      }).then(()=>{
         const bag = schedPlans();
         const i = bag.findIndex(p=> p._key===t._key);
         const old = i>=0 ? bag[i] : null;
         if(i>=0) bag.splice(i,1);
         schedMarkCancelled(t._key);
-        schedLog(t, '取消排程', schedPlanDesc(old), '—', String(value||'').trim()||'—', '管理员', nowStamp());
+        schedLog(t, '取消排程', schedPlanDesc(old), '—', '—', '管理员', nowStamp());
+        flowSyncEntry();
         bumpStore();
         ElMessage.success('已取消排程');
       }).catch(()=>{});
@@ -657,18 +663,19 @@
       const ids = new Set(sb.sel);
       const rows = schedTasks().filter(t=> ids.has(t._key) && t.排程状态==='已排程' && t['锁定']!=='是');
       if(!rows.length){ ElMessage.warning('所选任务中没有可取消的排程（锁定任务需先解锁）'); return; }
-      ElementPlus.ElMessageBox.prompt('将取消 '+rows.length+' 个任务的排程，请填写取消原因：', '取消排程', {
-        inputPlaceholder: '取消原因', confirmButtonText: '确定', cancelButtonText: '关闭'
-      }).then(({ value })=>{
+      ElementPlus.ElMessageBox.confirm('将取消 '+rows.length+' 个任务的排程，确认取消？', '取消排程', {
+        type: 'warning', confirmButtonText: '确定', cancelButtonText: '关闭'
+      }).then(()=>{
         const bag = schedPlans(), stamp = nowStamp();
         rows.forEach(t=>{
           const i = bag.findIndex(p=> p._key===t._key);
           const old = i>=0 ? bag[i] : null;
           if(i>=0) bag.splice(i,1);
           schedMarkCancelled(t._key);
-          schedLog(t, '取消排程', schedPlanDesc(old), '—', String(value||'').trim()||'—', '管理员', stamp);
+          schedLog(t, '取消排程', schedPlanDesc(old), '—', '—', '管理员', stamp);
         });
         sb.sel = [];
+        flowSyncEntry();
         bumpStore();
         ElMessage.success('已取消 '+rows.length+' 个任务的排程');
       }).catch(()=>{});
@@ -705,7 +712,8 @@
         && schedParse(p['计划开始'])<en && schedParse(p['计划结束'])>st);
       const ct = clash && schedTasks().find(x=> x._key===clash._key);
       schedLog(t, '调整排程', oldDesc, schedPlanDesc(exist), '甘特拖动', '管理员', exist['排程时间']);
-      bumpStore();
+      flowSyncEntry();
+        bumpStore();
       if(clash) ElMessage.warning('已调整；与 '+(ct ? ct['样品编号']+'-'+ct['检验类'] : '其他任务')+' 时段重叠，已标冲突');
       else ElMessage.success('已调整排程');
     }
@@ -738,18 +746,34 @@
         moved++;
       });
       if(!moved){ if(skipped) ElMessage.warning('所选任务均不可调整'); return; }
-      bumpStore();
+      flowSyncEntry();
+        bumpStore();
       if(clashSet.size) ElMessage.warning('已批量调整 '+moved+' 个排程；其中 '+clashSet.size+' 个与其他任务时段重叠，已标冲突');
       else ElMessage.success('已批量调整 '+moved+' 个排程');
+    }
+    /** 确认排程回写袋：_key=样品编号|检验类 → 预计完成时间；flowSyncEntry 合并主列表时消费 */
+    function schedFbBag(){ const b = (MOCK['my-task-schedfb'] = MOCK['my-task-schedfb'] || {}); return (b.main = b.main || []); }
+    /** 确认排程回写：计划结束 → 数据录入-我的「预计完成时间」，反馈状态置「已填写」（按 样品编号|检验类 匹配行） */
+    function schedFbConfirm(t){
+      const eta = String(t && t['计划结束'] || '').trim();
+      if(!eta || eta==='—') return;
+      const bag = schedFbBag();
+      const ex = bag.find(o=> o._key===t._key);
+      if(ex) ex['预计完成时间'] = eta;
+      else bag.push({ _key: t._key, 样品编号: t['样品编号'], 检验类名称: t['检验类'], 预计完成时间: eta, 反馈状态: '已填写' });
+      const myRow = (((MOCK[FLOW_MY_TASK]||{}).main)||[]).find(r=> String(r['样品编号']||'')+'|'+String(r['检验类名称']||'')===t._key);
+      if(myRow) applyFbLineEta(myRow, eta);
     }
     /** 锁定/解锁排程：锁定后禁止拖动、调整、取消 */
     function schedToggleLock(t, lock){
       const p = schedPlans().find(x=> x._key===t._key);
       if(!p){ ElMessage.warning('该任务暂无排程'); return; }
       p['锁定'] = lock ? '是' : '否';
+      if(lock) schedFbConfirm(t);
       schedLog(t, lock ? '锁定排程' : '解锁排程', schedPlanDesc(p), schedPlanDesc(p),
         lock ? '锁定：禁止拖动/调整/取消' : '解锁：恢复可调整', '管理员', nowStamp());
-      bumpStore();
+      flowSyncEntry();
+        bumpStore();
       ElMessage.success(lock ? '已锁定，拖动与修改已禁用' : '已解锁');
     }
     function schedLockBatch(lock){
@@ -760,10 +784,12 @@
       rows.forEach(t=>{
         const p = schedPlans().find(x=> x._key===t._key); if(!p) return;
         p['锁定'] = lock ? '是' : '否';
+        if(lock) schedFbConfirm(t);
         schedLog(t, lock?'锁定排程':'解锁排程', schedPlanDesc(p), schedPlanDesc(p), '批量'+(lock?'锁定':'解锁'), '管理员', stamp);
       });
       sb.sel = [];
-      bumpStore();
+      flowSyncEntry();
+        bumpStore();
       ElMessage.success('已'+(lock?'锁定':'解锁')+' '+rows.length+' 个任务');
     }
     function schedExport(kind){

@@ -433,7 +433,7 @@
         load:()=> oqcTab('tab-2').map(r=> Object.assign({}, r)),
         filter:(list,q)=> list.filter(r=> qrSel(r['物料编码'], q.mat) && qrSel(r['客户编码'], q.cust) && qrHit(r['批号'], q['批号']) && qrInRange(r['完成时间'], q['完成时间'])),
         cards:(list)=>{
-          const ok = list.filter(r=> r['检查结果']==='合格').length;
+          const ok = list.filter(r=> !String(r['客诉单号']||'').replace(/[—/\s]/g,'')).length;
           return [
             { label:'已完成单据数', value:list.length, tone:'blue' },
             { label:'合格单据数', value:ok, tone:'green' },
@@ -443,7 +443,7 @@
         cols:[
           {prop:'单据号',label:'单据号',w:140},{prop:'DN单号',label:'DN单号',w:120},{prop:'客户名称',label:'客户名称',w:150},
           {prop:'物料名称',label:'物料名称',w:150},{prop:'批号',label:'批号',w:110},{prop:'计划发货日期',label:'计划发货日期',w:110},
-          {prop:'检查结果',label:'检查结果',w:90},{prop:'客诉单号',label:'客诉单号',w:130},{prop:'完成时间',label:'完成时间',w:150}
+          {prop:'客诉单号',label:'客诉单号',w:130},{prop:'完成时间',label:'完成时间',w:150}
         ]
       },
       {

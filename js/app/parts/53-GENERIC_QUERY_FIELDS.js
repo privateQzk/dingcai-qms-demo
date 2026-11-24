@@ -257,6 +257,8 @@
     function resetQueryModel(){
       Object.keys(query).forEach(k=> delete query[k]);
       (tabView.value.queryFields||[]).forEach(f=>{ query[f.name] = f.multiple ? [] : ''; });
+      // 报检单顺序图：报检时间默认当天~当天
+      if(pageId.value==='insp-seq'){ const t = nowStamp().slice(0,10); query['报检时间']=[t,t]; }
     }
 
     function loadPage(id){
@@ -348,6 +350,10 @@
     }
     function onQuery(){
       pageNum.value=1;
+      if(pageId.value==='insp-seq'){
+        ElMessage.success('已按条件筛选，共 ' + inspSeqGroups.value.reduce((n,g)=> n + g.rows.length, 0) + ' 单');
+        return;
+      }
       ElMessage.success('已按条件筛选，共 ' + (tableData.value||[]).length + ' 条');
     }
     function onResetQuery(){ resetQueryModel(); queryExpanded.value=false; pageNum.value=1; }

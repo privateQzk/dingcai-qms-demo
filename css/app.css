@@ -1341,6 +1341,8 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
 
 /* ===== 报检单顺序图 ===== */
 .insp-seq { flex: 1; min-height: 0; overflow: hidden; padding: 16px 20px; display: flex; flex-direction: row; gap: 18px; }
+.insp-seq--many { overflow-x: auto; }
+.insp-seq--many .insp-seq__group { flex: 0 0 330px; }
 .insp-seq__group { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; min-height: 0; border: 1px solid #e4e7ed; border-radius: 8px; background: #fff; }
 .insp-seq__hd { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px solid #ebeef5; background: #f8fafc; border-radius: 8px 8px 0 0; }
 .insp-seq__title { font-size: 14px; font-weight: 600; color: #303133; }
@@ -1395,3 +1397,12 @@ body.remarks-open .query-area__actions,body.remarks-open .query-card__actions{
 .sb-split__pager{display:flex;justify-content:flex-end;padding-top:6px}
 .sb-legend__i--shade{background:repeating-linear-gradient(45deg,#CBD5E1 0 3px,#fff 3px 6px);border:1px solid #CBD5E1}
 .sb-legend__i--now{background:#fff;border-left:2px dashed #EF4444;width:10px}
+
+/* 适用检验类 行拖拽排序 */
+.cat-drag-col .cell{ padding:0 !important; overflow:visible; }
+.cat-drag-handle{ display:inline-block; cursor:grab; color:#a8abb2; font-size:13px; letter-spacing:-2px; padding:2px 6px; user-select:none; -webkit-user-select:none; }
+.cat-drag-handle:hover{ color:#409eff; }
+.cat-drag-handle:active{ cursor:grabbing; }
+tr.cat-row-dragging{ opacity:.4; }
+tr.cat-drop-above > td{ box-shadow:inset 0 2px 0 0 #409eff; }
+tr.cat-drop-below > td{ box-shadow:inset 0 -2px 0 0 #409eff; }

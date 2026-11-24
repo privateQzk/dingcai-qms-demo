@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vxe-pc-ui@4/lib/style.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vxe-table@4/lib/style.css" />
-<link rel="stylesheet" href="./css/app.css?v=1.0.24" />
+<link rel="stylesheet" href="./css/app.css?v=1.0.26" />
 </head>
 <body>
 <div id="app" v-cloak>
@@ -311,7 +311,31 @@
           <qms-spc-process            v-else-if="page.layout==='spc-process'"            :p="spcP"            :types="SPC_P_TYPES"            :chart-tabs="page.chartTabs || []"            :tips="page.spcTips"            :ana-cols="spcPAnaCols"            :ana-rows="spcPAnaRows"            :ana-col-width="spcPAnaColWidth"            :mat-name="spcPMatName"            :tag-class-name="tagClass"            @open-pick="openIoPick"            @remove-mat="spcPRemoveMat"            @add-row="spcPAddRow"            @remove-row="spcPRemoveRow"            @copy-row="spcPCopyRow"            @query="spcPQuery"            @reset="spcPReset"            @open-settings="spcPOpenSettings"            @open-samples="spcPOpenSamples"            @export="spcPExport">          </qms-spc-process>
 
           <qms-sched-board            v-else-if="page.layout==='sched-board'"            :sb="sb"            :data="schedData">          </qms-sched-board>
-          <qms-insp-sequence            v-else-if="page.layout==='insp-sequence'"            :groups="inspSeqGroups">          </qms-insp-sequence>
+          <template v-else-if="page.layout==='insp-sequence'">
+          <section class="query-area">
+            <div class="query-area__row">
+              <div class="query-area__fields">
+                <el-form :inline="true" class="query-form">
+                  <el-form-item v-for="f in visibleQueryFields" :key="f.name" :label="f.label || f.name">
+                    <el-select v-if="f.type==='select'" v-model="query[f.name]" clearable :multiple="!!f.multiple" :collapse-tags="!!f.multiple" collapse-tags-tooltip filterable placeholder="全部" style="width:100%">
+                      <el-option v-if="!f.multiple" label="全部" value=""></el-option>
+                      <el-option v-for="o in formFieldOptions(f)" :key="o" :label="o" :value="o"></el-option>
+                    </el-select>
+                    <el-input v-else-if="f.type==='picker'" :model-value="query[f.name]||''" readonly clearable class="demo-picker-input" placeholder="请点击选择" @click="openPicker(f.name, null, 'query')" @clear="query[f.name]=''"></el-input>
+                    <el-date-picker v-else-if="f.type==='daterange'" v-model="query[f.name]" type="daterange" value-format="YYYY-MM-DD" start-placeholder="开始日期" end-placeholder="结束日期" style="width:100%"></el-date-picker>
+                    <el-date-picker v-else-if="f.type==='date'" v-model="query[f.name]" type="date" value-format="YYYY-MM-DD" placeholder="选择日期" style="width:100%"></el-date-picker>
+                    <el-input v-else v-model="query[f.name]" clearable :placeholder="f.placeholder || '请输入'"></el-input>
+                  </el-form-item>
+                </el-form>
+              </div>
+              <div class="query-area__actions">
+                <el-button type="primary" @click="onQuery">查询</el-button>
+                <el-button @click="onResetQuery">重置</el-button>
+              </div>
+            </div>
+          </section>
+          <qms-insp-sequence            :groups="inspSeqGroups">          </qms-insp-sequence>
+          </template>
 
           <template v-else>
           <section class="query-area">
@@ -3107,8 +3131,13 @@
               <el-button size="small" type="primary" @click="onDispatchCatAction('添加')">添加</el-button>
               <el-button size="small" type="danger" :disabled="!(formCatSelected&&formCatSelected.length)" @click="onDispatchCatAction('批量删除')">批量删除</el-button>
             </div>
-            <div class="demo-table-scroll">
+            <div class="demo-table-scroll" @dragstart="onCatDragStart" @dragover="onCatDragOver" @drop="onCatDrop" @dragend="onCatDragEnd" @dragleave="onCatDragLeave">
               <el-table class="demo-data-table demo-data-table--striped" :data="formCatRows" border stripe style="width:100%" max-height="480" :empty-text="pageId==='np-0103-14' ? '请添加检验类' : '请添加适用检验类'" @selection-change="rows => formCatSelected = rows">
+                <el-table-column v-if="pageId==='np-0103-12'" label="" width="40" align="center" class-name="cat-drag-col">
+                  <template #default>
+                    <span class="cat-drag-handle" draggable="true" title="按住拖拽排序">⋮⋮</span>
+                  </template>
+                </el-table-column>
                 <el-table-column type="selection" width="48"></el-table-column>
                 <el-table-column type="index" label="序号" width="72"></el-table-column>
                 <el-table-column prop="检验类编码" label="检验类编码" min-width="140" show-overflow-tooltip></el-table-column>
@@ -8976,14 +9005,14 @@
 <script src="https://cdn.jsdelivr.net/npm/vxe-table@4/lib/index.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
 <script src="./js/demo-announcements.js?v=1.4.24"></script>
-<script src="./js/page-configs.js?v=1.4.615"></script>
-<script src="./js/mock-rows.js?v=1.4.363"></script>
+<script src="./js/page-configs.js?v=1.4.620"></script>
+<script src="./js/mock-rows.js?v=1.4.366"></script>
 <script src="./js/dict-catalog.js?v=1.1.16"></script>
-<script src="./js/page-prd-notes.js?v=2.4.554"></script>
+<script src="./js/page-prd-notes.js?v=2.4.563"></script>
 <script src="./js/remarks-markdown.js?v=1.1.0"></script>
 <script type="module" src="./js/remarks-mermaid-init.js"></script>
 <script src="./js/remarks-mermaid.js"></script>
-<script src="./js/demo-store.js?v=1.0.170"></script>
+<script src="./js/demo-store.js?v=1.0.173"></script>
 <script src="./js/ledger-insp.js?v=5"></script>
 <script src="./js/pages/index.js?v=1.0.0"></script>
 <script src="./js/pages/links.js?v=1.0.0"></script>
@@ -8997,14 +9026,14 @@
 <script src="./js/components/layouts/simple-list-panel.js?v=1.0.0"></script>
 <script src="./js/components/layouts/col-model-panel.js?v=1.0.0"></script>
 <script src="./js/components/layouts/util-report.js?v=1.0.0"></script>
-<script src="./js/components/layouts/insp-sequence.js?v=1.0.2"></script>
+<script src="./js/components/layouts/insp-sequence.js?v=1.0.3"></script>
 <script src="./js/components/layouts/quality-report.js?v=1.0.0"></script>
 <script src="./js/components/layouts/insp-report.js?v=1.0.0"></script>
 <script src="./js/components/layouts/cost-stat.js?v=1.0.0"></script>
 <script src="./js/components/layouts/spc-process.js?v=1.0.2"></script>
 <script src="./js/components/layouts/env-stat.js?v=1.0.0"></script>
 <script src="./js/components/layouts/batch-trace.js?v=1.0.0"></script>
-<script src="./js/components/layouts/sched-board.js?v=1.0.59"></script>
-<script src="./js/app.js?v=1.0.71"></script>
+<script src="./js/components/layouts/sched-board.js?v=1.0.62"></script>
+<script src="./js/app.js?v=1.0.87"></script>
 </body>
 </html>

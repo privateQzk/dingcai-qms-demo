@@ -3782,15 +3782,26 @@ const app = createApp({
         const b = flowBag(FLOW_ENTRY_CAT, name); b.splice(0, b.length, ...byCat[name]);
       });
       const merged = [];
+      const planByKey = {};
+      (typeof schedPlans==='function' ? schedPlans() : []).forEach(p=>{ if(p && p._key) planByKey[p._key] = p; });
+      const fbOv = {};
+      ((((MOCK['my-task-schedfb']||{}).main)||[])).forEach(o=>{ if(o && o._key) fbOv[o._key] = o['预计完成时间']; });
       FLOW_TABS.forEach(({ name, label })=>{
         byCat[name].forEach(r=>{
-          const fb = r._fb || '未填写';
-          const eta = fb==='已填写' ? r['预计完成时间'] : '—';
+          const key = String(r['样品编号']||'')+'|'+String(r['检验类名称']||'');
+          const sp = planByKey[key] || null;
+          const locked = !!(sp && sp['锁定']==='是');
+          const ovEta = fbOv[key] || '';
+          const fb = (locked || ovEta) ? '已填写' : (r._fb || '未填写');
+          const eta = locked ? (sp['计划结束'] || '—') : (ovEta || (fb==='已填写' ? r['预计完成时间'] : '—'));
           merged.push(Object.assign({}, r, {
             id: String(r.id||'').replace(/^ec-/, 'mt-'),
             报检单类型: label,
             反馈状态: fb,
             预计完成时间: eta,
+            计划开始时间: sp && sp['计划开始'] ? sp['计划开始'] : '—',
+            计划结束时间: sp && sp['计划结束'] ? sp['计划结束'] : '—',
+            排程状态: sp ? (sp['锁定']==='是' ? '锁定' : '已排程') : '待排程',
             逾期状态: flowCalcOverdue(eta)
           }));
         });
@@ -6232,15 +6243,13 @@ const app = createApp({
           if(hit){ ElMessage.warning('段'+(i+1)+' 与段'+(j+1)+' 时段重叠'); return; }
         }
       }
-      const restMin = segs.filter(x=> x.t==='休息').reduce((m,x)=> m + (x.en-x.st), 0);
-      const workMin = segs.filter(x=> x.t!=='休息').reduce((m,x)=> m + (x.en-x.st), 0);
       const list = (MOCK[SHIFT_PAGE] = MOCK[SHIFT_PAGE] || { main: [] }).main || (MOCK[SHIFT_PAGE].main = []);
       const others = list.filter(r=> isAdd || r.id!==formModel._editId);
       if(others.some(r=> r['班次名称']===name)){ ElMessage.warning('班次名称已存在'); return; }
       const teams = splitDun(formModel['适用班组']);
       const payload = {
         班次名称: name, 开始时间: segs[0].s, 结束时间: segs[segs.length-1].e,
-        段数: String(n), 休息时长: String(restMin), 工作时长: (workMin/60).toFixed(1),
+        段数: String(n), 检验时段: segs.map(x=> x.t + ' ' + x.s + '-' + x.e).join('；'),
         适用班组: teams.join('、') || '通用', 备注: txt('备注'),
         启用状态: formSwitch['启用状态']===false ? '禁用' : '启用'
       };
@@ -17047,6 +17056,7 @@ function nextWjNo(){
       }
       if(pageId.value===TASK_PAGE && op.name==='分配') return taskAssignBlock(row);
       if(pageId.value===TIME_FB_PAGE && op.name==='同步' && (row||{})['时间同步状态']==='已同步') return '已同步不可再次同步';
+      if(pageId.value===FLOW_MY_TASK && op.name==='反馈时间' && (row||{})['反馈状态']==='已填写') return '反馈状态已填写，不可再次反馈';
       if(pageId.value===DEV_PAGE) return devOpBlock(op.name, row);
       if(pageId.value===PLATE_PAGE) return plateOpBlock(op.name, row);
       if((isDjPlanPage() || isDjMyPage()) && (op.name==='作业执行' || op.name==='编辑') && !DJ_OPEN.includes((row||{})['计划状态'])) return '仅待执行、执行中的计划可操作';
@@ -23857,7 +23867,7 @@ function nextWjNo(){
         load:()=> oqcTab('tab-2').map(r=> Object.assign({}, r)),
         filter:(list,q)=> list.filter(r=> qrSel(r['物料编码'], q.mat) && qrSel(r['客户编码'], q.cust) && qrHit(r['批号'], q['批号']) && qrInRange(r['完成时间'], q['完成时间'])),
         cards:(list)=>{
-          const ok = list.filter(r=> r['检查结果']==='合格').length;
+          const ok = list.filter(r=> !String(r['客诉单号']||'').replace(/[—/\s]/g,'')).length;
           return [
             { label:'已完成单据数', value:list.length, tone:'blue' },
             { label:'合格单据数', value:ok, tone:'green' },
@@ -23867,7 +23877,7 @@ function nextWjNo(){
         cols:[
           {prop:'单据号',label:'单据号',w:140},{prop:'DN单号',label:'DN单号',w:120},{prop:'客户名称',label:'客户名称',w:150},
           {prop:'物料名称',label:'物料名称',w:150},{prop:'批号',label:'批号',w:110},{prop:'计划发货日期',label:'计划发货日期',w:110},
-          {prop:'检查结果',label:'检查结果',w:90},{prop:'客诉单号',label:'客诉单号',w:130},{prop:'完成时间',label:'完成时间',w:150}
+          {prop:'客诉单号',label:'客诉单号',w:130},{prop:'完成时间',label:'完成时间',w:150}
         ]
       },
       {
@@ -26691,6 +26701,8 @@ function nextWjNo(){
     function resetQueryModel(){
       Object.keys(query).forEach(k=> delete query[k]);
       (tabView.value.queryFields||[]).forEach(f=>{ query[f.name] = f.multiple ? [] : ''; });
+      // 报检单顺序图：报检时间默认当天~当天
+      if(pageId.value==='insp-seq'){ const t = nowStamp().slice(0,10); query['报检时间']=[t,t]; }
     }
 
     function loadPage(id){
@@ -26782,6 +26794,10 @@ function nextWjNo(){
     }
     function onQuery(){
       pageNum.value=1;
+      if(pageId.value==='insp-seq'){
+        ElMessage.success('已按条件筛选，共 ' + inspSeqGroups.value.reduce((n,g)=> n + g.rows.length, 0) + ' 单');
+        return;
+      }
       ElMessage.success('已按条件筛选，共 ' + (tableData.value||[]).length + ' 条');
     }
     function onResetQuery(){ resetQueryModel(); queryExpanded.value=false; pageNum.value=1; }
@@ -31846,6 +31862,53 @@ function nextWjNo(){
       if(!set.size){ ElMessage.warning(pageId.value===COST_PAGE ? '请先勾选检验类' : '请先勾选适用检验类'); return; }
       formCatRows.value = formCatRows.value.filter(r=> !set.has(r));
       formCatSelected.value = [];
+    }
+    /** 适用检验类行手动排序：把 from 行移动到 to 位 */
+    function moveFormCatRow(from, to){
+      const rows = formCatRows.value || [];
+      if(from<0 || to<0 || from>=rows.length || to>=rows.length || from===to) return;
+      const next = rows.slice();
+      next.splice(to, 0, next.splice(from, 1)[0]);
+      formCatRows.value = next;
+    }
+    /** 适用检验类表拖拽排序（原生 drag & drop，事件代理在外层容器） */
+    const catDragIdx = ref(-1);
+    function catDragRowIndex(e){
+      const tr = e.target && e.target.closest ? e.target.closest('.el-table__body .el-table__row') : null;
+      return tr ? [...tr.parentElement.children].indexOf(tr) : -1;
+    }
+    function clearCatDragMarks(){
+      document.querySelectorAll('.cat-row-dragging,.cat-drop-above,.cat-drop-below').forEach(el=> el.classList.remove('cat-row-dragging','cat-drop-above','cat-drop-below'));
+    }
+    function onCatDragStart(e){
+      if(pageId.value!=='np-0103-12' || !(e.target && e.target.closest && e.target.closest('.cat-drag-handle'))){ e.preventDefault(); return; }
+      const i = catDragRowIndex(e);
+      if(i<0){ e.preventDefault(); return; }
+      catDragIdx.value = i;
+      e.dataTransfer.effectAllowed = 'move';
+      const tr = e.target.closest('tr');
+      if(tr){ try{ e.dataTransfer.setDragImage(tr, 24, 14); }catch(_){/**/} tr.classList.add('cat-row-dragging'); }
+    }
+    function onCatDragOver(e){
+      if(pageId.value!=='np-0103-12' || catDragIdx.value<0) return;
+      const i = catDragRowIndex(e);
+      if(i<0) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      clearCatDragMarks();
+      const tr = e.target.closest('tr');
+      if(tr && i!==catDragIdx.value) tr.classList.add(i<catDragIdx.value ? 'cat-drop-above' : 'cat-drop-below');
+    }
+    function onCatDrop(e){
+      if(catDragIdx.value<0) return;
+      e.preventDefault();
+      const i = catDragRowIndex(e);
+      if(i>=0) moveFormCatRow(catDragIdx.value, i);
+      catDragIdx.value = -1; clearCatDragMarks();
+    }
+    function onCatDragEnd(){ catDragIdx.value = -1; clearCatDragMarks(); }
+    function onCatDragLeave(e){
+      if(!e.currentTarget.contains(e.relatedTarget)) clearCatDragMarks();
     }
     function onDispatchInstAction(name){
       if(name==='添加'){ openIoPick('inst', 'dispatchInsts', '仪器名称', true); return; }
@@ -39967,7 +40030,7 @@ function nextWjNo(){
       logQ: { 样品编号:'', 操作类型:'', 检验仪器:'', 报检单号:'', 操作人:'', 时间范围:null },
       sel: [],
       dlg: { visible:false, mode:'sched', title:'', head:{}, instOpts:[], task:null,
-             form:{ 仪器:'', 开始:'', 工时:2, 结束:'', 原因:'' } },
+             form:{ 仪器:'', 开始:'', 工时:2, 结束:'' } },
       detail: { visible:false, task:null },
       setTab(t){ this.tab = t; },
       nav(dir){ const d = schedParse(this.anchor+' 00:00'); d.setDate(d.getDate() + dir); this.anchor = schedFmtD(d); },
@@ -40003,8 +40066,10 @@ function nextWjNo(){
         tasks.forEach(t=>{
           const p = schedPlans().find(x=> x._key===t._key); if(!p) return;
           p['锁定'] = '是';
+          schedFbConfirm(t);
           schedLog(t, '锁定排程', schedPlanDesc(p), schedPlanDesc(p), '批量确认排程', '管理员', stamp);
         });
+        flowSyncEntry();
         bumpStore();
         ElMessage.success('已确认并锁定 '+tasks.length+' 个排程');
       },
@@ -40023,6 +40088,7 @@ function nextWjNo(){
           p['锁定'] = '否';
           schedLog(t, '解锁排程', schedPlanDesc(p), schedPlanDesc(p), '批量解锁排程', '管理员', stamp);
         });
+        flowSyncEntry();
         bumpStore();
         ElMessage.success('已解锁 '+tasks.length+' 个排程');
       },
@@ -40227,7 +40293,7 @@ function nextWjNo(){
         if(schedPlans().some(p=> p._key===key)) return;
         if(mkPlan(schedSynthTask(r))) n++;
       });
-      if(n) bumpStore();
+      if(n){ flowSyncEntry(); bumpStore(); }
     }
     function schedAutoRun(){
       let pool = schedTasks().filter(t=> t.排程状态==='待排程');
@@ -40259,7 +40325,8 @@ function nextWjNo(){
         if(t.需求完成时间!=='—' && plan['计划结束'] > t.需求完成时间) late++;
         n++;
       });
-      bumpStore();
+      flowSyncEntry();
+        bumpStore();
       ElMessage.success('已排程 '+n+' 个任务' + (late? '，'+late+' 个预计超出需求完成时间':'') + (noInst? '，'+noInst+' 个无可用仪器':''));
     }
     function schedOpenDlg(t, mode){
@@ -40275,7 +40342,7 @@ function nextWjNo(){
         需求完成时间: t['需求完成时间'], 取样时间: t['取样时间']
       };
       const defInst = plan ? plan['检验仪器'] : (pool[0] ? pool[0]['仪器名称'] : '');
-      sb.dlg.form = { 仪器: defInst, 开始: plan ? plan['计划开始'] : '', 工时: plan ? +plan['计划工时'] : +t._hours, 结束:'', 原因:'' };
+      sb.dlg.form = { 仪器: defInst, 开始: plan ? plan['计划开始'] : '', 工时: plan ? +plan['计划工时'] : +t._hours, 结束:'' };
       sb.dlg.title = (mode==='adjust' ? '调整' : '排程') + ' · ' + t['样品编号'] + '-' + t['检验类'];
       sb.dlg.visible = true;
       sb.dlgCalcEnd();
@@ -40308,8 +40375,9 @@ function nextWjNo(){
       if(!exist) schedPlans().push(plan);
       schedUnmarkCancelled(t._key);
       schedLog(t, mode==='adjust' ? '调整排程' : '手动排程', oldDesc, schedPlanDesc(plan),
-        mode==='adjust' ? (f.原因||'—') : '手动排程', '管理员', plan['排程时间']);
-      bumpStore();
+        mode==='adjust' ? '—' : '手动排程', '管理员', plan['排程时间']);
+      flowSyncEntry();
+        bumpStore();
       sb.dlg.visible = false;
       ElMessage.success(mode==='adjust' ? '已调整排程' : '排程成功');
     }
@@ -40320,7 +40388,7 @@ function nextWjNo(){
       if(!st){ ElMessage.warning('请选择计划开始时间'); return; }
       const h = +f.工时;
       if(!h || h<0.1 || h>24){ ElMessage.warning('请输入计划工时'); return; }
-      if(sb.dlg.mode==='adjust' && !String(f.原因||'').trim()){ ElMessage.warning('请填写调整原因'); return; }
+      // （调整弹窗不再收集调整原因，流水说明记「—」）
       const team = t._team || t.检验班组;
       if(!schedIsWorkday(team, st) || !schedInShiftWindow(st, team)){
         ElMessage.warning('计划开始须为工作日且在班次时段内'); return;
@@ -40348,15 +40416,16 @@ function nextWjNo(){
     function schedCancelRow(t){
       const lp = schedPlans().find(x=> x._key===t._key);
       if(lp && lp['锁定']==='是'){ ElMessage.warning('该排程已锁定，请先解锁'); return; }
-      ElementPlus.ElMessageBox.prompt('取消排程将清空计划起止与仪器，请填写取消原因：', '取消排程', {
-        inputPlaceholder: '取消原因', confirmButtonText: '确定', cancelButtonText: '关闭'
-      }).then(({ value })=>{
+      ElementPlus.ElMessageBox.confirm('取消排程将清空计划起止与仪器，确认取消？', '取消排程', {
+        type: 'warning', confirmButtonText: '确定', cancelButtonText: '关闭'
+      }).then(()=>{
         const bag = schedPlans();
         const i = bag.findIndex(p=> p._key===t._key);
         const old = i>=0 ? bag[i] : null;
         if(i>=0) bag.splice(i,1);
         schedMarkCancelled(t._key);
-        schedLog(t, '取消排程', schedPlanDesc(old), '—', String(value||'').trim()||'—', '管理员', nowStamp());
+        schedLog(t, '取消排程', schedPlanDesc(old), '—', '—', '管理员', nowStamp());
+        flowSyncEntry();
         bumpStore();
         ElMessage.success('已取消排程');
       }).catch(()=>{});
@@ -40365,18 +40434,19 @@ function nextWjNo(){
       const ids = new Set(sb.sel);
       const rows = schedTasks().filter(t=> ids.has(t._key) && t.排程状态==='已排程' && t['锁定']!=='是');
       if(!rows.length){ ElMessage.warning('所选任务中没有可取消的排程（锁定任务需先解锁）'); return; }
-      ElementPlus.ElMessageBox.prompt('将取消 '+rows.length+' 个任务的排程，请填写取消原因：', '取消排程', {
-        inputPlaceholder: '取消原因', confirmButtonText: '确定', cancelButtonText: '关闭'
-      }).then(({ value })=>{
+      ElementPlus.ElMessageBox.confirm('将取消 '+rows.length+' 个任务的排程，确认取消？', '取消排程', {
+        type: 'warning', confirmButtonText: '确定', cancelButtonText: '关闭'
+      }).then(()=>{
         const bag = schedPlans(), stamp = nowStamp();
         rows.forEach(t=>{
           const i = bag.findIndex(p=> p._key===t._key);
           const old = i>=0 ? bag[i] : null;
           if(i>=0) bag.splice(i,1);
           schedMarkCancelled(t._key);
-          schedLog(t, '取消排程', schedPlanDesc(old), '—', String(value||'').trim()||'—', '管理员', stamp);
+          schedLog(t, '取消排程', schedPlanDesc(old), '—', '—', '管理员', stamp);
         });
         sb.sel = [];
+        flowSyncEntry();
         bumpStore();
         ElMessage.success('已取消 '+rows.length+' 个任务的排程');
       }).catch(()=>{});
@@ -40413,7 +40483,8 @@ function nextWjNo(){
         && schedParse(p['计划开始'])<en && schedParse(p['计划结束'])>st);
       const ct = clash && schedTasks().find(x=> x._key===clash._key);
       schedLog(t, '调整排程', oldDesc, schedPlanDesc(exist), '甘特拖动', '管理员', exist['排程时间']);
-      bumpStore();
+      flowSyncEntry();
+        bumpStore();
       if(clash) ElMessage.warning('已调整；与 '+(ct ? ct['样品编号']+'-'+ct['检验类'] : '其他任务')+' 时段重叠，已标冲突');
       else ElMessage.success('已调整排程');
     }
@@ -40446,18 +40517,34 @@ function nextWjNo(){
         moved++;
       });
       if(!moved){ if(skipped) ElMessage.warning('所选任务均不可调整'); return; }
-      bumpStore();
+      flowSyncEntry();
+        bumpStore();
       if(clashSet.size) ElMessage.warning('已批量调整 '+moved+' 个排程；其中 '+clashSet.size+' 个与其他任务时段重叠，已标冲突');
       else ElMessage.success('已批量调整 '+moved+' 个排程');
+    }
+    /** 确认排程回写袋：_key=样品编号|检验类 → 预计完成时间；flowSyncEntry 合并主列表时消费 */
+    function schedFbBag(){ const b = (MOCK['my-task-schedfb'] = MOCK['my-task-schedfb'] || {}); return (b.main = b.main || []); }
+    /** 确认排程回写：计划结束 → 数据录入-我的「预计完成时间」，反馈状态置「已填写」（按 样品编号|检验类 匹配行） */
+    function schedFbConfirm(t){
+      const eta = String(t && t['计划结束'] || '').trim();
+      if(!eta || eta==='—') return;
+      const bag = schedFbBag();
+      const ex = bag.find(o=> o._key===t._key);
+      if(ex) ex['预计完成时间'] = eta;
+      else bag.push({ _key: t._key, 样品编号: t['样品编号'], 检验类名称: t['检验类'], 预计完成时间: eta, 反馈状态: '已填写' });
+      const myRow = (((MOCK[FLOW_MY_TASK]||{}).main)||[]).find(r=> String(r['样品编号']||'')+'|'+String(r['检验类名称']||'')===t._key);
+      if(myRow) applyFbLineEta(myRow, eta);
     }
     /** 锁定/解锁排程：锁定后禁止拖动、调整、取消 */
     function schedToggleLock(t, lock){
       const p = schedPlans().find(x=> x._key===t._key);
       if(!p){ ElMessage.warning('该任务暂无排程'); return; }
       p['锁定'] = lock ? '是' : '否';
+      if(lock) schedFbConfirm(t);
       schedLog(t, lock ? '锁定排程' : '解锁排程', schedPlanDesc(p), schedPlanDesc(p),
         lock ? '锁定：禁止拖动/调整/取消' : '解锁：恢复可调整', '管理员', nowStamp());
-      bumpStore();
+      flowSyncEntry();
+        bumpStore();
       ElMessage.success(lock ? '已锁定，拖动与修改已禁用' : '已解锁');
     }
     function schedLockBatch(lock){
@@ -40468,10 +40555,12 @@ function nextWjNo(){
       rows.forEach(t=>{
         const p = schedPlans().find(x=> x._key===t._key); if(!p) return;
         p['锁定'] = lock ? '是' : '否';
+        if(lock) schedFbConfirm(t);
         schedLog(t, lock?'锁定排程':'解锁排程', schedPlanDesc(p), schedPlanDesc(p), '批量'+(lock?'锁定':'解锁'), '管理员', stamp);
       });
       sb.sel = [];
-      bumpStore();
+      flowSyncEntry();
+        bumpStore();
       ElMessage.success('已'+(lock?'锁定':'解锁')+' '+rows.length+' 个任务');
     }
     function schedExport(kind){
@@ -40772,7 +40861,7 @@ function nextWjNo(){
         if(m[v]) return m[v];
       }
       if(pageId.value===FLOW_MY_TASK){
-        const m = { '已填写':'tag-g','未填写':'tag-o','正常':'tag-g','逾期':'tag-r' };
+        const m = { '已填写':'tag-g','未填写':'tag-o','正常':'tag-g','逾期':'tag-r','锁定':'tag-g','已排程':'tag-o','待排程':'tag-gr' };
         if(m[v]) return m[v];
       }
       if(pageId.value===TASK_PAGE || pageId.value===TIME_FB_PAGE || pageId.value===DISPATCH_PAGE || pageId.value==='insp-team'){
@@ -40930,7 +41019,7 @@ function nextWjNo(){
       document.body.classList.remove('remarks-open');
     });
 
-    /** 报检单顺序图：采购来料检 / 生产过程检 / 生产物料检三组，组内按报检时间倒序（最新报检在上） */
+    /** 报检单顺序图：采购来料检 / 生产过程检 / 生产物料检三组（含已完成），组内按报检时间倒序（最新报检在上） */
     const INSP_SEQ_DEFS = [
       { key: 'tab-pi', label: '采购来料检', party: '供应商名称' },
       { key: 'tab-pp', label: '生产过程检', party: '客户名称' },
@@ -40938,10 +41027,20 @@ function nextWjNo(){
     ];
     const inspSeqGroups = computed(()=>{
       const bag = MOCK['insp-order'] || {};
+      const rg = Array.isArray(query['报检时间']) ? query['报检时间'] : [];
+      const qs = String(rg[0] || '').slice(0,10);
+      const qe = String(rg[1] || '').slice(0,10);
+      const qm = String(query['物料信息'] || '').split(' / ')[0].trim();
+      const qr = String(query['报检人'] || '').trim();
+      const qd = String(query['报检部门'] || '').trim();
       return INSP_SEQ_DEFS.map(d=> ({
         key: d.key, label: d.label, party: d.party,
         rows: (Array.isArray(bag[d.key]) ? bag[d.key] : []).slice()
-          .filter(r=> String(r['单据状态'] || '') !== '已完成')
+          .filter(r=> !qs || String(r['报检时间'] || '').slice(0,10) >= qs)
+          .filter(r=> !qe || String(r['报检时间'] || '').slice(0,10) <= qe)
+          .filter(r=> !qm || String(r['物料编码'] || '') === qm || String(r['物料名称'] || '') === qm)
+          .filter(r=> !qr || String(r['报检人'] || '').includes(qr))
+          .filter(r=> !qd || String(r['报检部门'] || '').includes(qd))
           .sort((a, b)=> String(b['报检时间'] || '').localeCompare(String(a['报检时间'] || '')))
       }));
     });
@@ -40973,7 +41072,7 @@ function nextWjNo(){
       calibEntryVisible, calibEntryReadonly, calibEntryIdx, calibEntryTest, openCalibEntry, submitCalibEntry,
       labPrepExecVisible, labPrepExecReadonly, labPrepExecRow, labPrepExec, labPrepLineSel, labPrepReagentPick, labPrepEnvFields, labPrepDevFields, labPrepMethod, labPrepHeadCols, labPrepReagentOptions, labPrepEnumOpts, addLabPrepLine, removeLabPrepLines, saveLabPrepExec, submitLabPrepExec, downloadLabPrepPdf,
       tplTabs, tplCalc, tplRefParamOptions, onTplPubTimesChange, tplKind, isTplForm, tplFormTab, tplRows, tplSel, onTplFlagChange, addTplRow, removeTplRows, onTplAttrChange,
-      formVisible, formMode, formDialogTitle, formDialogWidth, formSwitch, formModel, formFieldTipOpen, setFormFieldTip, toggleFormFieldTip, isInspMethodForm, isInspSchemeForm, isQrConfigForm, isDriftRuleForm, isInspProjectCategoryForm, isSampSchemeForm, isFullscreenBizForm, isFullscreenDetail, detailHeaderTableFields, detailHeaderTableRows, isAutoSampForm, isSpcSchemeForm, isWideBizForm, isTreeTypeForm, isSchemeCylinder, sigmaConfigModel, onSigmaConfigConfirm, activeFormSections, isQmsFlowForm, entryCat, entryCats, entryCatRows, entryMethods, entryPickCat, entryStamp, entryResultText, entryFocusItem, entryCatSubmitted, entryMethodTab, entryDescOpen, entryMethodDetail, entryMethodVerOptions, entryOnVersion, entryMats, entryMatSelected, entryMatScan, entryMatScanRef, onEntryMatScan, removeEntryMats, entryExtraFiles, onEntryExtraFile, removeEntryExtraFile, entryInstruments, entryInstrumentOptions, entrySpectra, removeEntrySpectrum, openEntryInherit, entryInheritVisible, entryInheritPickVisible, entryInheritSampleNo, entryInheritPickNo, entryInheritSampleLabel, entryInheritCats, entryInheritMode, entryInheritQ, entryInheritQueryTick, entryInheritPickRows, openEntryInheritPick, confirmEntryInheritPick, clearEntryInheritSample, entryInheritApplySample, entryInheritSrcRow, entryInheritCatOpts, entryInheritPreviewRows, entryInheritAllChecked, entryInheritSomeChecked, entryInheritToggleCat, entryInheritToggleAll, confirmEntryInherit, openEntrySpecPick, entrySpecVisible, entrySpecQuery, entrySpecFiles, entrySpecChecked, entrySpecBatches, entrySpecCols, entrySpecDraft, entrySpecFillCol, entrySpecFillAll, entrySpecAutoFill, confirmEntrySpecPick, openEntryChromPick, entryChromVisible, entryChromFilters, entryChromKey, entryChromList, entryChromColumnOptions, entryChromFilterHint, entryChromRtCols, entryChromRtStructMap, entryChromPickCell, entryChromCellText, ENTRY_CHROM_STAT_FIELDS, entryChromParamNames, entryChromCols, entryChromDraft, entryChromChecked, entryChromAllChecked, entryChromIndeterminate, toggleEntryChromAll, setEntryChromChecked, entryChromAutoFill, entryChromFillByTime, entryChromClearGrid, confirmEntryChromPick, cancelEntryChromPick, entryPubParams, entryPubCols, entryPubCell, entrySetPubCell, entrySampParams, entrySampCols, entryCell, entrySetCell, entryLimitText, entryQuickExpandAll, entryQuickFilledCount, entryCategoryId, entryCategoryKw, filteredEntryCategories, spcProcessId, spcProcessKw, filteredSpcProcesses, activeChartTab, spcChartCards, envStat, costPivot, costFlowDlg, COST_DIMS, COST_MEASURES, inspRpt, inspDetailDlg, INSP_MEASURES, qr, QR_TABS, QR_TAG_FIELDS, qrDef, qrOptions, qrOpenPick, qrClearPick, qrApplyPick, qrQuery, qrReset, qrOnTab, qrCards, qrGroups, qrExport, util, utilPickerType, utilCards, utilDetail, utDefaultRange, utQuery, utReset, utOpenDetail, utExport, ylAdd, ylAddInstOptions, ylAddOpen, ylAddConfirm, SPC_P_TYPES, spcP, spcPMatName, spcPRemoveMat, spcPAddRow, spcPRemoveRow, spcPCopyRow, spcPQuery, wsPick, wsPickOpen, wsPickConfirm, spcPReset, spcPOpenSettings, spcPExport, spcPAnaCols, spcPAnaColWidth, spcPAnaRows, spcPOpenSamples, inspDimChoices, inspColChoices, openInspPick, inspClearPick, inspTypeOptions, inspKindOptions, inspItemOptions, inspResultText, inspDragStart, inspDragOver, inspDragDrop, inspDragEnd, inspRemoveDim, inspAddDim, inspRptQuery, inspRptReset, inspRptExport, inspOpenDetail, inspRptRowClass, costFlowOpts, costDragStart, costDragOver, costDragDrop, costDragEnd, costRemoveDim, costAddDim, costPivotReset, costPivotQuery, costPivotRowClass, costOpenFlow, costPivotExport, batchTrace, batchRelAddLine, batchRelCopyLine, batchRelDelLine, envStatNames, envStatItemOptions, envStatOnName, envStatQuery, envStatReset, envStatOpenSet, envStatSaveSet, envStatOpenSamples, envStatExport, treeListId, treeListKw, filteredTreeListNodes, onTreeListOp, waitSampInnerTab, waitSampSampleRows, waitSampSampleSelected, waitSampItemRows, waitSampItemSelected, waitSampSchemeItemCount, waitSampTempItemCount, waitSampItemSourceLabel, addWaitSampSample, refreshWaitSampCodes, removeWaitSampSamples, addWaitSampItem, removeWaitSampItems, recheckSampleRows, disposeDetailRows, disposeDetailSelected, initDisposeDetailRows, batchDisposeReceive, mrbWritebackVisible, saveMrbWriteback, mrbWriteback, disposeDetailVisible, disposeDetailViewRows, DRIFT_PAGE, DRIFT_TR_OPTS, DRIFT_INSP_OPTS, driftFormTab, driftImpurityRows, driftRrtRows, driftRrtSelected, driftNewUCL, driftNewLCL, driftFilterMin, driftFilterMax, driftMatRows, driftColRows, addDriftImpurity, removeDriftImpurity, addDriftRrtRule, removeDriftRrtRule, removeDriftRrtRules, addDriftMat, removeDriftMat, addDriftCol, removeDriftCol, driftMatOptions, onDriftMatPick, driftColTypeOptions, onDriftMainPeak, driftPointRows, schemeInnerTab, qrConfigInnerTab, qrFieldRows, qrFieldSelected, qrTemplateFileOptions, removeQrConfigFields, schemeQualRows, schemeQuantRows, schemeQualSelected, schemeQuantSelected, schemePointRows, schemeMatRows, schemeCustRows, schemeSuppRows, schemeMediaRows, schemeItemDrawerVisible, schemeItemDrawerKind, schemeItemDrawerQ, schemeItemDrawerTick, schemeItemDrawerRows, schemeItemDrawerSelected, openSchemeItemDrawer, confirmSchemeItemDrawer, removeSchemeRows, schemeRelDrawerVisible, schemeRelDrawerKind, schemeRelDrawerTitle, schemeRelDrawerRows, schemeRelDrawerColumns, schemeRelDrawerSelected, schemeRelDrawerTableRef, schemeRelDrawerRowKey, onSchemeRelDrawerSelect, clearSchemeRelDrawerSelect, openSchemeRelDrawer, confirmSchemeRelDrawer, resetSchemeRelDrawerQ, schemeRelDrawerQ, schemeRelDrawerTick, addSchemeMedium, schemeLimitOps, openSchemeUnitDrawer, openItemUomUnitDrawer, onSchemeFnChange, schemePointSelected, schemeMatSelected, schemeCustSelected, schemeSuppSelected, removeSchemeRelRows, schemeQualEnumDrawerVisible, schemeQualEnumDraft, schemeQualEnumSelected, schemeQualEnumEnableOther, openSchemeQualEnumDrawer, addSchemeQualEnumItem, removeSchemeQualEnumItems, confirmSchemeQualEnumDrawer, renumberSchemeQualEnum, sampInnerTab, sampInspectTypes, sampRuleRows, sampRuleSelected, sampMatRows, sampMatSelected, sampFormulaVisible, sampFormulaValue, onSampTypeChange, isSampRuleFirst, isSampRuleLast, normalizeSampRuleFixed, removeSampRuleRow, removeSampMatRows, openSampFormula, insertSampFormulaFn, confirmSampFormula, validateSampRules, addSampRuleRow, removeSampRuleRows, autoSampDetailRows, autoSampDetailSelected, autoSampPickVisible, autoSampPickKind, autoSampPickTitle, autoSampPickQ, autoSampPickTick, autoSampPickRows, autoSampPickColumns, autoSampPickMulti, autoSampPickCurrent, autoSampPickSelected, openAutoSampPick, resetAutoSampPickQ, confirmAutoSampPick, copyAutoSampDetail, validateAutoSampDetails, addAutoSampDetail, removeAutoSampDetails, inspMethodPublicParams, inspMethodSampleParams, inspMethodPublicSelected, inspMethodSampleSelected, inspMethodInnerTab, inspMethodMatRows, inspMethodMatSelected, inspMethodMatCatRows, inspMethodMatCatSelected, METHOD_MAT_SRCS, methodMatSrc, onMethodMatSrcTab, openMethodMatSupp, openMethodMatUnit, removeInspMethodMats, addInspMethodMatCat, copyInspMethodMatCat, removeInspMethodMatCats, openMethodMatCatMat, clearMethodMatCatMat, openMethodMatCatCat, clearMethodMatCatCat, methodVerVisible, methodVerTitle, methodVerRows, methodVerCount, openMethodVerDetail, onInspMethodFile, inspParamDrawerVisible, inspParamDrawerQ, inspParamDrawerTick, inspParamDrawerRows, inspParamDrawerSelected, openInspParamDrawer, resetInspParamDrawerQ, confirmInspParamDrawer, removeInspMethodParams, onInspMethodPublicToggle, onInspMethodPublicTimesChange, inspCatInstrumentTypeOptions, INSP_CAT_ATTRS, inspItemUnitDrawerVisible, inspItemUnitDrawerTitle, inspItemUnitDrawerQ, inspItemUnitDrawerTick, inspItemUnitDrawerRows, inspItemUnitDrawerCurrent, inspItemUnitDrawerSelectedKey, inspItemUnitTableRef, inspItemUnitRowKey, selectInspItemUnitRow, onInspItemUnitRowClick, onInspItemUnitCurrentChange, clearInspItemUnitDrawer, openInspItemUnitDrawer, confirmInspItemUnitDrawer, poMatPool, formLineSelected, dispatchAuditVisible, dispatchAuditRow, dispatchAuditForm, splitVisible, splitRow, splitForm, splitLines, splitLineSelected, splitNeedsOrder, splitShowPreDoc, splitShowSoShipPreDocs, splitShowSoPreoutPrepDoc, splitPreDocRequired, splitShowPo, onSplitOrderTypeChange, openSplitPicker, settleVisible, settleRows, settleForm, totalSettleQty, totalSettleFee, openSettleModal, onSettleOk, secondaryAssignVisible, secondaryAssignRow, secondaryAssignForm, resetSecondaryAssignForm, onSecondaryAssignOk, assignVisible, assignRow, assignForm, assignCarriers, assignVehicles, assignTrailers, activeFormFields, activeFormLineFields, formLineEmptyText, formLineRows, formCatRows, formCatSelected, onDispatchCatAction, formInstRows, formInstSelected, onDispatchInstAction, onGsDragStart, onGsDrop, onFormLineSelectChange,
+      formVisible, formMode, formDialogTitle, formDialogWidth, formSwitch, formModel, formFieldTipOpen, setFormFieldTip, toggleFormFieldTip, isInspMethodForm, isInspSchemeForm, isQrConfigForm, isDriftRuleForm, isInspProjectCategoryForm, isSampSchemeForm, isFullscreenBizForm, isFullscreenDetail, detailHeaderTableFields, detailHeaderTableRows, isAutoSampForm, isSpcSchemeForm, isWideBizForm, isTreeTypeForm, isSchemeCylinder, sigmaConfigModel, onSigmaConfigConfirm, activeFormSections, isQmsFlowForm, entryCat, entryCats, entryCatRows, entryMethods, entryPickCat, entryStamp, entryResultText, entryFocusItem, entryCatSubmitted, entryMethodTab, entryDescOpen, entryMethodDetail, entryMethodVerOptions, entryOnVersion, entryMats, entryMatSelected, entryMatScan, entryMatScanRef, onEntryMatScan, removeEntryMats, entryExtraFiles, onEntryExtraFile, removeEntryExtraFile, entryInstruments, entryInstrumentOptions, entrySpectra, removeEntrySpectrum, openEntryInherit, entryInheritVisible, entryInheritPickVisible, entryInheritSampleNo, entryInheritPickNo, entryInheritSampleLabel, entryInheritCats, entryInheritMode, entryInheritQ, entryInheritQueryTick, entryInheritPickRows, openEntryInheritPick, confirmEntryInheritPick, clearEntryInheritSample, entryInheritApplySample, entryInheritSrcRow, entryInheritCatOpts, entryInheritPreviewRows, entryInheritAllChecked, entryInheritSomeChecked, entryInheritToggleCat, entryInheritToggleAll, confirmEntryInherit, openEntrySpecPick, entrySpecVisible, entrySpecQuery, entrySpecFiles, entrySpecChecked, entrySpecBatches, entrySpecCols, entrySpecDraft, entrySpecFillCol, entrySpecFillAll, entrySpecAutoFill, confirmEntrySpecPick, openEntryChromPick, entryChromVisible, entryChromFilters, entryChromKey, entryChromList, entryChromColumnOptions, entryChromFilterHint, entryChromRtCols, entryChromRtStructMap, entryChromPickCell, entryChromCellText, ENTRY_CHROM_STAT_FIELDS, entryChromParamNames, entryChromCols, entryChromDraft, entryChromChecked, entryChromAllChecked, entryChromIndeterminate, toggleEntryChromAll, setEntryChromChecked, entryChromAutoFill, entryChromFillByTime, entryChromClearGrid, confirmEntryChromPick, cancelEntryChromPick, entryPubParams, entryPubCols, entryPubCell, entrySetPubCell, entrySampParams, entrySampCols, entryCell, entrySetCell, entryLimitText, entryQuickExpandAll, entryQuickFilledCount, entryCategoryId, entryCategoryKw, filteredEntryCategories, spcProcessId, spcProcessKw, filteredSpcProcesses, activeChartTab, spcChartCards, envStat, costPivot, costFlowDlg, COST_DIMS, COST_MEASURES, inspRpt, inspDetailDlg, INSP_MEASURES, qr, QR_TABS, QR_TAG_FIELDS, qrDef, qrOptions, qrOpenPick, qrClearPick, qrApplyPick, qrQuery, qrReset, qrOnTab, qrCards, qrGroups, qrExport, util, utilPickerType, utilCards, utilDetail, utDefaultRange, utQuery, utReset, utOpenDetail, utExport, ylAdd, ylAddInstOptions, ylAddOpen, ylAddConfirm, SPC_P_TYPES, spcP, spcPMatName, spcPRemoveMat, spcPAddRow, spcPRemoveRow, spcPCopyRow, spcPQuery, wsPick, wsPickOpen, wsPickConfirm, spcPReset, spcPOpenSettings, spcPExport, spcPAnaCols, spcPAnaColWidth, spcPAnaRows, spcPOpenSamples, inspDimChoices, inspColChoices, openInspPick, inspClearPick, inspTypeOptions, inspKindOptions, inspItemOptions, inspResultText, inspDragStart, inspDragOver, inspDragDrop, inspDragEnd, inspRemoveDim, inspAddDim, inspRptQuery, inspRptReset, inspRptExport, inspOpenDetail, inspRptRowClass, costFlowOpts, costDragStart, costDragOver, costDragDrop, costDragEnd, costRemoveDim, costAddDim, costPivotReset, costPivotQuery, costPivotRowClass, costOpenFlow, costPivotExport, batchTrace, batchRelAddLine, batchRelCopyLine, batchRelDelLine, envStatNames, envStatItemOptions, envStatOnName, envStatQuery, envStatReset, envStatOpenSet, envStatSaveSet, envStatOpenSamples, envStatExport, treeListId, treeListKw, filteredTreeListNodes, onTreeListOp, waitSampInnerTab, waitSampSampleRows, waitSampSampleSelected, waitSampItemRows, waitSampItemSelected, waitSampSchemeItemCount, waitSampTempItemCount, waitSampItemSourceLabel, addWaitSampSample, refreshWaitSampCodes, removeWaitSampSamples, addWaitSampItem, removeWaitSampItems, recheckSampleRows, disposeDetailRows, disposeDetailSelected, initDisposeDetailRows, batchDisposeReceive, mrbWritebackVisible, saveMrbWriteback, mrbWriteback, disposeDetailVisible, disposeDetailViewRows, DRIFT_PAGE, DRIFT_TR_OPTS, DRIFT_INSP_OPTS, driftFormTab, driftImpurityRows, driftRrtRows, driftRrtSelected, driftNewUCL, driftNewLCL, driftFilterMin, driftFilterMax, driftMatRows, driftColRows, addDriftImpurity, removeDriftImpurity, addDriftRrtRule, removeDriftRrtRule, removeDriftRrtRules, addDriftMat, removeDriftMat, addDriftCol, removeDriftCol, driftMatOptions, onDriftMatPick, driftColTypeOptions, onDriftMainPeak, driftPointRows, schemeInnerTab, qrConfigInnerTab, qrFieldRows, qrFieldSelected, qrTemplateFileOptions, removeQrConfigFields, schemeQualRows, schemeQuantRows, schemeQualSelected, schemeQuantSelected, schemePointRows, schemeMatRows, schemeCustRows, schemeSuppRows, schemeMediaRows, schemeItemDrawerVisible, schemeItemDrawerKind, schemeItemDrawerQ, schemeItemDrawerTick, schemeItemDrawerRows, schemeItemDrawerSelected, openSchemeItemDrawer, confirmSchemeItemDrawer, removeSchemeRows, schemeRelDrawerVisible, schemeRelDrawerKind, schemeRelDrawerTitle, schemeRelDrawerRows, schemeRelDrawerColumns, schemeRelDrawerSelected, schemeRelDrawerTableRef, schemeRelDrawerRowKey, onSchemeRelDrawerSelect, clearSchemeRelDrawerSelect, openSchemeRelDrawer, confirmSchemeRelDrawer, resetSchemeRelDrawerQ, schemeRelDrawerQ, schemeRelDrawerTick, addSchemeMedium, schemeLimitOps, openSchemeUnitDrawer, openItemUomUnitDrawer, onSchemeFnChange, schemePointSelected, schemeMatSelected, schemeCustSelected, schemeSuppSelected, removeSchemeRelRows, schemeQualEnumDrawerVisible, schemeQualEnumDraft, schemeQualEnumSelected, schemeQualEnumEnableOther, openSchemeQualEnumDrawer, addSchemeQualEnumItem, removeSchemeQualEnumItems, confirmSchemeQualEnumDrawer, renumberSchemeQualEnum, sampInnerTab, sampInspectTypes, sampRuleRows, sampRuleSelected, sampMatRows, sampMatSelected, sampFormulaVisible, sampFormulaValue, onSampTypeChange, isSampRuleFirst, isSampRuleLast, normalizeSampRuleFixed, removeSampRuleRow, removeSampMatRows, openSampFormula, insertSampFormulaFn, confirmSampFormula, validateSampRules, addSampRuleRow, removeSampRuleRows, autoSampDetailRows, autoSampDetailSelected, autoSampPickVisible, autoSampPickKind, autoSampPickTitle, autoSampPickQ, autoSampPickTick, autoSampPickRows, autoSampPickColumns, autoSampPickMulti, autoSampPickCurrent, autoSampPickSelected, openAutoSampPick, resetAutoSampPickQ, confirmAutoSampPick, copyAutoSampDetail, validateAutoSampDetails, addAutoSampDetail, removeAutoSampDetails, inspMethodPublicParams, inspMethodSampleParams, inspMethodPublicSelected, inspMethodSampleSelected, inspMethodInnerTab, inspMethodMatRows, inspMethodMatSelected, inspMethodMatCatRows, inspMethodMatCatSelected, METHOD_MAT_SRCS, methodMatSrc, onMethodMatSrcTab, openMethodMatSupp, openMethodMatUnit, removeInspMethodMats, addInspMethodMatCat, copyInspMethodMatCat, removeInspMethodMatCats, openMethodMatCatMat, clearMethodMatCatMat, openMethodMatCatCat, clearMethodMatCatCat, methodVerVisible, methodVerTitle, methodVerRows, methodVerCount, openMethodVerDetail, onInspMethodFile, inspParamDrawerVisible, inspParamDrawerQ, inspParamDrawerTick, inspParamDrawerRows, inspParamDrawerSelected, openInspParamDrawer, resetInspParamDrawerQ, confirmInspParamDrawer, removeInspMethodParams, onInspMethodPublicToggle, onInspMethodPublicTimesChange, inspCatInstrumentTypeOptions, INSP_CAT_ATTRS, inspItemUnitDrawerVisible, inspItemUnitDrawerTitle, inspItemUnitDrawerQ, inspItemUnitDrawerTick, inspItemUnitDrawerRows, inspItemUnitDrawerCurrent, inspItemUnitDrawerSelectedKey, inspItemUnitTableRef, inspItemUnitRowKey, selectInspItemUnitRow, onInspItemUnitRowClick, onInspItemUnitCurrentChange, clearInspItemUnitDrawer, openInspItemUnitDrawer, confirmInspItemUnitDrawer, poMatPool, formLineSelected, dispatchAuditVisible, dispatchAuditRow, dispatchAuditForm, splitVisible, splitRow, splitForm, splitLines, splitLineSelected, splitNeedsOrder, splitShowPreDoc, splitShowSoShipPreDocs, splitShowSoPreoutPrepDoc, splitPreDocRequired, splitShowPo, onSplitOrderTypeChange, openSplitPicker, settleVisible, settleRows, settleForm, totalSettleQty, totalSettleFee, openSettleModal, onSettleOk, secondaryAssignVisible, secondaryAssignRow, secondaryAssignForm, resetSecondaryAssignForm, onSecondaryAssignOk, assignVisible, assignRow, assignForm, assignCarriers, assignVehicles, assignTrailers, activeFormFields, activeFormLineFields, formLineEmptyText, formLineRows, formCatRows, formCatSelected, onDispatchCatAction, moveFormCatRow, onCatDragStart, onCatDragOver, onCatDrop, onCatDragEnd, onCatDragLeave, formInstRows, formInstSelected, onDispatchInstAction, onGsDragStart, onGsDrop, onFormLineSelectChange,
       kpiCfgVisible, kpiGrades, kpiGradeSel, kpiProjects, kpiProjSel, kpiScoreVisible, kpiScoreReadonly, kpiScoreVendor, kpiScoreProjects, kpiScoreExplain, kpiScoreRemark, kpiScoreTotal, kpiScoreGrade, kpiVendorRows, kpiVendorCols, kpiVendorSel,
       kpiFlowVisible, kpiFlowRow, kpiFlowNodes, kpiFlowStamp, kpiFlowStampClass,
       qcInspectVisible, qcInspectRow, qcInspectForm,

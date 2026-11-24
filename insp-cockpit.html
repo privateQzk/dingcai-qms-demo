@@ -17,6 +17,16 @@ body{background:#eef2f7;color:#1e293b;font-family:'Microsoft YaHei','PingFang SC
 .header .time{font-size:12px;color:#2563eb;letter-spacing:1px}
 .hd-sel{height:24px;font-size:11px;border:1px solid #cbd5e1;border-radius:6px;padding:0 6px;background:#fff;color:#334155;outline:none;cursor:pointer}
 .hd-sel:focus{border-color:#93c5fd}
+.hd-msel{position:relative}
+.hd-msel-btn{min-width:122px;display:flex;align-items:center;justify-content:space-between;gap:4px}
+.hd-msel-btn::after{content:'▾';font-size:9px;color:#94a3b8}
+.hd-msel-pop{display:none;position:absolute;right:0;top:28px;min-width:150px;max-height:250px;overflow:auto;background:#fff;border:1px solid #e2e8f0;border-radius:8px;box-shadow:0 6px 20px rgba(15,23,42,.14);z-index:60;padding:4px}
+.hd-msel.open .hd-msel-pop{display:block}
+.hd-msel-pop .msel-ops{display:flex;gap:10px;padding:4px 8px 6px;border-bottom:1px solid #f1f5f9;margin-bottom:4px}
+.hd-msel-pop .msel-ops a{font-size:10px;color:#2563eb;cursor:pointer}
+.hd-msel-pop label{display:flex;align-items:center;gap:6px;padding:5px 8px;font-size:11px;color:#334155;border-radius:5px;cursor:pointer;white-space:nowrap;font-weight:400}
+.hd-msel-pop label:hover{background:#eff6ff}
+.hd-msel-pop input[type=checkbox]{margin:0;accent-color:#2563eb}
 .hd-date{height:24px;font-size:11px;border:1px solid #cbd5e1;border-radius:6px;padding:0 4px;background:#fff;color:#334155;outline:none;width:118px;font-family:inherit}
 .hd-date:focus{border-color:#93c5fd}
 .hd-sep{font-size:11px;color:#94a3b8}
@@ -148,7 +158,10 @@ body{background:#eef2f7;color:#1e293b;font-family:'Microsoft YaHei','PingFang SC
       <input type="date" id="hd-start" class="hd-date" title="开始日期">
       <span class="hd-sep">~</span>
       <input type="date" id="hd-end" class="hd-date" title="结束日期">
-      <select id="hd-type" class="hd-sel" title="检验类型"></select>
+      <div class="hd-msel" id="hd-type">
+        <button type="button" class="hd-sel hd-msel-btn" id="hd-type-btn">检验类型（所有）</button>
+        <div class="hd-msel-pop" id="hd-type-pop"></div>
+      </div>
       <span class="time" id="clock"></span>
     </div>
   </div>
@@ -195,8 +208,8 @@ body{background:#eef2f7;color:#1e293b;font-family:'Microsoft YaHei','PingFang SC
     <div class="modal-body" id="dlg-body"></div>
   </div>
 </div>
-<script src="./js/mock-rows.js?v=1.4.353"></script>
-<script src="./js/demo-store.js?v=1.0.169"></script>
+<script src="./js/mock-rows.js?v=1.4.366"></script>
+<script src="./js/demo-store.js?v=1.0.173"></script>
 <script src="./js/ledger-insp.js?v=5"></script>
 <script>
 const MOCK = window.WMS_MOCK_ROWS || {};
@@ -217,8 +230,12 @@ const NOW = Date.now();
 const TODAY = new Date(); const TODAY_S = TODAY.getFullYear()+'-'+p2(TODAY.getMonth()+1)+'-'+p2(TODAY.getDate());
 
 /* ---------- 样品数据：五个页签 ---------- */
-const TABS = [['tab-pi','采购来料检'],['tab-pp','生产过程检'],['tab-pm','生产物料检'],['tab-sst','生产SST检'],['tab-rd','研发检']];
+const TABS = [['tab-pi','采购来料检'],['tab-pp','生产过程检'],['tab-pm','生产物料检'],['tab-sst','生产SST检'],['tab-rd','研发检'],['tab-ext','外来小样检'],['tab-wr','库内复检'],['tab-ty','通用检'],['tab-oe','内部委托']];
 const ledger = MOCK.ledger || {};
+const orderEta = {};
+[['tab-pi'],['tab-pp'],['tab-pm'],['tab-sst'],['tab-rd']].forEach(([t])=>{
+  ((MOCK['insp-order']||{})[t]||[]).forEach(o2=>{ const v=ts(o2['预计完成时间']); if(v && o2['报检单号']) orderEta[o2['报检单号']]=v; });
+});
 /* 单项状态：按该项检验结论——不合格/合格已定；检验中样品下无结论项=进行中；待检验=未检 */
 function itemState(s, it){
   if(it['检验结论']==='不合格') return 'bad';
@@ -234,17 +251,17 @@ const samples = TABS.flatMap(([name,label]) => ((ledger[name])||[]).map(r => {
   const done = items.filter(it => itemState(r,it)==='done' || itemState(r,it)==='bad').length;
   const bad  = items.filter(it => itemState(r,it)==='bad').length;
   const run  = items.filter(it => itemState(r,it)==='run').length;
-  const eta = ts(r['预计完成时间']);
+  const eta = ts(r['预计完成时间']) || ts(orderEta[r['报检单号']]);
   const active = r['样品状态']==='待检验' || r['样品状态']==='检验中';
   const overdue = !!(eta && NOW > eta);
   return Object.assign({}, r, { 报检类型:label, _items:items, _total:total, _done:done, _bad:bad, _run:run, _eta:eta, _active:active, _overdue:overdue });
 }));
 
 /* ---------- 页头全局筛选：时间范围（起止日期，默认当天~当天，按取样时间）+ 检验类型（默认所有） ---------- */
-const FLT = { start:TODAY_S, end:TODAY_S, type:'' };
+const FLT = { start:TODAY_S, end:TODAY_S, types:new Set() };
 function fltPool(){
   return samples.filter(s=>{
-    if(FLT.type && s['报检类型']!==FLT.type) return false;
+    if(FLT.types.size && !FLT.types.has(s['报检类型'])) return false;
     const d = dayOf(s['取样时间']);
     if(FLT.start && (!d || d<FLT.start)) return false;
     if(FLT.end && (!d || d>FLT.end)) return false;
@@ -255,15 +272,15 @@ function fltPool(){
 /* ---------- 样品状态 KPI ---------- */
 const KPIS = [
   { key:'wait',  label:'待检样品',   cls:'c-blue',   hit:s=> s['样品状态']==='待检验', chip:'待检' },
-  { key:'run',   label:'检验中样品', cls:'c-cyan',   hit:s=> s['样品状态']==='检验中', chip:'检验中' },
-  { key:'done',  label:'已完成样品', cls:'c-green',  hit:s=> s['样品状态']==='已完成', chip:'已完成' },
+  { key:'run',   label:'检验中样品', cls:'c-cyan',   hit:s=> s['样品状态']==='检验中', chip:'检验中', nosub:true },
+  { key:'done',  label:'已完成样品', cls:'c-green',  hit:s=> s['样品状态']==='已完成', chip:'已完成', nosub:true },
   { key:'late',  label:'逾期样品',   cls:'c-red',    hit:s=> s._overdue, chip:'逾期' }
 ];
 function renderKpis(){
   const pool = fltPool();
   $('kpi-row').innerHTML = KPIS.map(k=>{
     const rows = pool.filter(k.hit);
-    const subs = TABS.map(([,label])=>{
+    const subs = k.nosub ? '' : TABS.map(([,label])=>{
       const n = rows.filter(s=> s['报检类型']===label).length;
       return n ? `<span>${label}<b>${n}</b></span>` : '';
     }).join('');
@@ -285,23 +302,23 @@ function renderItemKpis(){
     `<div class="item-kpi ik-cyan"><div class="ik-label">检验项完成率</div><div class="ik-num">${rate}</div><div class="ik-sub">完成 ${itemDone} · 进行 ${itemRun} / 任务 ${itemTotal}</div></div>`+
     `<div class="item-kpi ik-red"><div class="ik-label">不合格项</div><div class="ik-num">${itemBad}<span style="font-size:11px;opacity:.55"> 项</span></div><div class="ik-sub">触发：判定不合格</div></div>`;
 }
-/* 检验项完成进度：按检验项名称聚合（非报检类型）；面板只展示「未完成样品（待检验+检验中）」里出现的检验项并集，进度数字仍按筛选内全部样品统计 */
+/* 检验项完成进度：按检验项「所属检验类」聚合；面板只展示「未完成样品（待检验+检验中）」里出现的检验类并集，进度数字仍按筛选内全部样品统计 */
 let progList = [];
 function renderProg(){
   const pool = fltPool();
   const itemStats = {};
   pool.forEach(s=> (s._items||[]).forEach(it=>{
-    const n = it['检验项名称'] || '未命名检验项';
-    const st = itemStats[n] || (itemStats[n] = { name:n, cls:it['所属检验类']||'', total:0, done:0, run:0, bad:0 });
+    const n = it['所属检验类'] || '未分类';
+    const st = itemStats[n] || (itemStats[n] = { name:n, total:0, done:0, run:0, bad:0 });
     st.total++;
     const k = itemState(s, it);
     if(k==='done') st.done++;
     else if(k==='bad'){ st.done++; st.bad++; }
     else if(k==='run') st.run++;
   }));
-  const pendingItemNames = new Set();
-  pool.filter(s=> s['样品状态']!=='已完成').forEach(s=> (s._items||[]).forEach(it=> pendingItemNames.add(it['检验项名称']||'未命名检验项')));
-  progList = Object.values(itemStats).sort((a,b)=> b.total-a.total || b.done-a.done).filter(st=> pendingItemNames.has(st.name));
+  const pendingCls = new Set();
+  pool.filter(s=> s['样品状态']!=='已完成').forEach(s=> (s._items||[]).forEach(it=> pendingCls.add(it['所属检验类']||'未分类')));
+  progList = Object.values(itemStats).sort((a,b)=> b.total-a.total || b.done-a.done).filter(st=> pendingCls.has(st.name));
   $('prog-list').innerHTML = progList.map(st=>{
     const pct = st.total ? Math.round(st.done/st.total*100) : 0;
     const parts = [`任务 ${st.total}`, `完成 ${st.done}`];
@@ -345,7 +362,15 @@ function renderKb(){
     const pct = s._total ? Math.round(s._done/s._total*100) : 0;
     const odTag = s._eta ? (s._overdue ? '<span class="tag tag-fail">逾期</span>' : '<span class="tag tag-done">正常</span>') : '';
     const tag = `<span class="tag ${statusTag(s)}">${esc(s['样品状态'])}</span>${odTag}`;
-    const chips = (s._items||[]).map(it=> `<span class="kc-chip-i ci-${itemState(s,it)}">${esc(it['检验项名称']||'—')}</span>`).join('');
+    const clsMap = {};
+    (s._items||[]).forEach(it=>{
+      const c = it['所属检验类'] || '未分类';
+      const st = itemState(s, it);
+      const cur = clsMap[c];
+      const rank = {bad:3, run:2, wait:1, done:0};
+      if(cur==null || rank[st] > rank[cur]) clsMap[c] = st;
+    });
+    const chips = Object.keys(clsMap).map(c=> `<span class="kc-chip-i ci-${clsMap[c]}">${esc(c)}</span>`).join('');
     return `<div class="kb-card" data-id="${esc(s.id)}"><div class="kc-no"><span>${esc(s['样品编号'])}</span>${tag}</div>`+
       `<div class="kc-mat">${esc(s['物料名称']||'—')} · ${esc(s['报检类型'])}</div>`+
       `<div class="kc-line"><span>检验项进度 <b>${s._done}/${s._total}</b></span><span>需求完成 ${esc(s['需求完成时间']||'—')}</span></div>`+
@@ -415,12 +440,12 @@ function renderLoc(){
   const bag = MOCK['np-0201-12'] || {};
   const groups = {未入库:[], 样品货架:[], 样品筐:[], 领用中:[], 留样:[], 已报废:[]};
   (bag['tab-1']||[]).forEach(r=>{
-    if(FLT.type && r['报检类型']!==FLT.type) return;
+    if(FLT.types.size && !FLT.types.has(r['报检类型'])) return;
     const key = slocBucket(r, false);
     groups[key].push({cat:key, no:r['样品编号'], io:r['报检单号'], mat:r['物料名称'], pos:(!r['当前位置']||r['当前位置']==='—')?'未入库':r['当前位置'], type:r['报检类型'], person:r['最近变更人'], time:r['最近变更时间']});
   });
   (bag['tab-2']||[]).forEach(r=>{
-    if(FLT.type && r['报检类型']!==FLT.type) return;
+    if(FLT.types.size && !FLT.types.has(r['报检类型'])) return;
     const key = slocBucket(r, true);
     groups[key].push({cat:key, no:r['样品编号'], io:r['报检单号'], mat:r['物料名称'], pos:key==='留样'?'留样':'已报废', type:r['报检类型'], person:r['最近变更人']||r['处置人'], time:r['最近变更时间']||r['处置时间']});
   });
@@ -469,37 +494,34 @@ function openSample(id){
   const body = items.map((it,ix)=>{
     const st = itemState(s, it);
     const [stTxt, stCls] = IT_ST[st];
-    const res = it['检验项类型']==='定性' ? (it['检验结果']||'—') : (it['检验报出值']||it['检验结果值']||'—');
     const c = it['检验结论'];
-    return `<tr><td>${ix+1}</td><td>${esc(it['检验项名称']||'—')}</td><td>${esc(it['检验项类型']||'—')}</td><td><span class="tag ${stCls}">${stTxt}</span></td><td>${esc(st==='done'||st==='bad' ? opUser : '—')}</td><td>${esc(res)}</td><td><span class="tag ${conclTag(c)}">${esc(c||'—')}</span></td><td>${esc(it['偏差结论']||'—')}</td></tr>`;
-  }).join('') || '<tr><td colspan="8" style="text-align:center;color:#94a3b8">无检验项明细</td></tr>';
+    return `<tr><td>${ix+1}</td><td>${esc(it['检验项名称']||'—')}</td><td><span class="tag ${stCls}">${stTxt}</span></td><td>${esc(st==='done'||st==='bad' ? opUser : '—')}</td><td><span class="tag ${conclTag(c)}">${esc(c||'—')}</span></td></tr>`;
+  }).join('') || '<tr><td colspan="5" style="text-align:center;color:#94a3b8">无检验项明细</td></tr>';
   openDlg(`${esc(s['样品编号'])} · 样品检验项明细`,
     `<div class="sd-sub">${esc(s['报检单号']||'—')} · ${esc(s['物料名称']||'—')} · ${esc(s['报检类型'])} · 进度 ${s._done}/${s._total} · 需求完成 ${esc(s['需求完成时间']||'—')}</div>`+
     `<div class="sd-cards">${cards}</div>`+
-    `<table class="dlg-table"><thead><tr><th>序号</th><th>检验项</th><th>类型</th><th>状态</th><th>检验员</th><th>结果</th><th>检验结论</th><th>偏差结论</th></tr></thead><tbody>${body}</tbody></table>`);
+    `<table class="dlg-table"><thead><tr><th>序号</th><th>检验项</th><th>状态</th><th>检验员</th><th>检验结论</th></tr></thead><tbody>${body}</tbody></table>`);
 }
 $('prog-all').onclick = ()=>{
   const body = progList.map(st=>{
     const pct = st.total ? (st.done/st.total*100).toFixed(1)+'%' : '—';
-    return `<tr><td>${esc(st.name)}</td><td>${esc(st.cls||'—')}</td><td>${st.total}</td><td>${st.done}</td><td>${st.run}</td><td>${pct}</td><td>${st.bad?`<span class="tag tag-fail">${st.bad}</span>`:st.bad}</td></tr>`;
-  }).join('') || '<tr><td colspan="7" style="text-align:center;color:#94a3b8">暂无检验项</td></tr>';
-  openDlg('检验项完成进度 · 全部（未完成样品涉及项）',
-    `<table class="dlg-table"><thead><tr><th>检验项名称</th><th>所属检验类</th><th>任务项次</th><th>完成项次</th><th>进行中</th><th>完成率</th><th>不合格项次</th></tr></thead><tbody>${body}</tbody></table>`);
+    return `<tr><td>${esc(st.name)}</td><td>${st.total}</td><td>${st.done}</td><td>${st.run}</td><td>${pct}</td><td>${st.bad?`<span class="tag tag-fail">${st.bad}</span>`:st.bad}</td></tr>`;
+  }).join('') || '<tr><td colspan="6" style="text-align:center;color:#94a3b8">暂无检验类</td></tr>';
+  openDlg('检验项完成进度 · 全部（未完成样品涉及检验类）',
+    `<table class="dlg-table"><thead><tr><th>检验类</th><th>任务项次</th><th>完成项次</th><th>进行中</th><th>完成率</th><th>不合格项次</th></tr></thead><tbody>${body}</tbody></table>`);
 };
 
-/* 检验项 → 包含该检验项的样品清单 */
-const IST_TXT = { done:'合格', bad:'不合格', run:'进行中', wait:'未检' };
-const IST_CLS = { done:'tag-pass', bad:'tag-fail', run:'tag-run', wait:'tag-gray' };
-function openItemSamples(name){
-  const rows = fltPool().filter(s=> (s._items||[]).some(it=> (it['检验项名称']||'未命名检验项')===name));
+/* 检验类 → 包含该类检验项的样品清单 */
+function openItemSamples(cls){
+  const rows = fltPool().filter(s=> (s._items||[]).some(it=> (it['所属检验类']||'未分类')===cls));
   rows.sort((a,b)=> (a['样品状态']==='已完成'?1:0)-(b['样品状态']==='已完成'?1:0));
   const body = rows.map(s=>{
-    const it = s._items.find(x=> (x['检验项名称']||'未命名检验项')===name);
-    const st = itemState(s, it);
+    const its = s._items.filter(it=> (it['所属检验类']||'未分类')===cls);
+    const allDone = its.every(it=>{ const k = itemState(s,it); return k==='done'||k==='bad'; });
     const odTxt = !s._eta ? '—' : (s._overdue ? '<span class="tag tag-fail">逾期</span>' : '<span class="tag tag-done">正常</span>');
-    return `<tr><td>${esc(s['样品编号'])}</td><td>${esc(s['物料名称']||'—')}</td><td>${esc(s['报检类型'])}</td><td><span class="tag ${statusTag(s)}">${esc(s['样品状态'])}</span></td><td>${odTxt}</td><td><span class="tag ${IST_CLS[st]}">${IST_TXT[st]}</span></td><td>${esc(s['需求完成时间']||'—')}</td></tr>`;
+    return `<tr><td>${esc(s['样品编号'])}</td><td>${esc(s['物料名称']||'—')}</td><td>${esc(s['报检类型'])}</td><td><span class="tag ${statusTag(s)}">${esc(s['样品状态'])}</span></td><td>${odTxt}</td><td><span class="tag ${allDone?'tag-done':'tag-run'}">${allDone?'已完成':'检验中'}</span></td><td>${esc(s['需求完成时间']||'—')}</td></tr>`;
   }).join('') || '<tr><td colspan="7" style="text-align:center;color:#94a3b8">暂无样品</td></tr>';
-  openDlg(`检验项「${name}」· 涉及样品 ${rows.length} 个`,
+  openDlg(`检验类「${cls}」· 涉及样品 ${rows.length} 个`,
     `<table class="dlg-table"><thead><tr><th>样品编号</th><th>物料名称</th><th>报检类型</th><th>样品状态</th><th>逾期状态</th><th>该项状态</th><th>需求完成时间</th></tr></thead><tbody>${body}</tbody></table>`);
 }
 
@@ -512,8 +534,30 @@ function renderAll(){ renderKpis(); renderItemKpis(); renderProg(); renderKb(); 
   $('kb-kind').innerHTML = '<option value="">物料种类（全部）</option>' + kinds.map(t=> `<option value="${esc(t)}">${esc(t)}</option>`).join('');
   $('kb-kind').addEventListener('change', renderKb);
   $('kb-mat').addEventListener('input', renderKb);
-  $('hd-type').innerHTML = '<option value="">检验类型（所有）</option>' + TABS.map(([,t])=> `<option value="${esc(t)}">${esc(t)}</option>`).join('');
-  $('hd-type').addEventListener('change', e=>{ FLT.type = e.target.value; renderAll(); });
+  const typePop = $('hd-type-pop');
+  typePop.innerHTML = '<div class="msel-ops"><a id="hd-type-all">全选</a><a id="hd-type-clear">清空</a></div>' +
+    TABS.map(([,t])=> `<label><input type="checkbox" value="${esc(t)}"><span>${esc(t)}</span></label>`).join('');
+  function hdTypeLabel(){
+    const n = FLT.types.size;
+    $('hd-type-btn').textContent = n===0 ? '检验类型（所有）' : (n===TABS.length ? '检验类型（全部9类）' : '检验类型（'+n+'类）');
+  }
+  $('hd-type-btn').addEventListener('click', e=>{ e.stopPropagation(); $('hd-type').classList.toggle('open'); });
+  document.addEventListener('click', e=>{ if(!e.target.closest('#hd-type')) $('hd-type').classList.remove('open'); });
+  typePop.addEventListener('click', e=> e.stopPropagation());
+  typePop.querySelectorAll('input[type=checkbox]').forEach(cb=> cb.addEventListener('change', ()=>{
+    if(cb.checked) FLT.types.add(cb.value); else FLT.types.delete(cb.value);
+    hdTypeLabel(); renderAll();
+  }));
+  $('hd-type-all').addEventListener('click', ()=>{
+    TABS.forEach(([,t])=> FLT.types.add(t));
+    typePop.querySelectorAll('input[type=checkbox]').forEach(c=> c.checked=true);
+    hdTypeLabel(); renderAll();
+  });
+  $('hd-type-clear').addEventListener('click', ()=>{
+    FLT.types.clear();
+    typePop.querySelectorAll('input[type=checkbox]').forEach(c=> c.checked=false);
+    hdTypeLabel(); renderAll();
+  });
   $('hd-start').value = TODAY_S;
   $('hd-end').value = TODAY_S;
   $('hd-start').addEventListener('change', e=>{ FLT.start = e.target.value; if(FLT.end && FLT.start && FLT.start>FLT.end){ FLT.end = FLT.start; $('hd-end').value = FLT.end; } renderAll(); });
