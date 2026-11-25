@@ -1315,7 +1315,7 @@
         qcOpenSpcFromOverview(row, op.name.indexOf('单图')>=0 ? 'spc-single' : 'spc-multi');
         return;
       }
-      if(op.name==='文件详情'){ openForm('文件详情'); return; }
+      if(op.name==='文件详情'){ if(pageId.value==='qr-issue'){ openQrFileDetail(row); }else{ openForm('文件详情'); } return; }
       if(op.name==='预览' && pageId.value==='qr-issue'){ qcQrPreview(row); return; }
       if(op.name==='预览' && pageId.value==='spc-report-ledger'){ qcSpcLedgerPreview(row); return; }
       if(op.name==='预览'){ onFilePreview(row['文件名称'] || row['文件'] || row['报告名称'] || ''); return; }

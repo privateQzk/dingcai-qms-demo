@@ -14317,16 +14317,33 @@ function nextWjNo(){
         name: k + '谱图',
         type: 'upload',
         required: false,
-        placeholder: '点击上传，限一份',
+        placeholder: '点击选择',
         limit: 1,
         ext: '.png',
         accept: '.png,.jpg,.jpeg'
       }));
     }
     function clearQrIssueSpectrumUploads(){
-      QR_SPECTRUM_FIELDS.forEach(k=>{ formModel[k] = ''; });
+      Object.keys(formModel).forEach(k=>{ if(/谱图$/.test(k)) formModel[k]=''; });
     }
     const qrIssueSpectrumFormFields = computed(()=> pageId.value==='qr-issue' ? qrIssueSpectrumFields(formModel['报告模板名称']) : []);
+    // 开具方式：一件一份=按样品明细行每组一套谱图；一批一份=仅一组
+    const qrIssueSpectrumGroups = computed(()=>{
+      if(pageId.value!=='qr-issue') return [];
+      const fields = qrIssueSpectrumFormFields.value;
+      if(!fields.length) return [];
+      const mode = String(formModel['开具方式']||'').trim();
+      if(mode==='一件一份'){
+        return (formLineRows.value||[]).map((r,ix)=>{
+          const label = String(r['样品编号']||'').trim() || String(r['物料批号']||'').trim() || ('样品'+(ix+1));
+          return { key:String(r['样品编号']||'').trim() || ('row'+(ix+1)), label:'样品 ' + label, fields, row:r };
+        });
+      }
+      return [{ key:'', label:'', fields }];
+    });
+    function qrSpecKey(gkey, fname){ return gkey ? (gkey + '__' + fname) : fname; }
+    function isSpecUploadImg(v){ return /^data:image\//.test(String(v||'')) || isDemoImageUpload(v); }
+    function specUploadSrc(v){ return /^data:image\//.test(String(v||'')) ? v : demoSpectrumImgSrc(v); }
     function isDemoImageUpload(name){
       return /\.(png|jpe?g|gif|webp)$/i.test(String(name||''));
     }
@@ -21913,12 +21930,121 @@ function nextWjNo(){
       }
       return list;
     }
+    /* ===== 开具报告 · 文件详情（报告流水列表面板）===== */
+    const qrFileDetailVisible = ref(false);
+    const qrFileDetailIssue = ref(null);
+    const qrFileDetailKw = ref('');
+    const qrFileDetailSelected = ref([]);
+    const qrFileDetailPage = ref(1);
+    const qrFileDetailPageSize = ref(20);
+    function openQrFileDetail(row){
+      qrFileDetailIssue.value = row || null;
+      qrFileDetailKw.value = '';
+      qrFileDetailSelected.value = [];
+      qrFileDetailPage.value = 1;
+      qrFileDetailVisible.value = true;
+    }
+    const qrFileDetailRows = computed(()=>{
+      const issue = qrFileDetailIssue.value || {};
+      const no = String(issue['开具单号']||'').trim();
+      let list = (((MOCK['qr-issue']||{})['tab-record'])||[]).filter(r=> no && String(r['开具单号']||'')===no);
+      if(!list.length && issue['样品编号']) list = (((MOCK['qr-issue']||{})['tab-record'])||[]).filter(r=> String(r['样品编号']||'')===String(issue['样品编号']));
+      const kw = qrFileDetailKw.value.trim().toLowerCase();
+      if(kw) list = list.filter(r=> String(r['文件流水']||'').toLowerCase().includes(kw));
+      return list;
+    });
+    const qrFileDetailPageRows = computed(()=>{
+      const st = (qrFileDetailPage.value-1)*qrFileDetailPageSize.value;
+      return qrFileDetailRows.value.slice(st, st+qrFileDetailPageSize.value);
+    });
+    function qrFileDetailSearch(){ qrFileDetailPage.value = 1; }
+    function qrFileDetailReset(){ qrFileDetailKw.value=''; qrFileDetailPage.value = 1; }
+    function qrFileDetailDownload(kind){ qcQrDownload(qrFileDetailSelected.value.length ? qrFileDetailSelected.value : [], kind); }
+
     function openQrIssueSpecPreview(row){
       const no = String((row && row['样品编号']) || '').trim();
       if(!no){ ElMessage.warning('请先选择样品编号'); return; }
       qrSpecPreviewSampleNo.value = no;
       qrSpecPreviewFiles.value = qrIssueSampleSpectra(row);
       qrSpecPreviewVisible.value = true;
+    }
+
+    /* ===== 开具报告 · 谱图文件「点击选择」：列表单选 → 预览 → 框选截图回填 ===== */
+    const qrSpecSelVisible = ref(false);
+    const qrSpecSelKey = ref('');
+    const qrSpecSelMeta = ref('');
+    const qrSpecSelRows = ref([]);
+    const qrSpecSelCurrent = ref(null);
+    const qrSpecSelRect = ref(null);
+    const qrSpecSelBox = ref(null);
+    let _qrSpecSelStart = null;
+    const qrSpecSelRectStyle = computed(()=>{
+      const r = qrSpecSelRect.value;
+      return r ? { left:r.x+'px', top:r.y+'px', width:r.w+'px', height:r.h+'px' } : {};
+    });
+    function openQrSpecSelect(g, f){
+      qrSpecSelKey.value = qrSpecKey(g.key, f.name);
+      qrSpecSelMeta.value = (g.label ? g.label+' · ' : '') + f.name;
+      const mode = String(formModel['开具方式']||'').trim();
+      let rows = [];
+      if(mode==='一件一份'){
+        rows = g.row ? qrIssueSampleSpectra(g.row) : [];
+      }else{
+        const seen = new Set();
+        (formLineRows.value||[]).forEach(r=>{
+          qrIssueSampleSpectra(r).forEach(fl=>{
+            const k = String(fl.id || fl['文件名'] || fl['文件名称'] || '');
+            if(k && !seen.has(k)){ seen.add(k); rows.push(fl); }
+          });
+        });
+      }
+      qrSpecSelRows.value = rows;
+      qrSpecSelCurrent.value = null;
+      qrSpecSelRect.value = null;
+      qrSpecSelVisible.value = true;
+    }
+    function qrSpecSelDown(e){
+      const box = e.currentTarget.getBoundingClientRect();
+      _qrSpecSelStart = { x:e.clientX-box.left, y:e.clientY-box.top };
+      qrSpecSelRect.value = { x:_qrSpecSelStart.x, y:_qrSpecSelStart.y, w:0, h:0 };
+    }
+    function qrSpecSelMove(e){
+      if(!_qrSpecSelStart) return;
+      const box = e.currentTarget.getBoundingClientRect();
+      const x = Math.min(Math.max(e.clientX-box.left, 0), box.width);
+      const y = Math.min(Math.max(e.clientY-box.top, 0), box.height);
+      qrSpecSelRect.value = { x:Math.min(x,_qrSpecSelStart.x), y:Math.min(y,_qrSpecSelStart.y), w:Math.abs(x-_qrSpecSelStart.x), h:Math.abs(y-_qrSpecSelStart.y) };
+    }
+    function qrSpecSelUp(){ _qrSpecSelStart = null; }
+    async function qrSpecSelConfirm(){
+      const f = qrSpecSelCurrent.value;
+      if(!f){ ElMessage.warning('请先选择一条谱图文件'); return; }
+      const r = qrSpecSelRect.value;
+      if(!r || r.w<5 || r.h<5){ ElMessage.warning('请先在谱图上框选区域'); return; }
+      try{
+        const svgEl = qrSpecSelBox.value && qrSpecSelBox.value.querySelector('svg');
+        if(!svgEl){ ElMessage.warning('未找到预览图'); return; }
+        const box = svgEl.getBoundingClientRect();
+        let ser = new XMLSerializer().serializeToString(svgEl);
+        if(!/xmlns=/.test(ser)) ser = ser.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"');
+        const img = new Image();
+        await new Promise((res, rej)=>{ img.onload=res; img.onerror=rej; img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(ser); });
+        const scale = 2;
+        const cv = document.createElement('canvas');
+        cv.width = Math.max(1, Math.round(box.width*scale));
+        cv.height = Math.max(1, Math.round(box.height*scale));
+        const ctx = cv.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0,0,cv.width,cv.height);
+        ctx.drawImage(img, 0, 0, cv.width, cv.height);
+        const c2 = document.createElement('canvas');
+        c2.width = Math.max(1, Math.round(r.w*scale));
+        c2.height = Math.max(1, Math.round(r.h*scale));
+        c2.getContext('2d').drawImage(cv, r.x*scale, r.y*scale, r.w*scale, r.h*scale, 0, 0, c2.width, c2.height);
+        formModel[qrSpecSelKey.value] = c2.toDataURL('image/png');
+        qrSpecSelVisible.value = false;
+        ElMessage.success('已框选谱图区域并回填');
+      }catch(err){ ElMessage.warning('框选截图失败，请重试'); }
     }
     const SPECTRUM_LEDGER_UPLOAD_DEMOS = [
       { name:'TL-A026 25I27-15-熔料 M 客户方法.pdf', mat:'OLED-HOST-BL-01', lot:'25I27-15', col:'P-7101B', inst:'EQ-HPLC-01', path:'/data/LIMS/图谱/HPLC3/TL-A026 25I27-15-熔料 M 客户方法.pdf' },
@@ -30990,7 +31116,7 @@ function nextWjNo(){
         qcOpenSpcFromOverview(row, op.name.indexOf('单图')>=0 ? 'spc-single' : 'spc-multi');
         return;
       }
-      if(op.name==='文件详情'){ openForm('文件详情'); return; }
+      if(op.name==='文件详情'){ if(pageId.value==='qr-issue'){ openQrFileDetail(row); }else{ openForm('文件详情'); } return; }
       if(op.name==='预览' && pageId.value==='qr-issue'){ qcQrPreview(row); return; }
       if(op.name==='预览' && pageId.value==='spc-report-ledger'){ qcSpcLedgerPreview(row); return; }
       if(op.name==='预览'){ onFilePreview(row['文件名称'] || row['文件'] || row['报告名称'] || ''); return; }
@@ -41093,7 +41219,7 @@ function nextWjNo(){
       visibleTypeFormFields, dictTypeOptions,
       onSelectMenu, openQualityCockpit, cmp, cmpFiltered, cmpPageRows, cmpPageSelected, cmpIndex, onCmpSelect, cmpReset, cmpExport, onTabChange, onQuery, onResetQuery, onToolbar, onTreeToolbar, demoMenuTreeData, onTagMenuTreeChange, onRowOp, onFormLineAction, formLineActionList, onFormBarcodeAction, onFormOk, onFormDraft, onFormFooter, onQcInspectSave, onSplitOk, onDispatchAuditOk, onAssignOk, onAssignVehicleChange, tagClass, displayTagValue, isStatusTagField, isPresentTagValue, arrowDetailPairs, formatMatUomRatioDisplay, isDateTimeField, colMinWidth, formLineColMinWidth, fitColWidth, colMaxWidth, isFormFieldVisible, isFormFieldRequired, ratioFieldKey, isBatchFieldRequired, dispatchNeedsOrderNo, isFormFieldLocked, isFormLineFieldLocked, isFormPickerDisabled, formPickerPlaceholder, onFormPickerClear, isDetailLineRowActionVisible, visibleRowOps, rowOpDisabledReason, canEditTankArch, onTankArchDetailEdit, onBizLink, isBizLinkField, isDetailTagField, detailFieldLabel, detailDisplayValue, maskIdCard, removeFormLine, clonePoInFormLineForNewLot, refreshPoInFormLineNos, removeMatMediumPick, matInfoText, formFieldOptions, formSelectOptions, formSelectAllState, toggleFormSelectAll, formLineSelectOptions, prodRetBatchOptions, countWhLotOptions, isProdFormLotField, isCountManageRow, resolveWhBizType, isWaybillPage, usesErpLineNoCol, isPoNoticePage, isProdIssuePage, isDirectXferPage, isProdWhPage, prodAppMeta, isLoadPage, loadPageMeta, loadWhBizMeta, isWhLineClosePage, isOsPoPage, isWhNoticePage, isCsRecvPage, isBcSerialPage, isBcLineFormPage, onBcFormLineBarcodeEnter, syncSerialSplitRemain, syncSerialMergeRemain, isCsRetPage, isCsWhPage, demoCarrierName, demoCarrierDispatcher,
       selectDictType, toggleDictTypeNode, openDictTypeForm, onDictTypeFormOk, removeDictType, addrPopoverField,
-      resetDemoStore, storeTick, isDemoImageUpload, demoSpectrumImgSrc, qrIssueSpectrumFormFields,
+      resetDemoStore, storeTick, isDemoImageUpload, demoSpectrumImgSrc, qrFileDetailVisible, qrFileDetailIssue, qrFileDetailKw, qrFileDetailSelected, qrFileDetailPage, qrFileDetailPageSize, qrFileDetailRows, qrFileDetailPageRows, openQrFileDetail, qrFileDetailSearch, qrFileDetailReset, qrFileDetailDownload, qrIssueSpectrumFormFields, qrIssueSpectrumGroups, qrSpecKey, isSpecUploadImg, specUploadSrc, qrSpecSelVisible, qrSpecSelKey, qrSpecSelMeta, qrSpecSelRows, qrSpecSelCurrent, qrSpecSelRect, qrSpecSelBox, qrSpecSelRectStyle, openQrSpecSelect, qrSpecSelDown, qrSpecSelMove, qrSpecSelUp, qrSpecSelConfirm,
       openPicker, onPickerOk, onGenerateBatch, onBatchDeleteLines, onBatchOk, refreshSerialExpire,
       onCraftDragStart, addCraftNode, onCraftDrop, onCraftOk, openCraftProc, onCraftProcOk, removeCraftNode, addDesignField, onDesignDrop, selectDesignField, moveDesignField, copyDesignField, removeDesignField, removeDesignChild, openFormPreview, onDesignCancel, onDesignOk, onDetailLineAction, removeDetailPickLine, syncPrepPickQty, onSplitLineSelection, addSplitMaterialLine, addSplitBatchLineForMat, addSplitBatchLine, removeSplitSelectedBatchLines, removeSplitBatchLine, splitSpanMethod, isSplitMatHeadRow,
       addKpiGrade, delKpiGrades, addKpiProject, delKpiProjects, addKpiIndicator, delKpiIndicators, moveKpiProject, moveKpiIndicator, onKpiCfgOk, openKpiScore, onKpiScoreOk, kpiProjectScore, onKpiVendorDelete,

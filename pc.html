@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vxe-pc-ui@4/lib/style.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vxe-table@4/lib/style.css" />
-<link rel="stylesheet" href="./css/app.css?v=1.0.26" />
+<link rel="stylesheet" href="./css/app.css?v=1.0.29" />
 </head>
 <body>
 <div id="app" v-cloak>
@@ -3178,20 +3178,23 @@
           </el-tab-pane>
         </el-tabs>
       </section>
-      <section class="demo-form-section" v-if="pageId==='qr-issue' && (qrIssueSpectrumFormFields||[]).length">
+      <section class="demo-form-section" v-if="pageId==='qr-issue' && (qrIssueSpectrumGroups||[]).length">
         <h4 class="demo-form-section__title"><span>谱图文件</span></h4>
-        <div class="demo-form-grid" :class="{ 'demo-form-grid--cols-3': page.formGridCols===3, 'demo-form-grid--cols-4': page.formGridCols===4 }">
-          <el-form-item v-for="f in qrIssueSpectrumFormFields" :key="'qr-spec-'+f.name" :label="f.name">
-            <div style="display:flex;align-items:center;gap:8px;width:100%;flex-wrap:wrap">
-              <el-button link type="primary" @click="formModel[f.name]=((f.name||'附件')+(f.ext||'.png')); ElMessage.success('Demo：已上传（限一份）')">{{ formModel[f.name] ? '重新上传' : (f.placeholder || '点击上传，限一份') }}</el-button>
-              <span v-if="formModel[f.name] && isDemoImageUpload(formModel[f.name])" class="demo-upload-img-chip" :title="formModel[f.name]">
-                <img :src="demoSpectrumImgSrc(formModel[f.name])" alt="" width="56" height="36">
-                <em>{{ formModel[f.name] }}</em>
-              </span>
-              <span v-else-if="formModel[f.name]" style="font-size:12px;color:#64748b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ formModel[f.name] }}</span>
-              <el-button v-if="formModel[f.name]" link type="danger" @click="formModel[f.name]=''">删除</el-button>
-            </div>
-          </el-form-item>
+        <div v-for="g in qrIssueSpectrumGroups" :key="'qr-spec-grp-'+g.key" class="qr-spec-group">
+          <div v-if="g.label" class="qr-spec-group__label">{{ g.label }}</div>
+          <div class="demo-form-grid" :class="{ 'demo-form-grid--cols-3': page.formGridCols===3, 'demo-form-grid--cols-4': page.formGridCols===4 }">
+            <el-form-item v-for="f in g.fields" :key="'qr-spec-'+g.key+'-'+f.name" :label="f.name">
+              <div style="display:flex;align-items:center;gap:8px;width:100%;flex-wrap:wrap">
+                <el-button link type="primary" @click="openQrSpecSelect(g, f)">{{ formModel[qrSpecKey(g.key,f.name)] ? '重新选择' : (f.placeholder || '点击选择') }}</el-button>
+                <span v-if="formModel[qrSpecKey(g.key,f.name)] && isSpecUploadImg(formModel[qrSpecKey(g.key,f.name)])" class="demo-upload-img-chip" :title="'框选区域图'">
+                  <img :src="specUploadSrc(formModel[qrSpecKey(g.key,f.name)])" alt="" width="56" height="36">
+                  <em>已截取区域</em>
+                </span>
+                <span v-else-if="formModel[qrSpecKey(g.key,f.name)]" style="font-size:12px;color:#64748b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ formModel[qrSpecKey(g.key,f.name)] }}</span>
+                <el-button v-if="formModel[qrSpecKey(g.key,f.name)]" link type="danger" @click="formModel[qrSpecKey(g.key,f.name)]=''">删除</el-button>
+              </div>
+            </el-form-item>
+          </div>
         </div>
       </section>
     </el-form>
@@ -8900,6 +8903,90 @@
     <template #footer><el-button type="primary" @click="qrSpecPreviewVisible=false">关闭</el-button></template>
   </el-dialog>
 
+  <!-- 开具报告 · 文件详情：本开具单生成的报告流水列表 -->
+  <el-dialog v-model="qrFileDetailVisible" class="demo-dialog--biz" title="文件详情" width="min(1120px, 96vw)" top="6vh" align-center append-to-body destroy-on-close>
+    <div class="qr-fd">
+      <div class="qr-fd__q">
+        <span class="qr-fd__q-label">文件流水</span>
+        <el-input v-model="qrFileDetailKw" clearable placeholder="" style="width:220px" @keyup.enter="qrFileDetailSearch"></el-input>
+        <el-button type="primary" @click="qrFileDetailSearch">查询</el-button>
+        <el-button @click="qrFileDetailReset">重置</el-button>
+      </div>
+      <div class="list-toolbar" style="margin-top:12px">
+        <div class="list-toolbar__info">
+          <span class="list-toolbar__title">数据列表</span>
+          <span class="list-toolbar__sel">已选: {{ qrFileDetailSelected.length }}（当页已选: {{ qrFileDetailSelected.length }}）</span>
+        </div>
+        <div class="list-toolbar__actions">
+          <el-button type="primary" size="small" @click="qrFileDetailDownload('下载源文件')">下载源文件</el-button>
+          <el-button type="primary" size="small" @click="qrFileDetailDownload('下载PDF')">下载PDF</el-button>
+        </div>
+      </div>
+      <el-table class="demo-data-table demo-data-table--striped" :data="qrFileDetailPageRows" border stripe size="small" style="width:100%" @selection-change="rows => qrFileDetailSelected = rows">
+        <el-table-column type="selection" width="44" align="center"></el-table-column>
+        <el-table-column type="index" label="序号" width="56" :index="i => (qrFileDetailPage-1)*qrFileDetailPageSize + i + 1"></el-table-column>
+        <el-table-column prop="文件流水" label="文件流水" min-width="170" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="物料批号" label="物料批号" min-width="120" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="样品来源" label="样品来源" min-width="110" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="样品编号" label="样品编号" min-width="120" show-overflow-tooltip></el-table-column>
+        <el-table-column label="操作" width="80" align="center">
+          <template #default="{ row }"><el-button link type="primary" size="small" @click="qcQrPreview(row)">预览</el-button></template>
+        </el-table-column>
+        <template #empty><span style="color:#94a3b8">暂无文件流水</span></template>
+      </el-table>
+      <div style="display:flex;justify-content:center;margin-top:14px">
+        <el-pagination v-model:current-page="qrFileDetailPage" v-model:page-size="qrFileDetailPageSize" :total="qrFileDetailRows.length" :page-sizes="[10,20,50]" layout="prev, pager, next, jumper, sizes, total" background small></el-pagination>
+      </div>
+    </div>
+    <template #footer><el-button type="primary" @click="qrFileDetailVisible=false">关闭</el-button></template>
+  </el-dialog>
+
+  <!-- 开具报告 · 谱图文件「点击选择」：列表单选 → 预览 → 框选截图回填 -->
+  <el-dialog v-model="qrSpecSelVisible" class="demo-dialog--biz" :title="'选择谱图文件'+(qrSpecSelMeta?' · '+qrSpecSelMeta:'')" width="min(1120px, 96vw)" top="4vh" align-center append-to-body destroy-on-close :close-on-click-modal="false">
+    <div class="qr-spec-sel">
+      <div class="qr-spec-sel__list">
+        <el-table :data="qrSpecSelRows" border size="small" height="400" highlight-current-row @current-change="r => { if(r) qrSpecSelCurrent = r }">
+          <el-table-column width="44" align="center">
+            <template #default="{ row }"><el-radio :model-value="qrSpecSelCurrent ? (qrSpecSelCurrent.id||'') : ''" :value="row.id" @change="qrSpecSelCurrent = row"></el-radio></template>
+          </el-table-column>
+          <el-table-column prop="文件名" label="文件名" min-width="300" show-overflow-tooltip></el-table-column>
+          <template #empty><span style="color:#94a3b8">暂无谱图文件</span></template>
+        </el-table>
+      </div>
+      <div class="qr-spec-sel__preview">
+        <div v-if="!qrSpecSelCurrent" class="qr-spec-sel__empty">选择左侧谱图文件后在此预览，并可在图上框选区域</div>
+        <template v-else>
+          <div class="qr-spec-sel__tip">在谱图上按住鼠标拖动框选区域，确认后截取框选区域回填</div>
+          <div ref="qrSpecSelBox" class="qr-spec-crop" @mousedown="qrSpecSelDown" @mousemove="qrSpecSelMove" @mouseup="qrSpecSelUp" @mouseleave="qrSpecSelUp">
+            <svg viewBox="0 0 720 220" preserveAspectRatio="none" role="img" aria-label="谱图预览" style="display:block;width:100%;height:400px">
+              <g stroke="#e5e7eb" stroke-width="1">
+                <line x1="40" y1="30" x2="700" y2="30"></line>
+                <line x1="40" y1="75" x2="700" y2="75"></line>
+                <line x1="40" y1="120" x2="700" y2="120"></line>
+                <line x1="40" y1="165" x2="700" y2="165"></line>
+              </g>
+              <g stroke="#cbd5e1" stroke-width="1.4">
+                <line x1="40" y1="190" x2="700" y2="190"></line>
+                <line x1="40" y1="16" x2="40" y2="190"></line>
+              </g>
+              <polyline v-if="specPolylineOf(qrSpecSelCurrent)" fill="none" stroke="#004098" stroke-width="1.6" stroke-linejoin="round" :points="specPolylineOf(qrSpecSelCurrent)"></polyline>
+            </svg>
+            <div v-if="qrSpecSelRect" class="qr-spec-crop__rect" :style="qrSpecSelRectStyle"></div>
+          </div>
+          <div class="qr-spec-sel__meta">
+            <span>样品编号 {{ qrSpecSelCurrent['样本编号'] || qrSpecSelCurrent['样品编号'] || '—' }}</span>
+            <span>批号 {{ qrSpecSelCurrent['批号'] || '—' }}</span>
+            <span>仪器编号 {{ qrSpecSelCurrent['仪器编号'] || '—' }}</span>
+          </div>
+        </template>
+      </div>
+    </div>
+    <template #footer>
+      <el-button @click="qrSpecSelVisible=false">取消</el-button>
+      <el-button type="primary" @click="qrSpecSelConfirm">确定</el-button>
+    </template>
+  </el-dialog>
+
   <el-image-viewer v-if="colImgUrl" :url-list="[colImgUrl]" teleported @close="colImgUrl=''"></el-image-viewer>
 
   <!-- GC / LC 台账：编辑台账数据（批号只读） -->
@@ -9006,7 +9093,7 @@
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
 <script src="./js/demo-announcements.js?v=1.4.24"></script>
 <script src="./js/page-configs.js?v=1.4.620"></script>
-<script src="./js/mock-rows.js?v=1.4.366"></script>
+<script src="./js/mock-rows.js?v=1.4.367"></script>
 <script src="./js/dict-catalog.js?v=1.1.16"></script>
 <script src="./js/page-prd-notes.js?v=2.4.567"></script>
 <script src="./js/remarks-markdown.js?v=1.1.0"></script>
@@ -9034,6 +9121,6 @@
 <script src="./js/components/layouts/env-stat.js?v=1.0.0"></script>
 <script src="./js/components/layouts/batch-trace.js?v=1.0.0"></script>
 <script src="./js/components/layouts/sched-board.js?v=1.0.62"></script>
-<script src="./js/app.js?v=1.0.87"></script>
+<script src="./js/app.js?v=1.0.91"></script>
 </body>
 </html>

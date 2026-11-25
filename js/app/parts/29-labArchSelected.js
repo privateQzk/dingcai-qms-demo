@@ -205,16 +205,33 @@
         name: k + '谱图',
         type: 'upload',
         required: false,
-        placeholder: '点击上传，限一份',
+        placeholder: '点击选择',
         limit: 1,
         ext: '.png',
         accept: '.png,.jpg,.jpeg'
       }));
     }
     function clearQrIssueSpectrumUploads(){
-      QR_SPECTRUM_FIELDS.forEach(k=>{ formModel[k] = ''; });
+      Object.keys(formModel).forEach(k=>{ if(/谱图$/.test(k)) formModel[k]=''; });
     }
     const qrIssueSpectrumFormFields = computed(()=> pageId.value==='qr-issue' ? qrIssueSpectrumFields(formModel['报告模板名称']) : []);
+    // 开具方式：一件一份=按样品明细行每组一套谱图；一批一份=仅一组
+    const qrIssueSpectrumGroups = computed(()=>{
+      if(pageId.value!=='qr-issue') return [];
+      const fields = qrIssueSpectrumFormFields.value;
+      if(!fields.length) return [];
+      const mode = String(formModel['开具方式']||'').trim();
+      if(mode==='一件一份'){
+        return (formLineRows.value||[]).map((r,ix)=>{
+          const label = String(r['样品编号']||'').trim() || String(r['物料批号']||'').trim() || ('样品'+(ix+1));
+          return { key:String(r['样品编号']||'').trim() || ('row'+(ix+1)), label:'样品 ' + label, fields, row:r };
+        });
+      }
+      return [{ key:'', label:'', fields }];
+    });
+    function qrSpecKey(gkey, fname){ return gkey ? (gkey + '__' + fname) : fname; }
+    function isSpecUploadImg(v){ return /^data:image\//.test(String(v||'')) || isDemoImageUpload(v); }
+    function specUploadSrc(v){ return /^data:image\//.test(String(v||'')) ? v : demoSpectrumImgSrc(v); }
     function isDemoImageUpload(name){
       return /\.(png|jpe?g|gif|webp)$/i.test(String(name||''));
     }
