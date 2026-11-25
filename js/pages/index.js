@@ -195,7 +195,6 @@ window.QMS_PAGE_PATHS = {
   "np-0503-01": "js/pages/np-0503-01.js",
   "np-0601-01": "js/pages/np-0601-01.js",
   "np-0602-01": "js/pages/np-0602-01.js",
-  "np-0701-01": "js/pages/np-0701-01.js",
   "np-0702-01": "js/pages/np-0702-01.js",
   "np-0702-02": "js/pages/np-0702-02.js",
 };

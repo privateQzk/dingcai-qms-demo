@@ -1330,11 +1330,7 @@ window.WMS_PAGE_CONFIGS = {
       "title": "BI驾驶舱",
       "index": "g-BI驾驶舱",
       "children": [
-        {
-          "title": "看板设置",
-          "index": "np-0701-01",
-          "pageId": "np-0701-01"
-        },
+        
         {
           "title": "质量数字驾驶舱",
           "index": "np-0702-01",
@@ -86585,36 +86581,7 @@ window.WMS_PAGE_CONFIGS = {
       "formLineFields": [],
       "formLineActions": []
     },
-    "np-0701-01": {
-      "id": "np-0701-01",
-      "title": "看板设置",
-      "groups": [
-        "BI驾驶舱"
-      ],
-      "breadcrumb": [
-        "BI驾驶舱",
-        "看板设置"
-      ],
-      "tabs": [],
-      "tabViews": [
-        {
-          "queryFields": [],
-          "toolbar": [],
-          "columns": [],
-          "rowOps": [],
-          "name": "main",
-          "label": ""
-        }
-      ],
-      "formFields": [],
-      "detailFields": [],
-      "hasEdit": false,
-      "hasDetail": false,
-      "stub": true,
-      "formFlat": true,
-      "formLineFields": [],
-      "formLineActions": []
-    },
+    
     "np-0702-01": {
       "id": "np-0702-01",
       "title": "质量数字驾驶舱",
@@ -172658,36 +172625,7 @@ window.WMS_PAGE_CONFIGS = {
       "formLineFields": [],
       "formLineActions": []
     },
-    {
-      "id": "np-0701-01",
-      "title": "看板设置",
-      "groups": [
-        "BI驾驶舱"
-      ],
-      "breadcrumb": [
-        "BI驾驶舱",
-        "看板设置"
-      ],
-      "tabs": [],
-      "tabViews": [
-        {
-          "queryFields": [],
-          "toolbar": [],
-          "columns": [],
-          "rowOps": [],
-          "name": "main",
-          "label": ""
-        }
-      ],
-      "formFields": [],
-      "detailFields": [],
-      "hasEdit": false,
-      "hasDetail": false,
-      "stub": true,
-      "formFlat": true,
-      "formLineFields": [],
-      "formLineActions": []
-    },
+    
     {
       "id": "np-0702-01",
       "title": "质量数字驾驶舱",
@@ -258734,36 +258672,7 @@ window.WMS_PAGE_CONFIGS = {
       "formLineFields": [],
       "formLineActions": []
     },
-    {
-      "id": "np-0701-01",
-      "title": "看板设置",
-      "groups": [
-        "BI驾驶舱"
-      ],
-      "breadcrumb": [
-        "BI驾驶舱",
-        "看板设置"
-      ],
-      "tabs": [],
-      "tabViews": [
-        {
-          "queryFields": [],
-          "toolbar": [],
-          "columns": [],
-          "rowOps": [],
-          "name": "main",
-          "label": ""
-        }
-      ],
-      "formFields": [],
-      "detailFields": [],
-      "hasEdit": false,
-      "hasDetail": false,
-      "stub": true,
-      "formFlat": true,
-      "formLineFields": [],
-      "formLineActions": []
-    },
+    
     {
       "id": "np-0702-01",
       "title": "质量数字驾驶舱",
