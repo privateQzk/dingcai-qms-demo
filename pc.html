@@ -160,12 +160,12 @@
                   <template v-for="m3 in m2.children" :key="m3.index">
                     <el-sub-menu v-if="m3.children" :index="m3.index">
                       <template #title><span class="menu-item-label">{{ m3.title }}</span></template>
-                      <el-menu-item v-for="leaf in m3.children" :key="leaf.index" :index="leaf.index">{{ leaf.title }}</el-menu-item>
+                      <el-menu-item v-for="leaf in m3.children" :key="leaf.index" :index="leaf.index" :class="{ 'menu-title-red': leaf.titleRed }">{{ leaf.title }}</el-menu-item>
                     </el-sub-menu>
                     <el-menu-item v-else :index="m3.index" :class="{ 'menu-title-red': m3.titleRed }">{{ m3.title }}</el-menu-item>
                   </template>
                 </el-sub-menu>
-                <el-menu-item v-else :index="m2.index">{{ m2.title }}</el-menu-item>
+                <el-menu-item v-else :index="m2.index" :class="{ 'menu-title-red': m2.titleRed }">{{ m2.title }}</el-menu-item>
               </template>
             </el-sub-menu>
           </template>
@@ -4511,7 +4511,7 @@
           <template #tip><div class="el-upload__tip">支持 PDF / 图片 / Word / Excel，可上传多个，单文件最大 20MB</div></template>
         </el-upload>
         <el-date-picker v-else-if="f.type==='date'" v-model="procForm.values[f.name]" type="date" value-format="YYYY-MM-DD" :placeholder="f.placeholder || '请选择日期'" style="width:100%"></el-date-picker>
-        <el-input v-else-if="f.type==='input'" v-model="procForm.values[f.name]" maxlength="200" clearable :placeholder="f.placeholder || '请输入'"></el-input>
+        <el-input v-else-if="f.type==='input'" v-model="procForm.values[f.name]" maxlength="200" clearable :placeholder="f.placeholder || '请输入'"><template v-if="f.unit" #suffix>{{ f.unit }}</template></el-input>
         <el-input v-else v-model="procForm.values[f.name]" type="textarea" :rows="f.rows || 4" maxlength="500" show-word-limit :placeholder="f.placeholder || '请输入'"></el-input>
       </el-form-item>
     </el-form>
@@ -9092,8 +9092,8 @@
 <script src="https://cdn.jsdelivr.net/npm/vxe-table@4/lib/index.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
 <script src="./js/demo-announcements.js?v=1.4.24"></script>
-<script src="./js/page-configs.js?v=1.4.620"></script>
-<script src="./js/mock-rows.js?v=1.4.367"></script>
+<script src="./js/page-configs.js?v=1.4.628"></script>
+<script src="./js/mock-rows.js?v=1.4.370"></script>
 <script src="./js/dict-catalog.js?v=1.1.16"></script>
 <script src="./js/page-prd-notes.js?v=2.4.567"></script>
 <script src="./js/remarks-markdown.js?v=1.1.0"></script>
@@ -9121,6 +9121,6 @@
 <script src="./js/components/layouts/env-stat.js?v=1.0.0"></script>
 <script src="./js/components/layouts/batch-trace.js?v=1.0.0"></script>
 <script src="./js/components/layouts/sched-board.js?v=1.0.62"></script>
-<script src="./js/app.js?v=1.0.91"></script>
+<script src="./js/app.js?v=1.0.93"></script>
 </body>
 </html>

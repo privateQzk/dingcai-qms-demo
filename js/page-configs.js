@@ -63,7 +63,8 @@ window.WMS_PAGE_CONFIGS = {
             {
               "title": "班次",
               "index": "np-0103-15",
-              "pageId": "np-0103-15"
+              "pageId": "np-0103-15",
+              "titleRed": true
             },
             {
               "title": "检验日历",
@@ -476,7 +477,8 @@ window.WMS_PAGE_CONFIGS = {
             {
               "title": "检测异常事件表",
               "index": "np-0417-03",
-              "pageId": "np-0417-03"
+              "pageId": "np-0417-03",
+              "titleRed": true
             }
           ]
         },
@@ -514,7 +516,8 @@ window.WMS_PAGE_CONFIGS = {
             {
               "title": "不合格处置汇总表",
               "index": "unqual-sum",
-              "pageId": "unqual-sum"
+              "pageId": "unqual-sum",
+              "titleRed": true
             }
           ]
         },
@@ -546,7 +549,8 @@ window.WMS_PAGE_CONFIGS = {
             {
               "title": "偏差处置汇总表",
               "index": "dev-sum",
-              "pageId": "dev-sum"
+              "pageId": "dev-sum",
+              "titleRed": true
             }
           ]
         },
@@ -557,12 +561,14 @@ window.WMS_PAGE_CONFIGS = {
             {
               "title": "内部整改",
               "index": "capa-internal",
-              "pageId": "capa-internal"
+              "pageId": "capa-internal",
+              "titleRed": true
             },
             {
               "title": "整改处理",
               "index": "capa-handle",
-              "pageId": "capa-handle"
+              "pageId": "capa-handle",
+              "titleRed": true
             }
           ]
         },
@@ -593,7 +599,8 @@ window.WMS_PAGE_CONFIGS = {
             {
               "title": "制程SPC(多图)",
               "index": "spc-process",
-              "pageId": "spc-process"
+              "pageId": "spc-process",
+              "titleRed": true
             },
             {
               "title": "SPC报告开具",
@@ -712,29 +719,37 @@ window.WMS_PAGE_CONFIGS = {
             {
               "title": "持续改进",
               "index": "np-0209-01",
-              "pageId": "np-0209-01"
+              "pageId": "np-0209-01",
+              "titleRed": true
             },
             {
               "title": "改进处理",
               "index": "np-0209-02",
-              "pageId": "np-0209-02"
+              "pageId": "np-0209-02",
+              "titleRed": true
             }
           ]
         },
         {
           "title": "变更处理",
           "index": "np-0210-01",
-          "pageId": "np-0210-01"
+          "pageId": "np-0210-01",
+              "titleRed": true
+
         },
         {
           "title": "审核管理",
           "index": "np-0211-02",
-          "pageId": "np-0211-02"
+          "pageId": "np-0211-02",
+          "titleRed": true
+
         },
         {
           "title": "品质专项任务",
           "index": "np-0218-01",
-          "pageId": "np-0218-01"
+          "pageId": "np-0218-01",
+          "titleRed": true
+
         },
         {
           "title": "客户质量管理",
@@ -749,7 +764,8 @@ window.WMS_PAGE_CONFIGS = {
             {
               "title": "客户投诉",
               "index": "np-0212-02",
-              "pageId": "np-0212-02"
+              "pageId": "np-0212-02",
+              "titleRed": true
             },
             {
               "title": "客户退货",
@@ -782,42 +798,50 @@ window.WMS_PAGE_CONFIGS = {
             {
               "title": "有害物质档案库",
               "index": "np-0215-01",
-              "pageId": "np-0215-01"
+              "pageId": "np-0215-01",
+              "titleRed": true
             },
             {
               "title": "有害物质文件库",
               "index": "np-0215-02",
-              "pageId": "np-0215-02"
+              "pageId": "np-0215-02",
+              "titleRed": true
             },
             {
               "title": "临期文件",
               "index": "np-0215-03",
-              "pageId": "np-0215-03"
+              "pageId": "np-0215-03",
+              "titleRed": true
             },
             {
               "title": "文件导入",
               "index": "np-0215-05",
-              "pageId": "np-0215-05"
+              "pageId": "np-0215-05",
+              "titleRed": true
             },
             {
               "title": "厂内检验流水",
               "index": "np-0215-08",
-              "pageId": "np-0215-08"
+              "pageId": "np-0215-08",
+              "titleRed": true
             },
             {
               "title": "文件变更",
               "index": "np-0215-06",
-              "pageId": "np-0215-06"
+              "pageId": "np-0215-06",
+              "titleRed": true
             },
             {
               "title": "文件作废",
               "index": "np-0215-07",
-              "pageId": "np-0215-07"
+              "pageId": "np-0215-07",
+              "titleRed": true
             },
             {
               "title": "回收站",
               "index": "np-0215-04",
-              "pageId": "np-0215-04"
+              "pageId": "np-0215-04",
+              "titleRed": true
             }
           ]
         },
@@ -852,12 +876,14 @@ window.WMS_PAGE_CONFIGS = {
             {
               "title": "检验类流水表",
               "index": "np-0409-01",
-              "pageId": "np-0409-01"
+              "pageId": "np-0409-01",
+              "titleRed": true
             },
             {
               "title": "多维度统计表",
               "index": "np-0409-02",
-              "pageId": "np-0409-02"
+              "pageId": "np-0409-02",
+              "titleRed": true
             }
           ]
         },
@@ -868,12 +894,14 @@ window.WMS_PAGE_CONFIGS = {
             {
               "title": "检验合格率多维表",
               "index": "np-0417-01",
-              "pageId": "np-0417-01"
+              "pageId": "np-0417-01",
+              "titleRed": true
             },
             {
               "title": "品质综合报表",
               "index": "np-0417-02",
-              "pageId": "np-0417-02"
+              "pageId": "np-0417-02",
+              "titleRed": true
             }
           ]
         }
@@ -57177,6 +57205,12 @@ window.WMS_PAGE_CONFIGS = {
               "width": 110
             },
             {
+              "title": "计划完成时间",
+              "field": "计划完成时间",
+              "name": "计划完成时间",
+              "width": 110
+            },
+            {
               "title": "持续改进项目",
               "field": "持续改进项目",
               "name": "持续改进项目",
@@ -57273,6 +57307,11 @@ window.WMS_PAGE_CONFIGS = {
         },
         {
           "name": "提案日期",
+          "type": "date",
+          "required": true
+        },
+        {
+          "name": "计划完成时间",
           "type": "date",
           "required": true
         },
@@ -57450,6 +57489,12 @@ window.WMS_PAGE_CONFIGS = {
               "width": 110
             },
             {
+              "title": "计划完成时间",
+              "field": "计划完成时间",
+              "name": "计划完成时间",
+              "width": 110
+            },
+            {
               "title": "持续改进项目",
               "field": "持续改进项目",
               "name": "持续改进项目",
@@ -57612,6 +57657,12 @@ window.WMS_PAGE_CONFIGS = {
               "width": 110
             },
             {
+              "title": "计划完成时间",
+              "field": "计划完成时间",
+              "name": "计划完成时间",
+              "width": 110
+            },
+            {
               "title": "持续改进项目",
               "field": "持续改进项目",
               "name": "持续改进项目",
@@ -57670,6 +57721,12 @@ window.WMS_PAGE_CONFIGS = {
               "field": "改进附件",
               "name": "改进附件",
               "width": 200
+            },
+            {
+              "title": "奖励金额",
+              "field": "奖励金额",
+              "name": "奖励金额",
+              "width": 100
             },
             {
               "title": "改进提交时间",
@@ -143138,6 +143195,12 @@ window.WMS_PAGE_CONFIGS = {
               "width": 110
             },
             {
+              "title": "计划完成时间",
+              "field": "计划完成时间",
+              "name": "计划完成时间",
+              "width": 110
+            },
+            {
               "title": "持续改进项目",
               "field": "持续改进项目",
               "name": "持续改进项目",
@@ -143234,6 +143297,11 @@ window.WMS_PAGE_CONFIGS = {
         },
         {
           "name": "提案日期",
+          "type": "date",
+          "required": true
+        },
+        {
+          "name": "计划完成时间",
           "type": "date",
           "required": true
         },
@@ -143412,6 +143480,12 @@ window.WMS_PAGE_CONFIGS = {
               "width": 110
             },
             {
+              "title": "计划完成时间",
+              "field": "计划完成时间",
+              "name": "计划完成时间",
+              "width": 110
+            },
+            {
               "title": "持续改进项目",
               "field": "持续改进项目",
               "name": "持续改进项目",
@@ -143574,6 +143648,12 @@ window.WMS_PAGE_CONFIGS = {
               "width": 110
             },
             {
+              "title": "计划完成时间",
+              "field": "计划完成时间",
+              "name": "计划完成时间",
+              "width": 110
+            },
+            {
               "title": "持续改进项目",
               "field": "持续改进项目",
               "name": "持续改进项目",
@@ -143632,6 +143712,12 @@ window.WMS_PAGE_CONFIGS = {
               "field": "改进附件",
               "name": "改进附件",
               "width": 200
+            },
+            {
+              "title": "奖励金额",
+              "field": "奖励金额",
+              "name": "奖励金额",
+              "width": 100
             },
             {
               "title": "改进提交时间",
@@ -229185,6 +229271,12 @@ window.WMS_PAGE_CONFIGS = {
               "width": 110
             },
             {
+              "title": "计划完成时间",
+              "field": "计划完成时间",
+              "name": "计划完成时间",
+              "width": 110
+            },
+            {
               "title": "持续改进项目",
               "field": "持续改进项目",
               "name": "持续改进项目",
@@ -229281,6 +229373,11 @@ window.WMS_PAGE_CONFIGS = {
         },
         {
           "name": "提案日期",
+          "type": "date",
+          "required": true
+        },
+        {
+          "name": "计划完成时间",
           "type": "date",
           "required": true
         },
@@ -229459,6 +229556,12 @@ window.WMS_PAGE_CONFIGS = {
               "width": 110
             },
             {
+              "title": "计划完成时间",
+              "field": "计划完成时间",
+              "name": "计划完成时间",
+              "width": 110
+            },
+            {
               "title": "持续改进项目",
               "field": "持续改进项目",
               "name": "持续改进项目",
@@ -229621,6 +229724,12 @@ window.WMS_PAGE_CONFIGS = {
               "width": 110
             },
             {
+              "title": "计划完成时间",
+              "field": "计划完成时间",
+              "name": "计划完成时间",
+              "width": 110
+            },
+            {
               "title": "持续改进项目",
               "field": "持续改进项目",
               "name": "持续改进项目",
@@ -229679,6 +229788,12 @@ window.WMS_PAGE_CONFIGS = {
               "field": "改进附件",
               "name": "改进附件",
               "width": 200
+            },
+            {
+              "title": "奖励金额",
+              "field": "奖励金额",
+              "name": "奖励金额",
+              "width": 100
             },
             {
               "title": "改进提交时间",

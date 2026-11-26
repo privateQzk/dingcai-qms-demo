@@ -23492,8 +23492,8 @@ function nextWjNo(){
 
     /** 改进处理：待处理由「执行中」的持续改进按责任部门拆分（一个部门一行）；已完成为各部门提交后的子级数据 */
     const CIP_PAGE = CI_SUB_PAGE;
-    const CIP_KEYS = ['提案编号','提案人','提案部门','提案日期','持续改进项目','现有状况描述','改进后状况和改进目标','小组成员','小组组长','备注','创建时间','创建人'];
-    const CIP_INFO_KEYS = ['提案编号','责任部门','提案人','提案部门','提案日期','小组组长','小组成员','持续改进项目','现有状况描述','改进后状况和改进目标'];
+    const CIP_KEYS = ['提案编号','提案人','提案部门','提案日期','计划完成时间','持续改进项目','现有状况描述','改进后状况和改进目标','小组成员','小组组长','备注','创建时间','创建人'];
+    const CIP_INFO_KEYS = ['提案编号','责任部门','提案人','提案部门','提案日期','计划完成时间','小组组长','小组成员','持续改进项目','现有状况描述','改进后状况和改进目标'];
     const CIP_INFO_FULL = ['小组成员','持续改进项目','现有状况描述','改进后状况和改进目标'];
     function cipDoneList(){ return ((MOCK[CIP_PAGE]||{})['tab-2']) || []; }
     function cipDoneRows(){
@@ -23577,9 +23577,14 @@ function nextWjNo(){
       bumpStore();
     }
     function openCipProcess(row){
-      openProcDlg({ title:'改进处理', keys:CIP_INFO_KEYS, full:CIP_INFO_FULL, descLabel:'改进说明', fileLabel:'改进附件', placeholder:'请输入改进措施及完成情况', onSubmit:submitCipProcess }, row);
+      openProcDlg({ title:'改进处理', keys:CIP_INFO_KEYS, full:CIP_INFO_FULL, onSubmit:submitCipProcess,
+        fields:[
+          { name:'改进说明', type:'textarea', required:true, placeholder:'请输入改进措施及完成情况' },
+          { name:'改进附件', type:'upload' },
+          { name:'奖励金额', type:'input', unit:'元', placeholder:'输入' },
+        ] }, row);
     }
-    function submitCipProcess(row, desc, files){
+    function submitCipProcess(row, desc, files, vals){
       const p = ciRows().find(x=> x['提案编号']===row['提案编号']);
       if(!p || p['改进状态']!=='执行中' || cipDoneSet().has(cipKey(row['提案编号'], row['责任部门']))){
         ElMessage.warning('该数据已处理或持续改进已关闭，请刷新后重试');
@@ -23587,7 +23592,7 @@ function nextWjNo(){
       }
       const rec = { id:'cip-'+Date.now(), 处理状态:'已完成', 责任部门: row['责任部门'] };
       CIP_KEYS.forEach(k=>{ rec[k] = p[k]; });
-      Object.assign(rec, { 改进说明: desc, 改进附件: files, 改进提交时间: nowStamp(), 改进提交人: CI_OPERATOR });
+      Object.assign(rec, { 改进说明: desc, 改进附件: files, 奖励金额: (vals && vals['奖励金额']) || '—', 改进提交时间: nowStamp(), 改进提交人: CI_OPERATOR });
       cipDoneRows().unshift(rec);
       const finished = ciSyncStatus(p) && p['改进状态']==='已完成';
       ElMessage.success(finished ? '已提交；提案 '+p['提案编号']+' 的所有责任部门均已完成，持续改进状态更新为【已完成】' : '改进处理已提交');
