@@ -54736,13 +54736,12 @@ window.WMS_PAGE_CONFIGS = {
     },
     {
       "name": "物料编码",
-      "type": "input",
-      "placeholder": "请输入"
+      "type": "picker",
+      "placeholder": "请点击选择物料"
     },
     {
       "name": "物料名称",
-      "type": "input",
-      "placeholder": "请输入"
+      "type": "readonly"
     }
   ],
   "formLineActions": [
