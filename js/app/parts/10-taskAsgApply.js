@@ -4,7 +4,7 @@
       let n = 0, skip = 0;
       taskAsgRows.value.filter(r=> cats.includes(r['检验类'])).forEach(r=>{
         if(r._itemLocked){ skip++; return; }
-        if(r._opts.includes(team)){ r['分配班组'] = [team]; n++; } else skip++;
+        if(r._opts.includes(team)){ r['分配班组'] = team; n++; } else skip++;
       });
       ElMessage.success('已将 '+n+' 行「'+cats.join('、')+'」设为 '+team + (skip ? '；'+skip+' 行不可选该班组，已跳过' : ''));
     }

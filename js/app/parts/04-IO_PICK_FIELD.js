@@ -585,6 +585,7 @@
         return;
       }
       if(ioPickBind.value==='splitSample'){ applySplitSamplePick([r]); return; }
+      if(ioPickBind.value==='taskInsts'){ applyTaskInstPick([r]); return; }
       if(ioPickBind.value==='spiMat'){ applySpiMatPick(r); return; }
       if(ioPickBind.value==='oeSample'){
         const prev = formModel['样品编号'];

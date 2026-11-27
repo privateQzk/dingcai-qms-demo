@@ -390,7 +390,7 @@
     function openTaskInstPick(row){
       if(!row || row._itemLocked) return;
       taskAsgInstRow.value = row;
-      openIoPick('inst', 'taskInsts', '仪器名称', true);
+      openIoPick('inst', 'taskInsts', '仪器名称', false);
     }
     function clearTaskInst(row){
       if(!row || row._itemLocked) return;
@@ -422,7 +422,7 @@
     }));
     function taskAsgTeamChange(row){
       const v = taskAsgList(row['分配班组']);
-      taskAsgRows.value.filter(r=> r._oid===row._oid && r._idx===row._idx && r!==row).forEach(r=>{ r['分配班组'] = v.slice(); });
+      taskAsgRows.value.filter(r=> r._oid===row._oid && r._idx===row._idx && r!==row).forEach(r=>{ r['分配班组'] = v[0] || ''; });
     }
     function taskAsgInstChange(row){
       const v = taskAsgList(row['适用仪器']);
@@ -453,7 +453,7 @@
               _oid: o.id, _idx: idx, _opts: opts, _cands: own, _instOpts: instOpts, _itemLocked: st==='已完成',
               样品编号: o['样品编号'], 物料名称: o['物料名称'], 检验类: ln['检验类'], 仪器类型: ln['仪器类型'],
               检验项: itemName, 检验状态: st, 命中方案: ln['命中方案'], 候选班组: ln['候选班组'],
-              原班组: teams.join('、'), 分配班组: teams.slice(),
+              原班组: teams.join('、'), 分配班组: teams[0] || '',
               原仪器: insts.join('、'), 适用仪器: insts.slice()
             });
           });

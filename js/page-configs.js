@@ -8956,9 +8956,9 @@ window.WMS_PAGE_CONFIGS = {
                  },
                  {
                    "name": "供应商COA",
-                   "type": "readonly",
+                   "type": "upload",
                    "required": false,
-                   "ctrl": "由行操作「上传报告」上传后反写附件名"
+                   "placeholder": "点击上传文件"
                  },
                  {
                    "name": "报检件数",
@@ -9133,9 +9133,9 @@ window.WMS_PAGE_CONFIGS = {
              },
              {
                "name": "供应商COA",
-               "type": "readonly",
+               "type": "upload",
                "required": false,
-               "ctrl": "由行操作「上传报告」上传后反写附件名"
+               "placeholder": "点击上传文件"
              },
              {
                "name": "报检件数",
@@ -95674,9 +95674,9 @@ window.WMS_PAGE_CONFIGS = {
                  },
                  {
                    "name": "供应商COA",
-                   "type": "readonly",
+                   "type": "upload",
                    "required": false,
-                   "ctrl": "由行操作「上传报告」上传后反写附件名"
+                   "placeholder": "点击上传文件"
                  },
                  {
                    "name": "报检件数",
@@ -95851,9 +95851,9 @@ window.WMS_PAGE_CONFIGS = {
              },
              {
                "name": "供应商COA",
-               "type": "readonly",
+               "type": "upload",
                "required": false,
-               "ctrl": "由行操作「上传报告」上传后反写附件名"
+               "placeholder": "点击上传文件"
              },
              {
                "name": "报检件数",
@@ -181748,9 +181748,9 @@ window.WMS_PAGE_CONFIGS = {
                  },
                  {
                    "name": "供应商COA",
-                   "type": "readonly",
+                   "type": "upload",
                    "required": false,
-                   "ctrl": "由行操作「上传报告」上传后反写附件名"
+                   "placeholder": "点击上传文件"
                  },
                  {
                    "name": "报检件数",
@@ -181925,9 +181925,9 @@ window.WMS_PAGE_CONFIGS = {
              },
              {
                "name": "供应商COA",
-               "type": "readonly",
+               "type": "upload",
                "required": false,
-               "ctrl": "由行操作「上传报告」上传后反写附件名"
+               "placeholder": "点击上传文件"
              },
              {
                "name": "报检件数",

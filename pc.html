@@ -4077,7 +4077,7 @@
       </el-table-column>
       <el-table-column label="检验班组" width="240" fixed="right">
         <template #default="{ row }">
-          <el-select v-model="row.分配班组" placeholder="请选择" multiple collapse-tags collapse-tags-tooltip clearable filterable style="width:100%" :disabled="row._itemLocked" @change="taskAsgTeamChange(row)">
+          <el-select v-model="row.分配班组" placeholder="请选择" clearable filterable style="width:100%" :disabled="row._itemLocked" @change="taskAsgTeamChange(row)">
             <el-option v-for="t in row._opts" :key="t" :label="t" :value="t">
               <span>{{ t }}</span>
               <span v-if="row._cands.includes(t)" style="float:right;margin-left:12px;color:#909399;font-size:12px">方案候选</span>
@@ -9092,7 +9092,7 @@
 <script src="https://cdn.jsdelivr.net/npm/vxe-table@4/lib/index.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
 <script src="./js/demo-announcements.js?v=1.4.24"></script>
-<script src="./js/page-configs.js?v=1.4.632"></script>
+<script src="./js/page-configs.js?v=1.4.634"></script>
 <script src="./js/mock-rows.js?v=1.4.370"></script>
 <script src="./js/dict-catalog.js?v=1.1.16"></script>
 <script src="./js/page-prd-notes.js?v=2.4.567"></script>
@@ -9121,6 +9121,6 @@
 <script src="./js/components/layouts/env-stat.js?v=1.0.0"></script>
 <script src="./js/components/layouts/batch-trace.js?v=1.0.0"></script>
 <script src="./js/components/layouts/sched-board.js?v=1.0.62"></script>
-<script src="./js/app.js?v=1.0.93"></script>
+<script src="./js/app.js?v=1.0.94"></script>
 </body>
 </html>
