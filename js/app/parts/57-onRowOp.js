@@ -340,6 +340,10 @@
           }
         });
         formModel._editId = row.id;
+        if(pageId.value===CASS_PAGE && op.name==='编辑'){
+          formLineRows.value = (row._lines||[]).map(l=>({ ...l }));
+          formLineSelected.value = [];
+        }
         if(pageId.value===SHIFT_PAGE && !formModel['段数']){
           formModel['段数'] = '1';
           formModel['段1开始'] = String(row['开始时间']||'').trim();

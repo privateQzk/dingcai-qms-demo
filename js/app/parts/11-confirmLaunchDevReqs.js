@@ -337,7 +337,8 @@
       if(!code){ ElMessage.warning('请输入卡塞编号'); return; }
       if(!typ){ ElMessage.warning('请选择卡塞类型'); return; }
       const list = cassList();
-      if(list.some(r=> r['信息流水号']===no)){ ElMessage.warning('信息流水号「'+no+'」已存在'); return; }
+      const cur = formMode.value==='edit' ? list.find(r=> r.id===formModel._editId) : null;
+      if(list.some(r=> r['信息流水号']===no && r!==cur)){ ElMessage.warning('信息流水号「'+no+'」已存在'); return; }
       renumberCassLines();
       const lines = (formLineRows.value||[]).map(r=>({
         玻璃板序号: String(r['玻璃板序号']||'').trim(),
@@ -347,6 +348,13 @@
         物料名称: String(r['物料名称']||'').trim() || '—'
       })).filter(r=> r['批次号']!=='—' || r['样品编号']!=='—' || r['物料编码']!=='—' || r['物料名称']!=='—');
       lines.forEach((r, i)=>{ r['玻璃板序号'] = String(i + 1); });
+      if(cur){
+        Object.assign(cur, { 卡塞编号: code, 卡塞类型: typ, 关联玻璃板数: String(lines.length), _lines: lines });
+        formVisible.value = false;
+        bumpStore();
+        ElMessage.success('已保存卡塞 '+no);
+        return;
+      }
       list.unshift({
         id: 'ks-'+Date.now().toString(36),
         信息流水号: no,

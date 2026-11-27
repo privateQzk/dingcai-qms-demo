@@ -54649,6 +54649,9 @@ window.WMS_PAGE_CONFIGS = {
       ],
       "rowOps": [
         {
+          "name": "编辑"
+        },
+        {
           "name": "详情"
         }
       ]

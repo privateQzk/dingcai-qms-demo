@@ -137,7 +137,7 @@
         return (formMode.value==='edit' ? '编辑' : '新增') + '成本方案';
       }
       if(pageId.value===CASS_PAGE && ['add','edit','copy'].includes(formMode.value)){
-        return '新增卡塞';
+        return (formMode.value==='edit' ? '编辑' : '新增') + '卡塞';
       }
       if(pageId.value==='spectrum-file' && formMode.value==='add'){
         return (page.value?.formDialogTitleMap||{})['新增'] || '新增 · 色谱台账';

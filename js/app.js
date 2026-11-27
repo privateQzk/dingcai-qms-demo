@@ -5920,7 +5920,8 @@ const app = createApp({
       if(!code){ ElMessage.warning('请输入卡塞编号'); return; }
       if(!typ){ ElMessage.warning('请选择卡塞类型'); return; }
       const list = cassList();
-      if(list.some(r=> r['信息流水号']===no)){ ElMessage.warning('信息流水号「'+no+'」已存在'); return; }
+      const cur = formMode.value==='edit' ? list.find(r=> r.id===formModel._editId) : null;
+      if(list.some(r=> r['信息流水号']===no && r!==cur)){ ElMessage.warning('信息流水号「'+no+'」已存在'); return; }
       renumberCassLines();
       const lines = (formLineRows.value||[]).map(r=>({
         玻璃板序号: String(r['玻璃板序号']||'').trim(),
@@ -5930,6 +5931,13 @@ const app = createApp({
         物料名称: String(r['物料名称']||'').trim() || '—'
       })).filter(r=> r['批次号']!=='—' || r['样品编号']!=='—' || r['物料编码']!=='—' || r['物料名称']!=='—');
       lines.forEach((r, i)=>{ r['玻璃板序号'] = String(i + 1); });
+      if(cur){
+        Object.assign(cur, { 卡塞编号: code, 卡塞类型: typ, 关联玻璃板数: String(lines.length), _lines: lines });
+        formVisible.value = false;
+        bumpStore();
+        ElMessage.success('已保存卡塞 '+no);
+        return;
+      }
       list.unshift({
         id: 'ks-'+Date.now().toString(36),
         信息流水号: no,
@@ -14732,7 +14740,7 @@ function nextWjNo(){
         return (formMode.value==='edit' ? '编辑' : '新增') + '成本方案';
       }
       if(pageId.value===CASS_PAGE && ['add','edit','copy'].includes(formMode.value)){
-        return '新增卡塞';
+        return (formMode.value==='edit' ? '编辑' : '新增') + '卡塞';
       }
       if(pageId.value==='spectrum-file' && formMode.value==='add'){
         return (page.value?.formDialogTitleMap||{})['新增'] || '新增 · 色谱台账';
@@ -30147,6 +30155,10 @@ function nextWjNo(){
           }
         });
         formModel._editId = row.id;
+        if(pageId.value===CASS_PAGE && op.name==='编辑'){
+          formLineRows.value = (row._lines||[]).map(l=>({ ...l }));
+          formLineSelected.value = [];
+        }
         if(pageId.value===SHIFT_PAGE && !formModel['段数']){
           formModel['段数'] = '1';
           formModel['段1开始'] = String(row['开始时间']||'').trim();
