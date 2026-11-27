@@ -555,24 +555,6 @@ window.WMS_PAGE_CONFIGS = {
           ]
         },
         {
-          "title": "纠正预防",
-          "index": "g-质量管理/纠正预防",
-          "children": [
-            {
-              "title": "内部整改",
-              "index": "capa-internal",
-              "pageId": "capa-internal",
-              "titleRed": true
-            },
-            {
-              "title": "整改处理",
-              "index": "capa-handle",
-              "pageId": "capa-handle",
-              "titleRed": true
-            }
-          ]
-        },
-        {
           "title": "SPC统计",
           "index": "g-质量管理/SPC统计",
           "children": [
@@ -708,6 +690,24 @@ window.WMS_PAGE_CONFIGS = {
               "title": "色谱台账",
               "index": "spectrum-file",
               "pageId": "spectrum-file",
+              "titleRed": true
+            }
+          ]
+        },
+        {
+          "title": "纠正预防",
+          "index": "g-质量管理/纠正预防",
+          "children": [
+            {
+              "title": "内部整改",
+              "index": "capa-internal",
+              "pageId": "capa-internal",
+              "titleRed": true
+            },
+            {
+              "title": "整改处理",
+              "index": "capa-handle",
+              "pageId": "capa-handle",
               "titleRed": true
             }
           ]
